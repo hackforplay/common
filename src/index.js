@@ -1,1 +1,1 @@
-export default 'hackforplay'
+import './hackforplay/core';
