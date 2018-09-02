@@ -1,1 +1,1 @@
-exports.default = 'hackforplay'
+export default 'hackforplay'

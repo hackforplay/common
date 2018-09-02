@@ -1,0 +1,15 @@
+{
+	"html": {
+		"indent_with_tabs": true
+	},
+	"css": {
+		"indent_with_tabs": true,
+		"indent_inner_html": true,
+		"extra_liners": []
+	},
+	"js": {
+		"indent_with_tabs": true,
+		"end_with_newline": true,
+		"brace_style": "collapse,preserve-inline"
+	}
+}
