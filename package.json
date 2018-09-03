@@ -21,10 +21,18 @@
     "url": "https://github.com/hackforplay/common/issues"
   },
   "homepage": "https://github.com/hackforplay/common#readme",
+  "ava": {
+    "require": [
+      "@babel/register",
+      "./test/helpers/setup-browser-env.js"
+    ]
+  },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
-    "ava": "1.0.0-beta.8"
+    "@babel/register": "^7.0.0",
+    "ava": "1.0.0-beta.8",
+    "browser-env": "^3.2.5"
   }
 }
