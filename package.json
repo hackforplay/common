@@ -25,7 +25,8 @@
     "require": [
       "@babel/register",
       "canvas-prebuilt",
-      "./test/helpers/setup-browser-env.js"
+      "./test/helpers/setup-browser-env.js",
+      "./test/helpers/setup-feeles-env.js"
     ]
   },
   "devDependencies": {
