@@ -4,6 +4,7 @@
   "description": "Common package for building stages in hackforplay",
   "main": "dist/index.js",
   "scripts": {
+    "prepublish": "npm run babel",
     "babel": "babel -d dist -D src",
     "test": "exit 0"
   },
