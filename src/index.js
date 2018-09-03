@@ -1,1 +1,1 @@
-require('./hackforplay/core');
+import './hackforplay/core';
