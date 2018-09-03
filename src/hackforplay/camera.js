@@ -1,12 +1,12 @@
-import { Core, Node, Event, Sprite, Surface, Group } from 'enchantjs/enchant';
-import 'enchantjs/ui.enchant';
-import 'enchantjs/fix';
-import 'hackforplay/rpg-kit-main';
+import enchant from '../enchantjs/enchant';
+import '../enchantjs/ui.enchant';
+import '../enchantjs/fix';
+import './rpg-kit-main';
 import Hack from './hack';
 
-import { clamp } from 'hackforplay/utils/math-utils';
+import { clamp } from './utils/math-utils';
 
-class Camera extends Sprite {
+class Camera extends enchant.Sprite {
 	constructor(x, y, w, h) {
 		super(w, h);
 
@@ -15,7 +15,7 @@ class Camera extends Sprite {
 		w = w || game.width;
 		h = h || game.height;
 
-		this.image = new Surface(w, h);
+		this.image = new enchant.Surface(w, h);
 
 		this.w = w;
 		this.h = h;
@@ -72,7 +72,7 @@ class Camera extends Sprite {
 			this.image._element.height = h;
 		}
 
-		this.dispatchEvent(new Event(Event.RESIZE));
+		this.dispatchEvent(new enchant.Event(enchant.Event.RESIZE));
 
 		return this;
 	}

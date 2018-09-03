@@ -1,6 +1,6 @@
-import { between } from 'hackforplay/utils/math-utils';
-import { roundRect } from 'hackforplay/utils/canvas2d-utils';
-import { Event, EventTarget } from 'enchantjs/enchant';
+import { between } from '../utils/math-utils';
+import { roundRect } from '../utils/canvas2d-utils';
+import { Event, EventTarget } from '../../enchantjs/enchant';
 
 /**
  * Canvas にボタンをレンダリングするクラス

@@ -1,6 +1,6 @@
-import { Sprite, Surface, Event } from 'enchantjs/enchant';
-import { roundRect } from 'hackforplay/utils/canvas2d-utils';
-import { stringToArray } from 'hackforplay/utils/string-utils';
+import enchant from '../../enchantjs/enchant';
+import { roundRect } from '../utils/canvas2d-utils';
+import { stringToArray } from '../utils/string-utils';
 
 const parser = new DOMParser();
 
@@ -22,14 +22,14 @@ function parse(xml, retry = false) {
 	return document;
 }
 
-class TextArea extends Sprite {
+class TextArea extends enchant.Sprite {
 	constructor(w, h) {
 		super(w, h);
 
 		this.source = '';
 		this.document = null;
 
-		this.image = new Surface(w, h);
+		this.image = new enchant.Surface(w, h);
 		this.context = this.image.context;
 
 		this.debug = false;
@@ -110,7 +110,7 @@ class TextArea extends Sprite {
 			this.image._element.width = w;
 			this.image._element.height = h;
 		}
-		this.dispatchEvent(new Event(Event.RESIZE));
+		this.dispatchEvent(new enchant.Event(enchant.Event.RESIZE));
 
 		this.updateValues();
 

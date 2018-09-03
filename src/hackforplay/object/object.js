@@ -1,10 +1,10 @@
-import { Sprite, Surface } from 'enchantjs/enchant';
-import 'enchantjs/ui.enchant';
-import Hack from '../../hackforplay/hack';
-import * as synonyms from 'hackforplay/synonyms';
+import enchant from '../../enchantjs/enchant';
+import '../../enchantjs/ui.enchant';
+import Hack from '../hack';
+import * as synonyms from '../synonyms';
 import Skin from '../skin';
 import Family, { isOpposite, registerServant } from '../family';
-import SAT from 'lib/sat.min';
+import SAT from '../../lib/sat.min';
 import BehaviorTypes from '../behavior-types';
 
 // 1 フレーム ( enterframe ) 間隔で next する
@@ -21,7 +21,7 @@ function startFrameCoroutine(node, generator) {
 	});
 }
 
-class RPGObject extends Sprite {
+class RPGObject extends enchant.Sprite {
 	constructor(mod) {
 		super(0, 0);
 
@@ -822,7 +822,7 @@ class RPGObject extends Sprite {
 		if (url.indexOf('http') === 0) {
 			throw new Error(`http から始まる URL は読み込めません`);
 		}
-		const image = Surface.load(url, () => {
+		const image = enchant.Surface.load(url, () => {
 			this.image = image;
 			this.width = image.width;
 			this.height = image.height;

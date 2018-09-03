@@ -1,13 +1,13 @@
-import { Event, Sprite, Surface } from 'enchantjs/enchant';
-import 'enchantjs/ui.enchant';
-import 'enchantjs/fix';
-import 'hackforplay/rpg-kit-main';
+import enchant from '../enchantjs/enchant';
+import '../enchantjs/ui.enchant';
+import '../enchantjs/fix';
+import './rpg-kit-main';
 
-import { roundRect } from 'hackforplay/utils/canvas2d-utils';
-import { stringToArray } from 'hackforplay/utils/string-utils';
-import { step, between, clamp } from 'hackforplay/utils/math-utils';
+import { roundRect } from './utils/canvas2d-utils';
+import { stringToArray } from './utils/string-utils';
+import { step, between, clamp } from './utils/math-utils';
 
-import ButtonRenderer from 'hackforplay/ui/button-renderer';
+import ButtonRenderer from './ui/button-renderer';
 
 class KeyRenderer extends ButtonRenderer {
 	constructor(text, props) {
@@ -19,9 +19,9 @@ class KeyRenderer extends ButtonRenderer {
 
 /**
  * キーボード
- * @extends Sprite
+ * @extends enchant.Sprite
  */
-class Keyboard extends Sprite {
+class Keyboard extends enchant.Sprite {
 	/**
 	 * コンストラクタ
 	 * @constructor
@@ -35,7 +35,7 @@ class Keyboard extends Sprite {
 		this.w = w;
 		this.h = h;
 
-		this.image = new Surface(w, h);
+		this.image = new enchant.Surface(w, h);
 
 		// デザイン時の解像度
 		this.referenceResolutionX = 480;
@@ -99,7 +99,7 @@ class Keyboard extends Sprite {
 			h: 28
 		});
 		this.cancelKey.on('click', () => {
-			this.dispatchEvent(new Event('cancel'));
+			this.dispatchEvent(new enchant.Event('cancel'));
 			this.select(this.cancelKey);
 		});
 
@@ -111,7 +111,7 @@ class Keyboard extends Sprite {
 			h: 28
 		});
 		this.enterKey.on('click', () => {
-			this.dispatchEvent(new Event('enter'));
+			this.dispatchEvent(new enchant.Event('enter'));
 			this.select(this.enterKey);
 		});
 
@@ -203,7 +203,7 @@ class Keyboard extends Sprite {
 		if (Key.right.clicked) this.move(1, 0);
 
 		if (Key.space.clicked || Key.enter.clicked) {
-			this.currentKey.dispatchEvent(new Event('click'));
+			this.currentKey.dispatchEvent(new enchant.Event('click'));
 		}
 
 		// 最大文字数を超えないように調整

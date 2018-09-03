@@ -1,4 +1,4 @@
-require('enchantjs/enchant');
+var enchant = require('./enchant');
 
 /**
  * @fileOverview

@@ -1,4 +1,4 @@
-import Vector2 from 'hackforplay/math/vector2';
+import Vector2 from '../math/vector2';
 
 class Range extends Array {
 	constructor(...args) {

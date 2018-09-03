@@ -1,4 +1,4 @@
-import enchant from 'enchantjs/enchant';
+import enchant from '../enchantjs/enchant';
 
 enchant.Node.prototype.stop = function() {
 	this._stop = true;

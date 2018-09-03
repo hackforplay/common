@@ -1,4 +1,4 @@
-import SAT from 'lib/sat.min';
+import SAT from '../../lib/sat.min';
 
 class Vector2 {
 	constructor(x, y) {

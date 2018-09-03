@@ -1,19 +1,11 @@
-import {
-	Event,
-	EventTarget,
-	Node,
-	Group,
-	Tween,
-	Easing,
-	Timeline
-} from 'enchantjs/enchant';
+import enchant from './enchant';
 
 /**
  * 1 度だけ呼ばれるイベントリスナーを追加する
  * @param {string}   type     イベント名
  * @param {function} listener リスナー
  */
-EventTarget.prototype.once = function once(type, listener) {
+enchant.EventTarget.prototype.once = function once(type, listener) {
 	this.on(type, function callback() {
 		this.removeEventListener(type, callback);
 		listener.apply(this, arguments);
@@ -21,18 +13,18 @@ EventTarget.prototype.once = function once(type, listener) {
 };
 
 // Easing を文字列で指定できるようにする
-const initializeTween = Tween.prototype.initialize;
-Tween.prototype.initialize = function $initialize(params) {
+const initializeTween = enchant.Tween.prototype.initialize;
+enchant.Tween.prototype.initialize = function $initialize(params) {
 	if (typeof params.easing === 'string') {
-		params.easing = Easing[params.easing.toUpperCase()];
+		params.easing = enchant.Easing[params.easing.toUpperCase()];
 	}
 
 	initializeTween.call(this, params);
 };
 
 // Event の第二引数に props を追加する
-const initializeEvent = Event.prototype.initialize;
-Event.prototype.initialize = function $initialize(name, props) {
+const initializeEvent = enchant.Event.prototype.initialize;
+enchant.Event.prototype.initialize = function $initialize(name, props) {
 	initializeEvent.call(this, name);
 
 	if (!props) return;
@@ -42,7 +34,7 @@ Event.prototype.initialize = function $initialize(name, props) {
 	}
 };
 
-Node.prototype.contains = function contains(x, y) {
+enchant.Node.prototype.contains = function contains(x, y) {
 	return (
 		this.x <= x &&
 		this.x + this.width >= x &&
@@ -51,10 +43,10 @@ Node.prototype.contains = function contains(x, y) {
 	);
 };
 
-Node.prototype.name = 'Node';
+enchant.Node.prototype.name = 'Node';
 
 // Node#order を追加
-Object.defineProperty(Node.prototype, 'order', {
+Object.defineProperty(enchant.Node.prototype, 'order', {
 	get() {
 		return this._order || 0;
 	},
@@ -74,7 +66,7 @@ Object.defineProperty(Node.prototype, 'order', {
 });
 
 // 子要素を order でソートする
-Group.prototype.sortChildren = function sortChildren() {
+enchant.Group.prototype.sortChildren = function sortChildren() {
 	this.childNodes.sort((a, b) => {
 		return a.order - b.order;
 	});
@@ -92,7 +84,7 @@ Group.prototype.sortChildren = function sortChildren() {
  * タイムラインの再生終了まで待機する
  * @return {Promise} Promise
  */
-Timeline.prototype.async = function async() {
+enchant.Timeline.prototype.async = function async() {
 	return new Promise(resolve => {
 		this.then(resolve);
 	});
@@ -101,7 +93,7 @@ Timeline.prototype.async = function async() {
 enchant.Map.prototype.cvsRender = function cvsRender(context) {
 	if (!this.width || !this.height) return;
 
-	const core = Core.instance;
+	const core = enchant.Core.instance;
 	const canvas = this._context.canvas;
 
 	this.updateBuffer();
@@ -201,7 +193,7 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
 enchant.Event.RESIZE = 'resize';
 enchant.Event.RENDERED = 'rendered';
 
-import { CanvasRenderer } from 'enchantjs/enchant';
+import { CanvasRenderer } from './enchant';
 
 const canvasRenderer = CanvasRenderer.instance;
 
@@ -211,22 +203,22 @@ canvasRenderer.render = function(context, node, event) {
 	if (this.targetSurface) context = this.targetSurface.context;
 
 	node.dispatchEvent(
-		new Event('prerender', {
+		new enchant.Event('prerender', {
 			canvasRenderer
 		})
 	);
 
-	enchant.CanvasRenderer.prototype.render.call(this, context, node, event);
+	CanvasRenderer.prototype.render.call(this, context, node, event);
 
 	node.dispatchEvent(
-		new Event('postrender', {
+		new enchant.Event('postrender', {
 			canvasRenderer
 		})
 	);
 };
 
 /*
-enchant.CanvasRenderer.instance.render = function(context, node, event) {
+CanvasRenderer.instance.render = function(context, node, event) {
 
 	// safari 対策
 	if (!node.scene && !node._scene) return;
@@ -236,7 +228,7 @@ enchant.CanvasRenderer.instance.render = function(context, node, event) {
 	// render start
 	this.listener.emit('renderStart', node);
 
-	enchant.CanvasRenderer.prototype.render.call(this, context, node, event);
+	CanvasRenderer.prototype.render.call(this, context, node, event);
 
 	// render end
 	this.listener.emit('renderEnd', node);
@@ -244,11 +236,11 @@ enchant.CanvasRenderer.instance.render = function(context, node, event) {
 	node.dispatchEvent(new enchant.Event(enchant.Event.RENDERED));
 };
 
-enchant.CanvasRenderer.instance.listener.on('renderStart', (node) => {
+CanvasRenderer.instance.listener.on('renderStart', (node) => {
 
 	if (!Hack.map || node !== enchant.Core.instance.rootScene._layers.Canvas) return;
 
-	enchant.CanvasRenderer.instance.override = Hack.map._surface.context;
+	CanvasRenderer.instance.override = Hack.map._surface.context;
 
 });
 */

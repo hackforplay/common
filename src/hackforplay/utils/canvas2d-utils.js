@@ -1,4 +1,4 @@
-import Line from 'hackforplay/shapes/line';
+import Line from '../shapes/line';
 
 /**
  * @param {CanvasRenderingContext2D} context Context

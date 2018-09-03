@@ -1,4 +1,5 @@
-import 'hackforplay/core';
+import enchant from '../enchantjs/enchant';
+import './core';
 
 /*
 function blobToDataURL(blob, callback) {

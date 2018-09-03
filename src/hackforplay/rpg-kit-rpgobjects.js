@@ -1,9 +1,9 @@
-import 'hackforplay/rpg-kit-main';
-import 'enchantjs/enchant';
-import 'enchantjs/ui.enchant';
+import './rpg-kit-main';
+import enchant from '../enchantjs/enchant';
+import '../enchantjs/ui.enchant';
 import Hack from './hack';
 import * as synonyms from './synonyms';
-import SAT from 'lib/sat.min';
+import SAT from '../lib/sat.min';
 import RPGObject from './object/object';
 import MapObject, { dictionary } from './object/map-object';
 import BehaviorTypes from './behavior-types';

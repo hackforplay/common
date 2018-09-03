@@ -1,6 +1,6 @@
 import enchant from '../enchantjs/enchant';
 import './enchantjs-kit'; // Core 生成を待つ
-import TextArea from 'hackforplay/ui/textarea';
+import TextArea from './ui/textarea';
 
 function refocus() {
 	window.document.activeElement.blur(); // Blur an enchantBook
@@ -283,14 +283,14 @@ Hack.overlay = function() {
 	return function(args) {
 		// scope: createSprite()
 
-		this.image = new Surface(game.width, game.height);
+		this.image = new enchant.Surface(game.width, game.height);
 		for (var i = 0; i < args.length; i++) {
 			var fill = args[i];
 			switch (true) {
-				case fill instanceof Surface:
+				case fill instanceof enchant.Surface:
 					this.image.draw(fill, 0, 0, game.width, game.height);
 					break;
-				case game.assets[fill] instanceof Surface:
+				case game.assets[fill] instanceof enchant.Surface:
 					this.image.draw(game.assets[fill], 0, 0, game.width, game.height);
 					break;
 				default:
@@ -476,7 +476,7 @@ Hack.overlay = function() {
 	game.on('load', function() {
 		// 暗めのオーバーレイ
 		overlay = new Sprite(game.width, game.height);
-		overlay.image = new Surface(overlay.width, overlay.height);
+		overlay.image = new enchant.Surface(overlay.width, overlay.height);
 		overlay.image.context.fillStyle = 'rgba(0,0,0,0.4)';
 		overlay.image.context.fillRect(0, 0, overlay.width, overlay.height);
 		overlay.touchEnabled = false;
@@ -631,7 +631,7 @@ game.addEventListener('load', function() {
  * @return [r, g, b]
  */
 (function() {
-	var ctx = new Surface(1, 1).context;
+	var ctx = new enchant.Surface(1, 1).context;
 	Hack.css2rgb = function(style) {
 		if (typeof style === 'string') {
 			ctx.fillStyle = style;

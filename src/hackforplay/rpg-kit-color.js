@@ -1,6 +1,6 @@
-import 'enchantjs/enchant';
-import 'enchantjs/ui.enchant';
-import 'hackforplay/hack';
+import enchant from '../enchantjs/enchant';
+import '../enchantjs/ui.enchant';
+import './hack';
 
 /**
  * Image Processing

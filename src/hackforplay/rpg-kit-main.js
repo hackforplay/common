@@ -1,22 +1,22 @@
-import 'hackforplay/enchantjs-kit';
-import 'mod/stop';
-import 'mod/coordinate';
-import SAT from 'lib/sat.min';
+import './enchantjs-kit';
+import '../mod/stop';
+import '../mod/coordinate';
+import SAT from '../lib/sat.min';
 import Hack from './hack';
-import 'hackforplay/rpg-kit-rpgobjects';
-import 'hackforplay/rpg-kit-color';
-import { Group } from 'enchantjs/enchant';
-import Camera from 'hackforplay/camera';
-import { CanvasRenderer } from 'enchantjs/enchant';
+import './rpg-kit-rpgobjects';
+import './rpg-kit-color';
+import enchant from '../enchantjs/enchant';
+import Camera from './camera';
+import { CanvasRenderer } from '../enchantjs/enchant';
 import { KeyClass } from './key';
 import { isOpposite } from './family';
 import BehaviorTypes from './behavior-types';
-import Keyboard from 'hackforplay/keyboard';
+import Keyboard from './keyboard';
 import {
 	stringToArray,
 	dakuten,
 	handakuten
-} from 'hackforplay/utils/string-utils';
+} from './utils/string-utils';
 import RPGMap from './rpg-map';
 import './enchantjs-kit'; // Core の生成を待つ
 
@@ -235,7 +235,7 @@ game.onawake = () => {
 	game.on('enterframe', () => Hack.mouseInput.update(mousePressed));
 
 	// カメラグループ
-	const cameraGroup = new Group();
+	const cameraGroup = new enchant.Group();
 	cameraGroup.name = 'CameraGroup';
 	cameraGroup.order = 100;
 
@@ -260,7 +260,7 @@ game.onawake = () => {
 	game.rootScene.addChild(controllerGroup);
 
 	// マップ関連の親
-	const world = new Group();
+	const world = new enchant.Group();
 	world.name = 'World';
 	Hack.world = world;
 	game.rootScene.addChild(world);
@@ -301,14 +301,14 @@ game.onawake = () => {
 		}
 	});
 
-	const overlayGroup = new Group();
+	const overlayGroup = new enchant.Group();
 	overlayGroup.name = 'OverlayGroup';
 	overlayGroup.order = 1000;
 	Hack.overlayGroup = overlayGroup;
 	game.rootScene.addChild(overlayGroup);
 
 	// DOMGroup
-	const domGroup = new Group();
+	const domGroup = new enchant.Group();
 	domGroup.name = 'DOMGroup';
 	domGroup.order = 500;
 	Hack.domGroup = domGroup;
@@ -317,7 +317,7 @@ game.onawake = () => {
 	game.rootScene.addChild(domGroup);
 
 	// PopupGroup
-	const popupGroup = new Group();
+	const popupGroup = newenchant.Group();
 	popupGroup.name = 'PopupGroup';
 	popupGroup.order = 1500;
 	Hack.popupGroup = popupGroup;

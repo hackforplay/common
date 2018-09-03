@@ -1,5 +1,8 @@
+import enchant from '../enchantjs/enchant';
 import Hack from '../hackforplay/hack';
 import TextArea from '../hackforplay/ui/textarea';
+
+const game = enchant.Core.instance;
 
 const messages = []; // 一旦メッセージを貯めておくキュー
 

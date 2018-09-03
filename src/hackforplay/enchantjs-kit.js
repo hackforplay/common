@@ -1,6 +1,6 @@
-import 'enchantjs/enchant';
-import 'enchantjs/ui.enchant';
-import 'enchantjs/fix';
+import enchant from '../enchantjs/enchant';
+import '../enchantjs/ui.enchant';
+import '../enchantjs/fix';
 
 // enchant.js wrapper for HackforPlay
 // v1.0
@@ -14,7 +14,7 @@ feeles.env.VIEW = {
 	height: 320
 };
 
-window.game = new Core(feeles.env.VIEW.width, feeles.env.VIEW.height);
+window.game = new enchant.Core(feeles.env.VIEW.width, feeles.env.VIEW.height);
 
 // リサイズ時にゲームの scale を調節
 document.documentElement.style.overflow = 'hidden';

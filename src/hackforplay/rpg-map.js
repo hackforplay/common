@@ -1,18 +1,17 @@
-import enchant from 'enchantjs/enchant';
-import { Surface, EventTarget } from 'enchantjs/enchant';
-import 'hackforplay/enchantjs-kit';
-import 'hackforplay/hack';
-import 'hackforplay/rpg-kit-rpgobjects';
-import 'hackforplay/rpg-kit-color';
-import Vector2 from 'hackforplay/math/vector2';
-import Line from 'hackforplay/shapes/line';
+import enchant from '../enchantjs/enchant';
+import './enchantjs-kit';
+import './hack';
+import './rpg-kit-rpgobjects';
+import './rpg-kit-color';
+import Vector2 from './math/vector2';
+import Line from './shapes/line';
 import MapObject from './object/map-object';
 
 /*
  * RPGMap
  * レイヤー化された切り替え可能なマップ
  */
-class RPGMap extends EventTarget {
+class RPGMap extends enchant.EventTarget {
 	constructor(tileWidth, tileHeight, mapWidth, mapHeight) {
 		super();
 
@@ -50,7 +49,7 @@ class RPGMap extends EventTarget {
 		const w = tileWidth * mapWidth;
 		const h = tileHeight * mapHeight;
 
-		this._surface = new Surface(w, h);
+		this._surface = new enchant.Surface(w, h);
 
 		// 反射ライン
 		this.reflectionLines = [
@@ -145,7 +144,7 @@ class RPGMap extends EventTarget {
 	set cmap(value) {
 		this.bmap.collisionData = value;
 	}
-	// bmap Image (Surface)
+	// bmap Image (enchant.Surface)
 	get image() {
 		return this.bmap.image;
 	}
