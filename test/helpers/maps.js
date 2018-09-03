@@ -1,5 +1,3 @@
-import Hack from '../src/hackforplay/hack';
-
 async function maps() {
 	const map1 = Hack.createMap(`
 322 322 322 322 322 322 322 322 322 322 322 322 322 322 322

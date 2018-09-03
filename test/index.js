@@ -5,8 +5,8 @@ test('Import as a module and initialize game', t => {
 	const game = enchant.Core.instance;
 	t.truthy(game);
 
-	const gameOnLoad = require('./game').default;
-	const hackOnLoad = require('./maps').default;
+	const gameOnLoad = require('./helpers/game').default;
+	const hackOnLoad = require('./helpers/maps').default;
 
 	game.onload = async () => {
 		// gameOnLoad より先に実行するイベント
