@@ -22,8 +22,8 @@ class RPGMap extends enchant.EventTarget {
 			tileHeight = 32;
 		}
 
-		this.bmap = new Map(tileWidth, tileHeight); // 他のオブジェクトより奥に表示されるマップ
-		this.fmap = new Map(tileWidth, tileHeight); // 他のオブジェクトより手前に表示されるマップ
+		this.bmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより奥に表示されるマップ
+		this.fmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより手前に表示されるマップ
 
 		this._mapWidth = mapWidth !== undefined ? mapWidth : 15;
 		this._mapHeight = mapHeight !== undefined ? mapHeight : 10;
@@ -31,7 +31,7 @@ class RPGMap extends enchant.EventTarget {
 		this.tileNumX = this._mapWidth;
 		this.tileNumY = this._mapHeight;
 
-		this.scene = new Group(); // マップ上に存在するオブジェクトをまとめるグループ
+		this.scene = new enchant.Group(); // マップ上に存在するオブジェクトをまとめるグループ
 		this.scene.ref = this;
 		this.isLoaded = false;
 		this.layerChangeFlag = false;
