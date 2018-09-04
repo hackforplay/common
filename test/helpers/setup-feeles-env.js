@@ -13,9 +13,17 @@ if (!global.feeles) {
 function fetchDataURL(src) {
     return new Promise((resolve, reject) => {
         const filePath = require('path').resolve(__dirname, '../../src/', src);
+        const ext = require('path').extname(src);
+        const mime = {
+            '.png': 'image/png',
+            '.gif': 'image/gif'
+        }[ext];
         require('fs').readFile(filePath, 'base64', (err, data) => {
             if (err) reject(err);
-            else resolve(data);
+            else {
+                const dataURL = `data:${mime};base64,${data}`;
+                resolve(dataURL);
+            }
         });
     });
 }
