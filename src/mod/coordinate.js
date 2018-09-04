@@ -25,10 +25,10 @@ export default function coordinate() {
 	// 青い枠を初期化
 	const sprite = new enchant.Sprite(96, 96);
 	sprite.moveTo(360, 300);
-	const surface = enchant.Surface.load(
+	enchant.Surface.load(
 		imageDataUrl,
-		() => {
-			sprite.image = surface;
+		event => {
+			sprite.image = event.target;
 			Hack.menuGroup.addChild(sprite);
 		},
 		() => {}
