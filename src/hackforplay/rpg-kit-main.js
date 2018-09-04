@@ -317,7 +317,7 @@ game.onawake = () => {
 	game.rootScene.addChild(domGroup);
 
 	// PopupGroup
-	const popupGroup = newenchant.Group();
+	const popupGroup = new enchant.Group();
 	popupGroup.name = 'PopupGroup';
 	popupGroup.order = 1500;
 	Hack.popupGroup = popupGroup;
