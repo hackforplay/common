@@ -332,7 +332,7 @@ game.onawake = () => {
 
 	Hack.pad = pad;
 
-	const apad = new Sprite(64, 64);
+	const apad = new enchant.Sprite(64, 64);
 	apad.image = game.assets['hackforplay/attack.png'];
 	apad.buttonMode = 'a';
 	apad.moveTo(400, 250);
