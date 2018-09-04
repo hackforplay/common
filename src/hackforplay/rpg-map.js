@@ -7,6 +7,8 @@ import Vector2 from './math/vector2';
 import Line from './shapes/line';
 import MapObject from './object/map-object';
 
+const game = enchant.Core.instance;
+
 /*
  * RPGMap
  * レイヤー化された切り替え可能なマップ

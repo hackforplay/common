@@ -7,6 +7,8 @@ import Family, { isOpposite, registerServant } from '../family';
 import SAT from '../../lib/sat.min';
 import BehaviorTypes from '../behavior-types';
 
+const game = enchant.Core.instance;
+
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
 function startFrameCoroutine(node, generator) {
