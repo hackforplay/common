@@ -9,6 +9,8 @@ import { step, between, clamp } from './utils/math-utils';
 
 import ButtonRenderer from './ui/button-renderer';
 
+const game = enchant.Core.instance;
+
 class KeyRenderer extends ButtonRenderer {
 	constructor(text, props) {
 		super(text, props);
