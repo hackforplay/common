@@ -13,6 +13,7 @@ import * as logFunc from '../mod/logFunc';
 import find from './find';
 import deprecated from './deprecated';
 import createCompatibleMap from './create-compatible-map';
+import coordinate from '../mod/coordinate';
 
 // Assign synonyms
 Hack.assets = Hack.assets || {};
@@ -77,3 +78,4 @@ logFunc.setHeight(180);
 
 // MODs
 enchant.Core.instance.on('awake', stopOnBlur);
+enchant.Core.instance.on('load', coordinate);

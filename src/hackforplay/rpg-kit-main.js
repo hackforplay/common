@@ -1,6 +1,5 @@
 import './enchantjs-kit';
 import '../mod/stop';
-import '../mod/coordinate';
 import SAT from '../lib/sat.min';
 import Hack from './hack';
 import './rpg-kit-rpgobjects';
