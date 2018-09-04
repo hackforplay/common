@@ -1,11 +1,10 @@
 import enchant from '../enchantjs/enchant';
 import './enchantjs-kit';
 import './hack';
-import './rpg-kit-rpgobjects';
 import './rpg-kit-color';
 import Vector2 from './math/vector2';
 import Line from './shapes/line';
-import MapObject from './object/map-object';
+import dictionary from './object/dictionary';
 
 const game = enchant.Core.instance;
 
@@ -110,9 +109,9 @@ class RPGMap extends enchant.EventTarget {
 	get type() {
 		if (!this._type) {
 			// 初期値は（0,0）のタイル
-			Object.keys(MapObject.dictionary)
+			Object.keys(dictionary)
 				.filter(function(key) {
-					return MapObject.dictionary[key] === this.bmap._data[0][0][0];
+					return dictionary[key] === this.bmap._data[0][0][0];
 				}, this)
 				.forEach(function(key) {
 					this._type = key;
@@ -121,10 +120,10 @@ class RPGMap extends enchant.EventTarget {
 		return this._type;
 	}
 	set type(value) {
-		if (value !== this._type && MapObject.dictionary.hasOwnProperty(value)) {
+		if (value !== this._type && dictionary.hasOwnProperty(value)) {
 			this._type = value;
 			// typeによってbmapを初期化
-			var frame = MapObject.dictionary[value];
+			var frame = dictionary[value];
 			this.bmap.loadData(
 				new Array(this._mapHeight).fill(0).map(function() {
 					return new Array(this._mapWidth).fill(frame);

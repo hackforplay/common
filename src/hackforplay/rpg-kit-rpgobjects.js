@@ -5,7 +5,8 @@ import Hack from './hack';
 import * as synonyms from './synonyms';
 import SAT from '../lib/sat.min';
 import RPGObject from './object/object';
-import MapObject, { dictionary } from './object/map-object';
+import MapObject from './object/map-object';
+import dictionary from './object/dictionary';
 import BehaviorTypes from './behavior-types';
 import './enchantjs-kit'; // Core の生成を待つ
 
