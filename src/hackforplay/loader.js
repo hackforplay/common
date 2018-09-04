@@ -1,5 +1,5 @@
 import enchant from '../enchantjs/enchant';
-import './core';
+import game from './game';
 
 /*
 function blobToDataURL(blob, callback) {
@@ -31,7 +31,7 @@ enchant.Surface.load = function(src, callback, onerror) {
 	image.onerror = function() {
 		var e = new enchant.Event(enchant.Event.ERROR);
 		e.message = 'Cannot load an asset: ' + image.src;
-		enchant.Core.instance.dispatchEvent(e);
+		game.dispatchEvent(e);
 		surface.dispatchEvent(e);
 	};
 	image.onload = function() {

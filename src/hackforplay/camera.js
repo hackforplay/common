@@ -3,10 +3,9 @@ import '../enchantjs/ui.enchant';
 import '../enchantjs/fix';
 import './rpg-kit-main';
 import Hack from './hack';
+import game from './game';
 
 import { clamp } from './utils/math-utils';
-
-const game = enchant.Core.instance;
 
 class Camera extends enchant.Sprite {
 	constructor(x, y, w, h) {

@@ -1,12 +1,10 @@
 import enchant from '../enchantjs/enchant';
-import './enchantjs-kit';
 import './hack';
 import './rpg-kit-color';
 import Vector2 from './math/vector2';
 import Line from './shapes/line';
 import dictionary from './object/dictionary';
-
-const game = enchant.Core.instance;
+import game from './game';
 
 /*
  * RPGMap

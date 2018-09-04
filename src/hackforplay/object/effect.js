@@ -1,13 +1,13 @@
-import enchant from '../../enchantjs/enchant';
 import RPGObject from './object';
 import SAT from '../../lib/sat.min';
+import game from '../game';
 
 class Effect extends RPGObject {
 	constructor(velocityX, velocityY, lifetime, randomize) {
 		super();
 		this.width = 32;
 		this.height = 32;
-		this.image = enchant.Core.instance.assets['enchantjs/x2/effect0.png'];
+		this.image = game.assets['enchantjs/x2/effect0.png'];
 		this.isKinematic = false;
 		this.velocity(velocityX, velocityY);
 		var frame = new Array(lifetime);

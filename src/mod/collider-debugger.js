@@ -1,8 +1,6 @@
-import { Core } from '../enchantjs/enchant';
 import Hack from '../hackforplay/hack';
 import RPGObject from '../hackforplay/object/object';
-
-const game = Core.instance;
+import game from '../hackforplay/game';
 
 game.on('awake', () => {
 	Hack.world.on('postrender', render);

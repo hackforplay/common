@@ -1,10 +1,9 @@
 import SAT from '../lib/sat.min';
 import enchant from '../enchantjs/enchant';
-import './enchantjs-kit';
 import RPGObject from './object/object';
 import BehaviorTypes from './behavior-types';
+import game from './game';
 
-const game = enchant.Core.instance;
 game.on('enterframe', trodden);
 
 const walkingRPGObjects = new WeakSet();

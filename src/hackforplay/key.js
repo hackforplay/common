@@ -1,5 +1,5 @@
 import enchant from '../enchantjs/enchant';
-import './enchantjs-kit'; // core の生成を待つ
+import game from './game';
 
 /*
 
@@ -76,8 +76,6 @@ Key.v.observe(function(key) {
 
 */
 
-var core = enchant.Core.instance;
-
 var Key = {};
 
 var keyCode = {
@@ -153,7 +151,7 @@ Object.keys(keyCode)
 		return keyCode[key];
 	})
 	.forEach(function(value) {
-		core.keybind(value, value);
+		game.keybind(value, value);
 	});
 
 var KeyClass = enchant.Class.create({
@@ -244,13 +242,13 @@ const alias = {
 	right: 'right'
 };
 
-core.on('enterframe', function() {
+game.on('enterframe', function() {
 	Object.keys(keyCode).forEach(function(key) {
-		let input = core.input[keyCode[key]];
+		let input = game.input[keyCode[key]];
 
 		// ui.enchant.js などの対策
 		if (key in alias) {
-			input = input || core.input[alias[key]];
+			input = input || game.input[alias[key]];
 		}
 
 		// console.log(key);

@@ -14,6 +14,7 @@ import find from './find';
 import deprecated from './deprecated';
 import createCompatibleMap from './create-compatible-map';
 import coordinate from '../mod/coordinate';
+import game from './game';
 
 // Assign synonyms
 Hack.assets = Hack.assets || {};
@@ -35,7 +36,7 @@ function checkDeprecated() {
 		feeles.setTimeout(checkDeprecated, 1000);
 	}
 }
-enchant.Core.instance.on('load', checkDeprecated);
+game.on('load', checkDeprecated);
 
 // find
 /**
@@ -77,5 +78,5 @@ Hack.logAtPoint = logFunc.logAtPoint;
 logFunc.setHeight(180);
 
 // MODs
-enchant.Core.instance.on('awake', stopOnBlur);
-enchant.Core.instance.on('load', coordinate);
+game.on('awake', stopOnBlur);
+game.on('load', coordinate);

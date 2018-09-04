@@ -1,6 +1,6 @@
 import enchant from '../enchantjs/enchant';
-import './enchantjs-kit'; // Core 生成を待つ
 import TextArea from './ui/textarea';
+import game from './game';
 
 function refocus() {
 	window.document.activeElement.blur(); // Blur an enchantBook
@@ -13,7 +13,6 @@ function getEditor() {
 }
 
 const Hack = self.Hack || new enchant.EventTarget();
-const game = enchant.Core.instance;
 
 // Hack.start
 Hack.start = function() {

@@ -2,9 +2,8 @@
 import enchant from '../enchantjs/enchant';
 import Hack from '../hackforplay/hack';
 import '../hackforplay/core';
-import '../hackforplay/enchantjs-kit'; // Core の生成を待つ
+import game from '../hackforplay/game';
 
-const game = enchant.Core.instance;
 const { MutableText } = enchant.ui;
 const imageDataUrl =
 	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAAXNSR0IArs4c6QAAAcRJREFUeAHt2y1OA1EUBeD3hpJ6HAl7QCIwOPbABnBIFoHEsQK2gUEg2QMJDk8K8+hr0p8ES+Yk9KvppObc+U7v1PSV4kWAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAIH/IFCTN3F2306Gw++7WttFrfV4yllaa++t1adxcXD7clPfpszezYoVsMKfj69DaUe7A019PZb6MX4Op6kSZlPf8Dqvf/OHUo6er2exL0Gf5fzhq5XlLMvLq/VsU74vDTKv/tjJJP9OTc4SLGDaZ/5v9u0nU//+bJNLiRWwO8Q+Xysg3L4CFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8DFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8DFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8D9rWA/v/88L1v4pOzxDagH47YCIQvkrPEzgf0kyllPl6u/p8fLGB1QGMx3KZGiG1AP5HST6aMY3lMPAJ6Zs9Ono5JlS6XAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECfy/wA9qGU1T+GdfUAAAAAElFTkSuQmCC';

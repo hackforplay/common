@@ -1,20 +1,4 @@
-import enchant from '../enchantjs/enchant';
-import '../enchantjs/ui.enchant';
-import '../enchantjs/fix';
-
-// enchant.js wrapper for HackforPlay
-// v1.0
-
-// すべてのenchantモジュールをグローバルにエクスポート
-enchant();
-
-// スクリーンのサイズを定義
-feeles.env.VIEW = {
-	width: 480,
-	height: 320
-};
-
-window.game = new enchant.Core(feeles.env.VIEW.width, feeles.env.VIEW.height);
+import game from './game';
 
 // リサイズ時にゲームの scale を調節
 document.documentElement.style.overflow = 'hidden';
@@ -33,7 +17,7 @@ window.addEventListener('message', function(event) {
 	if (typeof event.data === 'object' && event.data.query === 'capture') {
 		var canvas;
 		try {
-			canvas = enchant.Core.instance.currentScene._layers.Canvas._element;
+			canvas = game.currentScene._layers.Canvas._element;
 		} catch (e) {
 			if (!game.ready) {
 				game.on('load', send);
@@ -45,7 +29,7 @@ window.addEventListener('message', function(event) {
 
 	function send() {
 		return;
-		var canvas = enchant.Core.instance.currentScene._layers.Canvas._element;
+		var canvas = game.currentScene._layers.Canvas._element;
 		event.source.postMessage(
 			{
 				query: event.data.responseQuery,

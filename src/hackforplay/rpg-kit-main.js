@@ -1,4 +1,3 @@
-import './enchantjs-kit';
 import '../mod/stop';
 import SAT from '../lib/sat.min';
 import Hack from './hack';
@@ -17,9 +16,7 @@ import {
 	handakuten
 } from './utils/string-utils';
 import RPGMap from './rpg-map';
-import './enchantjs-kit'; // Core の生成を待つ
-
-const game = enchant.Core.instance;
+import game from './game';
 
 game.preload(
 	'enchantjs/monster1.gif',

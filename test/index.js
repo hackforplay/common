@@ -2,9 +2,9 @@ import test from 'ava';
 
 test.cb('Import as a module and initialize game', t => {
 	const { enchant, Hack, register } = require('../src/');
-	const game = enchant.Core.instance;
 
 	register(global);
+	t.is(global.game, enchant.Core.instance);
 
 	const gameOnLoad = require('./helpers/game').default;
 	const hackOnLoad = require('./helpers/maps').default;
@@ -31,7 +31,7 @@ test.cb('Import as a module and initialize game', t => {
 	};
 
 	// game.onload と Hack.onload がどちらも終了すればパス
-	t.plan(2);
+	t.plan(3);
 
 	// ゲームスタート
 	Hack.start();

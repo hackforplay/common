@@ -7,6 +7,7 @@ import Player from './hackforplay/object/player';
 import Effect from './hackforplay/object/effect';
 import BehaviorTypes from './hackforplay/behavior-types';
 import Key from './hackforplay/key';
+import game from './hackforplay/game';
 
 export default function register(global) {
   // Export to global
@@ -19,4 +20,5 @@ export default function register(global) {
   global.Player = global.Player || Player;
   global.Effect = global.Effect || Effect;
   global.Key = global.Key || Key;
+  global.game = global.game || game;
 }

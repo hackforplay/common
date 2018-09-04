@@ -1,5 +1,4 @@
 import './rpg-kit-main';
-import enchant from '../enchantjs/enchant';
 import '../enchantjs/ui.enchant';
 import Hack from './hack';
 import * as synonyms from './synonyms';
@@ -8,7 +7,7 @@ import RPGObject from './object/object';
 import MapObject from './object/map-object';
 import dictionary from './object/dictionary';
 import BehaviorTypes from './behavior-types';
-import './enchantjs-kit'; // Core の生成を待つ
+import game from './game';
 
 /**
 * RPGObject
@@ -46,8 +45,6 @@ bs.onbecomedead = function () {};
  * Physics ===> Physics			: oncollided	: Need collisionFlag is true, Change velocity
  * Physics ===> Kinematics		: ontriggered	: Ignore collisionFlag, Don't change velocity
  */
-
-var game = enchant.Core.instance;
 
 Hack.assets = Hack.assets || {};
 Hack.skills = Hack.skills || {};

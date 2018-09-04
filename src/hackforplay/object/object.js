@@ -7,8 +7,7 @@ import Family, { isOpposite, registerServant } from '../family';
 import SAT from '../../lib/sat.min';
 import BehaviorTypes from '../behavior-types';
 import RPGMap from '../rpg-map';
-
-const game = enchant.Core.instance;
+import game from '../game';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
