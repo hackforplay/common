@@ -4,7 +4,11 @@ if (!global.feeles) {
         env: {},
         fetchDataURL,
         throwError,
-        connected: new Promise(() => {})
+        connected: new Promise(() => {}),
+        setTimeout: window.setTimeout,
+        clearTimeout: window.clearTimeout,
+        setInterval: window.setInterval,
+        clearInterval: window.clearInterval
     }
 }
 
