@@ -6,6 +6,8 @@ import Hack from './hack';
 
 import { clamp } from './utils/math-utils';
 
+const game = enchant.Core.instance;
+
 class Camera extends enchant.Sprite {
 	constructor(x, y, w, h) {
 		super(w, h);
