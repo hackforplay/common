@@ -326,7 +326,7 @@ game.onawake = () => {
 	// デフォルトのキーボードを生成する
 	createDefaultKeyboard();
 
-	const pad = new Pad();
+	const pad = new enchant.ui.Pad();
 	pad.moveTo(20, 200);
 
 	controllerGroup.addChild(pad);
