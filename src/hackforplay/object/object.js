@@ -729,14 +729,14 @@ class RPGObject extends enchant.Sprite {
 	}
 
 	dispatchEvent(event) {
-		EventTarget.prototype.dispatchEvent.call(this, event);
+		enchant.EventTarget.prototype.dispatchEvent.call(this, event);
 		// Synonym Event を発火
 		var synonym = synonyms.events[event.type];
 		if (synonym) {
 			var clone = Object.assign({}, event, {
 				type: synonym
 			});
-			EventTarget.prototype.dispatchEvent.call(this, clone);
+			enchant.EventTarget.prototype.dispatchEvent.call(this, clone);
 		}
 	}
 
