@@ -269,3 +269,11 @@ extend(enchant.Scene, function() {
 	// シーンは自動で子要素をソートする
 	this.autoSorting = true;
 });
+
+const _addEventListener = enchant.EventTarget.prototype.addEventListener;
+enchant.EventTarget.prototype.addEventListener = function addEventListener(type, listener) {
+	if (typeof listener !== 'function') {
+		throw new TypeError(`Invalid listener ${listener} on addEventListener of type ${type}`);
+	}
+	_addEventListener.apply(this, arguments);
+}
