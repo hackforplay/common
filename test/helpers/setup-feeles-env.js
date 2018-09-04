@@ -3,7 +3,8 @@ if (!global.feeles) {
     global.feeles = {
         env: {},
         fetchDataURL,
-        throwError
+        throwError,
+        connected: new Promise(() => {})
     }
 }
 
