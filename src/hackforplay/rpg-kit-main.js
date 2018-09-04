@@ -363,7 +363,7 @@ game.onawake = () => {
 	Hack.textarea.height = 32;
 
 	// Life label
-	const lifeLabel = new ScoreLabel(1000, 1000, 0);
+	const lifeLabel = new enchant.ui.ScoreLabel(1000, 1000, 0);
 	Hack.lifeLabel = lifeLabel;
 	Hack.lifeLabel.label = 'HP:';
 	Hack.menuGroup.addChild(lifeLabel);
@@ -390,7 +390,7 @@ game.onawake = () => {
 		Hack.menuGroup.addChild(self);
 		return self;
 	})(
-		new ScoreLabel(Hack.menuGroup.x + 10, Hack.menuGroup.y + 88),
+		new enchant.ui.ScoreLabel(Hack.menuGroup.x + 10, Hack.menuGroup.y + 88),
 		Hack.scoreLabel
 	);
 
