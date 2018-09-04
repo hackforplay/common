@@ -481,7 +481,7 @@ Hack.overlay = function() {
 	// スプライトの初期化
 	game.on('load', function() {
 		// 暗めのオーバーレイ
-		overlay = new Sprite(game.width, game.height);
+		overlay = new enchant.Sprite(game.width, game.height);
 		overlay.image = new enchant.Surface(overlay.width, overlay.height);
 		overlay.image.context.fillStyle = 'rgba(0,0,0,0.4)';
 		overlay.image.context.fillRect(0, 0, overlay.width, overlay.height);
