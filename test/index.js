@@ -3,7 +3,6 @@ import test from 'ava';
 test.cb('Import as a module and initialize game', t => {
 	const { enchant, Hack, register } = require('../src/');
 	const game = enchant.Core.instance;
-	t.truthy(game);
 
 	register(global);
 
