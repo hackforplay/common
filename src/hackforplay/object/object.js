@@ -6,6 +6,7 @@ import Skin from '../skin';
 import Family, { isOpposite, registerServant } from '../family';
 import SAT from '../../lib/sat.min';
 import BehaviorTypes from '../behavior-types';
+import RPGMap from '../rpg-map';
 
 const game = enchant.Core.instance;
 
