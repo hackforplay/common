@@ -1,9 +1,11 @@
 import test from 'ava';
 
 test('Import as a module and initialize game', t => {
-	const { enchant, Hack } = require('../src/');
+	const { enchant, Hack, register } = require('../src/');
 	const game = enchant.Core.instance;
 	t.truthy(game);
+
+	register(global);
 
 	const gameOnLoad = require('./helpers/game').default;
 	const hackOnLoad = require('./helpers/maps').default;

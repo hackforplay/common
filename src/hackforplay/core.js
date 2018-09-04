@@ -7,30 +7,12 @@ import './trodden';
 import Hack from './hack';
 import * as synonyms from './synonyms';
 import Skin from './skin';
-import Family from './family';
 import '../mod/collider-debugger';
 import stopOnBlur from '../mod/stop-on-blur';
 import * as logFunc from '../mod/logFunc';
-import RPGObject from './object/object';
-import MapObject from './object/map-object';
-import Player from './object/player';
-import Effect from './object/effect';
-import BehaviorTypes from './behavior-types';
 import find from './find';
-import Key from './key';
 import deprecated from './deprecated';
 import createCompatibleMap from './create-compatible-map';
-
-// Global
-self.Hack = self.Hack || Hack;
-self.Skin = self.Skin || Skin;
-self.Family = self.Family || Family;
-self.RPGObject = self.RPGObject || RPGObject;
-self.BehaviorTypes = self.BehaviorTypes || BehaviorTypes;
-self.MapObject = self.MapObject || MapObject;
-self.Player = self.Player || Player;
-self.Effect = self.Effect || Effect;
-self.Key = self.Key || Key;
 
 // Assign synonyms
 Hack.assets = Hack.assets || {};
