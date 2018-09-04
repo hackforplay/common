@@ -1,6 +1,6 @@
 import test from 'ava';
 
-test('Import as a module and initialize game', t => {
+test.cb('Import as a module and initialize game', t => {
 	const { enchant, Hack, register } = require('../src/');
 	const game = enchant.Core.instance;
 	t.truthy(game);
@@ -10,23 +10,24 @@ test('Import as a module and initialize game', t => {
 	const gameOnLoad = require('./helpers/game').default;
 	const hackOnLoad = require('./helpers/maps').default;
 
-	game.onload = async () => {
+	game.onload = () => {
 		// gameOnLoad より先に実行するイベント
 		// lifelabel などが gameOnLoad 時に参照できない対策
 		game.dispatchEvent(new enchant.Event('awake'));
 
-		await gameOnLoad();
+		gameOnLoad();
 
 		// Hack.player がないとき self.player を代わりに入れる
 		if (self.player && !Hack.player) {
 			Hack.player = self.player;
 		}
 		t.pass('game.onload');
+		t.end();
 	};
-	Hack.onload = async () => {
+	Hack.onload = () => {
 		// Hack.maps を事前に作っておく
 		Hack.maps = Hack.maps || {};
-		await hackOnLoad();
+		hackOnLoad()
 		t.pass('Hack.onload');
 	};
 
