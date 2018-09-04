@@ -2,6 +2,7 @@ import enchant from '../../enchantjs/enchant';
 import RPGObject from './object';
 import Key from '../key';
 import BehaviorTypes from '../behavior-types';
+import RPGMap from '../rpg-map';
 
 class Player extends RPGObject {
 	constructor(mod) {
@@ -67,7 +68,7 @@ class Player extends RPGObject {
 				return item.mapX === this.mapX && item.mapY === this.mapY;
 			}, this)
 			.forEach(function(item) {
-				item.dispatchEvent(new Event('playerenter'));
+				item.dispatchEvent(new enchant.Event('playerenter'));
 				this.enteredStack.push(item);
 			}, this);
 	}
@@ -76,9 +77,9 @@ class Player extends RPGObject {
 		// Dispatch playerstay/playerexit Event
 		this.enteredStack.forEach(function(item) {
 			if (item.mapX === this.mapX && item.mapY === this.mapY) {
-				item.dispatchEvent(new Event('playerstay'));
+				item.dispatchEvent(new enchant.Event('playerstay'));
 			} else {
-				item.dispatchEvent(new Event('playerexit'));
+				item.dispatchEvent(new enchant.Event('playerexit'));
 				var index = this.enteredStack.indexOf(item);
 				this.enteredStack.splice(index, 1);
 			}
