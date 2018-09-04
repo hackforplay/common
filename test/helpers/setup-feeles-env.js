@@ -2,7 +2,8 @@
 if (!global.feeles) {
     global.feeles = {
         env: {},
-        fetchDataURL
+        fetchDataURL,
+        throwError
     }
 }
 
@@ -26,4 +27,8 @@ function fetchDataURL(src) {
             }
         });
     });
+}
+
+function throwError(error) {
+    throw error;
 }

@@ -20,7 +20,13 @@ Hack.start = function() {
 	// game start
 	Hack.maps = Hack.maps || {};
 	Hack.dispatchEvent(new Event('load'));
-	game.start();
+	game.start()
+		.error(e => {
+			console.error('ERROR', e);
+			if (feeles.throwError) {
+				feeles.throwError(e);
+			}
+		})
 	window.focus();
 };
 
