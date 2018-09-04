@@ -1,15 +1,14 @@
+import register from './timers';
+
 // https://github.com/Feeles/IDE/blob/master/src/Cards/MonitorCard/registerHTML.js#L33
 if (!global.feeles) {
     global.feeles = {
         env: {},
         fetchDataURL,
         throwError,
-        connected: new Promise(() => {}),
-        setTimeout: window.setTimeout,
-        clearTimeout: window.clearTimeout,
-        setInterval: window.setInterval,
-        clearInterval: window.clearInterval
+        connected: new Promise(() => {})
     }
+    register(global.feeles);
 }
 
 /**
