@@ -398,12 +398,6 @@ game.onawake = () => {
 	feeles.setAlias('game', game);
 };
 
-Object.defineProperty(window, 'RPGMap', {
-	get: function() {
-		return RPGMap;
-	}
-});
-
 RPGMap.Layer = {
 	Over: 4,
 	Player: 3,
