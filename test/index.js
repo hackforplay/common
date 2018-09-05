@@ -2,7 +2,7 @@ import test from 'ava';
 import '@babel/polyfill';
 
 test.cb('Import as a module and initialize game', t => {
-	const { enchant, Hack, register } = require('../src/');
+	const { enchant, Hack, register } = require('../src');
 
 	register(global);
 	t.is(global.game, enchant.Core.instance);
@@ -36,4 +36,11 @@ test.cb('Import as a module and initialize game', t => {
 
 	// ゲームスタート
 	Hack.start();
+});
+
+test('Global Map constructor instead of enchant.Map', t => {
+	const { register, enchant } = require('../src');
+	register(global);
+	t.not(window.Map, enchant.Map);
+	t.is(typeof window.Map.prototype.has, 'function');
 });
