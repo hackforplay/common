@@ -2,10 +2,11 @@
   "name": "@hackforplay/common",
   "version": "0.4.1",
   "description": "Common package for building stages in hackforplay",
-  "main": "dist/index.js",
+  "main": "dist/main.js",
   "scripts": {
-    "prepublish": "npm run babel",
-    "babel": "babel -d dist -D src",
+    "prepublish": "npm run build",
+    "build": "webpack",
+    "babel": "babel -d lib -D src",
     "test": "ava"
   },
   "repository": {
@@ -35,7 +36,11 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/register": "^7.0.0",
     "ava": "1.0.0-beta.8",
+    "babel-loader": "^8.0.2",
     "browser-env": "^3.2.5",
-    "canvas-prebuilt": "^1.6.5-prerelease.1"
-  }
+    "canvas-prebuilt": "^1.6.5-prerelease.1",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0"
+  },
+  "dependencies": {}
 }
