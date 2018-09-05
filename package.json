@@ -1,6 +1,6 @@
 {
   "name": "@hackforplay/common",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Common package for building stages in hackforplay",
   "main": "dist/main.production.js",
   "scripts": {
