@@ -2,9 +2,10 @@
   "name": "@hackforplay/common",
   "version": "0.5.2",
   "description": "Common package for building stages in hackforplay",
-  "main": "dist/main.production.js",
+  "main": "lib/index.js",
+  "unpkg": "dist/main.min.js",
   "scripts": {
-    "prepublish": "webpack",
+    "prepublish": "webpack && npm run babel",
     "babel": "babel -d lib -D src",
     "test": "ava"
   },

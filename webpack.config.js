@@ -53,7 +53,7 @@ module.exports = [
     mode: 'development',
     output: {
       ...common.output,
-      filename: '[name].development.js'
+      filename: '[name].js'
     }
   },
   {
@@ -61,7 +61,7 @@ module.exports = [
     mode: 'production',
     output: {
       ...common.output,
-      filename: '[name].production.js'
+      filename: '[name].min.js'
     }
   }
 ]
