@@ -4,8 +4,7 @@
   "description": "Common package for building stages in hackforplay",
   "main": "dist/main.js",
   "scripts": {
-    "prepublish": "npm run build",
-    "build": "webpack",
+    "prepublish": "webpack",
     "babel": "babel -d lib -D src",
     "test": "ava"
   },

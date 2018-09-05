@@ -25,7 +25,10 @@ module.exports = {
             [
               "@babel/preset-env",
               {
-                modules: false
+                targets: {
+                  ie: "11",
+                  node: "8"
+                }
               }
             ]
           ]
@@ -34,6 +37,11 @@ module.exports = {
         test: /\.js$/
       }
     ]
+  },
+
+  output: {
+    library: 'HackforPlayCommon',
+    libraryTarget: 'umd'
   },
 
   mode: "production",
