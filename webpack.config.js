@@ -20,20 +20,6 @@ const common = {
       {
         include: [path.resolve(__dirname, "src")],
         loader: "babel-loader",
-        options: {
-          presets: [
-            [
-              "@babel/preset-env",
-              {
-                targets: {
-                  ie: "11",
-                  node: "8"
-                }
-              }
-            ]
-          ]
-        },
-
         test: /\.js$/
       }
     ]
