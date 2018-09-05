@@ -2,7 +2,7 @@
   "name": "@hackforplay/common",
   "version": "0.5.1",
   "description": "Common package for building stages in hackforplay",
-  "main": "dist/main.js",
+  "main": "dist/main.production.js",
   "scripts": {
     "prepublish": "webpack",
     "babel": "babel -d lib -D src",

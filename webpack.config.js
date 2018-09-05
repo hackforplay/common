@@ -14,7 +14,7 @@ const path = require("path");
  *
  */
 
-module.exports = {
+const common = {
   module: {
     rules: [
       {
@@ -44,8 +44,6 @@ module.exports = {
     libraryTarget: 'umd'
   },
 
-  mode: "production",
-
   optimization: {
     splitChunks: {
       cacheGroups: {
@@ -62,3 +60,22 @@ module.exports = {
     }
   }
 };
+
+module.exports = [
+  {
+    ...common,
+    mode: 'development',
+    output: {
+      ...common.output,
+      filename: '[name].development.js'
+    }
+  },
+  {
+    ...common,
+    mode: 'production',
+    output: {
+      ...common.output,
+      filename: '[name].production.js'
+    }
+  }
+]
