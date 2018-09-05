@@ -277,3 +277,20 @@ enchant.EventTarget.prototype.addEventListener = function addEventListener(type,
 	}
 	_addEventListener.apply(this, arguments);
 }
+
+/**
+ * dispatchEvent の例外を全て catch して IDE に流す
+ */
+const _dispatchEvent = enchant.EventTarget.prototype.dispatchEvent;
+enchant.EventTarget.prototype.dispatchEvent = function dispatchEvent(event) {
+	try {
+		_dispatchEvent.apply(this, arguments);		
+	} catch (error) {
+		if (feeles.throwError) {
+			feeles.throwError(error);
+		}
+		throw error;
+	}
+}
+
+
