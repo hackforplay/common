@@ -9,6 +9,7 @@ import BehaviorTypes from './hackforplay/behavior-types';
 import Key from './hackforplay/key';
 import game from './hackforplay/game';
 import RPGMap from './hackforplay/rpg-map';
+import TextArea from './hackforplay/ui/textarea';
 
 export default function register(global) {
   // Export to global
@@ -23,4 +24,5 @@ export default function register(global) {
   global.Key = global.Key || Key;
   global.game = global.game || game;
   global.RPGMap = global.RPGMap || RPGMap;
+  global.TextArea = global.TextArea || TextArea;
 }
