@@ -4,7 +4,7 @@ import { Surface, Event } from 'enchantjs/enchant';
 import RPGObject from './object';
 import { drawLine } from 'hackforplay/utils/canvas2d-utils';
 import { reflect } from 'hackforplay/utils/math-utils';
-import SAT from 'lib/sat.min';
+import SAT from '../../lib/sat.min';
 
 /**
  * レーザー
