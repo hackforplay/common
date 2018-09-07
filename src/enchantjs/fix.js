@@ -1,5 +1,11 @@
 import enchant from './enchant';
 
+if (enchant.Core.instance !== null) {
+	throw new Error(
+		'enchant/fix.js has loaded after game.start(). Please import it before'
+	);
+}
+
 /**
  * 1 度だけ呼ばれるイベントリスナーを追加する
  * @param {string}   type     イベント名
