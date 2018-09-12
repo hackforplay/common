@@ -1,5 +1,5 @@
-const webpack = require("webpack");
-const path = require("path");
+const webpack = require('webpack');
+const path = require('path');
 
 /*
  * SplitChunksPlugin is enabled by default and replaced
@@ -18,8 +18,8 @@ const common = {
   module: {
     rules: [
       {
-        include: [path.resolve(__dirname, "src")],
-        loader: "babel-loader",
+        include: [path.resolve(__dirname, 'src')],
+        loader: 'babel-loader',
         test: /\.js$/
       }
     ]
@@ -39,7 +39,7 @@ const common = {
         }
       },
 
-      chunks: "async",
+      chunks: 'async',
       minChunks: 1,
       minSize: 30000,
       name: false
@@ -64,4 +64,4 @@ module.exports = [
       filename: '[name].min.js'
     }
   }
-]
+];

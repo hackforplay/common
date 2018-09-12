@@ -3,88 +3,88 @@ import dictionary from './dictionary';
 import game from '../game';
 
 function skin() {
-	this.image = game.assets['enchantjs/x2/dotmat.gif'];
-	this.directionType = 'single';
-	this.forward = [0, -1];
+  this.image = game.assets['enchantjs/x2/dotmat.gif'];
+  this.directionType = 'single';
+  this.forward = [0, -1];
 }
 
 class MapObject extends RPGObject {
-	constructor(value) {
-		super(skin);
-		if (typeof value === 'number') {
-			this.frame = value;
-		} else {
-			this.name = value;
-		}
-	}
+  constructor(value) {
+    super(skin);
+    if (typeof value === 'number') {
+      this.frame = value;
+    } else {
+      this.name = value;
+    }
+  }
 
-	get name() {
-		var search = '';
-		Object.keys(MapObject.dictionary).forEach(function(key) {
-			if (MapObject.dictionary[key] === this.frame) {
-				search = key;
-			}
-		}, this);
-		return search;
-	}
+  get name() {
+    var search = '';
+    Object.keys(MapObject.dictionary).forEach(function(key) {
+      if (MapObject.dictionary[key] === this.frame) {
+        search = key;
+      }
+    }, this);
+    return search;
+  }
 
-	set name(key) {
-		if (MapObject.dictionary.hasOwnProperty(key)) {
-			this.frame = MapObject.dictionary[key];
-		}
-	}
+  set name(key) {
+    if (MapObject.dictionary.hasOwnProperty(key)) {
+      this.frame = MapObject.dictionary[key];
+    }
+  }
 
-	onenterframe() {}
+  onenterframe() {}
 }
 
 // 互換性維持
 MapObject._dictionary = {
-	...dictionary,
-	...(MapObject.Dictionaly || {})
+  ...dictionary,
+  ...(MapObject.Dictionaly || {})
 };
 Object.defineProperty(MapObject, 'dictionary', {
-	configurable: true,
-	enumerable: true,
-	get: function() {
-		return this._dictionary;
-	},
-	set: function(value) {
-		Object.keys(value).forEach(function(key) {
-			this._dictionary[key] = value[key];
-		}, this);
-	}
+  configurable: true,
+  enumerable: true,
+  get: function() {
+    return this._dictionary;
+  },
+  set: function(value) {
+    Object.keys(value).forEach(function(key) {
+      this._dictionary[key] = value[key];
+    }, this);
+  }
 });
 
 // １枚ずつ切り分けたsurface
 MapObject.surfaces = {};
 Object.keys(dictionary).forEach(function(name) {
-	Object.defineProperty(MapObject.surfaces, name, {
-		enumerable: true,
-		configurable: true,
-		get: function() {
-			return tryFetchMapImage(name);
-		},
-		set: function(value) {
-			Object.defineProperty(MapObject.surfaces, name, {
-				value: value
-			});
-		}
-	});
+  Object.defineProperty(MapObject.surfaces, name, {
+    enumerable: true,
+    configurable: true,
+    get: function() {
+      return tryFetchMapImage(name);
+    },
+    set: function(value) {
+      Object.defineProperty(MapObject.surfaces, name, {
+        value: value
+      });
+    }
+  });
 });
 
 function tryFetchMapImage(name) {
-	if (game.assets['enchantjs/x2/dotmat.gif']) {
-		var length = 20,
-			w = 32,
-			h = 32;
-		var frame = MapObject.dictionary[name],
-			x = (frame % length) * w,
-			y = ((frame / length) >> 0) * h;
-		var s = new Surface(w, h);
-		s.draw(game.assets['enchantjs/x2/dotmat.gif'], x, y, w, h, 0, 0, w, h);
-		return (MapObject.surfaces[name] = s);
-	}
-	return undefined;
+  if (game.assets['enchantjs/x2/dotmat.gif']) {
+    var length = 20,
+      w = 32,
+      h = 32;
+    var frame = MapObject.dictionary[name],
+      x = (frame % length) * w,
+      y = ((frame / length) >> 0) * h;
+    var s = new Surface(w, h);
+    s.draw(game.assets['enchantjs/x2/dotmat.gif'], x, y, w, h, 0, 0, w, h);
+    return (MapObject.surfaces[name] = s);
+  }
+  return undefined;
 }
 
 export default MapObject;

@@ -19,22 +19,22 @@ import game from './game';
 // Assign synonyms
 Hack.assets = Hack.assets || {};
 for (const [from, _global, _skin] of synonyms.assets) {
-	const mod = Hack.assets[from];
-	if (typeof mod === 'function') {
-		self[_global] = Skin[_skin] = mod; // synonym
-		Skin.__name.set(mod, _skin); // Skin.__name.get(mod) === 'mod name'
-	}
+  const mod = Hack.assets[from];
+  if (typeof mod === 'function') {
+    self[_global] = Skin[_skin] = mod; // synonym
+    Skin.__name.set(mod, _skin); // Skin.__name.get(mod) === 'mod name'
+  }
 }
 
 // Notice to deprecated event
 function checkDeprecated() {
-	const message = deprecated();
-	if (message) {
-		console.error(message);
-	} else {
-		// また調べる
-		feeles.setTimeout(checkDeprecated, 1000);
-	}
+  const message = deprecated();
+  if (message) {
+    console.error(message);
+  } else {
+    // また調べる
+    feeles.setTimeout(checkDeprecated, 1000);
+  }
 }
 game.on('load', checkDeprecated);
 
@@ -53,23 +53,23 @@ Hack.find = find;
  * @returns {Promise<RPGMap>}
  */
 Hack.parseMapJson = function parseMapJson(mapName, mapJson) {
-	// mapName はなくても良いが、第１引数にしたい
-	if (mapJson === undefined) {
-		mapJson = mapName;
-		mapName = undefined;
-	}
-	const parsedMapJson = JSON.parse(mapJson);
-	return new Promise(resolve => {
-		let map;
-		const callback = () => {
-			if (mapName) {
-				Hack.maps = Hack.maps || {};
-				Hack.maps[mapName] = map;
-			}
-			resolve(map);
-		};
-		map = createCompatibleMap(parsedMapJson, {}, callback);
-	});
+  // mapName はなくても良いが、第１引数にしたい
+  if (mapJson === undefined) {
+    mapJson = mapName;
+    mapName = undefined;
+  }
+  const parsedMapJson = JSON.parse(mapJson);
+  return new Promise(resolve => {
+    let map;
+    const callback = () => {
+      if (mapName) {
+        Hack.maps = Hack.maps || {};
+        Hack.maps[mapName] = map;
+      }
+      resolve(map);
+    };
+    map = createCompatibleMap(parsedMapJson, {}, callback);
+  });
 };
 
 // Advanced log

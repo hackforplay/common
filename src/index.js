@@ -4,8 +4,4 @@ import './hackforplay/core';
 import Hack from './hackforplay/hack';
 import register from './register';
 
-export {
-    Hack,
-    enchant,
-    register
-};
+export { Hack, enchant, register };

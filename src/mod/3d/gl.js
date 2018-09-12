@@ -9,7 +9,7 @@ canvas.height = $HEIGHT;
 var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 
 if (!gl) {
-	alert('WebGL の初期化に失敗しました');
+  alert('WebGL の初期化に失敗しました');
 }
 
 window.gl = gl;

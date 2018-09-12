@@ -17,52 +17,52 @@ const targetItemSetMap = new WeakMap();
  * NOTICE: "removetrodden" イベント中に locate で移動すると, うまく移動できない
  */
 export default function trodden() {
-	const collection = [...RPGObject.collection];
+  const collection = [...RPGObject.collection];
 
-	// 2
-	for (const item of collection) {
-		if (walkingRPGObjects.has(item) && item.behavior === BehaviorTypes.Idle) {
-			const targets = collection.filter(target => isTrodden(target, item));
-			for (const target of targets) {
-				dispatch('addtrodden', target, item);
-				if (!targetItemSetMap.has(target)) {
-					const itemSet = new Set();
-					itemSet.add(item);
-					targetItemSetMap.set(target, itemSet);
-				} else {
-					const itemSet = targetItemSetMap.get(target);
-					itemSet.add(item);
-				}
-			}
-		}
-	}
+  // 2
+  for (const item of collection) {
+    if (walkingRPGObjects.has(item) && item.behavior === BehaviorTypes.Idle) {
+      const targets = collection.filter(target => isTrodden(target, item));
+      for (const target of targets) {
+        dispatch('addtrodden', target, item);
+        if (!targetItemSetMap.has(target)) {
+          const itemSet = new Set();
+          itemSet.add(item);
+          targetItemSetMap.set(target, itemSet);
+        } else {
+          const itemSet = targetItemSetMap.get(target);
+          itemSet.add(item);
+        }
+      }
+    }
+  }
 
-	// 3
-	// さっきまで踏んでいたオブジェクトが今も残っているか調べる
-	// オブジェクトは collection から削除されている可能性があることに注意する
-	for (const target of collection) {
-		if (targetItemSetMap.has(target)) {
-			const itemSet = targetItemSetMap.get(target);
-			for (const item of new Set(itemSet)) {
-				if (!isTrodden(target, item)) {
-					dispatch('removetrodden', target, item);
-					itemSet.delete(item);
-				}
-			}
-			if (itemSet.size < 1) {
-				targetItemSetMap.delete(target);
-			}
-		}
-	}
+  // 3
+  // さっきまで踏んでいたオブジェクトが今も残っているか調べる
+  // オブジェクトは collection から削除されている可能性があることに注意する
+  for (const target of collection) {
+    if (targetItemSetMap.has(target)) {
+      const itemSet = targetItemSetMap.get(target);
+      for (const item of new Set(itemSet)) {
+        if (!isTrodden(target, item)) {
+          dispatch('removetrodden', target, item);
+          itemSet.delete(item);
+        }
+      }
+      if (itemSet.size < 1) {
+        targetItemSetMap.delete(target);
+      }
+    }
+  }
 
-	// 1
-	for (const item of collection) {
-		if (item.behavior === BehaviorTypes.Walk) {
-			walkingRPGObjects.add(item);
-		} else {
-			walkingRPGObjects.delete(item);
-		}
-	}
+  // 1
+  for (const item of collection) {
+    if (item.behavior === BehaviorTypes.Walk) {
+      walkingRPGObjects.add(item);
+    } else {
+      walkingRPGObjects.delete(item);
+    }
+  }
 }
 
 /**
@@ -71,16 +71,16 @@ export default function trodden() {
  * @param {RPGObject} item ふむかも知れないオブジェクト
  */
 function isTrodden(target, item) {
-	if (
-		target === item ||
-		!RPGObject.collection.includes(target) ||
-		!RPGObject.collection.includes(item)
-	) {
-		return false;
-	}
-	const colliders = target.colliders || [target.collider];
-	const p = new SAT.Vector(item.center.x, item.center.y);
-	return colliders.some(poly => SAT.pointInPolygon(p, poly));
+  if (
+    target === item ||
+    !RPGObject.collection.includes(target) ||
+    !RPGObject.collection.includes(item)
+  ) {
+    return false;
+  }
+  const colliders = target.colliders || [target.collider];
+  const p = new SAT.Vector(item.center.x, item.center.y);
+  return colliders.some(poly => SAT.pointInPolygon(p, poly));
 }
 
 /**
@@ -90,11 +90,11 @@ function isTrodden(target, item) {
  * @param {RPGObject} item ふんだオブジェクト
  */
 function dispatch(name, target, item) {
-	const event = new Event(name);
-	event.item = item;
-	target.dispatchEvent(event);
+  const event = new Event(name);
+  event.item = item;
+  target.dispatchEvent(event);
 }
 
 export function unregister() {
-	game.off('enterframe', trodden);
+  game.off('enterframe', trodden);
 }

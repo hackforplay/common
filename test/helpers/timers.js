@@ -17,7 +17,7 @@ export function _setTimeout() {
 
 const __clearTimeout = clearTimeout;
 export function _clearTimeout(timerId) {
-  if (typeof timerId === "number") {
+  if (typeof timerId === 'number') {
     const timer = timers[timerId];
     if (timer) {
       __clearTimeout(timer);
@@ -37,7 +37,7 @@ export function _setInterval() {
 
 const __clearInterval = clearInterval;
 export function _clearInterval(timerId) {
-  if (typeof timerId === "number") {
+  if (typeof timerId === 'number') {
     const timer = timers[timerId];
     if (timer) {
       __clearInterval(timer);
