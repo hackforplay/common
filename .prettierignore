@@ -1,0 +1,10 @@
+/dist
+/lib
+node_modules
+
+package.json
+package-lock.json
+
+src/enchantjs/enchant.js
+src/enchantjs/ui.enchant.js
+src/lib/sat.min.js

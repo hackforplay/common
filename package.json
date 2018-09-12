@@ -40,6 +40,7 @@
     "babel-loader": "^8.0.2",
     "browser-env": "^3.2.5",
     "canvas-prebuilt": "^1.6.5-prerelease.1",
+    "prettier": "^1.14.2",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0"
   },
