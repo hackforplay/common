@@ -22,6 +22,7 @@ test.cb('Import as a module and initialize game', t => {
       Hack.player = self.player;
     }
     t.pass('game.onload');
+    t.is(Hack.statusLabel, 'map1');
     t.end();
   };
   Hack.onload = () => {
@@ -32,7 +33,7 @@ test.cb('Import as a module and initialize game', t => {
   };
 
   // game.onload と Hack.onload がどちらも終了すればパス
-  t.plan(3);
+  t.plan(4);
 
   // ゲームスタート
   Hack.start();

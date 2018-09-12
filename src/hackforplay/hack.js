@@ -1,6 +1,7 @@
 import enchant from '../enchantjs/enchant';
 import TextArea from './ui/textarea';
 import game from './game';
+import requestPostMessage from './request-post-message';
 
 function refocus() {
   window.document.activeElement.blur(); // Blur an enchantBook
@@ -680,5 +681,20 @@ Hack.Vec2Dir = function(vec) {
   } // down
   return 1; // left
 };
+
+// statusLabel を変更するとゲーム画面上部のバーにその文字が表示される
+let _statusLabel = null;
+Object.defineProperty(Hack, 'statusLabel', {
+  enumerable: true,
+  get() {
+    return _statusLabel;
+  },
+  set(value) {
+    _statusLabel = value;
+    requestPostMessage('statusLabel', {
+      value
+    });
+  }
+});
 
 export default Hack;
