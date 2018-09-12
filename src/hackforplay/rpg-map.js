@@ -75,6 +75,7 @@ class RPGMap extends enchant.EventTarget {
       this.dispatchEvent(new Event('load'));
     }
     if (Hack.player) this.scene.addChild(Hack.player);
+    Hack.statusLabel = this.name;
   }
 
   hitTest(x, y) {
