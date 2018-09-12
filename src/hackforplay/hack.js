@@ -691,9 +691,7 @@ Object.defineProperty(Hack, 'statusLabel', {
   },
   set(value) {
     _statusLabel = value;
-    requestPostMessage('statusLabel', {
-      value
-    });
+    requestPostMessage('statusLabel', value);
   }
 });
 
