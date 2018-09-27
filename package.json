@@ -5,11 +5,12 @@
   "main": "lib/index.js",
   "unpkg": "dist/main.min.js",
   "scripts": {
-    "prepublish": "webpack && npm run babel",
+    "prepublish": "webpack && npm run babel && npm run resources",
     "babel": "babel -d lib -D src",
     "format": "prettier --write '**/*.js'",
     "test": "ava",
-    "watch": "ava \"test/index.js\" --watch"
+    "watch": "ava \"test/index.js\" --watch",
+    "resources": "gsutil -m cp -r src/resources gs://hackforplay-common"
   },
   "repository": {
     "type": "git",
