@@ -8,7 +8,8 @@
     "prepublish": "webpack && npm run babel",
     "babel": "babel -d lib -D src",
     "format": "prettier --write '**/*.js'",
-    "test": "ava"
+    "test": "ava",
+    "watch": "ava \"test/index.js\" --watch"
   },
   "repository": {
     "type": "git",
