@@ -7,6 +7,12 @@ test.cb('Import as a module and initialize game', t => {
   register(global);
   t.is(global.game, enchant.Core.instance);
 
+  // ゲーム実行中にエラーが起きた場合はこの関数でエラーを吸い上げる
+  feeles.throwError = error => {
+    t.fail(error.message);
+    t.end();
+  };
+
   const gameOnLoad = require('./helpers/game').default;
   const hackOnLoad = require('./helpers/maps').default;
 
