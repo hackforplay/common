@@ -58,7 +58,7 @@ const ObjectRenderer = enchant.Class.createStatic({
       }
 
       if (
-        node.image._css === 'url(enchantjs/x2/dotmat.gif)' &&
+        node.image._css === 'url(resources/enchantjs/x2/dotmat.gif)' &&
         MapObject3D.get(node.frame)
       ) {
         type = ObjectType.OBJ_MODEL;

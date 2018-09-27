@@ -17,7 +17,7 @@ import BehaviorTypes from '../../hackforplay/behavior-types';
 
   Object.keys(MapObject.dictionary).forEach(function(name) {
     Hack.assets[name] = function() {
-      this.image = game.assets['enchantjs/x2/dotmat.gif'];
+      this.image = game.assets['resources/enchantjs/x2/dotmat.gif'];
       this.width = 32;
       this.height = 32;
       this.offset = {

@@ -3,7 +3,7 @@ import dictionary from './dictionary';
 import game from '../game';
 
 function skin() {
-  this.image = game.assets['enchantjs/x2/dotmat.gif'];
+  this.image = game.assets['resources/enchantjs/x2/dotmat.gif'];
   this.directionType = 'single';
   this.forward = [0, -1];
 }
@@ -73,7 +73,7 @@ Object.keys(dictionary).forEach(function(name) {
 });
 
 function tryFetchMapImage(name) {
-  if (game.assets['enchantjs/x2/dotmat.gif']) {
+  if (game.assets['resources/enchantjs/x2/dotmat.gif']) {
     var length = 20,
       w = 32,
       h = 32;
@@ -81,7 +81,17 @@ function tryFetchMapImage(name) {
       x = (frame % length) * w,
       y = ((frame / length) >> 0) * h;
     var s = new Surface(w, h);
-    s.draw(game.assets['enchantjs/x2/dotmat.gif'], x, y, w, h, 0, 0, w, h);
+    s.draw(
+      game.assets['resources/enchantjs/x2/dotmat.gif'],
+      x,
+      y,
+      w,
+      h,
+      0,
+      0,
+      w,
+      h
+    );
     return (MapObject.surfaces[name] = s);
   }
   return undefined;

@@ -15,37 +15,38 @@ import RPGMap from './rpg-map';
 import game from './game';
 
 game.preload(
-  'enchantjs/monster1.gif',
-  'enchantjs/monster2.gif',
-  'enchantjs/monster3.gif',
-  'enchantjs/monster4.gif',
-  'enchantjs/bigmonster1.gif',
-  'enchantjs/bigmonster2.gif',
-  'enchantjs/x2/map1.gif',
-  'enchantjs/x2/dotmat.gif',
-  'enchantjs/x1.5/chara0.png',
-  'enchantjs/x1.5/chara5.png',
-  'hackforplay/enchantbook.png',
-  'enchantjs/icon0.png',
-  'enchantjs/x2/effect0.png',
-  'hackforplay/madosyo_small.png',
-  'enchantjs/shadow.gif',
-  'enchantjs/x1.5/chara7.png',
-  'hackforplay/clear.png',
-  'hackforplay/gameover.png',
-  'hackforplay/button_retry.png',
-  'hackforplay/new_button_replay.png',
-  'hackforplay/new_button_retry.png',
-  'hackforplay/menu-button-menu.png',
-  'hackforplay/menu-button-restage.png',
-  'hackforplay/menu-button-hint.png',
-  'hackforplay/menu-button-comment.png',
-  'hackforplay/menu-button-retry.png',
-  'hackforplay/new_button_next.png',
-  'hackforplay/new_button_comment.png',
-  'hackforplay/new_button_restage.png',
-  'hackforplay/attack.png',
-  'hackforplay/magician_girl.png'
+  'resources/enchantjs/monster1.gif',
+  'resources/enchantjs/monster2.gif',
+  'resources/enchantjs/monster3.gif',
+  'resources/enchantjs/monster4.gif',
+  'resources/enchantjs/monster5.gif',
+  'resources/enchantjs/bigmonster1.gif',
+  'resources/enchantjs/bigmonster2.gif',
+  // 'resources/enchantjs/x2/map1.gif',
+  'resources/enchantjs/x2/dotmat.gif',
+  'resources/enchantjs/x1.5/chara0.png',
+  'resources/enchantjs/x1.5/chara5.png',
+  'resources/hackforplay/enchantbook.png',
+  'resources/enchantjs/icon0.png',
+  'resources/enchantjs/x2/effect0.png',
+  'resources/hackforplay/madosyo_small.png',
+  'resources/enchantjs/shadow.gif',
+  'resources/enchantjs/x1.5/chara7.png',
+  'resources/hackforplay/clear.png',
+  'resources/hackforplay/gameover.png',
+  // 'hackforplay/button_retry.png',
+  // 'hackforplay/new_button_replay.png',
+  'resources/hackforplay/new_button_retry.png',
+  'resources/hackforplay/menu-button-menu.png',
+  // 'hackforplay/menu-button-restage.png',
+  // 'hackforplay/menu-button-hint.png',
+  'resources/hackforplay/menu-button-comment.png',
+  'resources/hackforplay/menu-button-retry.png',
+  // 'hackforplay/new_button_next.png',
+  // 'hackforplay/new_button_comment.png',
+  // 'hackforplay/new_button_restage.png',
+  'resources/hackforplay/attack.png',
+  'resources/hackforplay/magician_girl.png'
 );
 
 game.keybind(' '.charCodeAt(0), 'a');
@@ -326,7 +327,7 @@ game.onawake = () => {
   Hack.pad = pad;
 
   const apad = new enchant.Sprite(64, 64);
-  apad.image = game.assets['hackforplay/attack.png'];
+  apad.image = game.assets['resources/hackforplay/attack.png'];
   apad.buttonMode = 'a';
   apad.moveTo(400, 250);
 
@@ -338,7 +339,7 @@ game.onawake = () => {
 
   // Enchant book
   Hack.enchantBookIcon = Hack.createSprite(64, 64, {
-    image: game.assets['hackforplay/enchantbook.png'],
+    image: game.assets['resources/hackforplay/enchantbook.png'],
     defaultParentNode: Hack.menuGroup,
     visible: !!Hack.hint,
     ontouchend: function() {
@@ -427,7 +428,7 @@ Hack.createMap = function(template) {
   });
 
   const map = new RPGMap(32, 32, bmap[0].length, bmap.length);
-  map.imagePath = 'enchantjs/x2/dotmat.gif';
+  map.imagePath = 'resources/enchantjs/x2/dotmat.gif';
   map.bmap.loadData(bmap);
   map.cmap = cmap;
   return map;

@@ -51,13 +51,13 @@ RPG3D.fpsMeterVisible = false;
 import Texture from 'mod/3d/texture';
 import { resize2 } from 'mod/3d/texture';
 
-game.preload('enchantjs/avatarBg2.png');
+game.preload('resources/enchantjs/avatarBg2.png');
 
 const main = async function() {
   game.fps = 30;
 
-  resize2('enchantjs/avatarBg2.png', 320, 50);
-  resize2('enchantjs/x2/dotmat.gif', 32, 32);
+  resize2('resources/enchantjs/avatarBg2.png', 320, 50);
+  resize2('resources/enchantjs/x2/dotmat.gif', 32, 32);
 
   await defineShader(FragmentShader, VertexShader);
 

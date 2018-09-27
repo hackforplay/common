@@ -1,11 +1,11 @@
 import { Sprite } from 'enchantjs/enchant';
 
-game.preload('mod/3d/ui.png');
+game.preload('resources/mod/3d/ui.png');
 
 game.on('awake', () => {
   // 操作説明用の画像を表示する
   const sprite = new Sprite(300, 320);
-  sprite.image = game.assets['mod/3d/ui.png'];
+  sprite.image = game.assets['resources/mod/3d/ui.png'];
   sprite.x = 455;
   Hack.menuGroup.addChild(sprite);
 

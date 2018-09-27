@@ -338,7 +338,10 @@ Hack.overlay = function() {
 
   // 初期値
   Hack.ongameclear = function() {
-    var lay = Hack.overlay('rgba(0,0,0,0.4)', 'hackforplay/clear.png');
+    var lay = Hack.overlay(
+      'rgba(0,0,0,0.4)',
+      'resources/hackforplay/clear.png'
+    );
     lay.opacity = 0;
     lay.moveTo(-game.rootScene.x, -game.rootScene.y);
     lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function() {
@@ -346,7 +349,7 @@ Hack.overlay = function() {
       Hack.createSprite(165, 69, {
         x: 314 - game.rootScene.x,
         y: 320 - game.rootScene.y,
-        image: game.assets['hackforplay/new_button_retry.png'],
+        image: game.assets['resources/hackforplay/new_button_retry.png'],
         defaultParentNode: Hack.overlayGroup,
         ontouchend: function() {
           // [RETRY] がクリックされたとき
@@ -362,7 +365,10 @@ Hack.overlay = function() {
   };
 
   Hack.ongameover = function() {
-    var lay = Hack.overlay('rgba(0,0,0,0.4)', 'hackforplay/gameover.png');
+    var lay = Hack.overlay(
+      'rgba(0,0,0,0.4)',
+      'resources/hackforplay/gameover.png'
+    );
     lay.opacity = 0;
     lay.moveTo(-game.rootScene.x, -game.rootScene.y);
     lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function() {
@@ -370,7 +376,7 @@ Hack.overlay = function() {
       Hack.createSprite(165, 69, {
         x: 157 - game.rootScene.x,
         y: 320 - game.rootScene.y,
-        image: game.assets['hackforplay/new_button_retry.png'],
+        image: game.assets['resources/hackforplay/new_button_retry.png'],
         defaultParentNode: Hack.overlayGroup,
         ontouchend: function() {
           // [RETRY] がクリックされたとき
@@ -490,7 +496,7 @@ Hack.overlay = function() {
     menuGroup.addChild(overlay);
 
     // メニューを開くボタン
-    opener.image = game.assets['hackforplay/menu-button-menu.png'];
+    opener.image = game.assets['resources/hackforplay/menu-button-menu.png'];
 
     /*
 		opener.onenterframe = function() {
@@ -505,7 +511,7 @@ Hack.overlay = function() {
 
     // コメント入力画面を表示するボタン
     addGUIParts(
-      game.assets['hackforplay/menu-button-comment.png'],
+      game.assets['resources/hackforplay/menu-button-comment.png'],
       function() {
         return !{
           getItem: function() {}
@@ -528,7 +534,7 @@ Hack.overlay = function() {
     );
     // ゲームを再スタートするボタン
     addGUIParts(
-      game.assets['hackforplay/menu-button-retry.png'],
+      game.assets['resources/hackforplay/menu-button-retry.png'],
       function() {
         return true;
       },

@@ -50,7 +50,7 @@ Hack.assets = Hack.assets || {};
 Hack.skills = Hack.skills || {};
 
 Hack.assets.knight = function() {
-  this.image = game.assets['enchantjs/x1.5/chara5.png'];
+  this.image = game.assets['resources/enchantjs/x1.5/chara5.png'];
   this.width = 48;
   this.height = 48;
   this.offset = {
@@ -84,14 +84,14 @@ Hack.assets.knight = function() {
 };
 Hack.assets.darkKnight = function() {
   this.mod(Hack.assets.knight);
-  this.image = game.assets['enchantjs/x1.5/chara7.png'];
+  this.image = game.assets['resources/enchantjs/x1.5/chara7.png'];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 28, 38).toPolygon();
   this.collider.setOffset(new SAT.V(10, 6));
 };
 
 Hack.assets.magician = function() {
-  this.image = game.assets['hackforplay/magician_girl.png'];
+  this.image = game.assets['resources/hackforplay/magician_girl.png'];
   this.width = 48;
   this.height = 48;
   this.offset = {
@@ -125,7 +125,7 @@ Hack.assets.magician = function() {
 };
 
 Hack.assets.slime = function() {
-  this.image = game.assets['enchantjs/monster4.gif'];
+  this.image = game.assets['resources/enchantjs/monster4.gif'];
   this.width = 48;
   this.height = 48;
   this.offset = {
@@ -163,7 +163,7 @@ Hack.assets.slime = function() {
 };
 
 Hack.assets.insect = function() {
-  this.image = game.assets['enchantjs/monster1.gif'];
+  this.image = game.assets['resources/enchantjs/monster1.gif'];
   this.width = 48;
   this.height = 48;
   this.offset = {
@@ -201,7 +201,7 @@ Hack.assets.insect = function() {
 };
 
 Hack.assets.spider = function() {
-  this.image = game.assets['enchantjs/monster2.gif'];
+  this.image = game.assets['resources/enchantjs/monster2.gif'];
   this.width = 64;
   this.height = 64;
   this.offset = {
@@ -239,7 +239,7 @@ Hack.assets.spider = function() {
 };
 
 Hack.assets.bat = function() {
-  this.image = game.assets['enchantjs/monster3.gif'];
+  this.image = game.assets['resources/enchantjs/monster3.gif'];
   this.width = 48;
   this.height = 48;
   this.offset = {
@@ -285,7 +285,7 @@ Hack.assets.shadowMod = function() {
   this.shadow = this.shadow || new Sprite(32, 32);
   this.shadow.ref = this;
   this.shadow.layer = RPGMap.Layer.Shadow;
-  this.shadow.image = game.assets['enchantjs/shadow.gif'];
+  this.shadow.image = game.assets['resources/enchantjs/shadow.gif'];
   this.shadow.offset = {
     x: (this.width - this.shadow.width) / 2,
     y: this.height - this.shadow.height
@@ -308,7 +308,7 @@ Hack.assets.shadowMod = function() {
 };
 
 Hack.assets.dragon = function() {
-  this.image = game.assets['enchantjs/bigmonster1.gif'];
+  this.image = game.assets['resources/enchantjs/bigmonster1.gif'];
   this.width = 80;
   this.height = 80;
   this.offset = {
@@ -428,7 +428,7 @@ Hack.assets.dragon = function() {
 };
 
 Hack.assets.minotaur = function() {
-  this.image = game.assets['enchantjs/bigmonster2.gif'];
+  this.image = game.assets['resources/enchantjs/bigmonster2.gif'];
   this.width = 80;
   this.height = 80;
   this.offset = {
@@ -556,7 +556,7 @@ Hack.assets.minotaur = function() {
 };
 
 Hack.assets.boy = function() {
-  this.image = game.assets['enchantjs/x1.5/chara0.png'];
+  this.image = game.assets['resources/enchantjs/x1.5/chara0.png'];
   this.width = 48;
   this.height = 48;
   this.offset = {
@@ -607,7 +607,7 @@ Hack.assets.boy = function() {
 };
 
 Hack.assets.girl = function() {
-  this.image = game.assets['enchantjs/x1.5/chara0.png'];
+  this.image = game.assets['resources/enchantjs/x1.5/chara0.png'];
   this.width = 48;
   this.height = 48;
   this.offset = {
@@ -658,7 +658,7 @@ Hack.assets.girl = function() {
 };
 
 Hack.assets.woman = function() {
-  this.image = game.assets['enchantjs/x1.5/chara0.png'];
+  this.image = game.assets['resources/enchantjs/x1.5/chara0.png'];
   this.width = 48;
   this.height = 48;
   this.offset = {
@@ -709,7 +709,7 @@ Hack.assets.woman = function() {
 };
 
 Hack.assets.enchantBookItem = function() {
-  this.image = game.assets['hackforplay/madosyo_small.png'];
+  this.image = game.assets['resources/hackforplay/madosyo_small.png'];
   this.width = 32;
   this.height = 32;
   this.offset = {
@@ -724,7 +724,7 @@ Hack.assets.enchantBookItem = function() {
 };
 
 Hack.assets.explosion = function() {
-  this.image = game.assets['enchantjs/x2/effect0.png'];
+  this.image = game.assets['resources/enchantjs/x2/effect0.png'];
   this.width = this.height = 32;
   this.offset = {
     x: 0,
@@ -761,9 +761,8 @@ Hack.assets.explosion = function() {
   ];
 };
 
-game.preload('enchantjs/monster5.gif');
 Hack.assets.ouroboros = function() {
-  this.image = game.assets['enchantjs/monster5.gif'];
+  this.image = game.assets['resources/enchantjs/monster5.gif'];
   this.width = 80;
   this.height = 80;
   this.offset = {
