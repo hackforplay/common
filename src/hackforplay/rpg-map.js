@@ -60,7 +60,14 @@ class RPGMap extends enchant.EventTarget {
   }
 
   load() {
-    if (!this.image && this.imagePath) this.image = game.assets[this.imagePath];
+    if (!this.image && this.imagePath) {
+      this.image = game.assets[this.imagePath];
+      if (!this.image) {
+        throw new Error(
+          `RPGMap.load: game.assets['${this.imagePath}'] is not found`
+        );
+      }
+    }
     var a = function(n) {
       Hack.world.addChild(n);
       // game.rootScene.addChild(n);
