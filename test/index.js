@@ -7,6 +7,9 @@ test.cb('Import as a module and initialize game', t => {
   register(global);
   t.is(global.game, enchant.Core.instance);
 
+  // 画像をローカルから取得する
+  Hack.basePath = '';
+
   // ゲーム実行中にエラーが起きた場合はこの関数でエラーを吸い上げる
   feeles.throwError = error => {
     t.fail(error.message);

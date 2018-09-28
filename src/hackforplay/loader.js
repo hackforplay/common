@@ -1,5 +1,6 @@
 import enchant from '../enchantjs/enchant';
 import game from './game';
+import Hack from './hack';
 
 /*
 function blobToDataURL(blob, callback) {
@@ -11,6 +12,10 @@ function blobToDataURL(blob, callback) {
 
 enchant.Surface.load = function(src, callback, onerror) {
   // console.log(src);
+  if (!src.startsWith('data:')) {
+    // 基底パスからの相対パスで指定できる
+    src = Hack.basePath + src;
+  }
 
   const image = new Image();
   const surface = Object.create(enchant.Surface.prototype, {

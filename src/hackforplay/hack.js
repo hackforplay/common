@@ -15,6 +15,9 @@ function getEditor() {
 
 const Hack = self.Hack || new enchant.EventTarget();
 
+// Surface.load される時の基底パス
+Hack.basePath = 'https://storage.googleapis.com/hackforplay-common/';
+
 // Hack.start
 Hack.start = function() {
   // game start
