@@ -10,7 +10,8 @@
     "format": "prettier --write '**/*.js'",
     "test": "ava",
     "watch": "ava \"test/index.js\" --watch",
-    "resources": "gsutil -m -h \"Cache-Control:public, max-age=3600\" cp -r src/resources gs://hackforplay-common"
+    "resources": "gsutil -m -h \"Cache-Control:public, max-age=3600\" cp -r src/resources gs://hackforplay-common",
+    "cors": "gsutil cors set cors.json gs://hackforplay-common"
   },
   "repository": {
     "type": "git",
