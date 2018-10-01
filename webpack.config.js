@@ -44,6 +44,14 @@ const common = {
       minSize: 30000,
       name: false
     }
+  },
+
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*'
+    }
   }
 };
 

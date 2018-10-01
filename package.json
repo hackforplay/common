@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "unpkg": "dist/main.min.js",
   "scripts": {
+    "start": "webpack-dev-server",
     "prepublish": "webpack && npm run babel && npm run resources",
     "babel": "babel -d lib -D src",
     "format": "prettier --write '**/*.js'",
@@ -46,7 +47,8 @@
     "canvas-prebuilt": "^1.6.5-prerelease.1",
     "prettier": "^1.14.2",
     "webpack": "^4.17.2",
-    "webpack-cli": "^3.1.0"
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {}
 }
