@@ -128,7 +128,7 @@ class TextArea extends enchant.Sprite {
   clear(text) {
     this.values = [];
     this.source = '';
-    this.docuemtn = null;
+    this.document = null;
   }
 
   push(text) {
