@@ -464,8 +464,8 @@ Hack.changeMap = function(mapName) {
       r(Hack.map.scene);
       r(Hack.map.fmap);
       next.load();
-      current.dispatchEvent(new Event('leavemap'));
-      next.dispatchEvent(new Event('entermap'));
+      current.dispatchEvent(new enchant.Event('leavemap'));
+      next.dispatchEvent(new enchant.Event('entermap'));
     }
   })(Hack.map, Hack.maps[mapName]);
 };
@@ -517,7 +517,7 @@ Hack.Attack = function(x, y, damage, pushX, pushY) {
           item.hp -= damage;
         }
       }
-      var e = new Event('attacked');
+      var e = new enchant.Event('attacked');
       e.attacker = e.item = this;
       e.damage = damage || 0;
       item.dispatchEvent(e);
@@ -547,7 +547,7 @@ Hack.scoreLabel = Object.create(null); // 仮オブジェクト
 Hack.score = 0; // Fire a event and Initialize score
 game.on('enterframe', function() {
   if (scorechangeFlag && Hack.isPlaying) {
-    Hack.dispatchEvent(new Event('scorechange'));
+    Hack.dispatchEvent(new enchant.Event('scorechange'));
     scorechangeFlag = false;
   }
 });

@@ -202,7 +202,7 @@ class RPGObject extends enchant.Sprite {
       }
     }
     if (this.hpchangeFlag) {
-      const event = new Event('hpchange', {
+      const event = new enchant.Event('hpchange', {
         item: this // イベント引数の統一
       });
       this.dispatchEvent(event);
@@ -215,7 +215,7 @@ class RPGObject extends enchant.Sprite {
       // becomeイベント内でbehaviorが変更された場合、
       // 次のフレームで１度だけbecomeイベントが発火します。
       this.isBehaviorChanged = false;
-      const event = new Event('become' + this.behavior, {
+      const event = new enchant.Event('become' + this.behavior, {
         item: this // イベント引数の統一
       });
       this.dispatchEvent(event);
@@ -455,7 +455,7 @@ class RPGObject extends enchant.Sprite {
     this.y = beginY + th * forward.y;
     this.updateCollider(); // TODO: 動的プロパティ
 
-    this.dispatchEvent(new Event('walkend'));
+    this.dispatchEvent(new enchant.Event('walkend'));
 
     this.behavior = BehaviorTypes.Idle;
   }
@@ -792,7 +792,7 @@ class RPGObject extends enchant.Sprite {
         return item.mapX === this.mapX && item.mapY === this.mapY;
       })
       .forEach(item => {
-        const event = new Event('pickedup');
+        const event = new enchant.Event('pickedup');
         event.actor = this;
         item.dispatchEvent(event);
       });
@@ -925,7 +925,7 @@ Hack.createDamageMod = damage =>
         }
         // attacked Event
         object.dispatchEvent(
-          new Event('attacked', {
+          new enchant.Event('attacked', {
             attacker: this, // attacker は弾などのエフェクトの場合もある
             item: this, // 引数名の統一
             damage

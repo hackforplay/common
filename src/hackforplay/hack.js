@@ -22,7 +22,7 @@ Hack.basePath = 'https://storage.googleapis.com/hackforplay-common/';
 Hack.start = function() {
   // game start
   Hack.maps = Hack.maps || {};
-  Hack.dispatchEvent(new Event('load'));
+  Hack.dispatchEvent(new enchant.Event('load'));
   game.start().error(e => {
     console.error('ERROR', e);
     if (feeles.throwError) {
@@ -192,7 +192,7 @@ Hack.enchantBook = function() {
           },
           '/'
         );
-        var e = new Event('hintset');
+        var e = new enchant.Event('hintset');
         e.value = _hint;
         e.rawValue = value;
         Hack.dispatchEvent(e);
@@ -231,7 +231,7 @@ Hack.openEditor = function() {
   this.enchantBook.scale(1, 0);
   this.enchantBook.tl.scaleTo(1, 1, 7, enchant.Easing.BACK_EASEOUT); // うごきあり
   this.enchantBook.visible = true;
-  this.dispatchEvent(new Event('editstart'));
+  this.dispatchEvent(new enchant.Event('editstart'));
 };
 
 Hack.closeEditor = function() {
@@ -242,7 +242,7 @@ Hack.closeEditor = function() {
     .then(function() {
       this.visible = false;
     });
-  this.dispatchEvent(new Event('editcancel'));
+  this.dispatchEvent(new enchant.Event('editcancel'));
 };
 
 Hack.clearHistory = function() {
@@ -331,12 +331,12 @@ Hack.overlay = function() {
   Hack.gameclear = function() {
     if (!playing) return;
     playing = false;
-    Hack.dispatchEvent(new Event('gameclear'));
+    Hack.dispatchEvent(new enchant.Event('gameclear'));
   };
   Hack.gameover = function() {
     if (!playing) return;
     playing = false;
-    Hack.dispatchEvent(new Event('gameover'));
+    Hack.dispatchEvent(new enchant.Event('gameover'));
   };
 
   // 初期値
@@ -450,7 +450,7 @@ Hack.overlay = function() {
   Hack.openMenu = function() {
     if (visible) return;
     visible = true;
-    Hack.dispatchEvent(new Event('menuopened'));
+    Hack.dispatchEvent(new enchant.Event('menuopened'));
 
     // アニメーション
     overlay.tl.fadeIn(6);
@@ -473,7 +473,7 @@ Hack.overlay = function() {
   Hack.closeMenu = function() {
     if (!visible) return;
     visible = false;
-    Hack.dispatchEvent(new Event('menuclosed'));
+    Hack.dispatchEvent(new enchant.Event('menuclosed'));
 
     overlay.tl.fadeOut(6);
 

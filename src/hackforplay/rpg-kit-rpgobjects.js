@@ -995,7 +995,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
     })
     .filter(function(item) {
       var self = item.self;
-      var event = (item.event = new Event('collided'));
+      var event = (item.event = new enchant.Event('collided'));
       var hits = (event.hits = item.hits);
       var calc = (item.calc = {
         x: self.x,
@@ -1048,7 +1048,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
     });
 
   function dispatchTriggerEvent(type, self, hit) {
-    var event = new Event('trigger' + type);
+    var event = new enchant.Event('trigger' + type);
     event.hit = hit;
     event.item = hit; // 引数名の統一
     event.mapX = hit.mapX;
