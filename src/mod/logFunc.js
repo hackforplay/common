@@ -1,4 +1,3 @@
-import enchant from '../enchantjs/enchant';
 import Hack from '../hackforplay/hack';
 import TextArea from '../hackforplay/ui/textarea';
 import game from '../hackforplay/game';
@@ -89,6 +88,7 @@ textArea.defaultStyle = {
   ruby: null,
   rubyId: null
 };
+Hack.textArea = textArea;
 const okButton = new TextArea(200, 38);
 okButton.x = (480 - okButton.w) / 2;
 okButton.y = textArea.h - 64;
