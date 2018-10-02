@@ -292,14 +292,40 @@ enchant.EventTarget.prototype.addEventListener = function addEventListener(
 /**
  * dispatchEvent の例外を全て catch して IDE に流す
  */
-const _dispatchEvent = enchant.EventTarget.prototype.dispatchEvent;
 enchant.EventTarget.prototype.dispatchEvent = function dispatchEvent(event) {
   try {
-    _dispatchEvent.apply(this, arguments);
-  } catch (error) {
-    if (feeles.throwError) {
-      feeles.throwError(error);
+    event.target = this;
+    event.localX = event.x - this._offsetX;
+    event.localY = event.y - this._offsetY;
+    if (this['on' + event.type] != null) {
+      const res = this['on' + event.type](event);
+      reportAsyncError(res, event, this);
     }
+    var listeners = this._listeners[event.type];
+    if (listeners != null) {
+      listeners = listeners.slice();
+      for (var i = 0, len = listeners.length; i < len; i++) {
+        const res = listeners[i].call(this, event);
+        reportAsyncError(res, event, this);
+      }
+    }
+  } catch (error) {
+    // イベントリスナーが同期関数だった場合の例外処理
+    feeles.throwError(error);
     throw error;
   }
 };
+
+/**
+ * イベントリスナーが非同期関数だった場合の例外処理
+ * @param {Promise|void} maybePromise
+ */
+function reportAsyncError(maybePromise, event, _this) {
+  if (maybePromise instanceof Promise) {
+    maybePromise.catch(error => {
+      console.error(`Runtime error in event '${event.type}'`, error);
+      console.info('Above error was occured to', _this);
+      feeles.throwError(error);
+    });
+  }
+}
