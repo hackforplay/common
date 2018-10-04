@@ -13,6 +13,7 @@ import * as logFunc from '../mod/logFunc';
 import find from './find';
 import deprecated from './deprecated';
 import createCompatibleMap from './create-compatible-map';
+import loadMap from './load-map';
 import coordinate from '../mod/coordinate';
 import game from './game';
 
@@ -71,6 +72,8 @@ Hack.parseMapJson = function parseMapJson(mapName, mapJson) {
     map = createCompatibleMap(parsedMapJson, {}, callback);
   });
 };
+
+Hack.loadMap = loadMap;
 
 // Advanced log
 Hack.logFunc = logFunc.default;

@@ -97,7 +97,7 @@ class Camera extends enchant.Sprite {
       };
     }
 
-    console.error('Camera#getCenter');
+    // console.error('Camera#getCenter');
   }
 
   getScale() {

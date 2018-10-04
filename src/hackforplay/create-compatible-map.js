@@ -122,7 +122,7 @@ export default function createCompatibleMap(
   rpgMap.fmap.loadData(fmap);
   rpgMap.cmap = cmap;
   rpgMap.image = buffer.surface;
-  console.log('buffer', rpgMap.image.toDataURL());
+  // console.log('buffer', rpgMap.image.toDataURL());
 
   return rpgMap;
 }
