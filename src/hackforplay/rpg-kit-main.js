@@ -42,7 +42,7 @@ game.preload(
   // 'hackforplay/menu-button-hint.png',
   'resources/hackforplay/menu-button-comment.png',
   'resources/hackforplay/menu-button-retry.png',
-  // 'hackforplay/new_button_next.png',
+  'resources/hackforplay/new_button_next.png',
   // 'hackforplay/new_button_comment.png',
   // 'hackforplay/new_button_restage.png',
   'resources/hackforplay/attack.png',
