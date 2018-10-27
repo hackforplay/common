@@ -1,6 +1,6 @@
 {
   "name": "@hackforplay/common",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "Common package for building stages in hackforplay",
   "main": "lib/index.js",
   "unpkg": "dist/main.min.js",
