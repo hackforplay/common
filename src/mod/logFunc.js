@@ -75,6 +75,7 @@ export function logAtPoint(text, x, y) {
 
 // canvas のテキストエリアを生成
 const textArea = new TextArea(480, 200);
+textArea.autoResizeVertical = true;
 textArea.x = (480 - textArea.w) / 2;
 textArea.y = 0;
 textArea.margin = 14;
@@ -83,7 +84,7 @@ textArea.defaultStyle = {
   size: '18',
   family: 'PixelMplus, sans-serif',
   weight: 'bold',
-  align: 'center',
+  align: 'left',
   space: 0,
   ruby: null,
   rubyId: null
@@ -91,7 +92,9 @@ textArea.defaultStyle = {
 Hack.textArea = textArea;
 const okButton = new TextArea(200, 38);
 okButton.x = (480 - okButton.w) / 2;
-okButton.y = textArea.h - 64;
+okButton.on('enterframe', () => {
+  okButton.y = textArea.h - 6;
+});
 okButton.margin = 0;
 okButton.padding = 8;
 okButton.background = 'rgb(251, 147, 36)';
