@@ -319,7 +319,7 @@ class RPGObject extends enchant.Sprite {
       this.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
       this.collider.setOffset(new SAT.V(12, 12));
     });
-    damageObject.mod(Hack.createDamageMod(this.atk));
+    damageObject.mod(Hack.createDamageMod(this.atk, this));
     damageObject.locate(dx, dy);
     damageObject.setTimeout(
       () => damageObject.destroy(),
@@ -852,7 +852,7 @@ class RPGObject extends enchant.Sprite {
     this.endless((self, count) => {
       if (count % 2 === 0) return;
       const effect = self.summon(params.skin);
-      effect.mod(Hack.createDamageMod(self.atk)); // ダメージオブジェクトにする
+      effect.mod(Hack.createDamageMod(self.atk, self)); // ダメージオブジェクトにする
       self.shoot(effect, self.forward, params.speed);
       const fx = self.forward.x;
       const fy = self.forward.y;
@@ -882,8 +882,9 @@ function makeHpLabel(self) {
 /**
  * ダメージを与える MOD を生成する
  * @param {number} damage
+ * @param {RPGObject} attacker
  */
-Hack.createDamageMod = damage =>
+Hack.createDamageMod = (damage, attacker) =>
   function damageMod() {
     this.isDamageObject = true; // ダメージ処理を行うフラグ
     this.collisionFlag = false; // ダメージオブジェクトそのものは, ぶつからない
@@ -926,8 +927,10 @@ Hack.createDamageMod = damage =>
         // attacked Event
         object.dispatchEvent(
           new enchant.Event('attacked', {
-            attacker: this, // attacker は弾などのエフェクトの場合もある
-            item: this, // 引数名の統一
+            attacker: attacker || this, // attacker は弾などのエフェクトの場合もある
+            attacker: attacker || this, // attacker は弾などのエフェクトの場合もある
+            item: attacker || this, // 引数名の統一
+            item: attacker || this, // 引数名の統一
             damage
           })
         );
