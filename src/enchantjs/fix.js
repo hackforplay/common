@@ -35,7 +35,8 @@ enchant.Event.prototype.initialize = function $initialize(name, props) {
 
   if (!props) return;
 
-  for (const [key, value] of Object.entries(props)) {
+  for (const key in Object.keys(props)) {
+    const value = props[key];
     this[key] = value;
   }
 };
@@ -79,7 +80,8 @@ enchant.Group.prototype.sortChildren = function sortChildren() {
 
   if (!this._layers) return;
 
-  for (const layer of Object.values(this._layers)) {
+  for (const key of Object.keys(this._layers)) {
+    const layer = this._layers[key];
     layer.childNodes.sort((a, b) => {
       return a.order - b.order;
     });
