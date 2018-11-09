@@ -393,7 +393,8 @@ class TextArea extends enchant.Sprite {
       return object;
     }, {});
 
-    for (const rubyChars of Object.values(rubyGroup)) {
+    for (const key of Object.keys(rubyGroup)) {
+      const rubyChars = rubyGroup[key];
       const left = rubyChars[0].x;
       const right =
         rubyChars[rubyChars.length - 1].x + rubyChars[rubyChars.length - 1].w;
