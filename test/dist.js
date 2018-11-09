@@ -1,5 +1,4 @@
 import test from 'ava';
-import '@babel/polyfill';
 
 test('[dev] Bundled js exports register, Hack and enchant', t => {
   const { register, Hack, enchant } = require('../dist/main');

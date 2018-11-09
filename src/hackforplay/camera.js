@@ -87,6 +87,11 @@ class Camera extends enchant.Sprite {
       return this.target.center;
     }
 
+    // プレイヤー
+    if (Hack.player && Hack.player instanceof RPGObject) {
+      return Hack.player.center;
+    }
+
     // マップの中心
     if (Hack.map) {
       const map = Hack.map;

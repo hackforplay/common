@@ -31,8 +31,12 @@ enchant.Surface.load = function(src, callback, onerror) {
   });
   enchant.EventTarget.call(surface);
   onerror = onerror || function() {};
-  surface.addEventListener('load', callback);
-  surface.addEventListener('error', onerror);
+  if (callback) {
+    surface.addEventListener('load', callback);
+  }
+  if (onerror) {
+    surface.addEventListener('error', onerror);
+  }
   image.onerror = function() {
     var e = new enchant.Event(enchant.Event.ERROR);
     e.message = 'Cannot load an asset: ' + image.src;

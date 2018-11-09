@@ -1,5 +1,4 @@
 import test from 'ava';
-import '@babel/polyfill';
 
 test.cb('Import as a module and initialize game', t => {
   const { enchant, Hack, register } = require('../src');

@@ -1,5 +1,4 @@
 import test from 'ava';
-import '@babel/polyfill';
 
 test('Hack.statusLabel', t => {
   const { Hack } = require('../src');
