@@ -35,7 +35,7 @@ enchant.Event.prototype.initialize = function $initialize(name, props) {
 
   if (!props) return;
 
-  for (const key in Object.keys(props)) {
+  for (const key of Object.keys(props)) {
     const value = props[key];
     this[key] = value;
   }
