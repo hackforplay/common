@@ -12,19 +12,19 @@ import RPGMap from './rpg-map';
 import TextArea from './ui/textarea';
 import Rule from './rule';
 
-export default function register(global) {
+export default function register(_global) {
   // Export to global
-  global.Hack = global.Hack || Hack;
-  global.Skin = global.Skin || Skin;
-  global.Family = global.Family || Family;
-  global.RPGObject = global.RPGObject || RPGObject;
-  global.BehaviorTypes = global.BehaviorTypes || BehaviorTypes;
-  global.MapObject = global.MapObject || MapObject;
-  global.Player = global.Player || Player;
-  global.Effect = global.Effect || Effect;
-  global.Key = global.Key || Key;
-  global.game = global.game || game;
-  global.RPGMap = global.RPGMap || RPGMap;
-  global.TextArea = global.TextArea || TextArea;
-  global.Rule = global.Rule || Rule;
+  _global.Hack = _global.Hack || Hack;
+  _global.Skin = _global.Skin || Skin;
+  _global.Family = _global.Family || Family;
+  _global.RPGObject = _global.RPGObject || RPGObject;
+  _global.BehaviorTypes = _global.BehaviorTypes || BehaviorTypes;
+  _global.MapObject = _global.MapObject || MapObject;
+  _global.Player = _global.Player || Player;
+  _global.Effect = _global.Effect || Effect;
+  _global.Key = _global.Key || Key;
+  _global.game = _global.game || game;
+  _global.RPGMap = _global.RPGMap || RPGMap;
+  _global.TextArea = _global.TextArea || TextArea;
+  _global.Rule = _global.Rule || Rule;
 }
