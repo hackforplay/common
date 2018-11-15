@@ -1,5 +1,5 @@
 import { register, Rule } from '.';
 
-const _global = window || global;
+const _global = global || window;
 register(_global);
 _global.rule = new Rule();
