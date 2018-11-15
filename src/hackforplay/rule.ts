@@ -1,12 +1,15 @@
 import RPGObject from './object/object';
 
-function throwError() {
+function throwError(error: Error) {
   return (<any>window).feeles.throwError.apply(null, arguments);
 }
 
-function handleError(promiseLike?: Promise<void>) {
+function handleError(title: string, name: string, promiseLike?: Promise<void>) {
   if (promiseLike && promiseLike instanceof Promise) {
-    return promiseLike.catch(throwError);
+    return promiseLike.catch(error => {
+      console.error(`RuleError: ${title} of ${name}`);
+      throwError(error);
+    });
   }
 }
 
@@ -49,7 +52,11 @@ export default class Rule {
 
   async runゲームがはじまったとき() {
     if (this._ゲームがはじまったとき) {
-      await handleError(this._ゲームがはじまったとき());
+      await handleError(
+        'ゲームがはじまったとき',
+        '',
+        this._ゲームがはじまったとき()
+      );
     }
   }
 
@@ -73,6 +80,7 @@ export default class Rule {
     let promise;
     if (this._つくられたとき[name]) {
       promise = this._つくられたとき[name].call(object);
+      handleError('つくられたとき', name, promise); // エラーハンドリング
     }
     // つねに
     if (this._つねに[name]) {
@@ -80,8 +88,8 @@ export default class Rule {
       promise = (promise || Promise.resolve()).then(() => {
         this.runつねに(object);
       });
+      handleError('つねに', name, promise); // エラーハンドリング
     }
-    handleError(promise); // エラーハンドリング
 
     if (this._たおされたとき[name]) {
       // rule.たおされたとき がある
@@ -122,7 +130,7 @@ export default class Rule {
       const func = this._つねに[object.name];
       if (!func) return;
 
-      const result = handleError(func.call(object));
+      const result = func.call(object);
       if (result && result instanceof Promise) {
         result.then(() => this.runつねに(object));
       } else {
@@ -147,7 +155,11 @@ export default class Rule {
   handleBecomeDead(object: any) {
     const name: string = object.name || '';
     if (this._たおされたとき[name]) {
-      handleError(this._たおされたとき[name].call(object));
+      handleError(
+        'たおされたとき',
+        name,
+        this._たおされたとき[name].call(object)
+      );
     }
   }
 
@@ -167,18 +179,22 @@ export default class Rule {
   }
 
   handleAddTrodden(object: any, event: any) {
-    const asset: string = object.name || '';
+    const name: string = object.name || '';
     const item: string = event.item.name || '';
-    const container = this._ふまれたとき[asset];
+    const container = this._ふまれたとき[name];
     if (!container) return;
     if (container[item]) {
       // 特定のアセットにだけ作用
-      handleError(container[item].call(object, event.item));
+      handleError(
+        'ふまれたとき',
+        name,
+        container[item].call(object, event.item)
+      );
     }
     const anyone = container[Anyone];
     if (anyone) {
       // 誰でも良い
-      handleError(anyone.call(object, event.item));
+      handleError('ふまれたとき', name, anyone.call(object, event.item));
     }
   }
 
@@ -216,7 +232,7 @@ export default class Rule {
       const name: string = object.name || '';
       const func = this._すすめなかったとき[name];
       if (func) {
-        handleError(func.call(object));
+        handleError('すすめなかったとき', name, func.call(object));
       }
     } else {
       // 何かとぶつかった
@@ -226,12 +242,16 @@ export default class Rule {
       if (!container) return;
       if (container[item]) {
         // 特定のアセットにだけ作用
-        handleError(container[item].call(object, event.item));
+        handleError(
+          'ぶつかったとき',
+          name,
+          container[item].call(object, event.item)
+        );
       }
       const anyone = container[Anyone];
       if (anyone) {
         // 誰でも良い
-        handleError(anyone.call(object, event.item));
+        handleError('ぶつかったとき', name, anyone.call(object, event.item));
       }
     }
   }
@@ -243,12 +263,16 @@ export default class Rule {
     if (!container) return;
     if (container[item]) {
       // 特定のアセットにだけ作用
-      handleError(container[item].call(object, event.item));
+      handleError(
+        'ぶつかったとき',
+        name,
+        container[item].call(object, event.item)
+      );
     }
     const anyone = container[Anyone];
     if (anyone) {
       // 誰でも良い
-      handleError(anyone.call(object, event.item));
+      handleError('ぶつかったとき', name, anyone.call(object, event.item));
     }
   }
 }

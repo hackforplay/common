@@ -34,6 +34,8 @@ if (!global.feeles) {
     eval: () => {}
   };
   register(global.feeles);
+
+  global.window.feeles = global.feeles;
 }
 
 /**
@@ -59,5 +61,7 @@ function fetchDataURL(src) {
 }
 
 function throwError(error) {
+  console.error(error);
+  console.trace();
   throw error;
 }
