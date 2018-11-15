@@ -7,7 +7,7 @@
   "scripts": {
     "start": "webpack-dev-server",
     "prepublish": "webpack && npm run babel && npm run resources",
-    "babel": "babel -d lib -D src --extensions \".ts\"",
+    "babel": "babel -d lib -D src --extensions '.js,.ts'",
     "format": "prettier --write '**/*.js'",
     "test": "ava",
     "watch": "ava \"test/index.js\" --watch",
