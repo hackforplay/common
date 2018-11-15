@@ -1,3 +1,4 @@
+import enchant from '../../enchantjs/enchant';
 import RPGObject from './object';
 import dictionary from './dictionary';
 import game from '../game';
@@ -80,7 +81,7 @@ function tryFetchMapImage(name) {
     var frame = MapObject.dictionary[name],
       x = (frame % length) * w,
       y = ((frame / length) >> 0) * h;
-    var s = new Surface(w, h);
+    var s = new enchant.Surface(w, h);
     s.draw(
       game.assets['resources/enchantjs/x2/dotmat.gif'],
       x,
