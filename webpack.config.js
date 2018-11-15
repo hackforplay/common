@@ -15,6 +15,11 @@ const path = require('path');
  */
 
 const common = {
+  entry: {
+    main: './src/',
+    register: './src/register'
+  },
+
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json']
   },
