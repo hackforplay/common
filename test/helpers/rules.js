@@ -1,5 +1,5 @@
-// ここからゲームがスタートしたときのルール
-rule.ゲームがスタートしたとき(async function() {
+// ここからゲームがはじまったときのルール
+rule.ゲームがはじまったとき(async function() {
   Hack.changeMap('map1'); // map1 をロード
 
   const player = rule.つくる('プレイヤー');
@@ -14,38 +14,37 @@ rule.ゲームがスタートしたとき(async function() {
   item2.locate(9, 5, 'map1'); // いる ばしょ
 
   const item3 = rule.つくる('イモムシ');
-  item3.locate(9, 5, 'map1'); // いる ばしょ
+  item3.locate(12, 5, 'map1'); // いる ばしょ
 
   const item4 = rule.つくる('コウモリ');
-  item4.locate(9, 5, 'map1'); // いる ばしょ
+  item4.locate(9, 2, 'map1'); // いる ばしょ
 
   const item5 = rule.つくる('ドラゴン');
-  item5.locate(9, 5, 'map1'); // いる ばしょ
+  item5.locate(2, 8, 'map1'); // いる ばしょ
 
   const item6 = rule.つくる('ウロボロス');
-  item6.locate(9, 5, 'map1'); // いる ばしょ
+  item6.locate(4, 8, 'map1'); // いる ばしょ
 
   const item7 = rule.つくる('ミノタウルス');
-  item7.locate(9, 5, 'map1'); // いる ばしょ
+  item7.locate(6, 8, 'map1'); // いる ばしょ
 
   const item8 = rule.つくる('ハート');
-  item8.locate(9, 5, 'map1'); // いる ばしょ
+  item8.locate(8, 8, 'map1'); // いる ばしょ
 
   const item9 = rule.つくる('コイン');
-  item9.locate(9, 5, 'map1'); // いる ばしょ
+  item9.locate(12, 8, 'map1'); // いる ばしょ
 
   const item10 = rule.つくる('スター');
-  item10.locate(9, 5, 'map1'); // いる ばしょ
+  item10.locate(14, 8, 'map1'); // いる ばしょ
 
   const item11 = rule.つくる('ふしぎなカギ');
-  item11.locate(9, 5, 'map1'); // いる ばしょ
 
   const item12 = rule.つくる('ゴールちてん');
-  item12.locate(10, 5, 'map1'); // いる ばしょ
+  item12.locate(10, 8, 'map1'); // いる ばしょ
 
   /*+ キャラクター アイテム */
 });
-// ここまでゲームがスタートしたときのルール
+// ここまでゲームがはじまったときのルール
 
 // ここからプレイヤーのルール
 rule.this = 'プレイヤー';
@@ -57,7 +56,10 @@ rule.つくられたとき(async function() {
   this.atk = 1; // こうげき力
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
-
+rule.たおされたとき(async function() {
+  Hack.gameover(); // ゲームオーバー
+  this.destroy(); // プレイヤーを消す
+});
 /*+ ルールついか */
 // ここまでプレイヤーのルール
 
@@ -79,12 +81,12 @@ rule.つねに(async function() {
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
 // ここまでキャラクターがつねに行うルール
-// ここからキャラクターがたおれたときのルール
-rule.たおれたとき(async function() {
+// ここからキャラクターがたおされたときのルール
+rule.たおされたとき(async function() {
   Hack.score += 1;
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
-// ここまでキャラクターがたおれたときのルール
+// ここまでキャラクターがたおされたときのルール
 /*+ ルールついか */
 
 // ここまでスライムのルール
@@ -131,12 +133,12 @@ rule.つねに(async function() {
   /*+ このキャラクターになにかする 条件 */
 });
 // ここまでキャラクターがつねに行うルール
-// ここからキャラクターがたおれたときのルール
-rule.たおれたとき(async function() {
+// ここからキャラクターがたおされたときのルール
+rule.たおされたとき(async function() {
   Hack.score += 1;
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
-// ここまでキャラクターがたおれたときのルール
+// ここまでキャラクターがたおされたときのルール
 /*+ ルールついか */
 
 // ここまでイモムシのルール
@@ -153,9 +155,9 @@ rule.つくられたとき(async function() {
 });
 // ここまでキャラクターがつくられたとき行うルール
 // ここからキャラクターがつねに行うルール
-rule.つねに(async function(item) {
-  const moveX = 32 * Math.sign(item.mapX - this.mapX);
-  const moveY = 32 * Math.sign(item.mapY - this.mapY);
+rule.つねに(async function() {
+  const moveX = 32 * Math.sign(player.mapX - this.mapX);
+  const moveY = 32 * Math.sign(player.mapY - this.mapY);
   this.forward = [moveX, moveY];
   await this.walk(); // あるく
   await this.attack(); // こうげきする
@@ -163,12 +165,12 @@ rule.つねに(async function(item) {
   /*+ このキャラクターになにかする 条件 */
 });
 // ここまでキャラクターがつねに行うルール
-// ここからキャラクターがたおれたときのルール
-rule.たおれたとき(async function() {
+// ここからキャラクターがたおされたときのルール
+rule.たおされたとき(async function() {
   Hack.score += 1;
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
-// ここまでキャラクターがたおれたときのルール
+// ここまでキャラクターがたおされたときのルール
 /*+ ルールついか */
 
 // ここまでコウモリ
@@ -190,12 +192,12 @@ rule.つねに(async function() {
   /*+ このキャラクターになにかする 条件 */
 });
 // ここまでキャラクターがつねに行うルール
-// ここからキャラクターがたおれたときのルール
-rule.たおれたとき(async function() {
+// ここからキャラクターがたおされたときのルール
+rule.たおされたとき(async function() {
   Hack.score += 1;
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
-// ここまでキャラクターがたおれたときのルール
+// ここまでキャラクターがたおされたときのルール
 /*+ ルールついか */
 
 // ここまでウロボロス
@@ -216,12 +218,12 @@ rule.つくられたとき(async function() {
     scale: 1
   });
 });
-// ここからキャラクターがたおれたときのルール
-rule.たおれたとき(async function() {
+// ここからキャラクターがたおされたときのルール
+rule.たおされたとき(async function() {
   Hack.score += 1;
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
-// ここまでキャラクターがたおれたときのルール
+// ここまでキャラクターがたおされたときのルール
 /*+ ルールついか */
 
 // ここまでドラゴン
@@ -243,12 +245,12 @@ rule.つねに(async function() {
   /*+ このキャラクターになにかする 条件 */
 });
 // ここまでキャラクターがつねに行うルール
-// ここからキャラクターがたおれたときのルール
-rule.たおれたとき(async function() {
+// ここからキャラクターがたおされたときのルール
+rule.たおされたとき(async function() {
   Hack.score += 1;
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
-// ここまでキャラクターがたおれたときのルール
+// ここまでキャラクターがたおされたときのルール
 /*+ ルールついか */
 
 // ここまでミノタウルス
@@ -282,7 +284,7 @@ rule.つくられたとき(async function() {
   this.force(0, 0.5);
 });
 // ここからキャラクターがぶつかったときのルール
-rule.item = Rule.Anyone;
+rule.item = 'プレイヤー';
 rule.ぶつかったとき(async function(item) {
   this.destroy();
   Hack.score += 1;
