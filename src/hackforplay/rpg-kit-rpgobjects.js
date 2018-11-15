@@ -277,7 +277,7 @@ Hack.assets.bat = function() {
   this.forward = [-1, 0];
   this.mod(Hack.assets.shadowMod);
   // ダメージ判定用のポリゴン
-  this.collider = new SAT.Box(new SAT.V(this.x, this.y), 40, 26).toPolygon();
+  this.collider = new SAT.Box(new SAT.V(this.x, this.y), 40, 28).toPolygon();
   this.collider.setOffset(new SAT.V(4, 4));
 };
 Hack.assets.shadowMod = function() {
