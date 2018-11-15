@@ -7,10 +7,18 @@ import RPGMap from '../rpg-map';
 class Player extends RPGObject {
   constructor(mod) {
     super(mod);
+    this.initialize();
+  }
 
+  initialize() {
     this.enteredStack = [];
-    this.on('enterframe', this.stayCheck);
-    this.on('walkend', this.enterCheck);
+    this.on('enterframe', Player.prototype.stayCheck);
+    this.on('walkend', Player.prototype.enterCheck);
+    this.checkInput = this.checkInput || Player.prototype.checkInput.bind(this);
+    this.onenterframe =
+      this.onenterframe || Player.prototype.onenterframe.bind(this);
+    this.enterCheck = this.enterCheck || Player.prototype.enterCheck.bind(this);
+    this.stayCheck = this.stayCheck || Player.prototype.stayCheck.bind(this);
     this._layer = RPGMap.Layer.Player;
 
     this.hp = 3;
@@ -26,6 +34,10 @@ class Player extends RPGObject {
 
     // 歩き終わったときに自動でモノを拾う (pickUp)
     this.isAutoPickUp = true;
+  }
+
+  static set(object) {
+    Player.prototype.initialize.call(object);
   }
 
   checkInput(type) {
