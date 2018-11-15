@@ -2,45 +2,45 @@
 rule.ゲームがスタートしたとき(async function() {
   Hack.changeMap('map1'); // map1 をロード
 
-  const player = new rule.つくる('プレイヤー');
+  const player = rule.つくる('プレイヤー');
   window.player = player;
   player.locate(3, 5); // いる ばしょ
 
-  const item1 = new rule.つくる('スライム');
+  const item1 = rule.つくる('スライム');
   item1.locate(8, 5, 'map1'); // いる ばしょ
   item1.forward = [1, 0]; // むき
 
-  const item2 = new rule.つくる('スライム');
+  const item2 = rule.つくる('スライム');
   item2.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item3 = new rule.つくる('イモムシ');
+  const item3 = rule.つくる('イモムシ');
   item3.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item4 = new rule.つくる('コウモリ');
+  const item4 = rule.つくる('コウモリ');
   item4.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item5 = new rule.つくる('ドラゴン');
+  const item5 = rule.つくる('ドラゴン');
   item5.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item6 = new rule.つくる('ウロボロス');
+  const item6 = rule.つくる('ウロボロス');
   item6.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item7 = new rule.つくる('ミノタウルス');
+  const item7 = rule.つくる('ミノタウルス');
   item7.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item8 = new rule.つくる('ハート');
+  const item8 = rule.つくる('ハート');
   item8.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item9 = new rule.つくる('コイン');
+  const item9 = rule.つくる('コイン');
   item9.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item10 = new rule.つくる('スター');
+  const item10 = rule.つくる('スター');
   item10.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item11 = new rule.つくる('ふしぎなカギ');
+  const item11 = rule.つくる('ふしぎなカギ');
   item11.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item12 = new rule.つくる('ゴールちてん');
+  const item12 = rule.つくる('ゴールちてん');
   item12.locate(10, 5, 'map1'); // いる ばしょ
 
   /*+ キャラクター アイテム */
