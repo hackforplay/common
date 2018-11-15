@@ -1,5 +1,3 @@
-const rule = new Rule(); // ここからルールを作っていく
-
 // ここからゲームがスタートしたときのルール
 rule.ゲームがスタートしたとき(async function() {
   Hack.changeMap('map1'); // map1 をロード
@@ -284,7 +282,7 @@ rule.つくられたとき(async function() {
   this.force(0, 0.5);
 });
 // ここからキャラクターがぶつかったときのルール
-rule.item = 'プレイヤー';
+rule.item = Rule.Anyone;
 rule.ぶつかったとき(async function(item) {
   this.destroy();
   Hack.score += 1;
