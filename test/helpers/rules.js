@@ -36,14 +36,14 @@ rule.ゲームがスタートしたとき(async function() {
   const item9 = new rule.つくる('コイン');
   item9.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item9 = new rule.つくる('スター');
-  item9.locate(9, 5, 'map1'); // いる ばしょ
-
-  const item10 = new rule.つくる('ふしぎなカギ');
+  const item10 = new rule.つくる('スター');
   item10.locate(9, 5, 'map1'); // いる ばしょ
 
-  const item11 = new rule.つくる('ゴールちてん');
-  item11.locate(10, 5, 'map1'); // いる ばしょ
+  const item11 = new rule.つくる('ふしぎなカギ');
+  item11.locate(9, 5, 'map1'); // いる ばしょ
+
+  const item12 = new rule.つくる('ゴールちてん');
+  item12.locate(10, 5, 'map1'); // いる ばしょ
 
   /*+ キャラクター アイテム */
 });
