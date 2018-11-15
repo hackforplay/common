@@ -52,5 +52,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.1.2"
+  },
+  "engines": {
+    "node": "^10.13.0"
   }
 }
