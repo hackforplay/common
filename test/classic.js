@@ -1,12 +1,10 @@
 import test from 'ava';
 
-test.cb('Play game with rule base definition', t => {
-  require('../src/register');
-  t.is(global.game, global.enchant.Core.instance);
+test.cb('Import as a module and initialize game', t => {
+  const { enchant, Hack, register } = require('../src');
 
-  require('./helpers/rules'); // ルール定義をロードする
-
-  t.truthy(global.rule);
+  register(global);
+  t.is(global.game, enchant.Core.instance);
 
   // 画像をローカルから取得する
   Hack.basePath = '';
@@ -17,6 +15,7 @@ test.cb('Play game with rule base definition', t => {
     t.end();
   };
 
+  const gameOnLoad = require('./helpers/game').default;
   const hackOnLoad = require('./helpers/maps').default;
 
   game.onload = () => {
@@ -24,18 +23,15 @@ test.cb('Play game with rule base definition', t => {
     // lifelabel などが gameOnLoad 時に参照できない対策
     game.dispatchEvent(new enchant.Event('awake'));
 
-    rule.runゲームがはじまったとき().then(() => {
-      // helpers/rules.js が一通り実行されたあと
+    gameOnLoad();
 
-      // Hack.player がないとき window.player を代わりに入れる
-      if (window.player && !Hack.player) {
-        Hack.player = window.player;
-      }
-
-      t.pass('game.onload');
-      t.is(Hack.statusLabel, 'map1');
-      t.end();
-    });
+    // Hack.player がないとき self.player を代わりに入れる
+    if (self.player && !Hack.player) {
+      Hack.player = self.player;
+    }
+    t.pass('game.onload');
+    t.is(Hack.statusLabel, 'map1');
+    t.end();
   };
   Hack.onload = () => {
     // Hack.maps を事前に作っておく
@@ -45,8 +41,15 @@ test.cb('Play game with rule base definition', t => {
   };
 
   // game.onload と Hack.onload がどちらも終了すればパス
-  t.plan(5);
+  t.plan(4);
 
   // ゲームスタート
   Hack.start();
+});
+
+test('Global Map constructor instead of enchant.Map', t => {
+  const { register, enchant } = require('../src');
+  register(global);
+  t.not(window.Map, enchant.Map);
+  t.is(typeof window.Map.prototype.has, 'function');
 });
