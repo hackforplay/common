@@ -15,12 +15,16 @@ const path = require('path');
  */
 
 const common = {
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.json']
+  },
+
   module: {
     rules: [
       {
         include: [path.resolve(__dirname, 'src')],
         loader: 'babel-loader',
-        test: /\.js$/
+        test: /\.[jt]s$/
       }
     ]
   },
