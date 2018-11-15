@@ -11,6 +11,7 @@ import game from './game';
 import RPGMap from './rpg-map';
 import TextArea from './ui/textarea';
 import Rule from './rule';
+import enchant from '../enchantjs/enchant';
 
 export default function register(_global) {
   // Export to global
@@ -27,4 +28,5 @@ export default function register(_global) {
   _global.RPGMap = _global.RPGMap || RPGMap;
   _global.TextArea = _global.TextArea || TextArea;
   _global.Rule = _global.Rule || Rule;
+  _global.enchant = _global.enchant || enchant;
 }
