@@ -6,7 +6,7 @@
   "unpkg": "dist/main.min.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "prepublish": "webpack && npm run babel",
+    "prepublish": "webpack && npm run babel && npm test",
     "babel": "babel -d lib -D src --extensions '.js,.ts'",
     "format": "prettier --write '**/*.js'",
     "test": "ava",
