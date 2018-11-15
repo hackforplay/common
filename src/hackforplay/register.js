@@ -12,6 +12,7 @@ import RPGMap from './rpg-map';
 import TextArea from './ui/textarea';
 import Rule from './rule';
 import enchant from '../enchantjs/enchant';
+import random from './random';
 
 export default function register(_global) {
   // Export to global
@@ -29,4 +30,5 @@ export default function register(_global) {
   _global.TextArea = _global.TextArea || TextArea;
   _global.Rule = _global.Rule || Rule;
   _global.enchant = _global.enchant || enchant;
+  _global.random = _global.random || random;
 }

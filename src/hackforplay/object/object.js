@@ -8,6 +8,7 @@ import SAT from '../../lib/sat.min';
 import BehaviorTypes from '../behavior-types';
 import RPGMap from '../rpg-map';
 import game from '../game';
+import random from '../random';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様

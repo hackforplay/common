@@ -9,6 +9,7 @@ import MapObject from './object/map-object';
 import dictionary from './object/dictionary';
 import BehaviorTypes from './behavior-types';
 import game from './game';
+import random from './random';
 
 /**
 * RPGObject
