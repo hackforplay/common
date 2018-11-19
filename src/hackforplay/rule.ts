@@ -1,30 +1,36 @@
 import { default as RPGObject } from './object/object';
 
+interface Event {
+  item: RPGObject;
+}
+interface CollidedEvent extends Event {
+  map: Boolean;
+  hits: RPGObject[];
+}
+
 function throwError(error: Error) {
   return (<any>window).feeles.throwError.apply(null, arguments);
 }
 
-function handleError(title: string, name: string, promiseLike?: Promise<void>) {
+function handleError(
+  title: string,
+  name: string,
+  promiseLike?: Promise<void>
+): Promise<void> {
   if (promiseLike && promiseLike instanceof Promise) {
     return promiseLike.catch(error => {
       console.error(`RuleError: ${title} of ${name}`);
       throwError(error);
     });
   }
+  return Promise.resolve();
 }
 
 const Anyone: unique symbol = Symbol('Rule.Anyone');
 
-interface OneObjectLisener {
-  [key: string]: Function;
-}
-
-interface TwoObjectListener {
-  [key: string]: {
-    [key: string]: Function;
-    [Anyone]?: Function;
-  };
-}
+type NoObjectListener = (this: void) => Promise<void>;
+type OneObjectListener = (this: RPGObject) => Promise<void>;
+type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
 
 export default class Rule {
   constructor() {}
@@ -35,245 +41,211 @@ export default class Rule {
   this: string | null = null;
   item: string | typeof Anyone | null = null;
   // listeners
-  _ゲームがはじまったとき?: Function;
-  _つくられたとき: OneObjectLisener = {};
-  _つねに: OneObjectLisener = {};
-  _たおされたとき: OneObjectLisener = {};
-  _ふまれたとき: TwoObjectListener = {};
-  _ぶつかったとき: TwoObjectListener = {};
-  _すすめなかったとき: OneObjectLisener = {};
+  _listenersOfNo: {
+    [type: string]: NoObjectListener;
+  } = {};
+  _listenersOfOne: {
+    [type: string]: {
+      [name: string]: OneObjectListener;
+    };
+  } = {};
+  _listenersOfTwo: {
+    [type: string]: {
+      [name: string]: {
+        [item: string]: TwoObjectListener;
+        [Anyone]?: TwoObjectListener;
+      };
+    };
+  } = {};
 
-  ゲームがはじまったとき(func: Function) {
-    if (this._ゲームがはじまったとき) {
-      throw new Error(`ゲームがはじまったとき はすでに決まっています`);
+  addNoObjectListener(type: string, func: NoObjectListener) {
+    if (this._listenersOfNo[type]) {
+      throw new Error(`${type} はすでに決まっています`);
     }
-    this._ゲームがはじまったとき = func;
+    this._listenersOfNo[type] = func;
   }
 
-  async runゲームがはじまったとき() {
-    if (this._ゲームがはじまったとき) {
-      await handleError(
-        'ゲームがはじまったとき',
-        '',
-        this._ゲームがはじまったとき()
-      );
+  async runNoObjectListener(type: string) {
+    if (this._listenersOfNo[type]) {
+      await handleError(type, '', this._listenersOfNo[type]());
     }
   }
 
-  つくられたとき(func: Function) {
+  addOneObjectLisener(type: string, func: OneObjectListener) {
     const name = this.this;
     if (!name) {
-      throw new Error(`つくられたとき の this がありません`);
+      throw new Error(`${type} の this がありません`);
     }
-    if (this._つくられたとき[name]) {
-      throw new Error(
-        `this="${name}" の つくられたとき はすでに決まっています`
-      );
+    const listeners =
+      this._listenersOfOne[type] || (this._listenersOfOne[type] = {});
+    if (listeners[name]) {
+      throw new Error(`this="${name}" の ${type} はすでに決まっています`);
     }
-    this._つくられたとき[name] = func;
+    listeners[name] = func;
   }
 
-  つくる(name: string) {
-    const object = new RPGObject();
-    object.name = name;
-    object._ruleInstance = this;
-    // つくられたとき
-    let promise;
-    if (this._つくられたとき[name]) {
-      promise = this._つくられたとき[name].call(object);
-      handleError('つくられたとき', name, promise); // エラーハンドリング
-    }
-    // つねに
-    if (this._つねに[name]) {
-      // rule.つねに がある
-      promise = (promise || Promise.resolve()).then(() => {
-        this.runつねに(object);
-      });
-      handleError('つねに', name, promise); // エラーハンドリング
-    }
-
-    if (this._たおされたとき[name]) {
-      // rule.たおされたとき がある
-      object.on('becomedead', () => this.handleBecomeDead(object));
-    }
-    if (this._ふまれたとき[name]) {
-      // rule.ふまれたとき がある
-      object.on('addtrodden', (event: {}) =>
-        this.handleAddTrodden(object, event)
-      );
-    }
-    if (this._ぶつかったとき[name]) {
-      // rule.ぶつかったとき がある
-      object.on('triggerenter', (event: {}) =>
-        this.handleTriggerEnter(object, event)
-      );
-    }
-    if (this._すすめなかったとき[name] || this._ぶつかったとき[name]) {
-      // rule.すすめなかったとき or rule.ぶつかったとき がある
-      object.on('collided', (event: {}) => this.handleCollided(object, event));
-    }
-    return object;
-  }
-
-  つねに(func: Function) {
-    const name = this.this;
-    if (!name) {
-      throw new Error(`つねに の this がありません`);
-    }
-    if (this._つねに[name]) {
-      throw new Error(`this="${name}" の つねに はすでに決まっています`);
-    }
-    this._つねに[name] = func;
-  }
-
-  runつねに(object: any) {
-    requestAnimationFrame(() => {
-      const func = this._つねに[object.name];
-      if (!func) return;
-
-      const result = func.call(object);
-      if (result && result instanceof Promise) {
-        result.then(() => this.runつねに(object));
-      } else {
-        this.runつねに(object);
-      }
-    });
-  }
-
-  たおされたとき(func: Function) {
-    const name = this.this;
-    if (!name) {
-      throw new Error(`たおされたとき の this がありません`);
-    }
-    if (this._たおされたとき[name]) {
-      throw new Error(
-        `this="${name}" の たおされたとき はすでに決まっています`
-      );
-    }
-    this._たおされたとき[name] = func;
-  }
-
-  handleBecomeDead(object: any) {
+  async runOneObjectLisener(type: string, object: RPGObject) {
     const name: string = object.name || '';
-    if (this._たおされたとき[name]) {
-      handleError(
-        'たおされたとき',
-        name,
-        this._たおされたとき[name].call(object)
-      );
+    const listeners = this._listenersOfOne[type];
+    if (!listeners) return;
+    const specify = listeners[name];
+    if (specify) {
+      await handleError(type, name, specify.call(object)); // エラーハンドリング
     }
   }
 
-  ふまれたとき(func: Function) {
+  addTwoObjectListener(type: string, func: TwoObjectListener) {
     const name = this.this;
     if (!name) {
       throw new Error(`ふまれたとき の this がありません`);
     }
     const item = this.item;
+    if (!item) {
+      throw new Error(`ふまれたとき の item がありません`);
+    }
     const container =
-      this._ふまれたとき[name] || (this._ふまれたとき[name] = {});
-    if (item === Anyone || typeof item === 'string') {
-      container[item] = func;
-    } else {
-      throw new Error(`ふまれたとき の item には使えません: ${item}`);
-    }
-  }
-
-  handleAddTrodden(object: any, event: any) {
-    const name: string = object.name || '';
-    const item: string = event.item.name || '';
-    const container = this._ふまれたとき[name];
-    if (!container) return;
-    if (container[item]) {
-      // 特定のアセットにだけ作用
-      handleError(
-        'ふまれたとき',
-        name,
-        container[item].call(object, event.item)
-      );
-    }
-    const anyone = container[Anyone];
-    if (anyone) {
-      // 誰でも良い
-      handleError('ふまれたとき', name, anyone.call(object, event.item));
-    }
-  }
-
-  ぶつかったとき(func: Function) {
-    const name = this.this;
-    if (!name) {
-      throw new Error(`すすめなかったとき の this がありません`);
-    }
-    const item = this.item;
-    const container =
-      this._ぶつかったとき[name] || (this._ぶつかったとき[name] = {});
-    if (item === Anyone || typeof item === 'string') {
-      container[item] = func;
-    } else {
-      throw new Error(`ぶつかったとき の item には使えません: ${item}`);
-    }
-  }
-
-  すすめなかったとき(func: Function) {
-    const name = this.this;
-    if (!name) {
-      throw new Error(`すすめなかったとき の this がありません`);
-    }
-    if (this._すすめなかったとき[name]) {
+      this._listenersOfTwo[type] || (this._listenersOfTwo[type] = {});
+    const listeners = container[name] || (container[name] = {});
+    if (listeners[name]) {
       throw new Error(
-        `this="${name}" の すすめなかったとき はすでに決まっています`
+        `this="${name}" item="${item.toString()}" の ${type} はすでに決まっています`
       );
     }
-    this._すすめなかったとき[name] = func;
+    listeners[item] = func;
   }
 
-  handleCollided(object: any, event: any) {
-    if (event.map || event.hits.length === 0) {
-      // マップの枠か、cmapとぶつかった => 相手のいない衝突
-      const name: string = object.name || '';
-      const func = this._すすめなかったとき[name];
-      if (func) {
-        handleError('すすめなかったとき', name, func.call(object));
-      }
-    } else {
-      // 何かとぶつかった
-      const name: string = object.name || '';
-      const item: string = event.item.name || '';
-      const container = this._ぶつかったとき[name];
-      if (!container) return;
-      if (container[item]) {
-        // 特定のアセットにだけ作用
-        handleError(
-          'ぶつかったとき',
-          name,
-          container[item].call(object, event.item)
-        );
-      }
-      const anyone = container[Anyone];
-      if (anyone) {
-        // 誰でも良い
-        handleError('ぶつかったとき', name, anyone.call(object, event.item));
-      }
-    }
-  }
-
-  handleTriggerEnter(object: any, event: any) {
-    const asset: string = object.name || '';
-    const item: string = event.item.name || '';
-    const container = this._ぶつかったとき[asset];
+  async runTwoObjectListener(type: string, object: RPGObject, item: RPGObject) {
+    const name: string = object.name || '';
+    const itemName: string = item.name || '';
+    const container = this._listenersOfTwo[type];
     if (!container) return;
-    if (container[item]) {
+    const listeners = container[name];
+    if (!listeners) return;
+    const specify = listeners[itemName];
+    if (specify) {
       // 特定のアセットにだけ作用
-      handleError(
-        'ぶつかったとき',
-        name,
-        container[item].call(object, event.item)
-      );
+      handleError('ふまれたとき', name, specify.call(object, item));
     }
-    const anyone = container[Anyone];
+    const anyone = listeners[Anyone];
     if (anyone) {
       // 誰でも良い
-      handleError('ぶつかったとき', name, anyone.call(object, event.item));
+      handleError('ふまれたとき', name, anyone.call(object, item));
     }
+  }
+
+  hasObjectListener(type: string, name: string) {
+    return (
+      this.hasNoObjectListener(type) ||
+      this.hasOneObjectLisener(type, name) ||
+      this.hasTwoObjectListener(type, name)
+    );
+  }
+
+  hasNoObjectListener(type: string) {
+    return Boolean(this._listenersOfNo[type]);
+  }
+
+  hasOneObjectLisener(type: string, name: string) {
+    const listeners = this._listenersOfOne[type];
+    if (!listeners) return false;
+    return Boolean(listeners[name]);
+  }
+
+  hasTwoObjectListener(type: string, name: string) {
+    const container = this._listenersOfTwo[type];
+    if (!container) return false;
+    const listeners = container[name];
+    if (!listeners) return false;
+    return Boolean(listeners[name]);
+  }
+
+  /**
+   * 「つねに」を再帰的にコールするラッパー
+   * @param object RPGObject
+   */
+  runつねに(object: RPGObject) {
+    // TODO: パフォーマンスが悪化しそうなので改善する
+    requestAnimationFrame(() => {
+      this.runOneObjectLisener('つねに', object).then(() =>
+        this.runつねに(object)
+      );
+    });
+  }
+
+  async runゲームがはじまったとき() {
+    await this.runNoObjectListener('ゲームがはじまったとき');
+  }
+
+  // 実際にコールする関数
+  つくる(name: string) {
+    const object = new RPGObject();
+    object.name = name;
+    object._ruleInstance = this;
+    // つくられたとき
+    let promise = Promise.resolve();
+    if (this.hasOneObjectLisener('つくられたとき', name)) {
+      promise = this.runOneObjectLisener('つくられたとき', object);
+    }
+    // つねに
+    if (this.hasOneObjectLisener('つねに', name)) {
+      // rule.つねに がある
+      promise = promise.then(() => this.runつねに(object));
+    }
+
+    if (this.hasOneObjectLisener('たおされたとき', name)) {
+      // rule.たおされたとき がある
+      object.on('becomedead', () =>
+        this.runOneObjectLisener('たおされたとき', object)
+      );
+    }
+    if (this.hasTwoObjectListener('ふまれたとき', name)) {
+      // rule.ふまれたとき がある
+      object.on('addtrodden', (event: Event) =>
+        this.runTwoObjectListener('ふまれたとき', object, event.item)
+      );
+    }
+    if (this.hasTwoObjectListener('ぶつかったとき', name)) {
+      // rule.ぶつかったとき がある
+      object.on('triggerenter', (event: Event) =>
+        this.runTwoObjectListener('ぶつかったとき', object, event.item)
+      );
+    }
+    if (
+      this.hasOneObjectLisener('すすめなかったとき', name) ||
+      this.hasTwoObjectListener('ぶつかったとき', name)
+    ) {
+      object.on('collided', (event: CollidedEvent) => {
+        if (event.map || event.hits.length === 0) {
+          // マップの枠か、cmapとぶつかった => 相手のいない衝突
+          this.runOneObjectLisener('すすめなかったとき', object);
+        } else {
+          // 何かとぶつかった
+          this.runTwoObjectListener('ぶつかったとき', object, event.item);
+        }
+      });
+    }
+    return object;
+  }
+
+  ゲームがはじまったとき(func: NoObjectListener) {
+    this.addNoObjectListener('ゲームがはじまったとき', func);
+  }
+  つくられたとき(func: OneObjectListener) {
+    this.addOneObjectLisener('つくられたとき', func);
+  }
+  つねに(func: OneObjectListener) {
+    this.addOneObjectLisener('つねに', func);
+  }
+  たおされたとき(func: OneObjectListener) {
+    this.addOneObjectLisener('たおされたとき', func);
+  }
+  すすめなかったとき(func: OneObjectListener) {
+    this.addOneObjectLisener('すすめなかったとき', func);
+  }
+  ふまれたとき(func: TwoObjectListener) {
+    this.addTwoObjectListener('ふまれたとき', func);
+  }
+  ぶつかったとき(func: TwoObjectListener) {
+    this.addTwoObjectListener('ぶつかったとき', func);
   }
 }
