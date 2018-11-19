@@ -133,9 +133,15 @@ export default class Rule {
     }
   }
 
-  hasObjectListener(type: string, name: string) {
+  /**
+   * そのルールが登録されているかを調べる
+   * @param type
+   * @param name アセットの名前
+   */
+  hasListener(type: string, name?: string) {
+    if (this.hasNoObjectListener(type)) return true;
+    if (!name) return false;
     return (
-      this.hasNoObjectListener(type) ||
       this.hasOneObjectLisener(type, name) ||
       this.hasTwoObjectListener(type, name)
     );
