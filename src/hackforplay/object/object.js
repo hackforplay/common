@@ -992,8 +992,6 @@ Hack.createDamageMod = (damage, attacker) =>
         object.dispatchEvent(
           new enchant.Event('attacked', {
             attacker: attacker || this, // attacker は弾などのエフェクトの場合もある
-            attacker: attacker || this, // attacker は弾などのエフェクトの場合もある
-            item: attacker || this, // 引数名の統一
             item: attacker || this, // 引数名の統一
             damage
           })
