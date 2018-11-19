@@ -228,6 +228,11 @@ export default class Rule {
         }
       });
     }
+    if (this.hasTwoObjectListener('こうげきされたとき', name)) {
+      object.on('attacked', (event: Event) => {
+        this.runTwoObjectListener('こうげきされたとき', object, event.item);
+      });
+    }
     return object;
   }
 
@@ -251,5 +256,8 @@ export default class Rule {
   }
   ぶつかったとき(func: TwoObjectListener) {
     this.addTwoObjectListener('ぶつかったとき', func);
+  }
+  こうげきされたとき(func: TwoObjectListener) {
+    this.addTwoObjectListener('こうげきされたとき', func);
   }
 }

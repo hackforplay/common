@@ -239,12 +239,12 @@ rule.つくられたとき(async function() {
   this.atk = 1;
   this.scale(2, 2);
 });
-// ここからキャラクターがつねに行うルール
-rule.つねに(async function() {
+// ここからキャラクターがこうげきされたときに行うルール
+rule.こうげきされたとき(async function() {
   await this.attack(); // こうげきする
   /*+ このキャラクターになにかする 条件 */
 });
-// ここまでキャラクターがつねに行うルール
+// ここまでキャラクターがこうげきされたときに行うルール
 // ここからキャラクターがたおされたときのルール
 rule.たおされたとき(async function() {
   Hack.score += 1;
