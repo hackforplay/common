@@ -1,4 +1,4 @@
-import RPGObject from './object/object';
+import { default as RPGObject } from './object/object';
 
 function throwError(error: Error) {
   return (<any>window).feeles.throwError.apply(null, arguments);
