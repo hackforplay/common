@@ -160,9 +160,7 @@ export default class Rule {
   hasTwoObjectListener(type: string, name: string) {
     const container = this._listenersOfTwo[type];
     if (!container) return false;
-    const listeners = container[name];
-    if (!listeners) return false;
-    return Boolean(listeners[name]);
+    return Boolean(container[name]);
   }
 
   /**
