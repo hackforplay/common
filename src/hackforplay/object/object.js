@@ -9,6 +9,8 @@ import BehaviorTypes from '../behavior-types';
 import RPGMap from '../rpg-map';
 import game from '../game';
 import random from '../random';
+import Rule from '../rule';
+import Camera from '../camera';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -147,6 +149,9 @@ class RPGObject extends enchant.Sprite {
     this.collider =
       this.collider ||
       new SAT.Box(new SAT.V(0, 0), this.width, this.height).toPolygon();
+
+    // warp を使うときのパラメータ
+    this.warpTarget = null; // warpTo() で新しく作られたインスタンス
 
     // ツリーに追加
     Hack.defaultParentNode.addChild(this);
@@ -863,6 +868,64 @@ class RPGObject extends enchant.Sprite {
       effect.scale(random(params.scale, params.scale * 1.5));
       effect.destroy(20);
     });
+  }
+
+  /**
+   * object の warpTo で設定された位置へ移動する
+   * @param {RPGObject} object
+   */
+  warp(object) {
+    if (!(object instanceof RPGObject)) {
+      throw new Error(
+        `${this.name} の warp に RPGObject ではなく ${object} が与えられました`
+      );
+    }
+    const { warpTarget } = object;
+    if (!(warpTarget instanceof RPGObject)) {
+      throw new Error(
+        `${
+          object.name
+        } の warpTo が設定されていません. warpTarget が ${warpTarget} です`
+      );
+    }
+    if (!warpTarget.parentNode) {
+      throw new Error(
+        `${warpTarget.name} の ワープ先のオブジェクトが削除されています. ${
+          this.name
+        } はワープできませんでした`
+      );
+    }
+    const isPlayer =
+      this === window.player ||
+      this === Hack.player ||
+      this === Camera.main.target;
+    if (isPlayer && this.map !== warpTarget.map) {
+      // プレイヤーがワープする場合は, 先にマップを変更する
+      Hack.changeMap(warpTarget.map.name);
+    }
+    this.locate(warpTarget.mapX, warpTarget.mapY, warpTarget.map.name);
+  }
+
+  /**
+   * warp の飛び先を決める
+   * @param {Number} x
+   * @param {Number} y
+   * @param {String} mapName
+   */
+  warpTo(x, y, mapName) {
+    const { _ruleInstance } = this;
+    if (!(_ruleInstance instanceof Rule)) {
+      throw new Error(
+        `warpTo を設定できません. new RPGObject(Skin.${
+          this.name
+        }) を rule.つくる('${this.name}') に書きかえてください`
+      );
+    }
+    const warpTarget = _ruleInstance.つくる(this.name); // 同じアセットを作る
+    warpTarget.locate(x, y, mapName);
+    warpTarget.warpTarget = this; // 飛び先の飛び先は自分
+    this.warpTarget = warpTarget;
+    return warpTarget;
   }
 }
 

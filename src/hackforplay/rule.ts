@@ -76,6 +76,7 @@ export default class Rule {
   つくる(name: string) {
     const object = new RPGObject();
     object.name = name;
+    object._ruleInstance = this;
     // つくられたとき
     let promise;
     if (this._つくられたとき[name]) {
