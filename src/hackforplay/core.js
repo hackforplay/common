@@ -16,6 +16,7 @@ import createCompatibleMap from './create-compatible-map';
 import loadMap from './load-map';
 import coordinate from '../mod/coordinate';
 import game from './game';
+import createDamageMod from './create-damage-mod';
 
 // Assign synonyms
 Hack.assets = Hack.assets || {};
@@ -86,3 +87,8 @@ game.on('load', coordinate);
 
 // patch to FireFox space key page down
 window.onkeydown = event => !(event.key === ' ');
+
+/**
+ * Hack.createDamageMod
+ */
+Hack.createDamageMod = createDamageMod;

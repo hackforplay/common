@@ -963,63 +963,6 @@ function makeHpLabel(self) {
   return label;
 }
 
-/**
- * ダメージを与える MOD を生成する
- * @param {number} damage
- * @param {RPGObject} attacker
- */
-Hack.createDamageMod = (damage, attacker) =>
-  function damageMod() {
-    this.isDamageObject = true; // ダメージ処理を行うフラグ
-    this.collisionFlag = false; // ダメージオブジェクトそのものは, ぶつからない
-
-    this.on('enterframe', () => {
-      // 接触している RPGObject を取得する
-      const hits = RPGObject.collection.filter(object => {
-        if (object === this) return false;
-        if (object.isDamageObject) return false;
-
-        const cols1 = this.colliders ? this.colliders : [this.collider];
-        const cols2 = object.colliders ? object.colliders : [object.collider];
-        for (const col1 of cols1) {
-          for (const col2 of cols2) {
-            const response = new SAT.Response();
-            const collided = SAT.testPolygonPolygon(col1, col2, response);
-            if (collided && response.overlap > 0) {
-              // 重なっていないのに collided になる場合がある.
-              // その場合は overlap (重なりの大きさ) が 0 になっている
-              return true;
-            }
-          }
-        }
-        return false;
-      });
-
-      // 攻撃する
-      for (const object of hits) {
-        // ダメージ処理
-        //   従来は onattacked イベントハンドラを使っていたが,
-        //   処理を上書きされないようここに移した
-        if (!object.damageTime && typeof object.hp === 'number') {
-          // ダメージ判定が起こる状態で,
-          if (isOpposite(object, this)) {
-            // 敵対している相手(もしくはその関係者)なら
-            object.damageTime = object.attackedDamageTime;
-            object.hp -= damage;
-          }
-        }
-        // attacked Event
-        object.dispatchEvent(
-          new enchant.Event('attacked', {
-            attacker: attacker || this, // attacker は弾などのエフェクトの場合もある
-            item: attacker || this, // 引数名の統一
-            damage
-          })
-        );
-      }
-    });
-  };
-
 // RPGObject.collection に必要な初期化
 RPGObject._collectionTarget = [RPGObject];
 RPGObject.collection = [];
