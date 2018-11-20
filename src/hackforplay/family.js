@@ -55,6 +55,10 @@ function hasContract(master, servant) {
   );
 }
 
+export function getMaster(servant) {
+  return servantMasterMap.get(servant);
+}
+
 /**
  * master を servant の従者オブジェクト (かつ同じファミリー) として登録する
  * @param {RPGObject} master マスターになるオブジェクト

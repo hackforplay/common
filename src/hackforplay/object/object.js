@@ -3,7 +3,7 @@ import '../../enchantjs/ui.enchant';
 import Hack from '../hack';
 import * as synonyms from '../synonyms';
 import Skin from '../skin';
-import Family, { isOpposite, registerServant } from '../family';
+import Family, { registerServant, getMaster } from '../family';
 import SAT from '../../lib/sat.min';
 import BehaviorTypes from '../behavior-types';
 import RPGMap from '../rpg-map';
@@ -155,6 +155,17 @@ class RPGObject extends enchant.Sprite {
 
     // ツリーに追加
     Hack.defaultParentNode.addChild(this);
+  }
+
+  get atk() {
+    if (typeof this._atk === 'number') return this._atk;
+    const master = getMaster(this);
+    if (master) return master.atk;
+    return 0;
+  }
+
+  set atk(value) {
+    this._atk = value;
   }
 
   get map() {
