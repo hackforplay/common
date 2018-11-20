@@ -644,11 +644,11 @@ class RPGObject extends enchant.Sprite {
             y: value[1]
           }
         : 'x' in value && 'y' in value
-          ? {
-              x: value.x,
-              y: value.y
-            }
-          : this._forward;
+        ? {
+            x: value.x,
+            y: value.y
+          }
+        : this._forward;
     var norm = Math.sqrt(vec.x * vec.x + vec.y * vec.y);
     if (norm > 0) {
       this._forward = {
@@ -946,6 +946,26 @@ class RPGObject extends enchant.Sprite {
     for (const item of items) {
       _ruleInstance.runTwoObjectListener('メッセージされたとき', item, this);
     }
+  }
+
+  /**
+   * summon の rule.つくる バージョン
+   */
+  つくる(name) {
+    const { _ruleInstance } = this;
+    if (!(_ruleInstance instanceof Rule)) {
+      throw new Error(
+        `${this.name} からメッセージを送れません. new RPGObject(Skin.${
+          this.name
+        }) を rule.つくる('${this.name}') に書きかえてください`
+      );
+    }
+    const appended = _ruleInstance.つくる(name);
+    registerServant(this, appended); // 自分と同じ Family を持つ従者とする
+    if (this.map) {
+      appended.locate(this.mapX, this.mapY, this.map.name); // 同じ場所に配置する
+    }
+    return appended;
   }
 }
 
