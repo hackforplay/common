@@ -761,6 +761,9 @@ Hack.assets.explosion = function() {
     4,
     4
   ];
+  // ダメージ判定用のポリゴン
+  this.collider = new SAT.Box(new SAT.V(this.x, this.y), 40, 40).toPolygon();
+  this.collider.setOffset(new SAT.V(-4, -4));
 };
 
 Hack.assets.ouroboros = function() {
