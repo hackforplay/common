@@ -109,10 +109,7 @@ class RPGObject extends enchant.Sprite {
     });
 
     // direction
-    this._forward = {
-      x: 0,
-      y: 0
-    };
+    this._forward = null;
 
     this._directionType = null;
 
@@ -642,24 +639,33 @@ class RPGObject extends enchant.Sprite {
   }
 
   get forward() {
-    return {
-      x: this._forward.x,
-      y: this._forward.y
-    };
+    if (this._forward) return this._forward;
+    switch (this.directionType) {
+      case 'signle':
+        return { x: 0, y: -1 };
+      case 'double':
+        return { x: 1, y: 0 };
+      default:
+        return { x: 0, y: 1 };
+    }
   }
   set forward(value) {
-    var vec =
-      value instanceof Array
-        ? {
-            x: value[0],
-            y: value[1]
-          }
-        : 'x' in value && 'y' in value
-        ? {
-            x: value.x,
-            y: value.y
-          }
-        : this._forward;
+    let vec;
+    if (Array.isArray(value)) {
+      vec = {
+        x: value[0],
+        y: value[1]
+      };
+    } else if (typeof value.x === 'number' && typeof value.y === 'number') {
+      vec = {
+        x: value.x,
+        y: value.y
+      };
+    } else {
+      throw new TypeError(
+        `${value} は forward に代入できません (${this.name})`
+      );
+    }
     var norm = Math.sqrt(vec.x * vec.x + vec.y * vec.y);
     if (norm > 0) {
       this._forward = {
