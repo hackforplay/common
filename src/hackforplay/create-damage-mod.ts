@@ -12,7 +12,7 @@ export function unregister() {
 interface DamagePair {
   damager: RPGObject;
   damage: number;
-  attacker: RPGObject;
+  attacker?: RPGObject;
 }
 
 const damagePairs: DamagePair[] = [];
@@ -22,7 +22,7 @@ const damagePairs: DamagePair[] = [];
  * @param damage
  * @param attacker
  */
-export default function createDamageMod(damage: number, attacker: RPGObject) {
+export default function createDamageMod(damage: number, attacker?: RPGObject) {
   return function damageMod(this: RPGObject) {
     this.isDamageObject = true; // ダメージ処理を行うフラグ
     this.collisionFlag = false; // ダメージオブジェクトそのものは, ぶつからない
