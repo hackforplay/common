@@ -206,7 +206,11 @@ export default class Rule {
       // rule.つねに がある
       promise = promise.then(() => this.runつねに(object));
     }
-
+    if (this.hasOneObjectLisener('こうげきするとき', name)) {
+      object.on('becomeattack', () =>
+        this.runOneObjectLisener('こうげきするとき', object)
+      );
+    }
     if (this.hasOneObjectLisener('たおされたとき', name)) {
       // rule.たおされたとき がある
       object.on('becomedead', () =>
@@ -255,6 +259,9 @@ export default class Rule {
   }
   つねに(func: OneObjectListener) {
     this.addOneObjectLisener('つねに', func);
+  }
+  こうげきするとき(func: OneObjectListener) {
+    this.addOneObjectLisener('こうげきするとき', func);
   }
   たおされたとき(func: OneObjectListener) {
     this.addOneObjectLisener('たおされたとき', func);
