@@ -260,4 +260,7 @@ export default class Rule {
   こうげきされたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('こうげきされたとき', func);
   }
+  メッセージされたとき(func: TwoObjectListener) {
+    this.addTwoObjectListener('メッセージされたとき', func);
+  }
 }

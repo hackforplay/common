@@ -927,6 +927,26 @@ class RPGObject extends enchant.Sprite {
     this.warpTarget = warpTarget;
     return warpTarget;
   }
+
+  /**
+   * rule.メッセージされたとき を発火させる
+   * @param {String} アセットの名前
+   */
+  message(name) {
+    const { _ruleInstance } = this;
+    if (!(_ruleInstance instanceof Rule)) {
+      throw new Error(
+        `${this.name} からメッセージを送れません. new RPGObject(Skin.${
+          this.name
+        }) を rule.つくる('${this.name}') に書きかえてください`
+      );
+    }
+    // 網羅的にアセットのインスタンスを調べて run する
+    const items = RPGObject.collection.filter(item => item.name === name);
+    for (const item of items) {
+      _ruleInstance.runTwoObjectListener('メッセージされたとき', item, this);
+    }
+  }
 }
 
 function makeHpLabel(self) {
