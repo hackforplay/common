@@ -201,8 +201,8 @@ class RPGObject extends enchant.Sprite {
   geneticUpdate() {
     if (!Hack.isPlaying) return;
     // enter frame
+    this.damageTime = Math.max(0, this.damageTime - 1); // fix: hp が number でなくても damageTime は減る
     if (typeof this.hp === 'number') {
-      this.damageTime = Math.max(0, this.damageTime - 1);
       if (this.damageTime > 0) {
         this.opacity = ((this.damageTime / 2 + 1) | 0) % 2; // 点滅
       }
