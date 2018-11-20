@@ -191,15 +191,12 @@ export default class Rule {
       promise = this.runOneObjectLisener('つくられたとき', object);
     }
     // しょうかんされたとき
-    if (summoner) {
-      const summonerName: string = summoner.name || '';
-      if (this.hasTwoObjectListener('しょうかんされたとき', summonerName)) {
-        promise = this.runTwoObjectListener(
-          'しょうかんされたとき',
-          object,
-          summoner
-        );
-      }
+    if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
+      promise = this.runTwoObjectListener(
+        'しょうかんされたとき',
+        object,
+        summoner
+      );
     }
     // つねに
     if (this.hasOneObjectLisener('つねに', name)) {
