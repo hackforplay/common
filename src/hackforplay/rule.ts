@@ -181,14 +181,25 @@ export default class Rule {
   }
 
   // 実際にコールする関数
-  つくる(name: string) {
+  つくる(name: string, summoner?: RPGObject) {
     const object = new RPGObject();
     object.name = name;
     object._ruleInstance = this;
     // つくられたとき
     let promise = Promise.resolve();
-    if (this.hasOneObjectLisener('つくられたとき', name)) {
+    if (!summoner && this.hasOneObjectLisener('つくられたとき', name)) {
       promise = this.runOneObjectLisener('つくられたとき', object);
+    }
+    // しょうかんされたとき
+    if (summoner) {
+      const summonerName: string = summoner.name || '';
+      if (this.hasTwoObjectListener('しょうかんされたとき', summonerName)) {
+        promise = this.runTwoObjectListener(
+          'しょうかんされたとき',
+          object,
+          summoner
+        );
+      }
     }
     // つねに
     if (this.hasOneObjectLisener('つねに', name)) {
@@ -262,5 +273,8 @@ export default class Rule {
   }
   メッセージされたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('メッセージされたとき', func);
+  }
+  しょうかんされたとき(func: TwoObjectListener) {
+    this.addTwoObjectListener('しょうかんされたとき', func);
   }
 }

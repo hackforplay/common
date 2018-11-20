@@ -929,10 +929,10 @@ class RPGObject extends enchant.Sprite {
       throw new Error(
         `warpTo を設定できません. new RPGObject(Skin.${
           this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
+        }) を rule.しょうかんする('${this.name}') に書きかえてください`
       );
     }
-    const warpTarget = _ruleInstance.つくる(this.name); // 同じアセットを作る
+    const warpTarget = _ruleInstance.しょうかんする(this.name); // 同じアセットを作る
     warpTarget.locate(x, y, mapName);
     warpTarget.warpTarget = this; // 飛び先の飛び先は自分
     this.warpTarget = warpTarget;
@@ -949,7 +949,7 @@ class RPGObject extends enchant.Sprite {
       throw new Error(
         `${this.name} からメッセージを送れません. new RPGObject(Skin.${
           this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
+        }) を rule.しょうかんする('${this.name}') に書きかえてください`
       );
     }
     // 網羅的にアセットのインスタンスを調べて run する
@@ -962,21 +962,25 @@ class RPGObject extends enchant.Sprite {
   /**
    * summon の rule.つくる バージョン
    */
-  つくる(name) {
+  しょうかんする(name) {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
         `${this.name} からメッセージを送れません. new RPGObject(Skin.${
           this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
+        }) を rule.しょうかんする('${this.name}') に書きかえてください`
       );
     }
-    const appended = _ruleInstance.つくる(name);
+    const appended = _ruleInstance.つくる(name, this);
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
     if (this.map) {
       appended.locate(this.mapX, this.mapY, this.map.name); // 同じ場所に配置する
     }
     return appended;
+  }
+
+  つくる(name) {
+    return this.しょうかんする(name); // 互換性 (~0.10)
   }
 }
 
