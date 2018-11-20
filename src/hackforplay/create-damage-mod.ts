@@ -74,22 +74,22 @@ export function update() {
       // ダメージ処理
       //   従来は onattacked イベントハンドラを使っていたが,
       //   処理を上書きされないようここに移した
-      if (!object.damageTime && typeof object.hp === 'number') {
-        // ダメージ判定が起こる状態で,
-        if (isOpposite(object, damager)) {
-          // 敵対している相手(もしくはその関係者)なら
-          object.damageTime = object.attackedDamageTime;
-          object.hp -= damage;
+      if (!object.damageTime && isOpposite(object, damager)) {
+        // ダメージ判定が起こる状態で, 敵対している相手(もしくはその関係者)なら
+
+        object.damageTime = object.attackedDamageTime; // チカチカする
+        if (typeof object.hp === 'number') {
+          object.hp -= damage; // 体力が number なら減らす
         }
+        // イベントを発火させる
+        object.dispatchEvent(
+          new enchant.Event('attacked', {
+            attacker: attacker || damager, // attacker は弾などのエフェクトの場合もある
+            item: attacker || damager, // 引数名の統一
+            damage
+          })
+        );
       }
-      // attacked Event
-      object.dispatchEvent(
-        new enchant.Event('attacked', {
-          attacker: attacker || damager, // attacker は弾などのエフェクトの場合もある
-          item: attacker || damager, // 引数名の統一
-          damage
-        })
-      );
     }
   }
 }
