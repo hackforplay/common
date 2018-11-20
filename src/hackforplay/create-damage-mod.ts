@@ -35,7 +35,9 @@ export default function createDamageMod(damage?: number, attacker?: RPGObject) {
 }
 
 export function update() {
-  const nonDamagers = RPGObject.collection.filter(item => !item.isDamageObject);
+  const nonDamagers = RPGObject.collection.filter(
+    item => !item.isDamageObject || item.damageTime > 0
+  );
 
   for (const pair of [...damagePairs]) {
     // まだ damage object としてのこっているか
@@ -64,34 +66,26 @@ export function update() {
           if (collided && response && response.overlap !== 0) {
             // 重なっていないのに collided になる場合がある.
             // その場合は overlap (重なりの大きさ) が 0 になっている
-            return true;
+            return isOpposite(item, damager); // 敵対関係のものだけを残す
           }
         }
       }
       return false;
     });
 
-    // 攻撃する
     for (const object of hits) {
-      // ダメージ処理
-      //   従来は onattacked イベントハンドラを使っていたが,
-      //   処理を上書きされないようここに移した
-      if (!object.damageTime && isOpposite(object, damager)) {
-        // ダメージ判定が起こる状態で, 敵対している相手(もしくはその関係者)なら
-
-        object.damageTime = object.attackedDamageTime; // チカチカする
-        if (typeof object.hp === 'number') {
-          object.hp -= damage; // 体力が number なら減らす
-        }
-        // イベントを発火させる
-        object.dispatchEvent(
-          new enchant.Event('attacked', {
-            attacker: attacker || damager, // attacker は弾などのエフェクトの場合もある
-            item: attacker || damager, // 引数名の統一
-            damage
-          })
-        );
+      object.damageTime = object.attackedDamageTime; // チカチカする
+      if (typeof object.hp === 'number') {
+        object.hp -= damage; // 体力が number なら減らす
       }
+      // イベントを発火させる
+      object.dispatchEvent(
+        new enchant.Event('attacked', {
+          attacker: attacker || damager, // attacker は弾などのエフェクトの場合もある
+          item: attacker || damager, // 引数名の統一
+          damage
+        })
+      );
     }
   }
 }
