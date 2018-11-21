@@ -935,10 +935,10 @@ class RPGObject extends enchant.Sprite {
       throw new Error(
         `warpTo を設定できません. new RPGObject(Skin.${
           this.name
-        }) を rule.しょうかんする('${this.name}') に書きかえてください`
+        }) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
-    const warpTarget = _ruleInstance.しょうかんする(this.name); // 同じアセットを作る
+    const warpTarget = _ruleInstance.つくる(this.name); // 同じアセットを作る
     warpTarget.locate(x, y, mapName);
     warpTarget.warpTarget = this; // 飛び先の飛び先は自分
     this.warpTarget = warpTarget;
@@ -955,7 +955,7 @@ class RPGObject extends enchant.Sprite {
       throw new Error(
         `${this.name} からメッセージを送れません. new RPGObject(Skin.${
           this.name
-        }) を rule.しょうかんする('${this.name}') に書きかえてください`
+        }) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
     // 網羅的にアセットのインスタンスを調べて run する
@@ -974,7 +974,7 @@ class RPGObject extends enchant.Sprite {
       throw new Error(
         `${this.name} からメッセージを送れません. new RPGObject(Skin.${
           this.name
-        }) を rule.しょうかんする('${this.name}') に書きかえてください`
+        }) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
     const appended = _ruleInstance.つくる(name, this);
@@ -987,6 +987,57 @@ class RPGObject extends enchant.Sprite {
 
   つくる(name) {
     return this.しょうかんする(name); // 互換性 (~0.10)
+  }
+
+  /**
+   * 指定されたアセットのインスタンスのうち一つを追う
+   * いない場合は何もしない
+   * (chase4 のシノニム)
+   * @param {String} name
+   */
+  chase(name) {
+    return this.chase4(name);
+  }
+
+  /**
+   * 指定されたアセットのインスタンスのうち一つを追う
+   * いない場合は何もしない
+   * @param {String} name
+   */
+  async chase4(name) {
+    const { map } = this;
+    const item = RPGObject.collection.find(
+      item => item.name === name && item.parentNode && item.map === map
+    );
+    if (!item) return;
+
+    const x = item.mapX - this.mapX;
+    const y = item.mapY - this.mapY;
+    if (x === 0 && y === 0) return;
+    const absX = Math.abs(x);
+    const absY = Math.abs(y);
+
+    if (absX > absY || (absX === absY && Math.random() < 0.5)) {
+      // 遠い方優先で動く. 同じだった場合はランダム
+      this.forward = { x: Math.sign(x), y: 0 };
+    } else {
+      this.forward = { x: 0, y: Math.sign(y) };
+    }
+    await this.walk(); // あるく
+  }
+
+  async chase8(name) {
+    const { map } = this;
+    const item = RPGObject.collection.find(
+      item => item.name === name && item.parentNode && item.map === map
+    );
+    if (!item) return;
+
+    const x = Math.sign(item.mapX - this.mapX);
+    const y = Math.sign(item.mapY - this.mapY);
+    if (x === 0 && y === 0) return;
+    this.forward = { x, y };
+    await this.walk(); // あるく
   }
 }
 
