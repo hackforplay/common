@@ -8,7 +8,8 @@ const Family = {
   // Japanese Synonyms
   ドクリツ: '__Independence',
   プレイヤー: 'Player',
-  エネミー: 'Enemy',
+  エネミー: 'Enemy', // Deprecated (~0.10)
+  モンスター: 'Monster',
   マップ: 'Map',
   プレイヤー2: 'Player2'
 };
