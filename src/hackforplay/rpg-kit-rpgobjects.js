@@ -920,6 +920,7 @@ Hack.skills.pistol = function(asset) {
 };
 
 game.on('enterframe', function() {
+  if (Hack.world._stop) return; // ゲームがストップしている
   var frame = game.collisionFrames || 10;
   var physicsPhantom = RPGObject.collection.filter(function(item) {
     return !item.isKinematic && !item.collisionFlag && !item._stop;
