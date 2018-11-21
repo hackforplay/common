@@ -22,11 +22,7 @@ const servantMasterMap = new WeakMap(); // 従者関係の参照を保持する�
  * @param {RPGObject} item2 別のオブジェクト
  */
 export function isOpposite(item1, item2) {
-  if (
-    item1 === item2 ||
-    hasContract(item1, item2) ||
-    hasContract(item2, item1)
-  ) {
+  if (item1 === item2 || hasContract(item1, item2)) {
     return false; // どちらかが一方の従者である
   }
   if (
@@ -41,17 +37,25 @@ export function isOpposite(item1, item2) {
 }
 
 /**
+ * どちらかがどちらかのマスターになっているかどうかを調べる
+ * @param {RPGObject} item1
+ * @param {RPGObject} item2
+ */
+export function hasContract(item1, item2) {
+  return isMaster(item1, item2) || isMaster(item2, item1);
+}
+
+/**
  *
  * @param {RPGObject} master マスターかもしれないオブジェクト
  * @param {RPGObject} servant サーヴァントかもしれないオブジェクト
  */
-function hasContract(master, servant) {
+export function isMaster(master, servant) {
   // servant => master => master's master... を再帰的に調べる
   const actualMaster = servantMasterMap.get(servant); // 直属のマスター
   // master が直属のマスターであるか, あるいは直属のマスターと契約関係にあるか
   return (
-    actualMaster &&
-    (actualMaster === master || hasContract(master, actualMaster))
+    actualMaster && (actualMaster === master || isMaster(master, actualMaster))
   );
 }
 
