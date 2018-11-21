@@ -644,7 +644,7 @@ class RPGObject extends enchant.Sprite {
       case 'signle':
         return { x: 0, y: -1 };
       case 'double':
-        return { x: 1, y: 0 };
+        return { x: -1, y: 0 };
       default:
         return { x: 0, y: 1 };
     }
