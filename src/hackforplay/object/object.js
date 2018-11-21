@@ -980,7 +980,9 @@ class RPGObject extends enchant.Sprite {
     const appended = _ruleInstance.つくる(name, this);
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
     if (this.map) {
-      appended.locate(this.mapX, this.mapY, this.map.name); // 同じ場所に配置する
+      const x = this.mapX + this.forward.x;
+      const y = this.mapY + this.forward.y;
+      appended.locate(x, y, this.map.name); // 自分の前に配置する
     }
     return appended;
   }
