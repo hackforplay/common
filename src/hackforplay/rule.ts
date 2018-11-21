@@ -98,11 +98,11 @@ export default class Rule {
   addTwoObjectListener(type: string, func: TwoObjectListener) {
     const name = this.this;
     if (!name) {
-      throw new Error(`ふまれたとき の this がありません`);
+      throw new Error(`${type} の this がありません`);
     }
     const item = this.item;
     if (!item) {
-      throw new Error(`ふまれたとき の item がありません`);
+      throw new Error(`${type} の item がありません`);
     }
     const container =
       this._listenersOfTwo[type] || (this._listenersOfTwo[type] = {});
@@ -125,12 +125,12 @@ export default class Rule {
     const specify = listeners[itemName];
     if (specify) {
       // 特定のアセットにだけ作用
-      handleError('ふまれたとき', name, specify.call(object, item));
+      handleError(type, name, specify.call(object, item));
     }
     const anyone = listeners[Anyone];
     if (anyone) {
       // 誰でも良い
-      handleError('ふまれたとき', name, anyone.call(object, item));
+      handleError(type, name, anyone.call(object, item));
     }
   }
 
@@ -186,23 +186,18 @@ export default class Rule {
     const object = new RPGObject();
     object.name = name;
     object._ruleInstance = this;
-    // つくられたとき
-    let promise = Promise.resolve();
-    if (!summoner && this.hasOneObjectLisener('つくられたとき', name)) {
-      promise = this.runOneObjectLisener('つくられたとき', object);
+    // つくられたとき (しょうかんしたときにも呼ばれる)
+    if (this.hasOneObjectLisener('つくられたとき', name)) {
+      this.runOneObjectLisener('つくられたとき', object);
     }
     // しょうかんされたとき
     if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
-      promise = this.runTwoObjectListener(
-        'しょうかんされたとき',
-        object,
-        summoner
-      );
+      this.runTwoObjectListener('しょうかんされたとき', object, summoner);
     }
     // つねに
     if (this.hasOneObjectLisener('つねに', name)) {
       // rule.つねに がある
-      promise = promise.then(() => this.runつねに(object));
+      this.runつねに(object);
     }
     if (this.hasOneObjectLisener('こうげきするとき', name)) {
       object.on('becomeattack', () =>
