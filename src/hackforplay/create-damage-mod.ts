@@ -36,7 +36,7 @@ export default function createDamageMod(damage?: number, attacker?: RPGObject) {
 
 export function update() {
   const nonDamagers = RPGObject.collection.filter(
-    item => !item.isDamageObject || item.damageTime > 0
+    item => !item.isDamageObject || item.damageTime === 0
   );
 
   for (const pair of [...damagePairs]) {
