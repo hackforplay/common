@@ -1,4 +1,5 @@
 import { default as RPGObject } from './object/object';
+import { hasContract } from './family';
 
 interface Event {
   item: RPGObject;
@@ -222,9 +223,15 @@ export default class Rule {
     }
     if (this.hasTwoObjectListener('ぶつかったとき', name)) {
       // rule.ぶつかったとき がある
-      object.on('triggerenter', (event: Event) =>
-        this.runTwoObjectListener('ぶつかったとき', object, event.item)
-      );
+      object.on('triggerenter', (event: Event) => {
+        if (event && event.item) {
+          const { collisionFlag } = event.item;
+          if (collisionFlag && !hasContract(object, event.item)) {
+            // item が障害物で、かつ互いに「しょうかんされた」ものではないとき
+            this.runTwoObjectListener('ぶつかったとき', object, event.item);
+          }
+        }
+      });
     }
     if (
       this.hasOneObjectLisener('すすめなかったとき', name) ||
