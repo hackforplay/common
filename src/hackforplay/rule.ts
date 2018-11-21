@@ -1,5 +1,6 @@
 import { default as RPGObject } from './object/object';
 import { hasContract } from './family';
+import { default as Hack } from './hack';
 
 interface Event {
   item: RPGObject;
@@ -171,6 +172,9 @@ export default class Rule {
   runつねに(object: RPGObject) {
     // TODO: パフォーマンスが悪化しそうなので改善する
     requestAnimationFrame(() => {
+      if (Hack.world._stop || object._stop) {
+        return this.runつねに(object);
+      }
       this.runOneObjectLisener('つねに', object).then(() =>
         this.runつねに(object)
       );
