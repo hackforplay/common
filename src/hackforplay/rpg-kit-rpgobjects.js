@@ -77,7 +77,6 @@ Hack.assets.knight = function() {
   this.setFrameD9(BehaviorTypes.Damaged, [2, -1, -1, -1, 2, 2, 2, -1, -1, -1]);
   this.setFrameD9(BehaviorTypes.Dead, [1, null]);
   this.directionType = 'quadruple';
-  this.forward = [0, 1];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 28, 38).toPolygon();
   this.collider.setOffset(new SAT.V(10, 6));
@@ -118,7 +117,6 @@ Hack.assets.magician = function() {
   this.setFrameD9(BehaviorTypes.Damaged, [2, -1, -1, -1, 2, 2, 2, -1, -1, -1]);
   this.setFrameD9(BehaviorTypes.Dead, [1, null]);
   this.directionType = 'quadruple';
-  this.forward = [0, 1];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 28, 38).toPolygon();
   this.collider.setOffset(new SAT.V(10, 6));
@@ -156,7 +154,6 @@ Hack.assets.slime = function() {
   this.setFrame(BehaviorTypes.Damaged, [4, 4, 4, 4, 5, 5, 5, 5]);
   this.setFrame(BehaviorTypes.Dead, [5, 5, 5, 5, 7, 7, 7, null]);
   this.directionType = 'double';
-  this.forward = [-1, 0];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 28, 28).toPolygon();
   this.collider.setOffset(new SAT.V(10, 10));
@@ -194,7 +191,6 @@ Hack.assets.insect = function() {
   this.setFrame(BehaviorTypes.Damaged, [4, 4, 4, 4, 5, 5, 5, 5]);
   this.setFrame(BehaviorTypes.Dead, [5, 5, 5, 5, 7, 7, 7, null]);
   this.directionType = 'double';
-  this.forward = [-1, 0];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 36, 28).toPolygon();
   this.collider.setOffset(new SAT.V(6, 18));
@@ -232,7 +228,6 @@ Hack.assets.spider = function() {
   this.setFrame(BehaviorTypes.Damaged, [4, 4, 4, 4, 5, 5, 5, 5]);
   this.setFrame(BehaviorTypes.Dead, [5, 5, 5, 5, 7, 7, 7, null]);
   this.directionType = 'double';
-  this.forward = [-1, 0];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 56, 40).toPolygon();
   this.collider.setOffset(new SAT.V(4, 18));
@@ -274,7 +269,6 @@ Hack.assets.bat = function() {
   this.setFrame(BehaviorTypes.Damaged, [4, 4, 4, 4, 5, 5, 5, 5]);
   this.setFrame(BehaviorTypes.Dead, [5, 5, 5, 5, 7, 7, 7, null]);
   this.directionType = 'double';
-  this.forward = [-1, 0];
   this.mod(Hack.assets.shadowMod);
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 40, 26).toPolygon();
@@ -421,7 +415,6 @@ Hack.assets.dragon = function() {
     null
   ]);
   this.directionType = 'double';
-  this.forward = [-1, 0];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 48, 48).toPolygon();
   this.collider.setOffset(new SAT.V(16, 16));
@@ -549,7 +542,6 @@ Hack.assets.minotaur = function() {
     null
   ]);
   this.directionType = 'double';
-  this.forward = [-1, 0];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 48, 48).toPolygon();
   this.collider.setOffset(new SAT.V(16, 16));
@@ -600,7 +592,6 @@ Hack.assets.boy = function() {
   ]);
   this.setFrameD9(BehaviorTypes.Dead, [_1, null]);
   this.directionType = 'quadruple';
-  this.forward = [0, 1];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 24, 34).toPolygon();
   this.collider.setOffset(new SAT.V(12, 14));
@@ -651,7 +642,6 @@ Hack.assets.girl = function() {
   ]);
   this.setFrameD9(BehaviorTypes.Dead, [_1, null]);
   this.directionType = 'quadruple';
-  this.forward = [0, 1];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 24, 34).toPolygon();
   this.collider.setOffset(new SAT.V(12, 14));
@@ -702,7 +692,6 @@ Hack.assets.woman = function() {
   ]);
   this.setFrameD9(BehaviorTypes.Dead, [_1, null]);
   this.directionType = 'quadruple';
-  this.forward = [0, 1];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 24, 34).toPolygon();
   this.collider.setOffset(new SAT.V(12, 14));
@@ -717,7 +706,6 @@ Hack.assets.enchantBookItem = function() {
     y: 0
   };
   this.directionType = 'single';
-  this.forward = [0, -1];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 28, 28).toPolygon();
   this.collider.setOffset(new SAT.V(2, 2));
@@ -731,7 +719,6 @@ Hack.assets.explosion = function() {
     y: 0
   };
   this.directionType = 'single';
-  this.forward = [0, -1];
   this.frame = [
     0,
     0,
@@ -815,7 +802,6 @@ Hack.assets.ouroboros = function() {
     null
   ]);
   this.setFrame(BehaviorTypes.Dead, [1, 5, 7, 7, 7, 7, 4, 0, 0, null]);
-  this.forward = [-1, 0];
   // ダメージ判定用のポリゴン
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 60, 36).toPolygon();
   this.collider.setOffset(new SAT.V(10, 38));
@@ -833,7 +819,6 @@ Object.keys(dictionary).forEach(function(name) {
     // 衝突判定用のポリゴン
     this.collider = new SAT.Box(new SAT.V(this.x, this.y), 32, 32).toPolygon();
     this.directionType = 'single';
-    this.forward = [0, -1];
   };
 });
 
