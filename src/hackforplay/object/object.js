@@ -673,7 +673,7 @@ class RPGObject extends enchant.Sprite {
         y: vec.y / norm
       };
     }
-    switch (this.directionType) {
+    switch (this._directionType) {
       case 'single':
         // 画像は上向きと想定する
         var rad = Math.atan2(this._forward.y, this._forward.x);
@@ -689,6 +689,9 @@ class RPGObject extends enchant.Sprite {
       case 'quadruple':
         var dir = Hack.Vec2Dir(this._forward);
         this.frame = [dir * 9 + (this.frame % 9)];
+        break;
+      default:
+        // 未設定
         break;
     }
   }
