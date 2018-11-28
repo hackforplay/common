@@ -198,6 +198,15 @@ export default class Rule {
     const object = new RPGObject();
     object.name = name;
     object._ruleInstance = this;
+    // つくられたとき (しょうかんしたときにも呼ばれる)
+    if (this.hasOneObjectLisener('つくられたとき', name)) {
+      this.runOneObjectLisener('つくられたとき', object);
+    }
+    // しょうかんされたとき
+    if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
+      this.runTwoObjectListener('しょうかんされたとき', object, summoner);
+    }
+
     // インスタンスごとのパラメータ指定
     if (dir) {
       object.forward = dir();
@@ -207,14 +216,7 @@ export default class Rule {
     } else if (x !== undefined) {
       object.locate(x, object.mapY, map);
     }
-    // つくられたとき (しょうかんしたときにも呼ばれる)
-    if (this.hasOneObjectLisener('つくられたとき', name)) {
-      this.runOneObjectLisener('つくられたとき', object);
-    }
-    // しょうかんされたとき
-    if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
-      this.runTwoObjectListener('しょうかんされたとき', object, summoner);
-    }
+
     // つねに
     if (this.hasOneObjectLisener('つねに', name)) {
       // rule.つねに がある
