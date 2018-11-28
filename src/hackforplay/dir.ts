@@ -1,5 +1,9 @@
 import { default as Vector2 } from './math/vector2';
 
+export interface Dir {
+  (): Vector2;
+}
+
 export function up() {
   return new Vector2(0, -1);
 }
