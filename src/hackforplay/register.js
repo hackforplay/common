@@ -13,6 +13,7 @@ import TextArea from './ui/textarea';
 import Rule from './rule';
 import enchant from '../enchantjs/enchant';
 import random from './random';
+import * as Dir from './dir';
 
 export default function register(_global) {
   // Export to global
@@ -31,4 +32,5 @@ export default function register(_global) {
   _global.Rule = _global.Rule || Rule;
   _global.enchant = _global.enchant || enchant;
   _global.random = _global.random || random;
+  _global.Dir = _global.Dir || Dir;
 }
