@@ -980,18 +980,20 @@ class RPGObject extends enchant.Sprite {
         }) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
-    const appended = _ruleInstance.つくる(name, this);
+    const appended = _ruleInstance.つくる(
+      name,
+      this.mapX + this.forward.x,
+      this.mapY + this.forward.y,
+      this.map ? this.map.name : undefined,
+      undefined,
+      this
+    );
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
-    if (this.map) {
-      const x = this.mapX + this.forward.x;
-      const y = this.mapY + this.forward.y;
-      appended.locate(x, y, this.map.name); // 自分の前に配置する
-    }
     return appended;
   }
 
-  つくる(name) {
-    return this.しょうかんする(name); // 互換性 (~0.10)
+  つくる() {
+    return this.しょうかんする.apply(this, arguments); // 互換性 (~0.10)
   }
 
   /**

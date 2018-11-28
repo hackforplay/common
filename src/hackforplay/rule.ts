@@ -1,6 +1,7 @@
 import { default as RPGObject } from './object/object';
 import { hasContract } from './family';
 import { default as Hack } from './hack';
+import { Dir } from './dir';
 
 interface Event {
   item: RPGObject;
@@ -186,10 +187,26 @@ export default class Rule {
   }
 
   // 実際にコールする関数
-  つくる(name: string, summoner?: RPGObject) {
+  つくる(
+    name: string,
+    x?: number,
+    y?: number,
+    map?: string,
+    dir?: Dir,
+    summoner?: RPGObject
+  ) {
     const object = new RPGObject();
     object.name = name;
     object._ruleInstance = this;
+    // インスタンスごとのパラメータ指定
+    if (dir) {
+      object.forward = dir();
+    }
+    if (y !== undefined) {
+      object.locate(x, y, map);
+    } else if (x !== undefined) {
+      object.locate(x, object.mapY, map);
+    }
     // つくられたとき (しょうかんしたときにも呼ばれる)
     if (this.hasOneObjectLisener('つくられたとき', name)) {
       this.runOneObjectLisener('つくられたとき', object);
