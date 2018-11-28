@@ -1046,6 +1046,10 @@ class RPGObject extends enchant.Sprite {
     this.forward = { x, y };
     await this.walk(); // あるく
   }
+
+  set dir(dir) {
+    this.forward = dir();
+  }
 }
 
 function makeHpLabel(self) {
