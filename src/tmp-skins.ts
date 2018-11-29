@@ -35,7 +35,7 @@ for (const key of Object.keys(avatars)) {
     this.height = height / 4;
     this.offset = {
       x: -(this.width - unitSize) / 2,
-      y: -(this.height - unitSize) / 2
+      y: -(this.height - unitSize) / 1.2
     };
 
     this._graphicColumn = 6; // ６列画像に対応
