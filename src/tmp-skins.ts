@@ -72,46 +72,46 @@ function setFrameD6(
 }
 
 const items = {
-  ビーム: 'beam',
-  ボム: 'bomb',
-  コイン: 'coin',
-  ダイヤモンド: 'diamond',
-  とじたゲート_ブルー: 'gate_b_c',
-  ひらいたゲート_ブルー: 'gate_b_o',
-  とじたゲート_グリーン: 'gate_g_c',
-  ひらいたゲート_グリーン: 'gate_g_o',
-  とじたゲート_レッド: 'gate_r_c',
-  ひらいたゲート_レッド: 'gate_r_o',
-  とじたゲート_イエロー: 'gate_y_c',
-  ひらいたゲート_イエロー: 'gate_y_o',
-  ハート: 'heart',
-  カギ_ブルー: 'key_b',
-  カギ_グリーン: 'key_g',
-  カギ_レッド: 'key_r',
-  カギ_イエロー: 'key_y',
-  かいだん: 'stairs',
-  スター: 'star',
-  とじたたからばこ_ブルー: 'tbox_b_c',
-  ひらいたたからばこ_ブルー: 'tbox_b_o',
-  とじたたからばこ_グリーン: 'tbox_g_c',
-  ひらいたたからばこ_グリーン: 'tbox_g_o',
-  とじたたからばこ_レッド: 'tbox_r_c',
-  ひらいたたからばこ_レッド: 'tbox_r_o',
-  とじたたからばこ_イエロー: 'tbox_y_c',
-  ひらいたたからばこ_イエロー: 'tbox_y_o'
+  ビーム: ['beam', 32, 32],
+  ボム: ['bomb', 32, 32],
+  コイン: ['coin', 32, 32],
+  ダイヤモンド: ['diamond', 32, 32],
+  とじたゲート_ブルー: ['gate_b_c', 32, 48],
+  ひらいたゲート_ブルー: ['gate_b_o', 32, 48],
+  とじたゲート_グリーン: ['gate_g_c', 32, 48],
+  ひらいたゲート_グリーン: ['gate_g_o', 32, 48],
+  とじたゲート_レッド: ['gate_r_c', 32, 48],
+  ひらいたゲート_レッド: ['gate_r_o', 32, 48],
+  とじたゲート_イエロー: ['gate_y_c', 32, 48],
+  ひらいたゲート_イエロー: ['gate_y_o', 32, 48],
+  ハート: ['heart', 32, 32],
+  カギ_ブルー: ['key_b', 32, 32],
+  カギ_グリーン: ['key_g', 32, 32],
+  カギ_レッド: ['key_r', 32, 32],
+  カギ_イエロー: ['key_y', 32, 32],
+  かいだん: ['stairs', 32, 32],
+  スター: ['star', 32, 32],
+  とじたたからばこ_ブルー: ['tbox_b_c', 32, 32],
+  ひらいたたからばこ_ブルー: ['tbox_b_o', 32, 32],
+  とじたたからばこ_グリーン: ['tbox_g_c', 32, 32],
+  ひらいたたからばこ_グリーン: ['tbox_g_o', 32, 32],
+  とじたたからばこ_レッド: ['tbox_r_c', 32, 32],
+  ひらいたたからばこ_レッド: ['tbox_r_o', 32, 32],
+  とじたたからばこ_イエロー: ['tbox_y_c', 32, 32],
+  ひらいたたからばこ_イエロー: ['tbox_y_o', 32, 32]
 };
 
 for (const key of Object.keys(items)) {
-  const fileName = items[key];
+  const [fileName, width, height] = items[key];
   const src = `resources/0.10.x/icons/${fileName}.png`;
   game.preload(src);
 
   // 追加
   const func = function(this: RPGObject) {
     this.image = game.assets[src];
-    this.width = unitSize;
-    this.height = unitSize;
-    this.offset = { x: 0, y: 0 };
+    this.width = width;
+    this.height = height;
+    this.offset = { x: 0, y: -(this.height - unitSize) };
 
     this.setFrame(BehaviorTypes.Idle, [1]);
     this.setFrame(BehaviorTypes.Walk, [].concat(a(0, 10), null));
@@ -121,6 +121,7 @@ for (const key of Object.keys(items)) {
     // this.directionType = 'single';
     // ダメージ判定用のポリゴン
     this.collider = new SAT.Box(new SAT.V(this.x, this.y), 32, 32).toPolygon();
+    this.collider.setOffset(new SAT.V(-this.offset.x, -this.offset.y));
   };
   Skin[key] = func;
   Skin.__name.set(func, key);
