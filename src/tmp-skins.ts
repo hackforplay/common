@@ -6,25 +6,28 @@ import { default as SAT } from './lib/sat.min';
 import { default as BehaviorTypes } from './hackforplay/behavior-types';
 
 const unitSize = 32; // タイルの大きさ
-const a = (n, l) => {
-  const array = new Array(l);
-  for (let i = array.length - 1; i >= 0; i--) array[i] = n;
+const a = (...args: any[]): any[] => {
+  const array = [];
+  for (let index = 0; index < args.length; index += 2) {
+    const n = args[index];
+    const l: number = args[index + 1];
+    for (let i = 0; i < l; i++) array.push(n);
+  }
   return array;
 };
 
-const avatars = {
-  ドラゴン: ['dragon', 456, 240],
-  しにがみ: ['grim-reaper', 288, 240],
-  ナイト_おんな: ['knight-female', 240, 224],
-  ナイト_おとこ: ['knight-male', 240, 224],
-  リザードマン: ['lizardman', 240, 144],
-  プリンセス: ['princess', 240, 224],
-  スライム: ['slime', 192, 160],
-  ウィザード: ['wizard', 240, 224]
-};
+const avatars = [
+  { key: 'ドラゴン', fileName: 'dragon', width: 456, height: 240 },
+  { key: 'しにがみ', fileName: 'grim-reaper', width: 288, height: 240 },
+  { key: 'ナイト_おんな', fileName: 'knight-female', width: 240, height: 224 },
+  { key: 'ナイト_おとこ', fileName: 'knight-male', width: 240, height: 224 },
+  { key: 'リザードマン', fileName: 'lizardman', width: 240, height: 144 },
+  { key: 'プリンセス', fileName: 'princess', width: 240, height: 224 },
+  { key: 'スライム', fileName: 'slime', width: 192, height: 160 },
+  { key: 'ウィザード', fileName: 'wizard', width: 240, height: 224 }
+];
 
-for (const key of Object.keys(avatars)) {
-  const [fileName, width, height] = avatars[key];
+for (const { key, fileName, width, height } of avatars) {
   const src = `resources/0.10.x/avatars/${fileName}.png`;
   game.preload(src);
 
@@ -41,68 +44,104 @@ for (const key of Object.keys(avatars)) {
     this._graphicColumn = 6; // ６列画像に対応
     setFrameD6(this, BehaviorTypes.Idle, [1]);
     setFrameD6(this, BehaviorTypes.Walk, [0, 0, 0, 1, 1, 1, 2, 2, 2, 1, null]);
-    setFrameD6(
-      this,
-      BehaviorTypes.Attack,
-      [].concat(a(3, 4), a(4, 4), a(5, 4), null)
-    );
-    setFrameD6(
-      this,
-      BehaviorTypes.Damaged,
-      [].concat(2, a(-1, 3), a(2, 3), a(-1, 3))
-    );
+    setFrameD6(this, BehaviorTypes.Attack, a(3, 4, 4, 4, 5, 4, null, 1));
     setFrameD6(this, BehaviorTypes.Dead, [1, null]);
     this.directionType = 'quadruple';
     // ダメージ判定用のポリゴン
     this.collider = new SAT.Box(new SAT.V(this.x, this.y), 32, 32).toPolygon();
     this.collider.setOffset(new SAT.V(-this.offset.x, -this.offset.y));
   };
-  Skin[key] = func;
-  Skin.__name.set(func, key);
+  (<any>Skin)[key] = func;
+  (<any>Skin).__name.set(func, key);
 }
 
-function setFrameD6(
-  object: RPGObject,
-  behavior: string,
-  frame: (number | null)[]
-) {
+function setFrameD6(object: RPGObject, behavior: string, frame: any[]) {
   object.setFrame(behavior, () =>
     frame.map(i => (i !== null && i >= 0 ? i + object.direction * 6 : i))
   );
 }
 
-const items = {
-  ビーム: ['beam', 32, 32],
-  ボム: ['bomb', 32, 32],
-  コイン: ['coin', 32, 32],
-  ダイヤモンド: ['diamond', 32, 32],
-  とじたゲート_ブルー: ['gate_b_c', 32, 48],
-  ひらいたゲート_ブルー: ['gate_b_o', 32, 48],
-  とじたゲート_グリーン: ['gate_g_c', 32, 48],
-  ひらいたゲート_グリーン: ['gate_g_o', 32, 48],
-  とじたゲート_レッド: ['gate_r_c', 32, 48],
-  ひらいたゲート_レッド: ['gate_r_o', 32, 48],
-  とじたゲート_イエロー: ['gate_y_c', 32, 48],
-  ひらいたゲート_イエロー: ['gate_y_o', 32, 48],
-  ハート: ['heart', 32, 32],
-  かぎ_ブルー: ['key_b', 32, 32],
-  かぎ_グリーン: ['key_g', 32, 32],
-  かぎ_レッド: ['key_r', 32, 32],
-  かぎ_イエロー: ['key_y', 32, 32],
-  かいだん: ['stairs', 32, 32],
-  スター: ['star', 32, 32],
-  とじたたからばこ_ブルー: ['tbox_b_c', 32, 32],
-  ひらいたたからばこ_ブルー: ['tbox_b_o', 32, 32],
-  とじたたからばこ_グリーン: ['tbox_g_c', 32, 32],
-  ひらいたたからばこ_グリーン: ['tbox_g_o', 32, 32],
-  とじたたからばこ_レッド: ['tbox_r_c', 32, 32],
-  ひらいたたからばこ_レッド: ['tbox_r_o', 32, 32],
-  とじたたからばこ_イエロー: ['tbox_y_c', 32, 32],
-  ひらいたたからばこ_イエロー: ['tbox_y_o', 32, 32]
-};
+const items = [
+  { key: 'ビーム', fileName: 'beam', width: 32, height: 32 },
+  { key: 'ボム', fileName: 'bomb', width: 32, height: 32 },
+  { key: 'コイン', fileName: 'coin', width: 32, height: 32 },
+  { key: 'ダイヤモンド', fileName: 'diamond', width: 32, height: 32 },
+  { key: 'とじたゲート_ブルー', fileName: 'gate_b_c', width: 32, height: 48 },
+  { key: 'ひらいたゲート_ブルー', fileName: 'gate_b_o', width: 32, height: 48 },
+  { key: 'とじたゲート_グリーン', fileName: 'gate_g_c', width: 32, height: 48 },
+  {
+    key: 'ひらいたゲート_グリーン',
+    fileName: 'gate_g_o',
+    width: 32,
+    height: 48
+  },
+  { key: 'とじたゲート_レッド', fileName: 'gate_r_c', width: 32, height: 48 },
+  { key: 'ひらいたゲート_レッド', fileName: 'gate_r_o', width: 32, height: 48 },
+  { key: 'とじたゲート_イエロー', fileName: 'gate_y_c', width: 32, height: 48 },
+  {
+    key: 'ひらいたゲート_イエロー',
+    fileName: 'gate_y_o',
+    width: 32,
+    height: 48
+  },
+  { key: 'ハート', fileName: 'heart', width: 32, height: 32 },
+  { key: 'かぎ_ブルー', fileName: 'key_b', width: 32, height: 32 },
+  { key: 'かぎ_グリーン', fileName: 'key_g', width: 32, height: 32 },
+  { key: 'かぎ_レッド', fileName: 'key_r', width: 32, height: 32 },
+  { key: 'かぎ_イエロー', fileName: 'key_y', width: 32, height: 32 },
+  { key: 'かいだん', fileName: 'stairs', width: 32, height: 32 },
+  { key: 'スター', fileName: 'star', width: 32, height: 32 },
+  {
+    key: 'とじたたからばこ_ブルー',
+    fileName: 'tbox_b_c',
+    width: 32,
+    height: 32
+  },
+  {
+    key: 'ひらいたたからばこ_ブルー',
+    fileName: 'tbox_b_o',
+    width: 32,
+    height: 32
+  },
+  {
+    key: 'とじたたからばこ_グリーン',
+    fileName: 'tbox_g_c',
+    width: 32,
+    height: 32
+  },
+  {
+    key: 'ひらいたたからばこ_グリーン',
+    fileName: 'tbox_g_o',
+    width: 32,
+    height: 32
+  },
+  {
+    key: 'とじたたからばこ_レッド',
+    fileName: 'tbox_r_c',
+    width: 32,
+    height: 32
+  },
+  {
+    key: 'ひらいたたからばこ_レッド',
+    fileName: 'tbox_r_o',
+    width: 32,
+    height: 32
+  },
+  {
+    key: 'とじたたからばこ_イエロー',
+    fileName: 'tbox_y_c',
+    width: 32,
+    height: 32
+  },
+  {
+    key: 'ひらいたたからばこ_イエロー',
+    fileName: 'tbox_y_o',
+    width: 32,
+    height: 32
+  }
+];
 
-for (const key of Object.keys(items)) {
-  const [fileName, width, height] = items[key];
+for (const { key, fileName, width, height } of items) {
   const src = `resources/0.10.x/icons/${fileName}.png`;
   game.preload(src);
 
@@ -114,15 +153,14 @@ for (const key of Object.keys(items)) {
     this.offset = { x: 0, y: -(this.height - unitSize) };
 
     this.setFrame(BehaviorTypes.Idle, [1]);
-    this.setFrame(BehaviorTypes.Walk, [].concat(a(0, 10), null));
-    this.setFrame(BehaviorTypes.Attack, [].concat(a(0, 12), null));
-    this.setFrame(BehaviorTypes.Damaged, a(0, 9));
+    this.setFrame(BehaviorTypes.Walk, a(0, 10, null, 1));
+    this.setFrame(BehaviorTypes.Attack, a(0, 12, null, 1));
     this.setFrame(BehaviorTypes.Dead, [0, null]);
     // this.directionType = 'single';
     // ダメージ判定用のポリゴン
     this.collider = new SAT.Box(new SAT.V(this.x, this.y), 32, 32).toPolygon();
     this.collider.setOffset(new SAT.V(-this.offset.x, -this.offset.y));
   };
-  Skin[key] = func;
-  Skin.__name.set(func, key);
+  (<any>Skin)[key] = func;
+  (<any>Skin).__name.set(func, key);
 }
