@@ -688,7 +688,8 @@ class RPGObject extends enchant.Sprite {
         break;
       case 'quadruple':
         var dir = Hack.Vec2Dir(this._forward);
-        this.frame = [dir * 9 + (this.frame % 9)];
+        const c = this._graphicColumn || 9; // ６列画像に対応する
+        this.frame = [dir * c + (this.frame % c)];
         break;
       default:
         // 未設定

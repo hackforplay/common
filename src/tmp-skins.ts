@@ -38,17 +38,20 @@ for (const key of Object.keys(avatars)) {
       y: -(this.height - unitSize) / 2
     };
 
-    this.setFrameD9(BehaviorTypes.Idle, [1]);
-    this.setFrameD9(BehaviorTypes.Walk, [0, 0, 0, 1, 1, 1, 2, 2, 2, 1, null]);
-    this.setFrameD9(
+    this._graphicColumn = 6; // ６列画像に対応
+    setFrameD6(this, BehaviorTypes.Idle, [1]);
+    setFrameD6(this, BehaviorTypes.Walk, [0, 0, 0, 1, 1, 1, 2, 2, 2, 1, null]);
+    setFrameD6(
+      this,
       BehaviorTypes.Attack,
       [].concat(a(3, 4), a(4, 4), a(5, 4), null)
     );
-    this.setFrameD9(
+    setFrameD6(
+      this,
       BehaviorTypes.Damaged,
       [].concat(2, a(-1, 3), a(2, 3), a(-1, 3))
     );
-    this.setFrameD9(BehaviorTypes.Dead, [1, null]);
+    setFrameD6(this, BehaviorTypes.Dead, [1, null]);
     this.directionType = 'quadruple';
     // ダメージ判定用のポリゴン
     this.collider = new SAT.Box(new SAT.V(this.x, this.y), 32, 32).toPolygon();
@@ -56,6 +59,16 @@ for (const key of Object.keys(avatars)) {
   };
   Skin[key] = func;
   Skin.__name.set(func, key);
+}
+
+function setFrameD6(
+  object: RPGObject,
+  behavior: string,
+  frame: (number | null)[]
+) {
+  object.setFrame(behavior, () =>
+    frame.map(i => (i !== null && i >= 0 ? i + object.direction * 6 : i))
+  );
 }
 
 const items = {
