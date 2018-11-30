@@ -60,6 +60,10 @@ export default class Rule {
       };
     };
   } = {};
+  // collections
+  _collections: {
+    [type: string]: RPGObject[];
+  } = {};
 
   addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
@@ -166,6 +170,26 @@ export default class Rule {
     return Boolean(container[name]);
   }
 
+  addToCollection(name: string, object: RPGObject) {
+    const collections =
+      this._collections[name] || (this._collections[name] = []);
+    collections.push(object);
+  }
+
+  /**
+   * あるアセットに向けてメッセージをおくる.
+   * メッセージされたとき ルールが実行される
+   * @param sender
+   * @param name
+   */
+  message(sender: RPGObject, name: string) {
+    const collections = this._collections[name];
+    if (!collections) return;
+    for (const item of collections) {
+      this.runTwoObjectListener('メッセージされたとき', item, sender);
+    }
+  }
+
   /**
    * 「つねに」を再帰的にコールするラッパー
    * @param object RPGObject
@@ -270,6 +294,7 @@ export default class Rule {
         this.runTwoObjectListener('こうげきされたとき', object, event.item);
       });
     }
+    this.addToCollection(name, object); // コレクションからは永久に消えない
     return object;
   }
 

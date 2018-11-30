@@ -962,11 +962,7 @@ class RPGObject extends enchant.Sprite {
         }) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
-    // 網羅的にアセットのインスタンスを調べて run する
-    const items = RPGObject.collection.filter(item => item.name === name);
-    for (const item of items) {
-      _ruleInstance.runTwoObjectListener('メッセージされたとき', item, this);
-    }
+    _ruleInstance.message(this, name);
   }
 
   /**
