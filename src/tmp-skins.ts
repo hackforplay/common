@@ -63,6 +63,22 @@ function setFrameD6(object: RPGObject, behavior: string, frame: any[]) {
 
 const items = [
   { key: 'ビーム', fileName: 'beam', width: 32, height: 32 },
+  {
+    key: 'まほうじん_オン',
+    fileName: 'magic-circle-on',
+    width: 32,
+    height: 32
+  },
+  {
+    key: 'まほうじん_オフ',
+    fileName: 'magic-circle-off',
+    width: 32,
+    height: 32
+  },
+  { key: 'ワープ_ブルー', fileName: 'warp-b', width: 32, height: 32 },
+  { key: 'ワープ_グリーン', fileName: 'warp-g', width: 32, height: 32 },
+  { key: 'ワープ_レッド', fileName: 'warp-r', width: 32, height: 32 },
+  { key: 'ワープ_イエロー', fileName: 'warp-y', width: 32, height: 32 },
   { key: 'ボム', fileName: 'bomb', width: 32, height: 32 },
   { key: 'コイン', fileName: 'coin', width: 32, height: 32 },
   { key: 'ダイヤモンド', fileName: 'diamond', width: 32, height: 32 },
