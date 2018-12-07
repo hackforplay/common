@@ -36,14 +36,15 @@ export default function createDamageMod(damage?: number, attacker?: RPGObject) {
 
 export function update() {
   const nonDamagers = RPGObject.collection.filter(
-    item => !item.isDamageObject && item.damageTime === 0
-  );
+    item => !item.isDamageObject && item.damageTime === 0 && item.scene
+  ); // ダメージをうける可能性のあるオブジェクト
 
   for (const pair of [...damagePairs]) {
     // まだ damage object としてのこっているか
     const index = damagePairs.indexOf(pair);
     if (index === -1) continue;
     const { damager, attacker } = pair;
+    if (!damager.scene) continue; // 異なるマップのダメージオブジェクトをスキップ
     const damage =
       typeof pair.damage === 'number' ? pair.damage : <number>damager.atk;
     if (
