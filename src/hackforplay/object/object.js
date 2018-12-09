@@ -246,7 +246,16 @@ class RPGObject extends enchant.Sprite {
         Hack.maps[mapName].scene.addChild(this);
       }
     } else if (typeof mapName === 'string') {
-      Hack.log(`${mapName} は まだつくられていない`);
+      const hasZenkaku = /[０-９]/.exec(mapName);
+      if (hasZenkaku) {
+        Hack.log(
+          `locate(${fromLeft}, ${fromTop}, ${mapName}) には全角の${
+            hasZenkaku[0]
+          }が入っています！全角/半角を押して半角文字にしましょう`
+        );
+      } else {
+        Hack.log(`${mapName} は まだつくられていない`);
+      }
     }
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
