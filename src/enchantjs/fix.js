@@ -331,3 +331,18 @@ function reportAsyncError(maybePromise, event, _this) {
     });
   }
 }
+
+/**
+ * フォーカスが外れたとき, 全ての入力をオフにする
+ */
+window.addEventListener('blur', () => {
+  const core = enchant.Core.instance;
+  if (!core) return;
+  const manager = core.keyboardInputManager;
+  for (const key of Object.keys(manager.valueStore)) {
+    if (manager.valueStore[key] === true) {
+      // BinaryInput かつ state が true のとき
+      manager.changeState(key, false);
+    }
+  }
+});
