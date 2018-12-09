@@ -2,7 +2,7 @@ import enchant from '../../enchantjs/enchant';
 import '../../enchantjs/ui.enchant';
 import Hack from '../hack';
 import * as synonyms from '../synonyms';
-import Skin from '../skin';
+import Skin from '../deprecated-skin';
 import Family, { registerServant, getMaster } from '../family';
 import SAT from '../../lib/sat.min';
 import BehaviorTypes from '../behavior-types';

@@ -1,5 +1,5 @@
 // v0.10.x で新しいスキンを使えるようにするための暫定処理. スキンを新しい API にして、これを消す
-import { default as Skin } from './hackforplay/skin';
+import { default as Skin } from './hackforplay/deprecated-skin';
 import { default as game } from './hackforplay/game';
 import { default as RPGObject } from './hackforplay/object/object';
 import { default as SAT } from './lib/sat.min';

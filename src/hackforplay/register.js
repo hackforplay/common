@@ -1,5 +1,5 @@
 import Hack from './hack';
-import Skin from './skin';
+import Skin from './deprecated-skin';
 import Family from './family';
 import RPGObject from './object/object';
 import MapObject from './object/map-object';

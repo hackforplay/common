@@ -6,7 +6,7 @@ import './rpg-kit-rpgobjects';
 import './trodden';
 import Hack from './hack';
 import * as synonyms from './synonyms';
-import Skin from './skin';
+import Skin from './deprecated-skin';
 import '../mod/collider-debugger';
 import stopOnBlur from '../mod/stop-on-blur';
 import * as logFunc from '../mod/logFunc';
