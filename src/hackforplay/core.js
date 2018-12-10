@@ -17,6 +17,7 @@ import loadMap from './load-map';
 import coordinate from '../mod/coordinate';
 import game from './game';
 import createDamageMod from './create-damage-mod';
+import skin, { getBaseUrl, setBaseUrl } from './skin';
 
 // Assign synonyms
 Hack.assets = Hack.assets || {};
@@ -92,3 +93,17 @@ window.onkeydown = event => !(event.key === ' ');
  * Hack.createDamageMod
  */
 Hack.createDamageMod = createDamageMod;
+
+/**
+ * Hack.skin
+ */
+Hack.skin = skin;
+/**
+ * Hack.baseUrl
+ */
+Object.defineProperty(Hack, 'baseUrl', {
+  enumerable: true,
+  configurable: false,
+  get: getBaseUrl,
+  set: setBaseUrl
+});
