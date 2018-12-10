@@ -1056,6 +1056,19 @@ class RPGObject extends enchant.Sprite {
   set dir(dir) {
     this.forward = dir();
   }
+
+  _skin = null; // Promise<(object: RPGObject) => void>
+  get skin() {
+    return this._skin;
+  }
+  set skin(value) {
+    if (this._skin) {
+      // 前回に与えられた skin が resolve(reject) するまで待つ
+      this._skin = this._skin.then(() => value).then(f => f(this));
+    } else {
+      this._skin = value.then(f => f(this));
+    }
+  }
 }
 
 function makeHpLabel(self) {
