@@ -72,6 +72,10 @@ export default async function skin(
  * @param skin スキンオブジェクト
  */
 export const dress = (skin: Skin) => (object: RPGObject) => {
+  // あらかじめ Sprite の差分を調整しておく
+  object.x += skin.sprite.x - object.offset.x;
+  object.y += skin.sprite.y - object.offset.y;
+  // パラメータのセット
   object.image = _surfaces[skin.name];
   object.width = skin.sprite.width;
   object.height = skin.sprite.height;
