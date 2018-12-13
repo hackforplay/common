@@ -35,13 +35,25 @@ type NoObjectListener = (this: void) => Promise<void>;
 type OneObjectListener = (this: RPGObject) => Promise<void>;
 type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
 
+const feeles = (<any>window).feeles || {};
+
 export default class Rule {
   constructor() {}
 
   static readonly Anyone = Anyone;
 
   // public vars
-  this: string | null = null;
+  get this(): string | null {
+    return this._this;
+  }
+  set this(value: string | null) {
+    if (value && this._knownThisNames.indexOf(value) < 0) {
+      this._knownThisNames.push(value);
+    }
+    this._this = value;
+  }
+  _this: string | null = null;
+  _knownThisNames: string[] = [];
   item: string | typeof Anyone | null = null;
   // listeners
   _listenersOfNo: {
@@ -79,7 +91,7 @@ export default class Rule {
   }
 
   addOneObjectLisener(type: string, func: OneObjectListener) {
-    const name = this.this;
+    const name = this._this;
     if (!name) {
       throw new Error(`${type} の this がありません`);
     }
@@ -102,7 +114,7 @@ export default class Rule {
   }
 
   addTwoObjectListener(type: string, func: TwoObjectListener) {
-    const name = this.this;
+    const name = this._this;
     if (!name) {
       throw new Error(`${type} の this がありません`);
     }
@@ -219,6 +231,10 @@ export default class Rule {
     dir?: Dir,
     summoner?: RPGObject
   ) {
+    if (this._knownThisNames.indexOf(name) < 0) {
+      Hack.log(`${name} というアセットは ないかもしれない`);
+      feeles.install && feeles.install(name);
+    }
     const object = new RPGObject();
     object.name = name;
     object._ruleInstance = this;
