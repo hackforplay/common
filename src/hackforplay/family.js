@@ -4,11 +4,12 @@ const Family = {
   Player: 'Player',
   Map: 'Map',
   Player2: 'Player2',
-  Enemy: 'Enemy',
+  Enemy: 'Enemy', // Deprecated (~0.11)
+  Monster: 'Monster',
   // Japanese Synonyms
   ドクリツ: '__Independence',
   プレイヤー: 'Player',
-  エネミー: 'Enemy', // Deprecated (~0.10)
+  エネミー: 'Enemy', // Deprecated (~0.11)
   モンスター: 'Monster',
   マップ: 'Map',
   プレイヤー2: 'Player2'
