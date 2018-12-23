@@ -42,6 +42,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     x: 0,
     y: 0
   };
+  damage = 0; // 0 以外のとき, ふれたときに与えるダメージ
   speed = 1.0;
   opacity = 1;
   collideMapBoader = true; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
@@ -61,6 +62,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private _hp?: number;
   private _atk?: number;
+  private _isDamageObject = false;
   private _forward?: { x: number; y: number }; // direction
   private _directionType?: 'single' | 'double' | 'quadruple';
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
@@ -226,6 +228,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
   set isKinematic(value: boolean) {
     this._isKinematic = value;
+  }
+
+  get isDamageObject() {
+    return this.damage !== 0 || this._isDamageObject;
+  }
+
+  set isDamageObject(value) {
+    this._isDamageObject = value;
   }
 
   geneticUpdate() {

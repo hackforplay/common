@@ -9,13 +9,7 @@ export function unregister() {
   game.off('enterframe', update);
 }
 
-interface DamagePair {
-  damager: RPGObject;
-  damage?: number;
-  attacker?: RPGObject;
-}
-
-const damagePairs: DamagePair[] = [];
+const attackerMap = new WeakMap<RPGObject, RPGObject>();
 
 /**
  * ダメージを与える MOD を生成する
@@ -26,11 +20,10 @@ export default function createDamageMod(damage?: number, attacker?: RPGObject) {
   return function damageMod(this: RPGObject) {
     this.isDamageObject = true; // ダメージ処理を行うフラグ
     this.collisionFlag = false; // ダメージオブジェクトそのものは, ぶつからない
-    damagePairs.push({
-      damager: this,
-      damage,
-      attacker
-    });
+    this.damage = damage !== undefined ? damage : this.atk;
+    if (attacker) {
+      attackerMap.set(this, attacker);
+    }
   };
 }
 
@@ -39,22 +32,15 @@ export function update() {
     item => !item.isDamageObject && item.damageTime === 0 && item.scene
   ); // ダメージをうける可能性のあるオブジェクト
 
-  for (const pair of [...damagePairs]) {
-    // まだ damage object としてのこっているか
-    const index = damagePairs.indexOf(pair);
-    if (index === -1) continue;
-    const { damager, attacker } = pair;
-    if (!damager.scene) continue; // 異なるマップのダメージオブジェクトをスキップ
-    const damage =
-      typeof pair.damage === 'number' ? pair.damage : <number>damager.atk;
-    if (
-      !damager.parentNode ||
-      !damager.isDamageObject ||
-      damager.collisionFlag
-    ) {
-      damagePairs.splice(index, 1); // 配列から削除する
-      continue;
-    }
+  const damagers = RPGObject.collection.filter(
+    item =>
+      item.isDamageObject &&
+      item.scene && // 異なるマップのダメージオブジェクトはスキップ
+      !item.collisionFlag // collisionFlag が true なオブジェクトの当たり判定には未対応
+  );
+
+  for (const damager of damagers) {
+    const attacker = attackerMap.get(damager); // attacker が自分の場合は undefined かも知れない
 
     // 接触している RPGObject を取得する
     const hits = nonDamagers.filter(item => {
@@ -77,14 +63,15 @@ export function update() {
     for (const object of hits) {
       object.damageTime = object.attackedDamageTime; // チカチカする
       if (object.hasHp) {
-        object.hp -= damage; // 体力が number なら減らす
+        // TODO: これって nonDamagers の条件式に書くべきじゃ無いか?
+        object.hp -= damager.damage; // 体力が number なら減らす
       }
       // イベントを発火させる
       object.dispatchEvent(
         new enchant.Event('attacked', {
           attacker: attacker || damager, // attacker は弾などのエフェクトの場合もある
           item: attacker || damager, // 引数名の統一
-          damage
+          damage: damager.damage
         })
       );
     }
