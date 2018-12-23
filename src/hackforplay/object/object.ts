@@ -13,6 +13,7 @@ import Rule from '../rule';
 import { default as Camera } from '../camera';
 import { Dir } from '../dir';
 import * as Skin from '../skin';
+import * as N from './numbers';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -31,7 +32,7 @@ function startFrameCoroutine(
   });
 }
 
-export default class RPGObject extends enchant.Sprite {
+export default class RPGObject extends enchant.Sprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   static _collectionTarget = [RPGObject];
   static collection: RPGObject[] = [];
@@ -42,6 +43,7 @@ export default class RPGObject extends enchant.Sprite {
     y: 0
   };
   speed = 1.0;
+  opacity = 1;
   collideMapBoader = true; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
   velocityX = 0;
   velocityY = 0;
@@ -122,6 +124,20 @@ export default class RPGObject extends enchant.Sprite {
 
     // ツリーに追加
     Hack.defaultParentNode.addChild(this);
+  }
+
+  n(type: string, operator: string, amount: number) {
+    const key = N.key(type);
+    if (!key)
+      throw new Error(
+        `this.n('${key}', '${operator}', ${amount}) の '${key}' は ないみたい`
+      );
+    const operate = N.operator(operator);
+    if (!operate)
+      throw new Error(
+        `this.n('${key}', '${operator}', ${amount}) の '${operator}' は ないみたい`
+      );
+    return (this[key] = operate(this[key], amount));
   }
 
   get atk() {
