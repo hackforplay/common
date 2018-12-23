@@ -1076,7 +1076,10 @@ function makeHpLabel(self) {
   label.label = 'HP:';
   label.opacity = 0;
   self.parentNode.addChild(label);
-  label.on('enterframe', e => {
+  self.on('enterframe', e => {
+    if (self.parentNode !== label.parentNode) {
+      self.parentNode.addChild(label);
+    }
     label.x = self.x;
     label.y = self.y;
     const diff = 1.01 - label.opacity;
