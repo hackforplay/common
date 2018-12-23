@@ -1,6 +1,6 @@
 import { default as game } from './game';
 import { default as enchant } from '../enchantjs/enchant';
-import { default as RPGObject } from './object/object';
+import RPGObject from './object/object';
 import { default as SAT } from '../lib/sat.min';
 import { default as BehaviorTypes } from './behavior-types';
 import { default as logFunc } from '../mod/logFunc';
@@ -24,7 +24,7 @@ export interface Skin {
   };
   direction: 1 | 4;
 }
-type Result = Promise<(object: RPGObject) => void>;
+export type Result = Promise<(object: RPGObject) => void>;
 
 let baseUrl: string = 'https://storage.googleapis.com/hackforplay-skins/';
 export const getBaseUrl = () => baseUrl;

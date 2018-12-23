@@ -1,20 +1,25 @@
-import enchant from '../../enchantjs/enchant';
+import { default as enchant } from '../../enchantjs/enchant';
 import '../../enchantjs/ui.enchant';
-import Hack from '../hack';
+import { default as Hack } from '../hack';
 import * as synonyms from '../synonyms';
-import Skin from '../deprecated-skin';
-import Family, { registerServant, getMaster } from '../family';
-import SAT from '../../lib/sat.min';
-import BehaviorTypes from '../behavior-types';
-import RPGMap from '../rpg-map';
-import game from '../game';
-import random from '../random';
+import { default as DeprecatedSkin } from '../deprecated-skin';
+import { default as Family, registerServant, getMaster } from '../family';
+import { default as SAT } from '../../lib/sat.min';
+import { default as BehaviorTypes } from '../behavior-types';
+import { default as RPGMap } from '../rpg-map';
+import { default as game } from '../game';
+import { default as random } from '../random';
 import Rule from '../rule';
-import Camera from '../camera';
+import { default as Camera } from '../camera';
+import { Dir } from '../dir';
+import * as Skin from '../skin';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
-function startFrameCoroutine(node, generator) {
+function startFrameCoroutine(
+  node: any,
+  generator: IterableIterator<undefined>
+) {
   return new Promise(resolve => {
     node.on('enterframe', function _() {
       const { done } = generator.next();
@@ -26,109 +31,74 @@ function startFrameCoroutine(node, generator) {
   });
 }
 
-class RPGObject extends enchant.Sprite {
-  constructor(mod) {
+export default class RPGObject extends enchant.Sprite {
+  // RPGObject.collection に必要な初期化
+  static _collectionTarget = [RPGObject];
+  static collection: RPGObject[] = [];
+  static _collective = true;
+
+  offset = {
+    x: 0,
+    y: 0
+  };
+  speed = 1.0;
+  collideMapBoader = true; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
+  velocityX = 0;
+  velocityY = 0;
+  accelerationX = 0;
+  accelerationY = 0;
+  mass = 1;
+  damageTime = 0;
+  attackedDamageTime = 30; // * 1/30sec
+  _debugColor = 'rgba(0, 0, 255, 0.5)';
+  showHpLabel = true; // デフォルトで表示
+  name: string = ''; // アセットの名前
+  collider?: any;
+  colliders?: any;
+  isAutoPickUp?: boolean;
+
+  private _hp?: number;
+  private _atk?: number;
+  private _forward?: { x: number; y: number }; // direction
+  private _directionType?: 'single' | 'double' | 'quadruple';
+  private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
+  private _collisionFlag?: boolean;
+  private _isKinematic?: boolean; // this.isKinematic (Default: true)
+  private _layer: number = (<any>RPGMap).Layer.Middle;
+  private _collidedNodes: any[] = []; // 衝突した Node リスト
+  private hpchangeFlag = false;
+  private getFrameOfBehavior: { [key: string]: () => (number | null)[] } = {};
+  private hpLabel?: any;
+  private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
+
+  constructor(mod?: DeprecatedSkin) {
     super(0, 0);
-
-    this.offset = {
-      x: 0,
-      y: 0
-    };
-
-    this.speed = 1.0;
-
-    // マップの端に衝突判定があると見なすか
-    // false ならマップ外を歩ける
-    this.collideMapBoader = true;
-
-    // 衝突した Node リスト
-    this._collidedNodes = [];
 
     this.moveTo(game.width, game.height);
 
-    var collisionFlag = null; // this.collisionFlag (Default:true)
-    var noCollisionEvents = [
-      'addtrodden',
-      'removetrodden',
-      'playerenter',
-      'playerstay',
-      'playerexit',
-      'pickedup'
-    ];
-    Object.defineProperty(this, 'collisionFlag', {
-      configurable: true,
-      enumerable: true,
-      get: function() {
-        if (collisionFlag !== null) return collisionFlag;
-        for (var i = 0; i < noCollisionEvents.length; i++) {
-          if (this.isListening(noCollisionEvents[i])) {
-            return false;
-          }
-        }
-        return true;
-      },
-      set: function(value) {
-        collisionFlag = value;
-      }
-    });
-    var isKinematic = null; // this.isKinematic (Default: true)
-    Object.defineProperty(this, 'isKinematic', {
-      configurable: true,
-      enumerable: true,
-      get: function() {
-        return isKinematic !== null
-          ? isKinematic
-          : !(
-              this.velocityX ||
-              this.velocityY ||
-              this.accelerationX ||
-              this.accelerationY
-            );
-      },
-      set: function(value) {
-        isKinematic = value;
-      }
-    });
     // Destroy when dead
-    this.on('becomedead', function() {
-      this.setTimeout(function() {
-        this.destroy();
-      }, this.getFrame().length);
+    this.on('becomedead', () => {
+      this.destroy(this.getFrame().length);
     });
-    this.on('hpchange', function() {
+    this.on('hpchange', () => {
       if (this.hp <= 0) {
         this.behavior = BehaviorTypes.Dead;
       }
     });
 
     // 歩き終わったときに自動でものを拾う設定
-    this.on('walkend', function() {
+    this.on('walkend', () => {
       if (this.isAutoPickUp) {
         this.pickUp();
       }
     });
 
-    // direction
-    this._forward = null;
-
-    this._directionType = null;
-
     // 初期化
-    this.velocityX = this.velocityY = this.accelerationX = this.accelerationY = 0;
-    this.mass = 1;
-    this.damageTime = 0;
-    this.attackedDamageTime = 30; // * 1/30sec
-    this.hpchangeFlag = false;
     this.on('enterframe', this.geneticUpdate);
-    this.getFrameOfBehavior = {}; // BehaviorTypesをキーとしたgetterのオブジェクト
-    this.behavior = BehaviorTypes.Idle; // call this.onbecomeidle
-    this._layer = RPGMap.Layer.Middle;
-    this._debugColor = 'rgba(0, 0, 255, 0.5)';
 
     // HPLabel
-    this.showHpLabel = true; // デフォルトで表示
-    this.on('hpchange', e => {
-      if (typeof this.hp === 'number' && this.showHpLabel) {
+    this.on('hpchange', (e: any) => {
+      if (this.hasHp && this.showHpLabel) {
         this.hpLabel = this.hpLabel || makeHpLabel(this);
         this.hpLabel.score = this.hp;
         this.hpLabel.opacity = 1;
@@ -137,18 +107,18 @@ class RPGObject extends enchant.Sprite {
 
     // アセット
     if (typeof mod === 'function') {
+      console.error(
+        'new RPGObject に引数を与える使い方は非推奨です. この機能は v1 で削除されます'
+      );
       this.mod(mod);
       // Skin.XXX の名前をデフォルトの name として登録する
-      this.name = Skin.__name.get(mod) || this.name;
+      this.name = DeprecatedSkin.__name.get(mod) || this.name;
     }
 
     // 後方互換性保持
     this.collider =
       this.collider ||
       new SAT.Box(new SAT.V(0, 0), this.width, this.height).toPolygon();
-
-    // warp を使うときのパラメータ
-    this.warpTarget = null; // warpTo() で新しく作られたインスタンス
 
     // ツリーに追加
     Hack.defaultParentNode.addChild(this);
@@ -206,11 +176,47 @@ class RPGObject extends enchant.Sprite {
     }
   }
 
+  get collisionFlag() {
+    const noCollisionEvents = [
+      'addtrodden',
+      'removetrodden',
+      'playerenter',
+      'playerstay',
+      'playerexit',
+      'pickedup'
+    ];
+    if (this._collisionFlag !== undefined) return this._collisionFlag;
+    for (var i = 0; i < noCollisionEvents.length; i++) {
+      if (this.isListening(noCollisionEvents[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  set collisionFlag(value: boolean) {
+    this._collisionFlag = value;
+  }
+
+  get() {
+    return this._isKinematic !== undefined
+      ? this._isKinematic
+      : !(
+          this.velocityX ||
+          this.velocityY ||
+          this.accelerationX ||
+          this.accelerationY
+        );
+  }
+  set(value: boolean) {
+    this._isKinematic = value;
+  }
+
   geneticUpdate() {
     if (!Hack.isPlaying) return;
     // enter frame
     this.damageTime = Math.max(0, this.damageTime - 1); // fix: hp が number でなくても damageTime は減る
-    if (typeof this.hp === 'number') {
+    if (this.hasHp) {
       if (this.damageTime > 0) {
         this.visible = ((this.damageTime / 2) >> 0) % 2 === 0; // 点滅
       }
@@ -236,8 +242,8 @@ class RPGObject extends enchant.Sprite {
     }
   }
 
-  locate(fromLeft, fromTop, mapName) {
-    if (mapName in Hack.maps) {
+  locate(fromLeft: number, fromTop: number, mapName?: string) {
+    if (mapName && mapName in Hack.maps) {
       if (
         Hack.maps[mapName] instanceof RPGMap &&
         this.map !== Hack.maps[mapName]
@@ -261,28 +267,26 @@ class RPGObject extends enchant.Sprite {
     this.updateCollider(); // TODO: 動的プロパティ
   }
 
-  destroy(delay) {
-    if (delay > 0) this.setTimeout(_remove.bind(this), delay);
-    else _remove.call(this);
-
-    function _remove() {
+  destroy(delay = 0) {
+    const _remove = () => {
       this.remove();
       if (this.shadow) this.shadow.remove();
-    }
+    };
+    if (delay > 0) this.setTimeout(_remove.bind(this), delay);
+    else _remove.call(this);
   }
 
-  setFrame(behavior, frame) {
+  setFrame(
+    behavior: string,
+    frame: (number | null)[] | ((this: RPGObject) => (number | null)[])
+  ) {
     // behavior is Type:string
     // frame is Frames:array or Getter:function
-    (function(_local) {
-      if (typeof frame === 'function') {
-        this.getFrameOfBehavior[behavior] = _local;
-      } else {
-        this.getFrameOfBehavior[behavior] = function() {
-          return _local;
-        };
-      }
-    }.call(this, frame));
+    if (typeof frame === 'function') {
+      this.getFrameOfBehavior[behavior] = frame;
+    } else {
+      this.getFrameOfBehavior[behavior] = () => frame;
+    }
   }
 
   getFrame() {
@@ -292,43 +296,50 @@ class RPGObject extends enchant.Sprite {
     return [];
   }
 
-  setTimeout(callback, wait, timing = 'enterframe') {
-    var target = this.age + Math.max(1, wait),
-      flag = true;
+  setTimeout(
+    callback: (this: RPGObject) => any,
+    wait: number,
+    timing = 'enterframe'
+  ) {
+    const target = this.age + Math.max(1, wait);
+    let flag = true;
 
-    function task() {
+    const task = () => {
       if (this.age === target && flag) {
         callback.call(this);
-        stopTimeout.call(this);
+        stopTimeout();
       }
-    }
+    };
 
-    function stopTimeout() {
+    const stopTimeout = () => {
       flag = false;
       this.removeEventListener(timing, task);
-    }
+    };
     this.on(timing, task);
-    return stopTimeout.bind(this);
+    return stopTimeout;
   }
 
-  setInterval(callback, interval) {
-    var current = this.age,
-      flag = true;
+  setInterval(
+    callback: (this: RPGObject, count: number) => any,
+    interval: number
+  ) {
+    const current = this.age;
+    let flag = true;
 
     let count = 0;
 
-    function task() {
+    const task = () => {
       if ((this.age - current) % interval === 0 && flag) {
         callback.call(this, ++count);
       }
-    }
+    };
 
-    function stopInterval() {
+    const stopInterval = () => {
       flag = false;
       this.removeEventListener('enterframe', task);
-    }
+    };
     this.on('enterframe', task);
-    return stopInterval.bind(this);
+    return stopInterval;
   }
 
   async attack() {
@@ -338,7 +349,7 @@ class RPGObject extends enchant.Sprite {
     const dy = this.mapY + this.forward.y;
 
     // ダメージを与えるオブジェクトを生成する
-    const damageObject = this.summon(function() {
+    const damageObject = this.summon(() => {
       this.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
       this.collider.setOffset(new SAT.V(12, 12));
     });
@@ -356,7 +367,11 @@ class RPGObject extends enchant.Sprite {
     this.behavior = BehaviorTypes.Idle;
   }
 
-  async walk(distance = 1, forward = null, setForward = true) {
+  async walk(
+    distance = 1,
+    forward: { x: number; y: number } | null = null,
+    setForward = true
+  ) {
     if (!Hack.isPlaying) return;
     if (!this.isKinematic) return;
     if (this.behavior !== BehaviorTypes.Idle) return;
@@ -374,7 +389,7 @@ class RPGObject extends enchant.Sprite {
     }
   }
 
-  *walkImpl(forward) {
+  *walkImpl(forward: { x: number; y: number }) {
     // タイルのサイズ
     const tw = Hack.map.tileWidth;
     const th = Hack.map.tileHeight;
@@ -483,7 +498,7 @@ class RPGObject extends enchant.Sprite {
     this.behavior = BehaviorTypes.Idle;
   }
 
-  dispatchCollidedEvent(hits, map) {
+  dispatchCollidedEvent(hits: RPGObject[], map: boolean) {
     // 衝突イベントを dispatch
     const event = new enchant.Event('collided');
     event.map = map;
@@ -504,21 +519,24 @@ class RPGObject extends enchant.Sprite {
     }
   }
 
-  velocity(x, y) {
+  velocity(x: number, y: number) {
     this.velocityX = x;
     this.velocityY = y;
   }
 
-  force(x, y) {
+  force(x: number, y: number) {
     this.accelerationX = x / this.mass;
     this.accelerationY = y / this.mass;
   }
 
-  get hp() {
-    return this._hp;
+  get hasHp() {
+    return this.hp !== undefined;
   }
-  set hp(value) {
-    if (typeof value === 'number' && !isNaN(value) && value !== this._hp) {
+  get hp() {
+    return this._hp || 0;
+  }
+  set hp(value: number) {
+    if (!isNaN(value) && value !== this._hp) {
       this.hpchangeFlag = true;
       this._hp = value;
     }
@@ -538,24 +556,26 @@ class RPGObject extends enchant.Sprite {
     return this._layer;
   }
   set layer(value) {
-    if (this === Hack.player) return this._layer; // プレイヤーのレイヤー移動を禁止
-    if (value === this._layer) return this._layer;
+    if (this === Hack.player) return; // プレイヤーのレイヤー移動を禁止
+    if (value === this._layer) return;
+
+    const { Layer } = <any>RPGMap;
 
     // Range of layer
-    var sortingOrder = Object.keys(RPGMap.Layer).map(function(key) {
-      return RPGMap.Layer[key];
+    var sortingOrder = Object.keys(Layer).map(function(key) {
+      return Layer[key];
     });
     var max = Math.max.apply(null, sortingOrder);
     var min = Math.min.apply(null, sortingOrder);
     this._layer = Math.max(Math.min(value, max), min);
 
     // 他オブジェクトはプレイヤーレイヤーに干渉できないようにする
-    if (this._layer === RPGMap.Layer.Player) {
+    if (this._layer === Layer.Player) {
       switch (Math.sign(value - this._layer)) {
         case 1:
-          return this.bringOver();
+          this._layer = this.bringOver();
         case -1:
-          return this.bringUnder();
+          this._layer = this.bringUnder();
         default:
           break;
       }
@@ -565,12 +585,13 @@ class RPGObject extends enchant.Sprite {
   }
 
   bringOver() {
+    const { Layer } = <any>RPGMap;
     // 現在のレイヤーより大きいレイヤーのうち最も小さいもの
-    var uppers = Object.keys(RPGMap.Layer)
-      .map(function(key) {
-        return RPGMap.Layer[key];
+    var uppers = Object.keys(Layer)
+      .map(key => {
+        return Layer[key];
       }, this)
-      .filter(function(layer) {
+      .filter(layer => {
         return layer > this.layer;
       }, this);
     this.layer = uppers.length > 0 ? Math.min.apply(null, uppers) : this.layer;
@@ -578,23 +599,24 @@ class RPGObject extends enchant.Sprite {
   }
 
   bringUnder() {
+    const { Layer } = <any>RPGMap;
     // 現在のレイヤーより小さいレイヤーのうち最も大きいもの
-    var unders = Object.keys(RPGMap.Layer)
-      .map(function(key) {
-        return RPGMap.Layer[key];
+    var unders = Object.keys(Layer)
+      .map(key => {
+        return Layer[key];
       }, this)
-      .filter(function(layer) {
+      .filter(layer => {
         return layer < this.layer;
       }, this);
     this.layer = unders.length > 0 ? Math.max.apply(null, unders) : this.layer;
     return this.layer;
   }
 
-  shoot(node, vector, speed) {
+  shoot(node: RPGObject, vector?: { x: number; y: number }, speed?: number) {
     node.collisionFlag = false;
 
     // 置くだけ
-    if (arguments.length === 1) {
+    if (!vector) {
       return node.locate(this.mapX, this.mapY);
     }
 
@@ -620,16 +642,19 @@ class RPGObject extends enchant.Sprite {
     );
 
     // 速度をかける
-    speed = arguments.length < 3 ? 1 : speed;
-    vector.x *= speed;
-    vector.y *= speed;
+    if (speed !== undefined) {
+      vector.x *= speed;
+      vector.y *= speed;
+    } else {
+      speed = 1;
+    }
     node.velocity(vector.x, vector.y);
 
     var angle = 0;
 
     // 対象が MapObject かつベクトルの長さが 0.0 より大きいなら
     if (
-      (node instanceof MapObject || node.directionType === 'single') &&
+      node.directionType === 'single' &&
       !(vector.x === 0 && vector.y === 0)
     ) {
       angle = 90 - (Math.atan2(-vector.y, vector.x) * 180) / Math.PI;
@@ -643,14 +668,14 @@ class RPGObject extends enchant.Sprite {
     return this;
   }
 
-  mod(func) {
+  mod(func: (this: RPGObject) => any) {
     func.call(this);
   }
 
   get forward() {
     if (this._forward) return this._forward;
     switch (this.directionType) {
-      case 'signle':
+      case 'single':
         return { x: 0, y: -1 };
       case 'double':
         return { x: -1, y: 0 };
@@ -685,14 +710,17 @@ class RPGObject extends enchant.Sprite {
     switch (this._directionType) {
       case 'single':
         // 画像は上向きと想定する
-        var rad = Math.atan2(this._forward.y, this._forward.x);
-        var enchantRot = (rad / Math.PI) * 180 + 90; // 基準は上,時計回りの度数法
-        this.rotation = (enchantRot + 360) % 360;
+        const angle = this._forward
+          ? (Math.atan2(this._forward.y, this._forward.x) / Math.PI) * 180 + 90
+          : 0; // 基準は上,時計回りの度数法
+        this.rotation = (angle + 360) % 360;
         break;
       case 'double':
         // 画像は左向きと想定する
-        if (this._forward.x !== 0) {
-          this.scaleX = -Math.sign(this._forward.x) * Math.abs(this.scaleX);
+        if (this._forward) {
+          if (this._forward.x !== 0) {
+            this.scaleX = -Math.sign(this._forward.x) * Math.abs(this.scaleX);
+          }
         }
         break;
       case 'quadruple':
@@ -717,24 +745,27 @@ class RPGObject extends enchant.Sprite {
     }
   }
 
-  set direction(value) {
+  set direction(value: number) {
     switch (this.directionType) {
       case 'single':
       case 'quadruple':
-        this.forward = Hack.Dir2Vec(value);
+        this._forward = Hack.Dir2Vec(value);
         break;
       case 'double':
-        this.forward = [Math.sign(value) || -1, 0];
+        this._forward = { x: Math.sign(value) || -1, y: 0 };
         break;
     }
   }
 
-  setFrameD9(behavior, frame) {
-    var array = typeof frame === 'function' ? frame() : frame;
+  setFrameD9(
+    behavior: string,
+    frame: (number | null)[] | (() => (number | null)[])
+  ) {
+    const array = typeof frame === 'function' ? frame() : frame;
 
-    this.setFrame(behavior, function() {
-      var _array = [];
-      array.forEach(function(item, index) {
+    this.setFrame(behavior, () => {
+      const _array: (number | null)[] = [];
+      array.forEach((item, index) => {
         _array[index] =
           item !== null && item >= 0 ? item + this.direction * 9 : item;
       }, this);
@@ -742,31 +773,41 @@ class RPGObject extends enchant.Sprite {
     });
   }
 
-  turn(count) {
-    var c, i;
+  turn(amount = 1) {
     switch (this.directionType) {
       case 'double':
-        c = typeof count === 'number' ? Math.ceil(Math.abs(count / 2)) : 1;
-        i =
-          {
-            '-1': 1,
-            '1': 0
-          }[this.direction] + c; // direction to turn index
-        this.direction = [1, -1, -1, 1][i % 2]; // turn index to direction
+        this.direction = 1 - this.direction; // どうせ使わないので雑に実装
         break;
       case 'single':
       case 'quadruple':
-        c = typeof count === 'number' ? (count % 4) + 4 : 1;
-        i = [3, 2, 0, 1][this.direction] + c; // direction to turn index
-        this.direction = [2, 3, 1, 0][i % 4]; // turn index to direction
+        // 0: 下
+        // 1: 左
+        // 2: 右
+        // 3: 上
+        amount = (amount < 0 ? 4 - amount : amount) % 4;
+        let dir = this.direction;
+        for (let i = 0; i < amount; i++) {
+          switch (dir) {
+            case 0:
+              return 1; // 下 => 左
+            case 1:
+              return 3; // 左 => 上
+            case 2:
+              return 0; // 右 => 下
+            case 3:
+              return 2; // 上 => 右
+          }
+        }
+        this.direction = dir;
         break;
     }
   }
 
-  dispatchEvent(event) {
+  dispatchEvent(event: any) {
     enchant.EventTarget.prototype.dispatchEvent.call(this, event);
     // Synonym Event を発火
-    var synonym = synonyms.events[event.type];
+    const events = <any>synonyms.events;
+    const synonym: any = <any>events[event.type];
     if (synonym) {
       var clone = Object.assign({}, event, {
         type: synonym
@@ -775,9 +816,10 @@ class RPGObject extends enchant.Sprite {
     }
   }
 
-  isListening(eventType) {
+  isListening(eventType: string) {
     // eventType のリスナーを持っているか
-    var synonym = synonyms.events[eventType];
+    const events = <any>synonyms.events;
+    var synonym = events[eventType];
     return (
       this['on' + eventType] ||
       this._listeners[eventType] ||
@@ -785,7 +827,7 @@ class RPGObject extends enchant.Sprite {
     );
   }
 
-  start(virtual) {
+  start(virtual: any) {
     let count = 1;
     const override = async () => {
       // １フレームだけディレイを入れる
@@ -811,7 +853,7 @@ class RPGObject extends enchant.Sprite {
     });
   }
 
-  async endless(virtual) {
+  async endless(virtual: any) {
     if (!this._endless) {
       // ルーチンをスタート
       let count = 1;
@@ -850,7 +892,7 @@ class RPGObject extends enchant.Sprite {
     this._family = family;
   }
 
-  summon(skin, _class = RPGObject) {
+  summon(skin: DeprecatedSkin, _class = RPGObject) {
     // 自分と同じ Family を持つ従者とする
     const appended = new _class(skin);
     registerServant(this, appended);
@@ -861,7 +903,7 @@ class RPGObject extends enchant.Sprite {
     return appended;
   }
 
-  set imageUrl(url) {
+  set imageUrl(url: string) {
     if (typeof url !== 'string') {
       throw new Error(`${this.name}の imageUrl に文字列以外が代入されました`);
     }
@@ -885,15 +927,15 @@ class RPGObject extends enchant.Sprite {
    * ドラゴンのブレス. 暫定
    * @param {Object} params
    */
-  breath(params) {
+  breath(params: any) {
     params = {
       // デフォルトのパラメータ
-      skin: Skin.バクエン,
+      skin: (<any>DeprecatedSkin).バクエン,
       speed: 5,
       scale: 1,
       ...params
     };
-    this.endless((self, count) => {
+    this.endless((self: RPGObject, count: number) => {
       if (count % 2 === 0) return;
       const effect = self.summon(params.skin);
       effect.mod(Hack.createDamageMod(self.atk, self)); // ダメージオブジェクトにする
@@ -912,7 +954,7 @@ class RPGObject extends enchant.Sprite {
    * object の warpTo で設定された位置へ移動する
    * @param {RPGObject} object
    */
-  warp(object) {
+  warp(object: RPGObject) {
     if (!(object instanceof RPGObject)) {
       throw new Error(
         `${this.name} の warp に RPGObject ではなく ${object} が与えられました`
@@ -934,7 +976,7 @@ class RPGObject extends enchant.Sprite {
       );
     }
     const isPlayer =
-      this === window.player ||
+      this === (<any>window).player ||
       this === Hack.player ||
       this === Camera.main.target;
     if (isPlayer && this.map !== warpTarget.map) {
@@ -950,7 +992,7 @@ class RPGObject extends enchant.Sprite {
    * @param {Number} y
    * @param {String} mapName
    */
-  warpTo(x, y, mapName) {
+  warpTo(x: number, y: number, mapName: string) {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
@@ -970,7 +1012,7 @@ class RPGObject extends enchant.Sprite {
    * rule.メッセージされたとき を発火させる
    * @param {String} アセットの名前
    */
-  message(name) {
+  message(name: string) {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
@@ -985,7 +1027,7 @@ class RPGObject extends enchant.Sprite {
   /**
    * summon の rule.つくる バージョン
    */
-  しょうかんする(name) {
+  しょうかんする(name: string) {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
@@ -1006,17 +1048,13 @@ class RPGObject extends enchant.Sprite {
     return appended;
   }
 
-  つくる() {
-    return this.しょうかんする.apply(this, arguments); // 互換性 (~0.10)
-  }
-
   /**
    * 指定されたアセットのインスタンスのうち一つを追う
    * いない場合は何もしない
    * (chase4 のシノニム)
    * @param {String} name
    */
-  chase(name) {
+  chase(name: string) {
     return this.chase4(name);
   }
 
@@ -1025,7 +1063,7 @@ class RPGObject extends enchant.Sprite {
    * いない場合は何もしない
    * @param {String} name
    */
-  async chase4(name) {
+  async chase4(name: string) {
     const { map } = this;
     const item = RPGObject.collection.find(
       item => item.name === name && item.parentNode && item.map === map
@@ -1047,7 +1085,7 @@ class RPGObject extends enchant.Sprite {
     await this.walk(); // あるく
   }
 
-  async chase8(name) {
+  async chase8(name: string) {
     const { map } = this;
     const item = RPGObject.collection.find(
       item => item.name === name && item.parentNode && item.map === map
@@ -1061,31 +1099,33 @@ class RPGObject extends enchant.Sprite {
     await this.walk(); // あるく
   }
 
-  set dir(dir) {
+  set dir(dir: Dir) {
     this.forward = dir();
   }
 
-  _skin = null; // Promise<(object: RPGObject) => void>
+  private _skin: Skin.Result | null = null; // Promise<(object: RPGObject) => void>
   get skin() {
     return this._skin;
   }
   set skin(value) {
-    if (this._skin) {
+    if (!value) return;
+    const { _skin } = this;
+    if (_skin) {
       // 前回に与えられた skin が resolve(reject) するまで待つ
-      this._skin = this._skin.then(() => value).then(f => f(this));
+      this._skin = _skin.then(() => value).then(f => (f(this), f));
     } else {
-      this._skin = value.then(f => f(this));
+      this._skin = value.then(f => (f(this), f));
     }
   }
 }
 
-function makeHpLabel(self) {
-  const label = new ScoreLabel();
+function makeHpLabel(self: RPGObject) {
+  const label = new (<any>enchant).ui.ScoreLabel();
   label.label = 'HP:';
   label.opacity = 0;
   self.parentNode.addChild(label);
-  self.on('enterframe', e => {
-    if (self.parentNode !== label.parentNode) {
+  self.on('enterframe', (e: any) => {
+    if (self.parentNode && self.parentNode !== label.parentNode) {
       self.parentNode.addChild(label);
     }
     label.x = self.x;
@@ -1095,10 +1135,3 @@ function makeHpLabel(self) {
   });
   return label;
 }
-
-// RPGObject.collection に必要な初期化
-RPGObject._collectionTarget = [RPGObject];
-RPGObject.collection = [];
-RPGObject._collective = true;
-
-export default RPGObject;

@@ -364,7 +364,7 @@ game.onawake = () => {
   Hack.lifeLabel.moveTo(Hack.menuGroup.x + 10, Hack.menuGroup.y + 72);
   game.on('enterframe', () => {
     const player = self.player || Hack.player;
-    if (player && typeof player.hp === 'number') {
+    if (player && player.hasHp) {
       lifeLabel.score = player.hp;
     }
   });
@@ -506,7 +506,7 @@ Hack.Attack = function(x, y, damage, pushX, pushY) {
       // ダメージ処理
       //   従来は onattacked イベントハンドラを使っていたが,
       //   処理を上書きされないようここに移した
-      if (!item.damageTime && typeof item.hp === 'number') {
+      if (!item.damageTime && item.hasHp) {
         // ダメージ判定が起こる状態で,
         if (isOpposite(item, this)) {
           // 敵対している相手(もしくはその関係者)なら

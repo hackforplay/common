@@ -1,4 +1,4 @@
-import { default as RPGObject } from './object/object';
+import RPGObject from './object/object';
 import { hasContract } from './family';
 import { default as Hack } from './hack';
 import { Dir } from './dir';
@@ -251,10 +251,8 @@ export default class Rule {
     if (dir) {
       object.forward = dir();
     }
-    if (y !== undefined) {
+    if (x !== undefined && y !== undefined) {
       object.locate(x, y, map);
-    } else if (x !== undefined) {
-      object.locate(x, object.mapY, map);
     }
 
     // つねに

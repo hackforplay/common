@@ -1,6 +1,6 @@
 import * as enchant from '../enchantjs/enchant';
 import SAT from '../lib/sat.min';
-import { default as RPGObject } from './object/object';
+import RPGObject from './object/object';
 import { isOpposite } from './family';
 import game from './game';
 
@@ -76,7 +76,7 @@ export function update() {
 
     for (const object of hits) {
       object.damageTime = object.attackedDamageTime; // チカチカする
-      if (typeof object.hp === 'number') {
+      if (object.hasHp) {
         object.hp -= damage; // 体力が number なら減らす
       }
       // イベントを発火させる
