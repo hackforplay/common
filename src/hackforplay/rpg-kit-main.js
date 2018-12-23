@@ -362,13 +362,10 @@ game.onawake = () => {
   Hack.lifeLabel.label = 'HP:';
   Hack.menuGroup.addChild(lifeLabel);
   Hack.lifeLabel.moveTo(Hack.menuGroup.x + 10, Hack.menuGroup.y + 72);
-  game.once('enterframe', () => {
+  game.on('enterframe', () => {
     const player = self.player || Hack.player;
-    if (player) {
+    if (player && typeof player.hp === 'number') {
       lifeLabel.score = player.hp;
-      player.on('hpchange', () => {
-        lifeLabel.score = player.hp;
-      });
     }
   });
 
