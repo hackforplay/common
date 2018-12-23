@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/hackforplay/common#readme",
   "ava": {
+    "compileEnhancements": false,
     "extensions": [
       "ts"
     ],
     "require": [
-      "@babel/register",
       "ts-node/register",
       "canvas-prebuilt",
       "raf/polyfill",
