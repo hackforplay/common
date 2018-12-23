@@ -798,8 +798,16 @@ class RPGObject extends enchant.Sprite {
   }
 
   wait(second = 0) {
-    return new Promise((resolve, reject) => {
-      this.setTimeout(resolve, second * game.fps);
+    let frame = second * game.fps;
+    return new Promise(resolve => {
+      const handler = () => {
+        if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
+        if (--frame <= 0) {
+          resolve();
+          game.removeEventListener('enterframe', handler);
+        }
+      };
+      game.on('enterframe', handler);
     });
   }
 
