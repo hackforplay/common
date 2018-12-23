@@ -1085,7 +1085,7 @@ function makeHpLabel(self) {
   label.opacity = 0;
   self.parentNode.addChild(label);
   self.on('enterframe', e => {
-    if (self.parentNode !== label.parentNode) {
+    if (self.parentNode && self.parentNode !== label.parentNode) {
       self.parentNode.addChild(label);
     }
     label.x = self.x;
