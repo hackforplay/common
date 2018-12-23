@@ -212,7 +212,7 @@ class RPGObject extends enchant.Sprite {
     this.damageTime = Math.max(0, this.damageTime - 1); // fix: hp が number でなくても damageTime は減る
     if (typeof this.hp === 'number') {
       if (this.damageTime > 0) {
-        this.opacity = ((this.damageTime / 2 + 1) | 0) % 2; // 点滅
+        this.visible = ((this.damageTime / 2) >> 0) % 2 === 0; // 点滅
       }
     }
     if (this.hpchangeFlag) {
