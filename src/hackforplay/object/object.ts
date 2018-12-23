@@ -198,7 +198,7 @@ export default class RPGObject extends enchant.Sprite {
     this._collisionFlag = value;
   }
 
-  get() {
+  get isKinematic() {
     return this._isKinematic !== undefined
       ? this._isKinematic
       : !(
@@ -208,7 +208,7 @@ export default class RPGObject extends enchant.Sprite {
           this.accelerationY
         );
   }
-  set(value: boolean) {
+  set isKinematic(value: boolean) {
     this._isKinematic = value;
   }
 
