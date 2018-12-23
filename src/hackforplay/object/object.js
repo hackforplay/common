@@ -456,7 +456,7 @@ class RPGObject extends enchant.Sprite {
 
     for (let frame = 1; frame <= endFrame; ++frame) {
       // アニメーション番号を算出
-      this.frame = animation[Math.round((animation.length / endFrame) * frame)];
+      this.frame = animation[Math.floor((animation.length / endFrame) * frame)];
 
       const x = beginX + move * tw * frame * forward.x;
       const y = beginY + move * th * frame * forward.y;
