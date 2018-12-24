@@ -4,6 +4,7 @@ import { default as Hack } from './hack';
 import { Dir } from './dir';
 
 interface Event {
+  target: RPGObject;
   item: RPGObject;
 }
 interface CollidedEvent extends Event {
@@ -184,10 +185,18 @@ export default class Rule {
     return Boolean(container[name]);
   }
 
-  addToCollection(name: string, object: RPGObject) {
+  addToCollection(object: RPGObject) {
     const collections =
-      this._collections[name] || (this._collections[name] = []);
+      this._collections[object.name] || (this._collections[object.name] = []);
     collections.push(object);
+  }
+
+  removeFromCollection(object: RPGObject) {
+    const collections = this._collections[object.name];
+    if (!collections) return;
+    const index = collections.indexOf(object);
+    if (index < 0) return;
+    collections.splice(index, 1);
   }
 
   /**
@@ -223,21 +232,68 @@ export default class Rule {
   /**
    * 「つねに」を再帰的にコールするラッパー
    * @param object RPGObject
+   * @param name string このアセットとして実行する (へんしんしたらストップしたい)
    */
-  runつねに(object: RPGObject) {
+  runつねに(object: RPGObject, name: string) {
+    if (object.name !== name) return; // へんしんしたので終了
     // TODO: パフォーマンスが悪化しそうなので改善する
     requestAnimationFrame(() => {
       if (Hack.world._stop || object._stop) {
-        return this.runつねに(object);
+        return this.runつねに(object, name);
       }
       this.runOneObjectLisener('つねに', object).then(() =>
-        this.runつねに(object)
+        this.runつねに(object, name)
       );
     });
   }
 
   async runゲームがはじまったとき() {
     await this.runNoObjectListener('ゲームがはじまったとき');
+  }
+
+  registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
+    if (this.hasOneObjectLisener('つくられたとき', name)) {
+      this.runOneObjectLisener('つくられたとき', object);
+    }
+    if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
+      this.runTwoObjectListener('しょうかんされたとき', object, summoner);
+    }
+    if (this.hasOneObjectLisener('つねに', name)) {
+      this.runつねに(object, name);
+    }
+    if (this.hasOneObjectLisener('こうげきするとき', name)) {
+      object.on('becomeattack', this.onこうげきするとき);
+    }
+    if (this.hasOneObjectLisener('たおされたとき', name)) {
+      object.on('becomedead', this.onたおされたとき);
+    }
+    if (this.hasTwoObjectListener('ふまれたとき', name)) {
+      object.on('addtrodden', this.onふまれたとき);
+    }
+    if (this.hasTwoObjectListener('ぶつかったとき', name)) {
+      object.on('triggerenter', this.onぶつかったとき);
+    }
+    if (
+      this.hasOneObjectLisener('すすめなかったとき', name) ||
+      this.hasTwoObjectListener('ぶつかったとき', name)
+    ) {
+      object.on('collided', this.onすすめなかったとき);
+    }
+    if (this.hasTwoObjectListener('こうげきされたとき', name)) {
+      object.on('attacked', this.onこうげきされたとき);
+    }
+    this.addToCollection(object);
+  }
+
+  unregisterRules(object: RPGObject) {
+    object.name = ''; // つねに() を終了させる
+    object.removeEventListener('becomeattack', this.onこうげきするとき);
+    object.removeEventListener('becomedead', this.onたおされたとき);
+    object.removeEventListener('addtrodden', this.onふまれたとき);
+    object.removeEventListener('triggerenter', this.onぶつかったとき);
+    object.removeEventListener('collided', this.onすすめなかったとき);
+    object.removeEventListener('attacked', this.onこうげきされたとき);
+    this.removeFromCollection(object);
   }
 
   // 実際にコールする関数
@@ -256,14 +312,8 @@ export default class Rule {
     const object = new RPGObject();
     object.name = name;
     object._ruleInstance = this;
-    // つくられたとき (しょうかんしたときにも呼ばれる)
-    if (this.hasOneObjectLisener('つくられたとき', name)) {
-      this.runOneObjectLisener('つくられたとき', object);
-    }
-    // しょうかんされたとき
-    if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
-      this.runTwoObjectListener('しょうかんされたとき', object, summoner);
-    }
+
+    this.registerRules(object, name);
 
     // インスタンスごとのパラメータ指定
     if (dir) {
@@ -272,63 +322,39 @@ export default class Rule {
     if (x !== undefined && y !== undefined) {
       object.locate(x, y, map);
     }
-
-    // つねに
-    if (this.hasOneObjectLisener('つねに', name)) {
-      // rule.つねに がある
-      this.runつねに(object);
-    }
-    if (this.hasOneObjectLisener('こうげきするとき', name)) {
-      object.on('becomeattack', () =>
-        this.runOneObjectLisener('こうげきするとき', object)
-      );
-    }
-    if (this.hasOneObjectLisener('たおされたとき', name)) {
-      // rule.たおされたとき がある
-      object.on('becomedead', () =>
-        this.runOneObjectLisener('たおされたとき', object)
-      );
-    }
-    if (this.hasTwoObjectListener('ふまれたとき', name)) {
-      // rule.ふまれたとき がある
-      object.on('addtrodden', (event: Event) =>
-        this.runTwoObjectListener('ふまれたとき', object, event.item)
-      );
-    }
-    if (this.hasTwoObjectListener('ぶつかったとき', name)) {
-      // rule.ぶつかったとき がある
-      object.on('triggerenter', (event: Event) => {
-        if (event && event.item) {
-          const { collisionFlag } = event.item;
-          if (collisionFlag && !hasContract(object, event.item)) {
-            // item が障害物で、かつ互いに「しょうかんされた」ものではないとき
-            this.runTwoObjectListener('ぶつかったとき', object, event.item);
-          }
-        }
-      });
-    }
-    if (
-      this.hasOneObjectLisener('すすめなかったとき', name) ||
-      this.hasTwoObjectListener('ぶつかったとき', name)
-    ) {
-      object.on('collided', (event: CollidedEvent) => {
-        if (event.map || event.hits.length === 0) {
-          // マップの枠か、cmapとぶつかった => 相手のいない衝突
-          this.runOneObjectLisener('すすめなかったとき', object);
-        } else {
-          // 何かとぶつかった
-          this.runTwoObjectListener('ぶつかったとき', object, event.item);
-        }
-      });
-    }
-    if (this.hasTwoObjectListener('こうげきされたとき', name)) {
-      object.on('attacked', (event: Event) => {
-        this.runTwoObjectListener('こうげきされたとき', object, event.item);
-      });
-    }
-    this.addToCollection(name, object); // コレクションからは永久に消えない
     this.tryPairing(object);
     return object;
+  }
+
+  private onこうげきするとき(e: Event) {
+    this.runOneObjectLisener('こうげきするとき', e.target);
+  }
+  private onたおされたとき(e: Event) {
+    this.runOneObjectLisener('たおされたとき', e.target);
+  }
+  private onすすめなかったとき(e: CollidedEvent) {
+    if (e.map || e.hits.length === 0) {
+      // マップの枠か、cmapとぶつかった => 相手のいない衝突
+      this.runOneObjectLisener('すすめなかったとき', e.target);
+    } else {
+      // 何かとぶつかった
+      this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
+    }
+  }
+  private onふまれたとき(e: Event) {
+    this.runTwoObjectListener('ふまれたとき', e.target, e.item);
+  }
+  private onぶつかったとき(e: Event) {
+    if (e && e.item) {
+      const { collisionFlag } = e.item;
+      if (collisionFlag && !hasContract(e.target, e.item)) {
+        // item が障害物で、かつ互いに「しょうかんされた」ものではないとき
+        this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
+      }
+    }
+  }
+  private onこうげきされたとき(e: Event) {
+    this.runTwoObjectListener('こうげきされたとき', e.target, e.item);
   }
 
   ゲームがはじまったとき(func: NoObjectListener) {
