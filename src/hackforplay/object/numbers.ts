@@ -5,6 +5,7 @@ export interface INumbers {
   opacity: number;
   damage: number;
   penetrate: number;
+  score: number;
 }
 
 // reflection の機能がないので,
@@ -14,7 +15,8 @@ const reflectINumbers: INumbers = {
   speed: 0,
   opacity: 0,
   damage: 0,
-  penetrate: 0
+  penetrate: 0,
+  score: 0
 };
 
 export const keys = <(keyof INumbers)[]>Object.keys(reflectINumbers);
@@ -31,7 +33,9 @@ const keysOfINumbers: { [key: string]: keyof INumbers } = {
   damage: 'damage',
   ふれたときのダメージ: 'damage',
   penetrate: 'penetrate',
-  かんつうする回数: 'penetrate'
+  かんつうする回数: 'penetrate',
+  score: 'score',
+  スコア: 'score'
 };
 
 export function key(type: string): keyof INumbers | undefined {

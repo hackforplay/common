@@ -34,7 +34,7 @@ class Camera extends enchant.Sprite {
 
   // カメラに表示されるHPなどのラベル
   private _numberLabels: any[] = [];
-  private static _numberLabels: (keyof N.INumbers)[] = ['hp'];
+  private static _numberLabels: (keyof N.INumbers)[] = ['hp', 'score'];
   static get numberLabels() {
     return Camera._numberLabels;
   }

@@ -59,6 +59,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   collider?: any;
   colliders?: any;
   isAutoPickUp?: boolean;
+  score = 0;
 
   private _hp?: number;
   private _atk?: number;
