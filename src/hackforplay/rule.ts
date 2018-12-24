@@ -77,6 +77,8 @@ export default class Rule {
     [type: string]: RPGObject[];
   } = {};
 
+  private _pairingWaitList: { [key: string]: RPGObject } = {};
+
   addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
       throw new Error(`${type} はすでに決まっています`);
@@ -203,6 +205,22 @@ export default class Rule {
   }
 
   /**
+   * ペアが空いていれば RPGObject.pairedObject に設定する
+   * @param object
+   */
+  tryPairing(object: RPGObject) {
+    const waiting = this._pairingWaitList[object.name];
+    if (!waiting) {
+      this._pairingWaitList[object.name] = object; // 次のオブジェクトとペアリング
+      return;
+    }
+    // 互いに参照を持つ
+    object.pairedObject = waiting;
+    waiting.pairedObject = object;
+    delete this._pairingWaitList[object.name]; // ペアリング完了
+  }
+
+  /**
    * 「つねに」を再帰的にコールするラッパー
    * @param object RPGObject
    */
@@ -309,6 +327,7 @@ export default class Rule {
       });
     }
     this.addToCollection(name, object); // コレクションからは永久に消えない
+    this.tryPairing(object);
     return object;
   }
 

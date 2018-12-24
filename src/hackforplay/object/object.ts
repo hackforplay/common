@@ -60,6 +60,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   colliders?: any;
   isAutoPickUp?: boolean;
   score = 0;
+  pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
 
   private _hp?: number;
   private _atk?: number;
@@ -1049,6 +1050,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     warpTarget.warpTarget = this; // 飛び先の飛び先は自分
     this.warpTarget = warpTarget;
     return warpTarget;
+  }
+
+  teleport(portal: RPGObject) {
+    if (this.behavior !== BehaviorTypes.Idle) return;
+    const { pairedObject } = portal;
+    if (!pairedObject) return;
+    this.locate(pairedObject.mapX, pairedObject.mapY, pairedObject.map.name);
   }
 
   /**
