@@ -252,6 +252,7 @@ export default class Rule {
   }
 
   registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
+    object.name = name;
     if (this.hasOneObjectLisener('つくられたとき', name)) {
       this.runOneObjectLisener('つくられたとき', object);
     }
@@ -310,7 +311,6 @@ export default class Rule {
       feeles.install && feeles.install(name);
     }
     const object = new RPGObject();
-    object.name = name;
     object._ruleInstance = this;
 
     this.registerRules(object, name);
