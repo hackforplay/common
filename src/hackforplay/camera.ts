@@ -339,8 +339,8 @@ class Camera extends enchant.Sprite {
         labelsWillRemove.splice(labelsWillRemove.indexOf(label), 1);
       }
       // ラベルを上から順に並べる
-      label.moveTo(10, y);
-      y += 32;
+      label.moveTo(Hack.menuGroup.x + 10, Hack.menuGroup.y + y);
+      y += 20;
     }
     for (const label of labelsWillRemove) {
       const index = this._numberLabels.indexOf(label);
