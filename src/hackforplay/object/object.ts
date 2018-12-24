@@ -297,6 +297,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const _remove = () => {
       this.remove();
       if (this.shadow) this.shadow.remove();
+      if (this.hpLabel) this.hpLabel.remove();
     };
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
     else _remove.call(this);
