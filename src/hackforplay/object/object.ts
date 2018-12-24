@@ -1007,6 +1007,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {RPGObject} object
    */
   warp(object: RPGObject) {
+    console.warn('warp は非推奨になりました. teleport を使ってください');
     if (!(object instanceof RPGObject)) {
       throw new Error(
         `${this.name} の warp に RPGObject ではなく ${object} が与えられました`
@@ -1037,6 +1038,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {String} mapName
    */
   warpTo(x: number, y: number, mapName: string) {
+    console.warn('warpTo は非推奨になりました');
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
