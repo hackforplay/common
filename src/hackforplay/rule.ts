@@ -326,13 +326,13 @@ export default class Rule {
     return object;
   }
 
-  private onこうげきするとき(e: Event) {
+  private onこうげきするとき = ((e: Event) => {
     this.runOneObjectLisener('こうげきするとき', e.target);
-  }
-  private onたおされたとき(e: Event) {
+  }).bind(this);
+  private onたおされたとき = ((e: Event) => {
     this.runOneObjectLisener('たおされたとき', e.target);
-  }
-  private onすすめなかったとき(e: CollidedEvent) {
+  }).bind(this);
+  private onすすめなかったとき = ((e: CollidedEvent) => {
     if (e.map || e.hits.length === 0) {
       // マップの枠か、cmapとぶつかった => 相手のいない衝突
       this.runOneObjectLisener('すすめなかったとき', e.target);
@@ -340,11 +340,11 @@ export default class Rule {
       // 何かとぶつかった
       this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
     }
-  }
-  private onふまれたとき(e: Event) {
+  }).bind(this);
+  private onふまれたとき = ((e: Event) => {
     this.runTwoObjectListener('ふまれたとき', e.target, e.item);
-  }
-  private onぶつかったとき(e: Event) {
+  }).bind(this);
+  private onぶつかったとき = ((e: Event) => {
     if (e && e.item) {
       const { collisionFlag } = e.item;
       if (collisionFlag && !hasContract(e.target, e.item)) {
@@ -352,10 +352,10 @@ export default class Rule {
         this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
       }
     }
-  }
-  private onこうげきされたとき(e: Event) {
+  }).bind(this);
+  private onこうげきされたとき = ((e: Event) => {
     this.runTwoObjectListener('こうげきされたとき', e.target, e.item);
-  }
+  }).bind(this);
 
   ゲームがはじまったとき(func: NoObjectListener) {
     this.addNoObjectListener('ゲームがはじまったとき', func);
