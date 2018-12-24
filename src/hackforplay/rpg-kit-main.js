@@ -356,7 +356,7 @@ game.onawake = () => {
       );
       return (
         Camera.main &&
-        Camera.main.numberLabels.find(label => label._key === 'hp')
+        Camera.main._numberLabels.find(label => label._key === 'hp')
       );
     }
   });

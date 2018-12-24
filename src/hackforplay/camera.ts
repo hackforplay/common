@@ -32,7 +32,18 @@ class Camera extends enchant.Sprite {
   borderColor = '#000';
   borderLineWidth = 1;
 
-  private numberLabels: any[] = [];
+  // カメラに表示されるHPなどのラベル
+  private _numberLabels: any[] = [];
+  private static _numberLabels: (keyof N.INumbers)[] = ['hp'];
+  static get numberLabels() {
+    return Camera._numberLabels;
+  }
+  static set numberLabels(value) {
+    Camera._numberLabels = value;
+    for (const camera of Camera.collection) {
+      camera.refreshNumberLabels();
+    }
+  }
 
   constructor(x = 0, y = 0, w: number = game.width, h: number = game.height) {
     super(w, h);
@@ -42,8 +53,7 @@ class Camera extends enchant.Sprite {
     this.x = x;
     this.y = y;
 
-    // カメラにつけるラベル
-    this.addNumberLabel('HP:', 'hp');
+    this.refreshNumberLabels();
 
     Hack.cameraGroup.addChild(this);
     Camera.collection.push(this);
@@ -300,53 +310,44 @@ class Camera extends enchant.Sprite {
     this.resize(this.w, this.h);
   }
 
-  addNumberLabel(
-    prefix: string,
-    key: keyof N.INumbers,
-    beforeAt?: keyof N.INumbers
-  ) {
+  private createNumberLabel(key: keyof N.INumbers) {
     const {
       ui: { ScoreLabel }
     } = <any>enchant;
     const label = new ScoreLabel(this.w, this.h); // 見えない位置で初期化
-    label.label = prefix;
+    label.label = key.toUpperCase() + ':';
     label._key = key;
     label.onenterframe = () => {
       if (!this.target) return;
       label.score = this.target[key];
     };
     Hack.menuGroup.addChild(label);
-    if (beforeAt) {
-      // key をふくむラベルを探して途中に追加
-      const index = this.numberLabels.findIndex(
-        label => label._key === beforeAt
-      );
-      if (index > -1) {
-        this.numberLabels.splice(index, 0, label);
-      } else {
-        this.numberLabels.push(label);
-      }
-    } else {
-      this.numberLabels.push(label);
-    }
-    this.refreshNumberLabels();
     return label;
   }
 
-  removeNumberLabel(key: keyof N.INumbers) {
-    const index = this.numberLabels.findIndex(label => label._key === key);
-    if (index > 0) {
-      const [label] = this.numberLabels.splice(index, 1);
-      label.remove();
-      this.refreshNumberLabels();
-    }
-  }
-
-  refreshNumberLabels() {
+  private refreshNumberLabels() {
     let y = 10;
-    for (const label of this.numberLabels) {
+    const labelsWillRemove = [...this._numberLabels];
+    for (const key of Camera.numberLabels) {
+      let label = labelsWillRemove.find(label => label._key === key);
+      if (!label) {
+        // 足りないラベルを追加
+        label = this.createNumberLabel(key);
+        this._numberLabels.push(label);
+      } else {
+        // 削除待機配列から削除
+        labelsWillRemove.splice(labelsWillRemove.indexOf(label), 1);
+      }
+      // ラベルを上から順に並べる
       label.moveTo(10, y);
       y += 32;
+    }
+    for (const label of labelsWillRemove) {
+      const index = this._numberLabels.indexOf(label);
+      if (index > -1) {
+        this._numberLabels.splice(index, 1);
+      }
+      label.remove();
     }
   }
 }
