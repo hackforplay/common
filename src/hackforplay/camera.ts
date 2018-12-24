@@ -8,10 +8,28 @@ import RPGObject from './object/object';
 
 import { clamp } from './utils/math-utils';
 
+type Vector2 = { x: number; y: number };
 type Rect = { x: number; y: number; width: number; height: number };
 
 class Camera extends enchant.Sprite {
   static collection: Camera[] = [];
+
+  x: number;
+  y: number;
+
+  background = '#000';
+
+  enabled = true;
+  target: RPGObject | null = null;
+  center: Vector2 | null = null;
+  clip = true;
+  clipScaleFunction = Math.min;
+  clamp = true;
+  scale = 1;
+
+  border = false;
+  borderColor = '#000';
+  borderLineWidth = 1;
 
   constructor(x = 0, y = 0, w: number = game.width, h: number = game.height) {
     super(w, h);
@@ -20,20 +38,6 @@ class Camera extends enchant.Sprite {
 
     this.x = x;
     this.y = y;
-
-    this.background = '#000';
-
-    this.enabled = true;
-    this.target = null;
-    this.center = null;
-    this.clip = true;
-    this.clipScaleFunction = Math.min;
-    this.clamp = true;
-    this.scale = 1.0;
-
-    this.border = false;
-    this.borderColor = '#000';
-    this.borderLineWidth = 1;
 
     Hack.cameraGroup.addChild(this);
     Camera.collection.push(this);
@@ -290,8 +294,6 @@ class Camera extends enchant.Sprite {
     this.resize(this.w, this.h);
   }
 }
-
-Camera.collection = [];
 
 // カメラを並べる
 Camera.arrange = function(
