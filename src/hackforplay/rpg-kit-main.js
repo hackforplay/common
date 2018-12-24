@@ -361,21 +361,17 @@ game.onawake = () => {
     }
   });
 
-  Hack.scoreLabel = (function(self, source) {
-    Object.keys(source)
-      .filter(function(key) {
-        var desc = Object.getOwnPropertyDescriptor(source, key);
-        return desc !== undefined && desc.enumerable;
-      })
-      .forEach(function(key) {
-        self[key] = source[key];
-      });
-    Hack.menuGroup.addChild(self);
-    return self;
-  })(
-    new enchant.ui.ScoreLabel(Hack.menuGroup.x + 10, Hack.menuGroup.y + 88),
-    Hack.scoreLabel
-  );
+  Object.defineProperty(Hack, 'scoreLabel', {
+    get() {
+      console.warn(
+        `Hack.scoreLabel は非推奨になりました. Camera.numberLabels を使ってください`
+      );
+      return (
+        Camera.main &&
+        Camera.main._numberLabels.find(label => label._key === 'score')
+      );
+    }
+  });
 
   feeles.setAlias('Hack', Hack);
   feeles.setAlias('game', game);
@@ -513,31 +509,21 @@ Hack.Attack = function(x, y, damage, pushX, pushY) {
     }, this);
 };
 
-/**
- * Hack.score
- * Generic scoring property
- * Invoke Hack.onscorechange
- */
-var scorechangeFlag = false;
+const scoreIsDeprecated =
+  'Hack.score は非推奨になりました. プレイヤーのスコアを使ってください';
 Object.defineProperty(Hack, 'score', {
-  enumerable: true,
-  configurable: false,
-  get: function() {
-    return Hack.scoreLabel.score;
-  },
-  set: function(value) {
-    if (Hack.scoreLabel.score !== value) {
-      Hack.scoreLabel.score = value;
-      scorechangeFlag = true;
+  get() {
+    console.warn(scoreIsDeprecated);
+    if (Camera.main && Camera.main.target) {
+      return Camera.main.target.score;
     }
-  }
-});
-Hack.scoreLabel = Object.create(null); // 仮オブジェクト
-Hack.score = 0; // Fire a event and Initialize score
-game.on('enterframe', function() {
-  if (scorechangeFlag && Hack.isPlaying) {
-    Hack.dispatchEvent(new enchant.Event('scorechange'));
-    scorechangeFlag = false;
+    return 0;
+  },
+  set(value) {
+    console.warn(scoreIsDeprecated);
+    if (Camera.main && Camera.main.target) {
+      Camera.main.target.score = value;
+    }
   }
 });
 
