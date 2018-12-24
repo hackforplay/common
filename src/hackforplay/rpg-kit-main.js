@@ -352,7 +352,7 @@ game.onawake = () => {
   Object.defineProperty(Hack, 'lifeLabel', {
     get() {
       console.warn(
-        `Hack.lifeLabel は非推奨になりました. ラベルを消したい場合は, Camera.main.removeNumberLabel('hp'); を使ってください`
+        `Hack.lifeLabel は非推奨になりました. Camera.numberLabels を使ってください`
       );
       return (
         Camera.main &&
