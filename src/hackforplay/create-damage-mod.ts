@@ -1,7 +1,7 @@
 import * as enchant from '../enchantjs/enchant';
 import SAT from '../lib/sat.min';
 import RPGObject from './object/object';
-import { isOpposite } from './family';
+import { isOpposite, getMaster } from './family';
 import game from './game';
 
 game.on('enterframe', update);
@@ -9,21 +9,19 @@ export function unregister() {
   game.off('enterframe', update);
 }
 
-const attackerMap = new WeakMap<RPGObject, RPGObject>();
-
 /**
  * ダメージを与える MOD を生成する
  * @param damage
  * @param attacker
  */
 export default function createDamageMod(damage?: number, attacker?: RPGObject) {
+  console.warn(
+    'Hack.createDamgeMod は非推奨になりました. damage プロパティを使ってください'
+  );
   return function damageMod(this: RPGObject) {
     this.isDamageObject = true; // ダメージ処理を行うフラグ
     this.collisionFlag = false; // ダメージオブジェクトそのものは, ぶつからない
     this.damage = damage !== undefined ? damage : this.atk;
-    if (attacker) {
-      attackerMap.set(this, attacker);
-    }
   };
 }
 
@@ -40,7 +38,7 @@ export function update() {
   );
 
   for (const damager of damagers) {
-    const attacker = attackerMap.get(damager); // attacker が自分の場合は undefined かも知れない
+    const attacker = getMaster(damager); // attacker が自分の場合は undefined かも知れない
 
     // 接触している RPGObject を取得する
     const hits = nonDamagers.filter(item => {

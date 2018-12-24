@@ -402,11 +402,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const dy = this.mapY + this.forward.y;
 
     // ダメージを与えるオブジェクトを生成する
-    const damageObject = this.summon(() => {
-      this.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
-      this.collider.setOffset(new SAT.V(12, 12));
-    });
-    damageObject.mod(Hack.createDamageMod(this.atk, this));
+    const damageObject = new RPGObject();
+    damageObject.damage = this.atk;
+    damageObject.collisionFlag = false;
+    registerServant(this, damageObject);
+    if (this.map) {
+      damageObject.locate(this.mapX, this.mapY, this.map.name); // 同じ場所に配置する
+    }
+    damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
+    damageObject.collider.setOffset(new SAT.V(12, 12));
     damageObject.locate(dx, dy);
     damageObject.setTimeout(
       () => damageObject.destroy(),
@@ -981,6 +985,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {Object} params
    */
   breath(params: any) {
+    console.warn('breath は非推奨になりました');
     params = {
       // デフォルトのパラメータ
       skin: (<any>DeprecatedSkin).バクエン,

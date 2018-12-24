@@ -46,7 +46,6 @@ class Laser extends RPGObject {
     this.height = h;
 
     this.damage = damage;
-    this.mod(Hack.createDamageMod(this.damage, this));
   }
 
   update() {
