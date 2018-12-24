@@ -1,6 +1,7 @@
-import { default as RPGObject } from './object/object';
+import RPGObject from './object/object';
 import * as synonyms from './synonyms';
 import { default as Family } from './family';
+import { default as Hack } from './hack';
 
 const checked = new WeakSet();
 
@@ -11,6 +12,9 @@ export default function deprecated() {
     message += checkEvents(item);
     message += checkFamily(item);
     checked.add(item);
+  }
+  if (isListening(Hack, 'scorechange')) {
+    message += `Hack.onscorechange was removed.\n`;
   }
   return message;
 }
@@ -30,13 +34,13 @@ function checkEvents(item: RPGObject) {
   // for Japanese (synonym)
   for (const type of deprecatedEventsJp) {
     if (isListening(item, type)) {
-      return `Deprecated: '${type}' は廃止予定です. 代わりに 'ふまれた' か 'どかれた' を使ってください`;
+      return `Deprecated: '${type}' は廃止予定です. 代わりに 'ふまれた' か 'どかれた' を使ってください\n`;
     }
   }
   // for English (origin)
   for (const type of deprecatedEvents) {
     if (isListening(item, type)) {
-      return `Deprecated: '${type}' is deprecated. Please use 'addtrodden' or 'removetrodden' instead.`;
+      return `Deprecated: '${type}' is deprecated. Please use 'addtrodden' or 'removetrodden' instead.\n`;
     }
   }
   return '';
@@ -47,7 +51,7 @@ function checkEvents(item: RPGObject) {
  */
 function checkFamily(item: RPGObject) {
   if (item.family === Family.エネミー) {
-    return 'Family.エネミー ではなく Family.モンスター を使ってください';
+    return 'Family.エネミー ではなく Family.モンスター を使ってください\n';
   }
   return '';
 }
