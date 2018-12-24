@@ -61,6 +61,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   isAutoPickUp?: boolean;
   score = 0;
   pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
+  _ruleInstance?: Rule;
 
   private _hp?: number;
   private _atk?: number;
@@ -1099,6 +1100,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     );
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
     return appended;
+  }
+
+  へんしんする(name: string) {
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return;
+    _ruleInstance.installAsset(name);
+    _ruleInstance.unregisterRules(this);
+    _ruleInstance.registerRules(this, name);
   }
 
   /**

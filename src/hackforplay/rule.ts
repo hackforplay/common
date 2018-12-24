@@ -297,6 +297,13 @@ export default class Rule {
     this.removeFromCollection(object);
   }
 
+  installAsset(name: string) {
+    if (this._knownThisNames.indexOf(name) < 0) {
+      Hack.log(`${name} というアセットは ないかもしれない`);
+      feeles.install && feeles.install(name);
+    }
+  }
+
   // 実際にコールする関数
   つくる(
     name: string,
@@ -306,10 +313,8 @@ export default class Rule {
     dir?: Dir,
     summoner?: RPGObject
   ) {
-    if (this._knownThisNames.indexOf(name) < 0) {
-      Hack.log(`${name} というアセットは ないかもしれない`);
-      feeles.install && feeles.install(name);
-    }
+    this.installAsset(name);
+
     const object = new RPGObject();
     object._ruleInstance = this;
 
