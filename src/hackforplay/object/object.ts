@@ -1025,7 +1025,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const isPlayer =
       this === (<any>window).player ||
       this === Hack.player ||
-      this === Camera.main.target;
+      this === (Camera.main && Camera.main.target);
     if (isPlayer && this.map !== warpTarget.map) {
       // プレイヤーがワープする場合は, 先にマップを変更する
       Hack.changeMap(warpTarget.map.name);
