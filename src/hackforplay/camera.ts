@@ -315,7 +315,7 @@ class Camera extends enchant.Sprite {
       if (!this.target) return;
       label.score = this.target[key];
     };
-    Hack.cameraGroup.addChild(label);
+    Hack.menuGroup.addChild(label);
     if (beforeAt) {
       // key をふくむラベルを探して途中に追加
       const index = this.numberLabels.findIndex(
