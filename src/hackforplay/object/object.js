@@ -268,6 +268,7 @@ class RPGObject extends enchant.Sprite {
     function _remove() {
       this.remove();
       if (this.shadow) this.shadow.remove();
+      if (this.hpLabel) this.hpLabel.remove();
     }
   }
 
