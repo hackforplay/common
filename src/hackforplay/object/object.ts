@@ -1108,11 +1108,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   へんしんする(name: string) {
-    const { _ruleInstance } = this;
+    const { _ruleInstance, hp } = this;
     if (!_ruleInstance) return;
     _ruleInstance.installAsset(name);
     _ruleInstance.unregisterRules(this);
     _ruleInstance.registerRules(this, name);
+    this.hp = hp; // 体力だけは引き継ぐ
   }
 
   /**
