@@ -295,7 +295,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         Hack.maps[mapName] instanceof RPGMap &&
         this.map !== Hack.maps[mapName]
       ) {
-        // this.destroy();
+        // プレイヤーがワープする場合は, 先にマップを変更する
+        if (this === (Camera.main && Camera.main.target)) {
+          Hack.changeMap(mapName);
+        }
         Hack.maps[mapName].scene.addChild(this);
       }
     } else if (typeof mapName === 'string') {
@@ -1022,14 +1025,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           this.name
         } はワープできませんでした`
       );
-    }
-    const isPlayer =
-      this === (<any>window).player ||
-      this === Hack.player ||
-      this === (Camera.main && Camera.main.target);
-    if (isPlayer && this.map !== warpTarget.map) {
-      // プレイヤーがワープする場合は, 先にマップを変更する
-      Hack.changeMap(warpTarget.map.name);
     }
     this.locate(warpTarget.mapX, warpTarget.mapY, warpTarget.map.name);
   }
