@@ -1,28 +1,25 @@
-import enchant from '../enchantjs/enchant';
+import { default as enchant } from '../enchantjs/enchant';
 import '../enchantjs/ui.enchant';
 import '../enchantjs/fix';
 import './rpg-kit-main';
-import Hack from './hack';
-import game from './game';
+import { default as Hack } from './hack';
+import { default as game } from './game';
+import RPGObject from './object/object';
 
 import { clamp } from './utils/math-utils';
 
+type Rect = { x: number; y: number; width: number; height: number };
+
 class Camera extends enchant.Sprite {
-  constructor(x, y, w, h) {
+  static collection: Camera[] = [];
+
+  constructor(x = 0, y = 0, w: number = game.width, h: number = game.height) {
     super(w, h);
-
-    // this.opacity = 0.5;
-
-    w = w || game.width;
-    h = h || game.height;
 
     this.image = new enchant.Surface(w, h);
 
-    this.w = w;
-    this.h = h;
-
-    this.x = x || 0;
-    this.y = y || 0;
+    this.x = x;
+    this.y = y;
 
     this.background = '#000';
 
@@ -45,18 +42,18 @@ class Camera extends enchant.Sprite {
   get w() {
     return this.width;
   }
-  set w(value) {
+  set w(value: number) {
     this.width = value;
   }
 
   get h() {
     return this.height;
   }
-  set h(value) {
+  set h(value: number) {
     this.height = value;
   }
 
-  resize(w, h) {
+  resize(w: number, h: number) {
     w = Math.ceil(w);
     h = Math.ceil(h);
 
@@ -146,7 +143,7 @@ class Camera extends enchant.Sprite {
   }
 
   // 描画範囲を画面に収める
-  clampRect(rect) {
+  clampRect(rect: Rect) {
     const { w, h } = this.getVisionSize();
 
     var over = false;
@@ -185,7 +182,7 @@ class Camera extends enchant.Sprite {
     return rect;
   }
 
-  _rectScale(rect, scale) {
+  _rectScale(rect: Rect, scale: number) {
     rect.x *= scale;
     rect.y *= scale;
     rect.width *= scale;
@@ -194,7 +191,7 @@ class Camera extends enchant.Sprite {
   }
 
   // スクリーン座標をゲーム内座標に変換する
-  projection(screenX, screenY) {
+  projection(screenX: number, screenY: number) {
     const renderRect = this.getRenderRect();
     return [
       renderRect.x + (screenX - this.x) * (renderRect.width / this.width),
@@ -203,7 +200,7 @@ class Camera extends enchant.Sprite {
   }
 
   // カメラ上の座標を計算する
-  getNodeRect(node) {
+  getNodeRect(node: RPGObject) {
     var renderRect = this.getRenderRect();
     var scale = this.getScale();
 
@@ -228,11 +225,11 @@ class Camera extends enchant.Sprite {
     };
   }
 
-  zoom(value) {
+  zoom(value: number) {
     this.scale /= value;
   }
 
-  borderStyle(lineWidth, color) {
+  borderStyle(lineWidth: number, color: string) {
     this.border = true;
     this.borderLineWidth = lineWidth;
     this.borderColor = color;
@@ -297,8 +294,17 @@ class Camera extends enchant.Sprite {
 Camera.collection = [];
 
 // カメラを並べる
-Camera.arrange = function(x, y, border, filter) {
-  var for2d = function(x, y, callback) {
+Camera.arrange = function(
+  x: number,
+  y: number,
+  border = true,
+  filter?: (camera: Camera) => boolean
+) {
+  var for2d = function(
+    x: number,
+    y: number,
+    callback: (a: number, b: number) => void
+  ) {
     for (var a = 0; a < x; ++a) {
       for (var b = 0; b < y; ++b) {
         callback(a, b);
@@ -307,7 +313,7 @@ Camera.arrange = function(x, y, border, filter) {
   };
 
   // 枠を表示する
-  if (border === undefined ? true : border) {
+  if (border) {
     Camera.collection.forEach(function(camera) {
       camera.border = true;
     });
@@ -333,8 +339,6 @@ Camera.arrange = function(x, y, border, filter) {
 };
 
 Camera.layout = Camera.arrange;
-
-window.Camera = Camera;
 Camera.main = Hack.camera;
 
 export default Camera;
