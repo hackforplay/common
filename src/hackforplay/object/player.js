@@ -3,6 +3,7 @@ import RPGObject from './object';
 import Key from '../key';
 import BehaviorTypes from '../behavior-types';
 import RPGMap from '../rpg-map';
+import Camera from '../camera';
 
 class Player extends RPGObject {
   constructor(mod) {
@@ -31,6 +32,14 @@ class Player extends RPGObject {
       right: 'right',
       attack: 'space'
     };
+
+    // デフォルトのカメラを作成する
+    if (!Camera.main) {
+      const camera = new Camera();
+      camera.target = this;
+      Camera.main = camera;
+      Hack.camera = Hack.camera; // 後方互換性 (~0.11)
+    }
 
     // 歩き終わったときに自動でモノを拾う (pickUp)
     this.isAutoPickUp = true;

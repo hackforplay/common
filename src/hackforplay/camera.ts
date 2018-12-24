@@ -5,14 +5,15 @@ import './rpg-kit-main';
 import { default as Hack } from './hack';
 import { default as game } from './game';
 import RPGObject from './object/object';
-
 import { clamp } from './utils/math-utils';
+import * as N from './object/numbers';
 
 type Vector2 = { x: number; y: number };
 type Rect = { x: number; y: number; width: number; height: number };
 
 class Camera extends enchant.Sprite {
   static collection: Camera[] = [];
+  static main: Camera | null = null;
 
   x: number;
   y: number;
@@ -31,6 +32,8 @@ class Camera extends enchant.Sprite {
   borderColor = '#000';
   borderLineWidth = 1;
 
+  private numberLabels: any[] = [];
+
   constructor(x = 0, y = 0, w: number = game.width, h: number = game.height) {
     super(w, h);
 
@@ -38,6 +41,9 @@ class Camera extends enchant.Sprite {
 
     this.x = x;
     this.y = y;
+
+    // カメラにつけるラベル
+    this.addNumberLabel('HP:', 'hp');
 
     Hack.cameraGroup.addChild(this);
     Camera.collection.push(this);
@@ -293,6 +299,56 @@ class Camera extends enchant.Sprite {
     super._computeFramePosition();
     this.resize(this.w, this.h);
   }
+
+  addNumberLabel(
+    prefix: string,
+    key: keyof N.INumbers,
+    beforeAt?: keyof N.INumbers
+  ) {
+    const {
+      ui: { ScoreLabel }
+    } = <any>enchant;
+    const label = new ScoreLabel(this.w, this.h); // 見えない位置で初期化
+    label.label = prefix;
+    label._key = key;
+    label.onenterframe = () => {
+      if (!this.target) return;
+      label.score = this.target[key];
+    };
+    Hack.cameraGroup.addChild(label);
+    if (beforeAt) {
+      // key をふくむラベルを探して途中に追加
+      const index = this.numberLabels.findIndex(
+        label => label._key === beforeAt
+      );
+      if (index > -1) {
+        this.numberLabels.splice(index, 0, label);
+      } else {
+        this.numberLabels.push(label);
+      }
+    } else {
+      this.numberLabels.push(label);
+    }
+    this.refreshNumberLabels();
+    return label;
+  }
+
+  removeNumberLabel(key: keyof N.INumbers) {
+    const index = this.numberLabels.findIndex(label => label._key === key);
+    if (index > 0) {
+      const [label] = this.numberLabels.splice(index, 1);
+      label.remove();
+      this.refreshNumberLabels();
+    }
+  }
+
+  refreshNumberLabels() {
+    let y = 10;
+    for (const label of this.numberLabels) {
+      label.moveTo(10, y);
+      y += 32;
+    }
+  }
 }
 
 // カメラを並べる
@@ -341,6 +397,5 @@ Camera.arrange = function(
 };
 
 Camera.layout = Camera.arrange;
-Camera.main = Hack.camera;
 
 export default Camera;

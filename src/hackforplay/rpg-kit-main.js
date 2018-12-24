@@ -235,14 +235,6 @@ game.onawake = () => {
   Hack.cameraGroup = cameraGroup;
   game.rootScene.addChild(cameraGroup);
 
-  // デフォルトのカメラを作成する
-  const camera = (Hack.camera = Camera.main = new Camera());
-
-  // ゲーム開始時にデフォルトのカメラのターゲットが存在しないならプレイヤーを割り当てる
-  game.on('load', () => {
-    if (!camera.target) camera.target = Hack.player;
-  });
-
   // コントローラーグループ
   const controllerGroup = new enchant.Group();
   controllerGroup.name = 'ControllerGroup';
@@ -356,16 +348,16 @@ game.onawake = () => {
   Hack.textarea.width = 340;
   Hack.textarea.height = 32;
 
-  // Life label
-  const lifeLabel = new enchant.ui.ScoreLabel(1000, 1000, 0);
-  Hack.lifeLabel = lifeLabel;
-  Hack.lifeLabel.label = 'HP:';
-  Hack.menuGroup.addChild(lifeLabel);
-  Hack.lifeLabel.moveTo(Hack.menuGroup.x + 10, Hack.menuGroup.y + 72);
-  game.on('enterframe', () => {
-    const player = self.player || Hack.player;
-    if (player && player.hasHp) {
-      lifeLabel.score = player.hp;
+  // Life label (後方互換性 ~0.11)
+  Object.defineProperty(Hack, 'lifeLabel', {
+    get() {
+      console.warn(
+        `Hack.lifeLabel は非推奨になりました. ラベルを消したい場合は, Camera.main.removeNumberLabel('hp'); を使ってください`
+      );
+      return (
+        Camera.main &&
+        Camera.main.numberLabels.find(label => label._key === 'hp')
+      );
     }
   });
 
