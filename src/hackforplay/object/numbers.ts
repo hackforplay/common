@@ -7,6 +7,18 @@ export interface INumbers {
   penetrate: number;
 }
 
+// reflection の機能がないので,
+const reflectINumbers: INumbers = {
+  hp: 0,
+  atk: 0,
+  speed: 0,
+  opacity: 0,
+  damage: 0,
+  penetrate: 0
+};
+
+export const keys = <(keyof INumbers)[]>Object.keys(reflectINumbers);
+
 const keysOfINumbers: { [key: string]: keyof INumbers } = {
   hp: 'hp',
   たいりょく: 'hp',
