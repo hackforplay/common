@@ -4,6 +4,7 @@ export interface INumbers {
   speed: number;
   opacity: number;
   damage: number;
+  penetrate: number;
 }
 
 const keysOfINumbers: { [key: string]: keyof INumbers } = {
@@ -16,7 +17,9 @@ const keysOfINumbers: { [key: string]: keyof INumbers } = {
   opacity: 'opacity',
   みえやすさ: 'opacity',
   damage: 'damage',
-  ふれたときのダメージ: 'damage'
+  ふれたときのダメージ: 'damage',
+  penetrate: 'penetrate',
+  かんつうする回数: 'penetrate'
 };
 
 export function key(type: string): keyof INumbers | undefined {

@@ -75,5 +75,10 @@ export function update() {
         })
       );
     }
+
+    if (hits.length > 0) {
+      // もし貫通限界を超えたらオブジェクトを破棄する
+      damager.addPenetratedCount();
+    }
   }
 }

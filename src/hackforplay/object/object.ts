@@ -63,6 +63,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _hp?: number;
   private _atk?: number;
   private _isDamageObject = false;
+  private _penetrate?: number; // ものに触れた時に貫通できる回数
+  private _penetratedCount = 0; // すでに貫通した回数
   private _forward?: { x: number; y: number }; // direction
   private _directionType?: 'single' | 'double' | 'quadruple';
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
@@ -236,6 +238,24 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   set isDamageObject(value) {
     this._isDamageObject = value;
+  }
+
+  get penetrate() {
+    return this._penetrate !== undefined ? this._penetrate : 0;
+  }
+
+  set penetrate(value) {
+    this._penetrate = value;
+  }
+
+  addPenetratedCount() {
+    this._penetratedCount++;
+    if (
+      this._penetrate !== undefined && // そもそも貫通限界が設定されているか
+      this._penetrate < this._penetratedCount // 貫通限界を超えたか
+    ) {
+      this.destroy();
+    }
   }
 
   geneticUpdate() {
