@@ -62,6 +62,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   score = 0;
   pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
   _ruleInstance?: Rule;
+  skill?: string; // 攻撃時にしょうかんするアセットの名前
 
   private _hp?: number;
   private _atk?: number;
@@ -401,21 +402,27 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const dx = this.mapX + this.forward.x;
     const dy = this.mapY + this.forward.y;
 
-    // ダメージを与えるオブジェクトを生成する
-    const damageObject = new RPGObject();
-    damageObject.damage = this.atk;
-    damageObject.collisionFlag = false;
-    registerServant(this, damageObject);
-    if (this.map) {
-      damageObject.locate(this.mapX, this.mapY, this.map.name); // 同じ場所に配置する
+    if (this.skill) {
+      // アセットをしょうかんする
+      this.しょうかんする(this.skill);
+    } else {
+      // ダメージを与えるオブジェクトを生成する
+      const damageObject = new RPGObject();
+      damageObject.damage = this.atk;
+      damageObject.collisionFlag = false;
+      registerServant(this, damageObject);
+      if (this.map) {
+        damageObject.locate(dx, dy, this.map.name); // 同じ場所に配置する
+      } else {
+        damageObject.locate(dx, dy);
+      }
+      damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
+      damageObject.collider.setOffset(new SAT.V(12, 12));
+      damageObject.setTimeout(
+        () => damageObject.destroy(),
+        this.getFrame().length
+      );
     }
-    damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
-    damageObject.collider.setOffset(new SAT.V(12, 12));
-    damageObject.locate(dx, dy);
-    damageObject.setTimeout(
-      () => damageObject.destroy(),
-      this.getFrame().length
-    );
 
     await new Promise(resolve => {
       this.setTimeout(resolve, this.getFrame().length);
