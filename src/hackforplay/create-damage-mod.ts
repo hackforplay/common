@@ -61,7 +61,6 @@ export function update() {
     for (const object of hits) {
       object.damageTime = object.attackedDamageTime; // チカチカする
       if (object.hasHp) {
-        // TODO: これって nonDamagers の条件式に書くべきじゃ無いか?
         object.hp -= damager.damage; // 体力が number なら減らす
       }
       // イベントを発火させる
