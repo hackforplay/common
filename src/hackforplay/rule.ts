@@ -223,9 +223,9 @@ export default class Rule {
    * ペアが空いていれば RPGObject.pairedObject に設定する
    * @param object
    */
-  tryPairing(object: RPGObject) {
+  private tryPairing(object: RPGObject) {
     const waiting = this._pairingWaitList[object.name];
-    if (!waiting) {
+    if (!waiting || object === waiting) {
       this._pairingWaitList[object.name] = object; // 次のオブジェクトとペアリング
       return;
     }
