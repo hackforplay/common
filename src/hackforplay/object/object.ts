@@ -415,13 +415,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       damageObject.damage = this.atk;
       damageObject.collisionFlag = false;
       registerServant(this, damageObject);
+      damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
+      damageObject.collider.setOffset(new SAT.V(12, 12));
       if (this.map) {
         damageObject.locate(dx, dy, this.map.name); // 同じ場所に配置する
       } else {
         damageObject.locate(dx, dy);
       }
-      damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
-      damageObject.collider.setOffset(new SAT.V(12, 12));
       damageObject.setTimeout(
         () => damageObject.destroy(),
         this.getFrame().length
