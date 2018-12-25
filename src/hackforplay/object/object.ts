@@ -1127,6 +1127,24 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.hp = hp; // 体力だけは引き継ぐ
   }
 
+  getNearest(name: string): RPGObject | null {
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return null;
+    let nearestObject: RPGObject | null = null;
+    let nearestDistance: number = Infinity;
+    for (const item of _ruleInstance.getCollection(name)) {
+      if (!item.parentNode || !item.scene) continue; // マップ上に存在しないオブジェクトはのぞく
+      const dx = item.mapX - this.mapX;
+      const dy = item.mapY - this.mapY;
+      const distance = dx * dx + dy * dy;
+      if (distance < nearestDistance) {
+        nearestObject = item;
+        nearestDistance = distance;
+      }
+    }
+    return nearestObject;
+  }
+
   /**
    * 指定されたアセットのインスタンスのうち一つを追う
    * いない場合は何もしない

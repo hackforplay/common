@@ -184,6 +184,13 @@ export default class Rule {
     return Boolean(container[name]);
   }
 
+  getCollection(name: string) {
+    if (!this._collections[name]) {
+      return [];
+    }
+    return [...this._collections[name]];
+  }
+
   private addToCollection(object: RPGObject) {
     const collections =
       this._collections[object.name] || (this._collections[object.name] = []);
