@@ -60,12 +60,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   collider?: any;
   colliders?: any;
   isAutoPickUp?: boolean;
-  score = 0;
   pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
   _ruleInstance?: Rule;
   skill: string = ''; // 攻撃時にしょうかんするアセットの名前
   fieldOfView: number = 1; // 自分を起点に隣何マスまで find 可能か
   lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
+  money: number = 0; // 持っているお金
 
   private _hp?: number;
   private _atk?: number;

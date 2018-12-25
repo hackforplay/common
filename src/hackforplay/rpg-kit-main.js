@@ -368,7 +368,7 @@ game.onawake = () => {
       );
       return (
         Camera.main &&
-        Camera.main._numberLabels.find(label => label._key === 'score')
+        Camera.main._numberLabels.find(label => label._key === 'money')
       );
     }
   });
@@ -510,19 +510,19 @@ Hack.Attack = function(x, y, damage, pushX, pushY) {
 };
 
 const scoreIsDeprecated =
-  'Hack.score は非推奨になりました. プレイヤーのスコアを使ってください';
+  'Hack.score は非推奨になりました. プレイヤーの「おかね」を使ってください';
 Object.defineProperty(Hack, 'score', {
   get() {
     console.warn(scoreIsDeprecated);
     if (Camera.main && Camera.main.target) {
-      return Camera.main.target.score;
+      return Camera.main.target.money;
     }
     return 0;
   },
   set(value) {
     console.warn(scoreIsDeprecated);
     if (Camera.main && Camera.main.target) {
-      Camera.main.target.score = value;
+      Camera.main.target.money = value;
     }
   }
 });
