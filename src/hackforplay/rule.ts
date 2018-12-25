@@ -186,6 +186,14 @@ export default class Rule {
     return Boolean(container[name]);
   }
 
+  hasTwoObjectListenerWith(type: string, name: string, target: RPGObject) {
+    const container = this._listenersOfTwo[type];
+    if (!container) return false;
+    const listeners = container[name];
+    if (!listeners) return false;
+    return Boolean(listeners[Anyone]) || target.name in listeners;
+  }
+
   getCollection(name: string) {
     if (!this._collections[name]) {
       return [];
@@ -401,5 +409,8 @@ export default class Rule {
   }
   しょうかんされたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('しょうかんされたとき', func);
+  }
+  みつけたとき(func: TwoObjectListener) {
+    this.addTwoObjectListener('みつけたとき', func);
   }
 }

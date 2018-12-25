@@ -6,6 +6,8 @@ export interface INumbers {
   damage: number;
   penetrate: number;
   score: number;
+  fieldOfView: number;
+  lengthOfView: number;
 }
 
 // reflection の機能がないので,
@@ -16,7 +18,9 @@ const reflectINumbers: INumbers = {
   opacity: 0,
   damage: 0,
   penetrate: 0,
-  score: 0
+  score: 0,
+  fieldOfView: 0,
+  lengthOfView: 0
 };
 
 export const keys = <(keyof INumbers)[]>Object.keys(reflectINumbers);
@@ -35,7 +39,11 @@ const keysOfINumbers: { [key: string]: keyof INumbers } = {
   penetrate: 'penetrate',
   かんつうする回数: 'penetrate',
   score: 'score',
-  スコア: 'score'
+  スコア: 'score',
+  fieldOfView: 'fieldOfView',
+  みつけられるはんい: 'fieldOfView',
+  lengthOfView: 'lengthOfView',
+  みつけられるきょり: 'lengthOfView'
 };
 
 export function key(type: string): keyof INumbers | undefined {

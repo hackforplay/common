@@ -64,6 +64,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
   _ruleInstance?: Rule;
   skill: string = ''; // 攻撃時にしょうかんするアセットの名前
+  fieldOfView: number = 1; // 自分を起点に隣何マスまで find 可能か
+  lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
 
   private _hp?: number;
   private _atk?: number;
@@ -1224,6 +1226,46 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     } else {
       this._flyToward =
         this._flyToward || Vector2.from(this.forward).normalize();
+    }
+  }
+
+  async find() {
+    if (this.behavior !== BehaviorTypes.Idle) return;
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return;
+    const sight = Vector2.from(this.forward)
+      .unit()
+      .scale(this.lengthOfView); // 視線に対して平行な単位ベクトル
+    const right = sight
+      .rotateAngle(90)
+      .unit()
+      .scale(this.fieldOfView); // 視線に対して右手方向 (X軸とは限らない) の単位ベクトル
+    // this の (x, y) を原点として, ~ +sight までと, -right ~ +right までの矩形が視界の範囲
+    const x1 = this.mapX - right.x;
+    const x2 = this.mapX + sight.x + right.x;
+    const y1 = this.mapY - right.y;
+    const y2 = this.mapY + sight.y + right.y;
+    const rangeOfView = {
+      left: Math.min(x1, x2),
+      right: Math.max(x1, x2),
+      top: Math.min(y1, y2),
+      bottom: Math.max(y1, y2)
+    };
+    // 「みつけたとき」イベントが発火しうる対象のうち最も近いものを探す
+    const foundable = RPGObject.collection
+      .filter(
+        item =>
+          rangeOfView.left <= item.mapX &&
+          item.mapX <= rangeOfView.right &&
+          rangeOfView.top <= item.mapY &&
+          item.mapY <= rangeOfView.bottom
+      )
+      .filter(item =>
+        _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this.name, item)
+      );
+    const found = this.getNearest(foundable);
+    if (found) {
+      await _ruleInstance.runTwoObjectListener('みつけたとき', this, found);
     }
   }
 }
