@@ -318,7 +318,7 @@ export default class Rule {
     const object = new RPGObject();
     object._ruleInstance = this;
 
-    this.registerRules(object, name);
+    this.registerRules(object, name, summoner);
 
     // インスタンスごとのパラメータ指定
     if (dir) {
