@@ -23,7 +23,8 @@ function handleError(
 ): Promise<void> {
   if (promiseLike && promiseLike instanceof Promise) {
     return promiseLike.catch(error => {
-      console.error(`RuleError: ${title} of ${name}`);
+      console.error(error);
+      console.error(`above error was occured in "${name}" when "${title}"`);
       throwError(error);
     });
   }
