@@ -91,12 +91,26 @@ export default class Vector2 implements IVector2 {
     return vector;
   }
 
+  rotateAngle(angle: number) {
+    return this.rotate((angle / 180) * Math.PI);
+  }
+
   cross(vec: IVector2) {
     return this.x * vec.y - vec.x * this.y;
   }
 
   toSAT() {
     return new SAT.Vector(this.x, this.y);
+  }
+
+  unit() {
+    return Math.abs(this.x) >= Math.abs(this.y)
+      ? this.x >= 0
+        ? new Vector2(1, 0)
+        : new Vector2(-1, 0)
+      : this.y >= 0
+      ? new Vector2(0, 1)
+      : new Vector2(0, -1);
   }
 
   static from(vec: IVector2) {
