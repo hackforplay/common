@@ -1161,10 +1161,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {String} name
    */
   async chase4(name: string) {
-    const { map } = this;
-    const item = RPGObject.collection.find(
-      item => item.name === name && item.parentNode && item.map === map
-    );
+    const item = this.getNearest(name);
     if (!item) return;
 
     const x = item.mapX - this.mapX;
@@ -1183,10 +1180,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   async chase8(name: string) {
-    const { map } = this;
-    const item = RPGObject.collection.find(
-      item => item.name === name && item.parentNode && item.map === map
-    );
+    const item = this.getNearest(name);
     if (!item) return;
 
     const x = Math.sign(item.mapX - this.mapX);
