@@ -1209,9 +1209,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  flyToward(target?: RPGObject) {
-    if (target) {
-      this._flyToward = new Vector2(target.mapX, target.mapY)
+  flyToward(target?: RPGObject | string) {
+    const targetObject =
+      typeof target === 'string' ? this.getNearest(target) : target;
+    if (targetObject) {
+      this._flyToward = new Vector2(targetObject.mapX, targetObject.mapY)
         .subtract({ x: this.mapX, y: this.mapY })
         .normalize();
     } else {
