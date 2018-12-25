@@ -1,4 +1,4 @@
-import { default as Vector2 } from './math/vector2';
+import Vector2 from './math/vector2';
 
 export interface Dir {
   (): Vector2;

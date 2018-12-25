@@ -1,41 +1,49 @@
 import SAT from '../../lib/sat.min';
 
-class Vector2 {
-  constructor(x, y) {
-    this.x = x || 0;
-    this.y = y || 0;
+export interface IVector2 {
+  x: number;
+  y: number;
+}
+
+export default class Vector2 implements IVector2 {
+  x = 0;
+  y = 0;
+
+  constructor(x = 0, y = 0) {
+    this.x = x;
+    this.y = y;
   }
 
-  set(x, y) {
-    this.x = x || 0;
-    this.y = y || 0;
+  set(x = 0, y = 0) {
+    this.x = x;
+    this.y = y;
   }
 
   clone() {
     return new Vector2(this.x, this.y);
   }
 
-  add({ x, y }) {
-    return new Vector2(this.x + x, this.y + y);
+  add(vec: IVector2) {
+    return new Vector2(this.x + vec.x, this.y + vec.y);
   }
 
-  subtract({ x, y }) {
-    return new Vector2(this.x - x, this.y - y);
+  subtract(vec: IVector2) {
+    return new Vector2(this.x - vec.x, this.y - vec.y);
   }
 
-  scale(scalar) {
+  scale(scalar: number) {
     return new Vector2(this.x * scalar, this.y * scalar);
   }
 
-  dot({ x, y }) {
-    return this.x * x + this.y + y;
+  dot(vec: IVector2) {
+    return this.x * vec.x + this.y + vec.y;
   }
 
-  moveTowards(vector, t) {
+  moveTowards(vec: Vector2, t: number) {
     // Linearly interpolates between vectors A and B by t.
     // t = 0 returns A, t = 1 returns B
     t = Math.min(t, 1); // still allow negative t
-    const diff = vector.subtract(this);
+    const diff = vec.subtract(this);
     return this.add(diff.scale(t));
   }
 
@@ -47,13 +55,13 @@ class Vector2 {
     return this.x * this.x + this.y * this.y;
   }
 
-  distance(vector) {
-    return Math.sqrt(this.distanceSqr(vector));
+  distance(vec: IVector2) {
+    return Math.sqrt(this.distanceSqr(vec));
   }
 
-  distanceSqr({ x, y }) {
-    const deltaX = this.x - x;
-    const deltaY = this.y - y;
+  distanceSqr(vec: IVector2) {
+    const deltaX = this.x - vec.x;
+    const deltaY = this.y - vec.y;
     return deltaX * deltaX + deltaY * deltaY;
   }
 
@@ -74,7 +82,7 @@ class Vector2 {
     return Math.atan2(this.y, this.x);
   }
 
-  rotate(alpha) {
+  rotate(alpha: number) {
     const cos = Math.cos(alpha);
     const sin = Math.sin(alpha);
     const vector = new Vector2();
@@ -83,33 +91,19 @@ class Vector2 {
     return vector;
   }
 
-  toPrecision(precision) {
-    const vector = this.clone();
-    vector.x = vector.x.toFixed(precision);
-    vector.y = vector.y.toFixed(precision);
-    return vector;
-  }
-
-  cross({ y, x }) {
-    return this.x * y - x * this.y;
-  }
-
-  toString() {
-    const vector = this.toPrecision(1);
-    return `[${vector.x}; ${vector.y}]`;
+  cross(vec: IVector2) {
+    return this.x * vec.y - vec.x * this.y;
   }
 
   toSAT() {
     return new SAT.Vector(this.x, this.y);
   }
 
-  static from({ x, y }) {
-    return new Vector2(x, y);
+  static from(vec: IVector2) {
+    return new Vector2(vec.x, vec.y);
   }
 
-  static equal(a, b) {
+  static equal(a: IVector2, b: IVector2) {
     return a.x === b.x && a.y === b.y;
   }
 }
-
-export default Vector2;

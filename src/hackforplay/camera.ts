@@ -7,8 +7,8 @@ import { default as game } from './game';
 import RPGObject from './object/object';
 import { clamp } from './utils/math-utils';
 import * as N from './object/numbers';
+import Vector2 from './math/vector2';
 
-type Vector2 = { x: number; y: number };
 type Rect = { x: number; y: number; width: number; height: number };
 
 class Camera extends enchant.Sprite {
