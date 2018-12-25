@@ -598,7 +598,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   get hasHp() {
-    return this.hp !== undefined;
+    return this._hp !== undefined;
   }
   get hp() {
     return this._hp || 0;
