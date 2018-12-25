@@ -1203,7 +1203,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         .subtract({ x: this.mapX, y: this.mapY })
         .normalize();
     } else {
-      this._flyToward = Vector2.from(this.forward).normalize();
+      this._flyToward =
+        this._flyToward || Vector2.from(this.forward).normalize();
     }
   }
 }
