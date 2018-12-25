@@ -53,19 +53,19 @@ export default class Rule {
     }
     this._this = value;
   }
-  _this: string | null = null;
-  _knownThisNames: string[] = [];
+  private _this: string | null = null;
+  private readonly _knownThisNames: string[] = [];
   item: string | typeof Anyone | null = null;
   // listeners
-  _listenersOfNo: {
+  private readonly _listenersOfNo: {
     [type: string]: NoObjectListener;
   } = {};
-  _listenersOfOne: {
+  private readonly _listenersOfOne: {
     [type: string]: {
       [name: string]: OneObjectListener;
     };
   } = {};
-  _listenersOfTwo: {
+  private readonly _listenersOfTwo: {
     [type: string]: {
       [name: string]: {
         [item: string]: TwoObjectListener;
@@ -73,12 +73,11 @@ export default class Rule {
       };
     };
   } = {};
-  // collections
-  _collections: {
+  private readonly _collections: {
     [type: string]: RPGObject[];
   } = {};
 
-  private _pairingWaitList: { [key: string]: RPGObject } = {};
+  private readonly _pairingWaitList: { [key: string]: RPGObject } = {};
 
   addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
@@ -185,13 +184,13 @@ export default class Rule {
     return Boolean(container[name]);
   }
 
-  addToCollection(object: RPGObject) {
+  private addToCollection(object: RPGObject) {
     const collections =
       this._collections[object.name] || (this._collections[object.name] = []);
     collections.push(object);
   }
 
-  removeFromCollection(object: RPGObject) {
+  private removeFromCollection(object: RPGObject) {
     const collections = this._collections[object.name];
     if (!collections) return;
     const index = collections.indexOf(object);
