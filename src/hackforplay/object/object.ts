@@ -203,6 +203,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   get collisionFlag() {
+    if (this._collisionFlag !== undefined) return this._collisionFlag;
+    if (this.damage) return false; // ダメージオブジェクトは衝突処理がない
     const noCollisionEvents = [
       'addtrodden',
       'removetrodden',
@@ -211,7 +213,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       'playerexit',
       'pickedup'
     ];
-    if (this._collisionFlag !== undefined) return this._collisionFlag;
     for (var i = 0; i < noCollisionEvents.length; i++) {
       if (this.isListening(noCollisionEvents[i])) {
         return false;
