@@ -14,6 +14,7 @@ import { default as Camera } from '../camera';
 import { Dir } from '../dir';
 import * as Skin from '../skin';
 import * as N from './numbers';
+import Vector2 from '../math/vector2';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -80,6 +81,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private getFrameOfBehavior: { [key: string]: () => (number | null)[] } = {};
   private hpLabel?: any;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
+  private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
 
   constructor(mod?: DeprecatedSkin) {
     super(0, 0);
@@ -229,7 +231,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           this.velocityX ||
           this.velocityY ||
           this.accelerationX ||
-          this.accelerationY
+          this.accelerationY ||
+          this._flyToward
         );
   }
   set isKinematic(value: boolean) {
@@ -1190,6 +1193,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this._skin = _skin.then(() => value).then(f => (f(this), f));
     } else {
       this._skin = value.then(f => (f(this), f));
+    }
+  }
+
+  flyToward(target?: RPGObject) {
+    if (target) {
+      this._flyToward = new Vector2(target.mapX, target.mapY)
+        .subtract({ x: this.mapX, y: this.mapY })
+        .normalize();
+    } else {
+      this._flyToward = Vector2.from(this.forward).normalize();
     }
   }
 }
