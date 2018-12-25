@@ -323,10 +323,6 @@ export default class Rule {
 
     const object = new RPGObject();
     object._ruleInstance = this;
-
-    this.registerRules(object, name, summoner);
-
-    // インスタンスごとのパラメータ指定
     if (dir) {
       object.forward = dir();
     }
@@ -334,6 +330,9 @@ export default class Rule {
       object.locate(x, y, map);
     }
     this.tryPairing(object);
+
+    this.registerRules(object, name, summoner);
+
     return object;
   }
 

@@ -1111,7 +1111,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this.mapX + this.forward.x,
       this.mapY + this.forward.y,
       this.map ? this.map.name : undefined,
-      undefined,
+      () => Vector2.from(this.forward),
       this
     );
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
