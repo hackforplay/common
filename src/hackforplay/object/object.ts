@@ -63,7 +63,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   score = 0;
   pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
   _ruleInstance?: Rule;
-  skill?: string; // 攻撃時にしょうかんするアセットの名前
+  skill: string = ''; // 攻撃時にしょうかんするアセットの名前
 
   private _hp?: number;
   private _atk?: number;
