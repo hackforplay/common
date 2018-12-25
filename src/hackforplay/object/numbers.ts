@@ -31,7 +31,7 @@ const keysOfINumbers: { [key: string]: keyof INumbers } = {
   atk: 'atk',
   こうげきりょく: 'atk',
   speed: 'speed',
-  あるくはやさ: 'speed',
+  スピード: 'speed',
   opacity: 'opacity',
   みえやすさ: 'opacity',
   damage: 'damage',
