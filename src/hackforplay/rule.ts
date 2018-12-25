@@ -143,15 +143,16 @@ export default class Rule {
     if (!container) return;
     const listeners = container[name];
     if (!listeners) return;
+    // 条件によって複数のルールが定義できる場合, 詳細度が細かいものから順に実行される
     const specify = listeners[itemName];
     if (specify) {
       // 特定のアセットにだけ作用
-      handleError(type, name, specify.call(object, item));
+      await handleError(type, name, specify.call(object, item));
     }
     const anyone = listeners[Anyone];
     if (anyone) {
       // 誰でも良い
-      handleError(type, name, anyone.call(object, item));
+      await handleError(type, name, anyone.call(object, item));
     }
   }
 
