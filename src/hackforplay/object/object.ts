@@ -1126,12 +1126,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.hp = hp; // 体力だけは引き継ぐ
   }
 
-  getNearest(name: string): RPGObject | null {
-    const { _ruleInstance } = this;
-    if (!_ruleInstance) return null;
+  getNearest(collection: RPGObject[]): RPGObject | null {
     let nearestObject: RPGObject | null = null;
     let nearestDistance: number = Infinity;
-    for (const item of _ruleInstance.getCollection(name)) {
+    for (const item of collection) {
       if (!item.parentNode || !item.scene) continue; // マップ上に存在しないオブジェクトはのぞく
       const dx = item.mapX - this.mapX;
       const dy = item.mapY - this.mapY;
@@ -1160,7 +1158,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {String} name
    */
   async chase4(name: string) {
-    const item = this.getNearest(name);
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return;
+    const item = this.getNearest(_ruleInstance.getCollection(name));
     if (!item) return;
 
     const x = item.mapX - this.mapX;
@@ -1179,7 +1179,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   async chase8(name: string) {
-    const item = this.getNearest(name);
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return;
+    const item = this.getNearest(_ruleInstance.getCollection(name));
     if (!item) return;
 
     const x = Math.sign(item.mapX - this.mapX);
@@ -1209,8 +1211,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   flyToward(target?: RPGObject | string) {
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return;
     const targetObject =
-      typeof target === 'string' ? this.getNearest(target) : target;
+      typeof target === 'string'
+        ? this.getNearest(_ruleInstance.getCollection(name))
+        : target;
     if (targetObject) {
       this._flyToward = new Vector2(targetObject.mapX, targetObject.mapY)
         .subtract({ x: this.mapX, y: this.mapY })
