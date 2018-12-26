@@ -1229,8 +1229,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
+  private _isJustBeingFound = false; // みつけたときに同フレーム内で this.find() して Stackoverflow するのを防ぐフラグ
   async find() {
     if (this.behavior !== BehaviorTypes.Idle) return;
+    if (this._isJustBeingFound) return; // 同フレーム内でみつけたときがコールされたばかり
     const { _ruleInstance } = this;
     if (!_ruleInstance) return;
     const sight = Vector2.from(this.forward)
@@ -1265,7 +1267,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       );
     const found = this.getNearest(foundable);
     if (found) {
-      await _ruleInstance.runTwoObjectListener('みつけたとき', this, found);
+      this._isJustBeingFound = true; // このフレームでは find() をスキップ
+      const p = _ruleInstance.runTwoObjectListener('みつけたとき', this, found);
+      this._isJustBeingFound = false; // スキップタイム終了
+      await p; // await this.find() でみつけたときをループできるよう, 終了を待つ
     }
   }
 }
