@@ -66,6 +66,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   fieldOfView: number = 1; // 自分を起点に隣何マスまで find 可能か
   lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
   money: number = 0; // 持っているお金
+  _mayRotate = false; // 向いている方向に合わせてスプライト自体を回転させるフラグ
 
   private _hp?: number;
   private _atk?: number;
@@ -185,6 +186,23 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   updateCollider() {
     this.collider.pos.x = this.x;
     this.collider.pos.y = this.y;
+  }
+
+  private rotateIfNeeded() {
+    if (this.mayRotate) {
+      // 画像は上向きと想定する
+      const angle = (this.forward.angle() / Math.PI) * 180 + 90; // 基準は上,時計回りの度数法
+      this._rotation = (angle + 360) % 360;
+    }
+  }
+
+  get mayRotate() {
+    return this._mayRotate;
+  }
+
+  set mayRotate(value: boolean) {
+    this._mayRotate = value;
+    this.rotateIfNeeded();
   }
 
   get directionType() {
@@ -762,11 +780,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._forward = vec.normalize();
     switch (this._directionType) {
       case 'single':
-        // 画像は上向きと想定する
-        const angle = this._forward
-          ? (Math.atan2(this._forward.y, this._forward.x) / Math.PI) * 180 + 90
-          : 0; // 基準は上,時計回りの度数法
-        this.rotation = (angle + 360) % 360;
         break;
       case 'double':
         // 画像は左向きと想定する
@@ -783,6 +796,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         // 未設定
         break;
     }
+    this.rotateIfNeeded();
   }
 
   get direction() {
