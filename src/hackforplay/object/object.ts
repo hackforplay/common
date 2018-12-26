@@ -1197,6 +1197,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.forward = dir();
   }
 
+  private _lastAssignedSkin?: Skin.Result; // 参照比較するためのプロパティ
   private _skin: Skin.Result | null = null; // Promise<(object: RPGObject) => void>
   get skin() {
     return this._skin;
@@ -1205,6 +1206,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (!value) return;
     const { _skin } = this;
     if (_skin) {
+      if (this._lastAssignedSkin === value) return; // 同じスキンなのでスルー
+      this._lastAssignedSkin = value;
       // 前回に与えられた skin が resolve(reject) するまで待つ
       this._skin = _skin.then(() => value).then(f => (f(this), f));
     } else {
