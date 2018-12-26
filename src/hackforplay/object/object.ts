@@ -14,7 +14,7 @@ import { default as Camera } from '../camera';
 import { Dir } from '../dir';
 import * as Skin from '../skin';
 import * as N from './numbers';
-import Vector2 from '../math/vector2';
+import Vector2, { IVector2 } from '../math/vector2';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -72,7 +72,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _isDamageObject = false;
   private _penetrate?: number; // ものに触れた時に貫通できる回数
   private _penetratedCount = 0; // すでに貫通した回数
-  private _forward?: { x: number; y: number }; // direction
+  private _forward?: Vector2; // direction
   private _directionType?: 'single' | 'double' | 'quadruple';
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
   private _collisionFlag?: boolean;
@@ -436,16 +436,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.behavior = BehaviorTypes.Idle;
   }
 
-  async walk(
-    distance = 1,
-    forward: { x: number; y: number } | null = null,
-    setForward = true
-  ) {
+  async walk(distance = 1, forward?: IVector2, setForward = true) {
     if (!Hack.isPlaying) return;
     if (!this.isKinematic) return;
     if (this.behavior !== BehaviorTypes.Idle) return;
 
-    if (forward && setForward) this.forward = forward;
+    if (forward && setForward) this.forward = Vector2.from(forward);
 
     // 距離が 1 以下
     if (distance < 1) return;
@@ -458,7 +454,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  *walkImpl(forward: { x: number; y: number }) {
+  *walkImpl(forward: IVector2) {
     // タイルのサイズ
     const tw = Hack.map.tileWidth;
     const th = Hack.map.tileHeight;
@@ -745,37 +741,25 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this._forward) return this._forward;
     switch (this.directionType) {
       case 'single':
-        return { x: 0, y: -1 };
+        return new Vector2(0, -1);
       case 'double':
-        return { x: -1, y: 0 };
+        return new Vector2(-1, 0);
       default:
-        return { x: 0, y: 1 };
+        return new Vector2(0, 1);
     }
   }
   set forward(value) {
-    let vec;
+    let vec: Vector2;
     if (Array.isArray(value)) {
-      vec = {
-        x: value[0],
-        y: value[1]
-      };
+      vec = new Vector2(value[0], value[1]);
     } else if (typeof value.x === 'number' && typeof value.y === 'number') {
-      vec = {
-        x: value.x,
-        y: value.y
-      };
+      vec = Vector2.from(value);
     } else {
       throw new TypeError(
         `${value} は forward に代入できません (${this.name})`
       );
     }
-    var norm = Math.sqrt(vec.x * vec.x + vec.y * vec.y);
-    if (norm > 0) {
-      this._forward = {
-        x: vec.x / norm,
-        y: vec.y / norm
-      };
-    }
+    this._forward = vec.normalize();
     switch (this._directionType) {
       case 'single':
         // 画像は上向きと想定する
@@ -786,10 +770,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         break;
       case 'double':
         // 画像は左向きと想定する
-        if (this._forward) {
-          if (this._forward.x !== 0) {
-            this.scaleX = -Math.sign(this._forward.x) * Math.abs(this.scaleX);
-          }
+        if (this._forward.x !== 0) {
+          this.scaleX = -Math.sign(this._forward.x) * Math.abs(this.scaleX);
         }
         break;
       case 'quadruple':
@@ -821,7 +803,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         this._forward = Hack.Dir2Vec(value);
         break;
       case 'double':
-        this._forward = { x: Math.sign(value) || -1, y: 0 };
+        this._forward = new Vector2(Math.sign(value) || -1, 0);
         break;
     }
   }
@@ -1173,9 +1155,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     if (absX > absY || (absX === absY && Math.random() < 0.5)) {
       // 遠い方優先で動く. 同じだった場合はランダム
-      this.forward = { x: Math.sign(x), y: 0 };
+      this.forward = new Vector2(Math.sign(x), 0);
     } else {
-      this.forward = { x: 0, y: Math.sign(y) };
+      this.forward = new Vector2(0, Math.sign(y));
     }
     await this.walk(); // あるく
   }
@@ -1189,7 +1171,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const x = Math.sign(item.mapX - this.mapX);
     const y = Math.sign(item.mapY - this.mapY);
     if (x === 0 && y === 0) return;
-    this.forward = { x, y };
+    this.forward = new Vector2(x, y);
     await this.walk(); // あるく
   }
 
