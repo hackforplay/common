@@ -1209,11 +1209,18 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       if (this._lastAssignedSkin === value) return; // 同じスキンなのでスルー
       this._lastAssignedSkin = value;
       // 前回に与えられた skin が resolve(reject) するまで待つ
-      this._skin = _skin.then(() => value).then(f => (f(this), f));
+      this._skin = _skin.then(() => value).then(this.applySkin);
     } else {
-      this._skin = value.then(f => (f(this), f));
+      this._skin = value.then(this.applySkin);
     }
   }
+
+  private applySkin = ((f: (object: RPGObject) => void) => {
+    f(this); // スキンを適用
+    var routine = this.getFrameOfBehavior[this.behavior];
+    if (routine) this.frame = routine.call(this); // frame を設定し直す
+    return f;
+  }).bind(this);
 
   flyToward(target?: RPGObject | string) {
     const { _ruleInstance } = this;
