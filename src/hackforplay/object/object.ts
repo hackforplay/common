@@ -1257,7 +1257,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       .unit()
       .scale(this.lengthOfView); // 視線に対して平行な単位ベクトル
     const right = sight
-      .rotateAngle(90)
+      .rotateDegree(90)
       .unit()
       .scale(this.fieldOfView); // 視線に対して右手方向 (X軸とは限らない) の単位ベクトル
     // this の (x, y) を原点として, ~ +sight までと, -right ~ +right までの矩形が視界の範囲

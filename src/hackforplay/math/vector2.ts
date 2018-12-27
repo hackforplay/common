@@ -82,17 +82,23 @@ export default class Vector2 implements IVector2 {
     return Math.atan2(this.y, this.x);
   }
 
-  rotate(alpha: number) {
-    const cos = Math.cos(alpha);
-    const sin = Math.sin(alpha);
+  rotate(rad: number) {
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
     const vector = new Vector2();
     vector.x = this.x * cos - this.y * sin;
     vector.y = this.x * sin + this.y * cos;
     return vector;
   }
 
-  rotateAngle(angle: number) {
-    return this.rotate((angle / 180) * Math.PI);
+  /**
+   * ベクトルを指定された角度だけ回転させる
+   * XY座標系で回転行列を適用するが, Canvas 座標系は Y が反転しているため
+   * 見た目上は「時計回りに回転する」ことになる
+   * @param deg 度数法による角度
+   */
+  rotateDegree(deg: number) {
+    return this.rotate((deg / 180) * Math.PI);
   }
 
   cross(vec: IVector2) {
