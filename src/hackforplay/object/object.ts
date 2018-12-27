@@ -8,7 +8,7 @@ import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
 import RPGMap from '../rpg-map';
 import { default as game } from '../game';
-import { default as random } from '../random';
+import { randomRange, randomCollection } from '../random';
 import Rule from '../rule';
 import { default as Camera } from '../camera';
 import { Dir } from '../dir';
@@ -1010,10 +1010,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       self.shoot(effect, self.forward, params.speed);
       const fx = self.forward.x;
       const fy = self.forward.y;
-      effect.moveBy(fx * random(64, 96), fy * random(64, 96));
-      effect.velocityX += random(-0.99, 1);
-      effect.velocityY += random(-0.99, 1);
-      effect.scale(random(params.scale, params.scale * 1.5));
+      effect.moveBy(fx * randomRange(64, 96), fy * randomRange(64, 96));
+      effect.velocityX += randomRange(-0.99, 1);
+      effect.velocityY += randomRange(-0.99, 1);
+      effect.scale(randomRange(params.scale, params.scale * 1.5));
       effect.destroy(20);
     });
   }
@@ -1076,6 +1076,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { pairedObject } = portal;
     if (!pairedObject || !pairedObject.map) return;
     this.locate(pairedObject.mapX, pairedObject.mapY, pairedObject.map.name);
+  }
+
+  teleportRandom() {
+    if (this.behavior !== BehaviorTypes.Idle) return;
+    const { map } = this;
+    if (!map) return;
+    const pos = randomCollection(map.walkablePositions);
+    if (!pos) return;
+    this.locate(pos.x, pos.y);
   }
 
   /**

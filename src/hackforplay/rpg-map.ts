@@ -1,7 +1,7 @@
 import { default as enchant } from '../enchantjs/enchant';
 import { default as Hack } from './hack';
 import './rpg-kit-color';
-import Vector2 from './math/vector2';
+import Vector2, { IVector2 } from './math/vector2';
 import { default as Line } from './shapes/line';
 import { default as dictionary } from './object/dictionary';
 import { default as game } from './game';
@@ -142,13 +142,27 @@ export default class RPGMap extends enchant.EventTarget {
   get height(): number {
     return this.bmap.height;
   }
+
+  _walkablePositions: IVector2[] = []; // cmap から 0 のマスだけを配列化したもの
+  get walkablePositions(): IVector2[] {
+    return this._walkablePositions;
+  }
   // Collisino Map. (this.bmap.collisionData)
   get cmap(): (0 | 1)[][] | null {
     return this.bmap.collisionData;
   }
   set cmap(value) {
+    if (!value) return;
     this.bmap.collisionData = value;
+    // cmap は 0 のとき歩ける
+    this._walkablePositions = [];
+    value.forEach((vertical, y) =>
+      vertical.forEach(
+        (flag, x) => flag === 0 && this._walkablePositions.push({ x, y })
+      )
+    );
   }
+
   // bmap Image (enchant.Surface)
   get image() {
     return this.bmap.image;
