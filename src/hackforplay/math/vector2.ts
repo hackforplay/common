@@ -119,6 +119,11 @@ export default class Vector2 implements IVector2 {
       : new Vector2(0, -1);
   }
 
+  unit8() {
+    if (this.x === 0 && this.y === 0) return new Vector2(1, 0);
+    return new Vector2(Math.sign(this.x), Math.sign(this.y));
+  }
+
   static from(vec: IVector2) {
     return new Vector2(vec.x, vec.y);
   }

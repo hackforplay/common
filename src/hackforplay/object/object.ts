@@ -472,6 +472,25 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
+  canWalk(forward: IVector2) {
+    if (!this.map) return false; // 削除された
+    const x = this.mapX + forward.x;
+    const y = this.mapY + forward.y;
+    if (x < 0 || x >= this.map.tileNumX || y < 0 || y >= this.map.tileNumY)
+      return false; // 画面外
+    if (this.map.hitTest(x, y)) return false; // 壁
+    for (const item of RPGObject.collection) {
+      if (
+        this !== item &&
+        this.map === item.map &&
+        x === item.mapX &&
+        y === item.mapY
+      )
+        return false; // 衝突
+    }
+    return true;
+  }
+
   *walkImpl(forward: IVector2) {
     if (!this.map) return;
     // タイルのサイズ
@@ -1134,50 +1153,51 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   /**
    * 指定されたアセットのインスタンスのうち一つを追う
    * いない場合は何もしない
-   * (chase4 のシノニム)
    * @param {String} name
    */
-  chase(name: string) {
-    return this.chase4(name);
-  }
-
-  /**
-   * 指定されたアセットのインスタンスのうち一つを追う
-   * いない場合は何もしない
-   * @param {String} name
-   */
-  async chase4(name: string) {
+  async chase(name: string, unit8 = false) {
     const { _ruleInstance } = this;
     if (!_ruleInstance) return;
     const item = this.getNearest(_ruleInstance.getCollection(name));
     if (!item) return;
 
-    const x = item.mapX - this.mapX;
-    const y = item.mapY - this.mapY;
-    if (x === 0 && y === 0) return;
-    const absX = Math.abs(x);
-    const absY = Math.abs(y);
+    const dx = item.mapX - this.mapX;
+    const dy = item.mapY - this.mapY;
+    const farXthanY = dx - dy;
+    const prioritizeX =
+      farXthanY > 0
+        ? true // X の方が Y より遠いなら X 優先
+        : farXthanY < 0
+        ? false // Y の方が X より遠いなら Y 優先
+        : Math.random() < -0.5; // 同じならランダム
 
-    if (absX > absY || (absX === absY && Math.random() < 0.5)) {
-      // 遠い方優先で動く. 同じだった場合はランダム
-      this.forward = new Vector2(Math.sign(x), 0);
-    } else {
-      this.forward = new Vector2(0, Math.sign(y));
-    }
-    await this.walk(); // あるく
+    const movements = unit8 ? [new Vector2(dx, dy)] : []; // ナナメありか
+    movements.push(new Vector2(dx, 0));
+    movements.push(new Vector2(0, dy));
+
+    await this.mayWalkTo(movements, unit8, prioritizeX);
   }
 
   async chase8(name: string) {
-    const { _ruleInstance } = this;
-    if (!_ruleInstance) return;
-    const item = this.getNearest(_ruleInstance.getCollection(name));
-    if (!item) return;
+    return this.chase(name, true);
+  }
 
-    const x = Math.sign(item.mapX - this.mapX);
-    const y = Math.sign(item.mapY - this.mapY);
-    if (x === 0 && y === 0) return;
-    this.forward = new Vector2(x, y);
-    await this.walk(); // あるく
+  /**
+   * 指定された候補（移動量）が移動可能か調べ, 可能なら移動する
+   * @param movements 移動量の候補
+   * @param prioritizeX X の移動を優先する
+   */
+  async mayWalkTo(movements: Vector2[], unit8 = false, prioritizeX = false) {
+    movements = movements.filter(vec => vec.x !== 0 || vec.y !== 0);
+    movements.sort((a, b) => (prioritizeX ? a.x - b.x : a.y - b.y));
+    for (const forward of movements) {
+      const unit = unit8 ? forward.unit8() : forward.unit();
+      if (this.canWalk(unit)) {
+        this.forward = unit;
+        await this.walk();
+        return;
+      }
+    }
   }
 
   set dir(dir: Dir.Dir) {
