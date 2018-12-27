@@ -11,7 +11,7 @@ import { default as game } from '../game';
 import { randomRange, randomCollection } from '../random';
 import Rule from '../rule';
 import { default as Camera } from '../camera';
-import { Dir } from '../dir';
+import * as Dir from '../dir';
 import * as Skin from '../skin';
 import * as N from './numbers';
 import Vector2, { IVector2 } from '../math/vector2';
@@ -840,34 +840,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
   }
 
-  turn(amount = 1) {
-    switch (this.directionType) {
-      case 'double':
-        this.direction = 1 - this.direction; // どうせ使わないので雑に実装
-        break;
-      case 'single':
-      case 'quadruple':
-        // 0: 下
-        // 1: 左
-        // 2: 右
-        // 3: 上
-        amount = (amount < 0 ? 4 - amount : amount) % 4;
-        let dir = this.direction;
-        for (let i = 0; i < amount; i++) {
-          switch (dir) {
-            case 0:
-              return 1; // 下 => 左
-            case 1:
-              return 3; // 左 => 上
-            case 2:
-              return 0; // 右 => 下
-            case 3:
-              return 2; // 上 => 右
-          }
-        }
-        this.direction = dir;
-        break;
+  turn(dir: Dir.Dir): void {
+    if (typeof dir !== 'function') {
+      console.warn('this.turn() は非推奨になりました');
+      return this.turn(Dir.rightHand);
     }
+    this.forward = dir(this);
   }
 
   dispatchEvent(event: any) {
@@ -1201,7 +1179,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     await this.walk(); // あるく
   }
 
-  set dir(dir: Dir) {
+  set dir(dir: Dir.Dir) {
+    console.warn('this.dir = ... は非推奨になりました. turn を使ってください');
     this.forward = dir(this);
   }
 
