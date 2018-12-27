@@ -1,13 +1,18 @@
 import Vector2 from './math/vector2';
+import RPGObject from './object/object';
 
 export interface Dir {
-  (): Vector2;
+  (self: RPGObject): Vector2;
 }
 
 export const up: Dir = () => new Vector2(0, -1);
 export const right: Dir = () => new Vector2(1, 0);
 export const down: Dir = () => new Vector2(0, 1);
 export const left: Dir = () => new Vector2(-1, 0);
+
+export const rightHand: Dir = self => self.forward.rotateDegree(90);
+export const leftHand: Dir = self => self.forward.rotateDegree(-90);
+export const behind: Dir = self => self.forward.scale(-1);
 
 const m = -1;
 
@@ -41,6 +46,9 @@ export const うえ = up;
 export const みぎ = right;
 export const ひだり = left;
 export const した = down;
+export const みぎて = rightHand;
+export const ひだりて = leftHand;
+export const うしろ = behind;
 export const ランダム = random;
 export const ランダム4 = random4;
 export const ランダム8 = random8;

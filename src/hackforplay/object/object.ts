@@ -1202,7 +1202,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   set dir(dir: Dir) {
-    this.forward = dir();
+    this.forward = dir(this);
   }
 
   private _lastAssignedSkin?: Skin.Result; // 参照比較するためのプロパティ
