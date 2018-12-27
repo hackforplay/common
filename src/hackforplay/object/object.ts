@@ -473,19 +473,20 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   *walkImpl(forward: IVector2) {
+    if (!this.map) return;
     // タイルのサイズ
-    const tw = Hack.map.tileWidth;
-    const th = Hack.map.tileHeight;
+    const tw = this.map.tileWidth;
+    const th = this.map.tileHeight;
 
     // マップのタイル数
-    const tx = Hack.map.tileNumX;
-    const ty = Hack.map.tileNumY;
+    const tx = this.map.tileNumX;
+    const ty = this.map.tileNumY;
 
     // 移動先
     const nextX = this.mapX + forward.x;
     const nextY = this.mapY + forward.y;
 
-    let isHit = Hack.map.hitTest(nextX * tw, nextY * th);
+    let isHit = this.map.hitTest(nextX * tw, nextY * th);
 
     // 画面外
     if (nextX < 0 || nextX >= tx || nextY < 0 || nextY >= ty) {

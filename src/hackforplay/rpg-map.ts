@@ -20,20 +20,20 @@ export default class RPGMap extends enchant.EventTarget {
   reflectionLines: Line[] = [];
   imagePath = '';
 
-  private _width = 15;
-  private _height = 10;
+  private _tileNumX = 15;
+  private _tileNumY = 10;
   private _name = '';
   private _type = '';
   _surface: any;
 
-  constructor(tileWidth = 32, tileHeight = 32, mapWidth = 15, mapHeight = 10) {
+  constructor(tileWidth = 32, tileHeight = 32, tileNumX = 15, tileNumY = 10) {
     super();
 
     this.bmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより奥に表示されるマップ
     this.fmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより手前に表示されるマップ
 
-    this._width = mapWidth;
-    this._height = mapHeight;
+    this._tileNumX = tileNumX;
+    this._tileNumY = tileNumY;
 
     this.scene = new enchant.Group(); // マップ上に存在するオブジェクトをまとめるグループ
     (<any>this.scene).ref = this;
@@ -47,8 +47,8 @@ export default class RPGMap extends enchant.EventTarget {
     this.fmap.name = 'FMap';
     this.scene.name = 'MapScene';
 
-    const w = tileWidth * mapWidth;
-    const h = tileHeight * mapHeight;
+    const w = tileWidth * tileNumX;
+    const h = tileHeight * tileNumY;
 
     this._surface = new enchant.Surface(w, h);
 
@@ -175,6 +175,12 @@ export default class RPGMap extends enchant.EventTarget {
   }
   get tileHeight(): number {
     return this.bmap.tileHeight;
+  }
+  get tileNumX() {
+    return this._tileNumX;
+  }
+  get tileNumY() {
+    return this._tileNumY;
   }
 
   set background(value: any) {
