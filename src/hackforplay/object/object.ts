@@ -6,7 +6,7 @@ import { default as DeprecatedSkin } from '../deprecated-skin';
 import { default as Family, registerServant, getMaster } from '../family';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
-import { default as RPGMap } from '../rpg-map';
+import RPGMap from '../rpg-map';
 import { default as game } from '../game';
 import { default as random } from '../random';
 import Rule from '../rule';
@@ -164,7 +164,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._atk = value;
   }
 
-  get map() {
+  get map(): RPGMap | null {
     return this.parentNode ? this.parentNode.ref : null;
   }
 
@@ -664,7 +664,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       }
     }
 
-    this.map.layerChangeFlag = true; // レイヤーをソートする
+    if (this.map) {
+      this.map.layerChangeFlag = true; // レイヤーをソートする
+    }
   }
 
   bringOver() {
@@ -1035,14 +1037,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         } の warpTo が設定されていません. warpTarget が ${warpTarget} です`
       );
     }
-    if (!warpTarget.parentNode) {
+    const { map } = warpTarget;
+    if (!map) {
       throw new Error(
         `${warpTarget.name} の ワープ先のオブジェクトが削除されています. ${
           this.name
         } はワープできませんでした`
       );
     }
-    this.locate(warpTarget.mapX, warpTarget.mapY, warpTarget.map.name);
+    this.locate(warpTarget.mapX, warpTarget.mapY, map.name);
   }
 
   /**
@@ -1071,7 +1074,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   teleport(portal: RPGObject) {
     if (this.behavior !== BehaviorTypes.Idle) return;
     const { pairedObject } = portal;
-    if (!pairedObject) return;
+    if (!pairedObject || !pairedObject.map) return;
     this.locate(pairedObject.mapX, pairedObject.mapY, pairedObject.map.name);
   }
 

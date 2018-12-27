@@ -1,44 +1,46 @@
-import enchant from '../enchantjs/enchant';
-import './hack';
+import { default as enchant } from '../enchantjs/enchant';
+import { default as Hack } from './hack';
 import './rpg-kit-color';
 import Vector2 from './math/vector2';
-import Line from './shapes/line';
-import dictionary from './object/dictionary';
-import game from './game';
+import { default as Line } from './shapes/line';
+import { default as dictionary } from './object/dictionary';
+import { default as game } from './game';
+import RPGObject from './object/object';
 
 /*
  * RPGMap
  * レイヤー化された切り替え可能なマップ
  */
-class RPGMap extends enchant.EventTarget {
-  constructor(tileWidth, tileHeight, mapWidth, mapHeight) {
-    super();
+export default class RPGMap extends enchant.EventTarget {
+  bmap: any;
+  fmap: any;
+  scene: any;
+  isLoaded = false;
+  layerChangeFlag = false;
+  reflectionLines: Line[] = [];
+  imagePath = '';
 
-    if (tileWidth === undefined) {
-      tileWidth = 32;
-    }
-    if (tileHeight === undefined) {
-      tileHeight = 32;
-    }
+  private _width = 15;
+  private _height = 10;
+  private _name = '';
+  private _type = '';
+  _surface: any;
+
+  constructor(tileWidth = 32, tileHeight = 32, mapWidth = 15, mapHeight = 10) {
+    super();
 
     this.bmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより奥に表示されるマップ
     this.fmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより手前に表示されるマップ
 
-    this._mapWidth = mapWidth !== undefined ? mapWidth : 15;
-    this._mapHeight = mapHeight !== undefined ? mapHeight : 10;
-
-    this.tileNumX = this._mapWidth;
-    this.tileNumY = this._mapHeight;
+    this._width = mapWidth;
+    this._height = mapHeight;
 
     this.scene = new enchant.Group(); // マップ上に存在するオブジェクトをまとめるグループ
-    this.scene.ref = this;
-    this.isLoaded = false;
-    this.layerChangeFlag = false;
-    this._name = '';
-    this._type = '';
+    (<any>this.scene).ref = this;
     this.scene.on('enterframe', this.autoSorting);
-    this.scene.on('childadded', function() {
-      this.ref.layerChangeFlag = true;
+    this.scene.on('childadded', function(this: any) {
+      const { ref } = <any>this;
+      ref && (ref.layerChangeFlag = true);
     });
 
     this.bmap.name = 'BMap';
@@ -68,32 +70,28 @@ class RPGMap extends enchant.EventTarget {
         );
       }
     }
-    var a = function(n) {
-      Hack.world.addChild(n);
-      // game.rootScene.addChild(n);
-    };
-    a(this.bmap);
-    a(this.scene);
-    a(this.fmap);
+    Hack.world.addChild(this.bmap);
+    Hack.world.addChild(this.scene);
+    Hack.world.addChild(this.fmap);
     Hack.map = this;
     Hack.defaultParentNode = this.scene;
     if (!this.isLoaded) {
       this.isLoaded = true;
-      this.dispatchEvent(new enchant.Event('load'));
+      (<any>this).dispatchEvent(new enchant.Event('load'));
     }
     if (Hack.player) this.scene.addChild(Hack.player);
     Hack.statusLabel = this.name;
   }
 
-  hitTest(x, y) {
+  hitTest(x: number, y: number): boolean {
     return this.bmap.hitTest(x, y);
   }
 
   autoSorting() {
-    var ref =
-      this instanceof RPGMap ? this : 'ref' in this ? this.ref : Hack.map;
+    var ref: RPGMap =
+      this instanceof RPGMap ? this : (<any>this).ref || Hack.map;
     if (ref.layerChangeFlag) {
-      ref.scene.childNodes.sort(function(a, b) {
+      ref.scene.childNodes.sort((a: RPGObject, b: RPGObject) => {
         if (!('layer' in a) && !('layer' in b)) return 0;
         if (!('layer' in a)) return 1;
         if (!('layer' in b)) return -1;
@@ -105,9 +103,9 @@ class RPGMap extends enchant.EventTarget {
 
   get name() {
     if (!this._name) {
-      var result = Object.keys(Hack.maps).filter(function(key) {
-        return Hack.maps[key] === this;
-      }, this);
+      var result = Object.keys(Hack.maps).filter(
+        key => Hack.maps[key] === this
+      );
       this._name = result.length > 0 ? result[0] : '';
     }
     return this._name;
@@ -116,12 +114,8 @@ class RPGMap extends enchant.EventTarget {
     if (!this._type) {
       // 初期値は（0,0）のタイル
       Object.keys(dictionary)
-        .filter(function(key) {
-          return dictionary[key] === this.bmap._data[0][0][0];
-        }, this)
-        .forEach(function(key) {
-          this._type = key;
-        }, this);
+        .filter(key => (<any>dictionary)[key] === this.bmap._data[0][0][0])
+        .forEach(key => (this._type = key));
     }
     return this._type;
   }
@@ -129,23 +123,27 @@ class RPGMap extends enchant.EventTarget {
     if (value !== this._type && dictionary.hasOwnProperty(value)) {
       this._type = value;
       // typeによってbmapを初期化
-      var frame = dictionary[value];
+      var frame = (<any>dictionary)[value];
       this.bmap.loadData(
-        new Array(this._mapHeight).fill(0).map(function() {
-          return new Array(this._mapWidth).fill(frame);
-        }, this)
+        new Array(this.height)
+          .fill(0)
+          .map(() => new Array(this.width).fill(frame))
       );
 
       // ついでにcmapも初期化
       this.cmap =
         this.cmap ||
-        new Array(this._mapHeight).fill(0).map(function() {
-          return new Array(this._mapWidth).fill(0);
-        }, this);
+        new Array(this.height).fill(0).map(() => new Array(this.width).fill(0));
     }
   }
+  get width(): number {
+    return this.bmap.width;
+  }
+  get height(): number {
+    return this.bmap.height;
+  }
   // Collisino Map. (this.bmap.collisionData)
-  get cmap() {
+  get cmap(): (0 | 1)[][] | null {
     return this.bmap.collisionData;
   }
   set cmap(value) {
@@ -158,28 +156,20 @@ class RPGMap extends enchant.EventTarget {
   set image(value) {
     this.bmap.image = this.fmap.image = value;
   }
-  get width() {
-    return this.bmap.width;
-  }
-  get height() {
-    return this.bmap.height;
-  }
-  get tileWidth() {
+  get tileWidth(): number {
     return this.bmap.tileWidth;
   }
-  get tileHeight() {
+  get tileHeight(): number {
     return this.bmap.tileHeight;
   }
 
-  set background(value) {
+  set background(value: any) {
     this.bmap.overwrite = value;
     this.bmap.redraw();
   }
 
-  set foreground(value) {
+  set foreground(value: any) {
     this.fmap.overwrite = value;
     this.fmap.redraw();
   }
 }
-
-export default RPGMap;
