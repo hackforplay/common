@@ -1198,9 +1198,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     movements.sort((a, b) => (prioritizeX ? a.x - b.x : a.y - b.y));
     for (const forward of movements) {
       const unit = unit8 ? forward.unit8() : forward.unit();
-      if (this.canWalk(unit)) {
+      if (!Vector2.equal(this.forward, unit) || this.canWalk(unit)) {
         this.forward = unit;
-        await this.walk();
+        await this.walk(); // とりあえず歩いてみる
         return;
       }
     }
