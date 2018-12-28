@@ -1153,13 +1153,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   /**
    * 指定されたアセットのインスタンスのうち一つを追う
    * いない場合は何もしない
-   * @param {String} name
+   * @param {String} nameOrTarget
    */
-  async chase(name: string, unit8 = false) {
+  async chase(nameOrTarget: string | RPGObject, unit8 = false) {
     const { _ruleInstance } = this;
     if (!_ruleInstance) return;
-    const item = this.getNearest(_ruleInstance.getCollection(name));
-    if (!item) return;
+    const item =
+      typeof nameOrTarget === 'string'
+        ? this.getNearest(_ruleInstance.getCollection(nameOrTarget))
+        : nameOrTarget;
+    if (!item || !item.parentNode) return;
 
     const dx = item.mapX - this.mapX;
     const dy = item.mapY - this.mapY;
@@ -1178,8 +1181,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     await this.mayWalkTo(movements, unit8, prioritizeX);
   }
 
-  async chase8(name: string) {
-    return this.chase(name, true);
+  async chase8(nameOrTarget: string | RPGObject) {
+    return this.chase(nameOrTarget, true);
   }
 
   /**
