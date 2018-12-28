@@ -85,6 +85,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private hpLabel?: any;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
   private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
+  private _image?: typeof enchant.Surface;
+  private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
 
   constructor(mod?: DeprecatedSkin) {
     super(0, 0);
@@ -971,7 +973,36 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return appended;
   }
 
+  get image() {
+    return this._image || null;
+  }
+
+  set image(image: typeof enchant.Sprite | null) {
+    if (!image || this._image === image) return;
+    this._image = image;
+    this._noFilterImage = image;
+    this._computeFramePosition();
+  }
+
+  filter(filter = '') {
+    if (!('filter' in CanvasRenderingContext2D.prototype)) return; // ブラウザが非対応
+    if (!this._noFilterImage || !this._image) return;
+    if (this._image.context && this._image.context.filter === filter) return; // 同じフィルター
+    if (!filter) {
+      this._image = this._noFilterImage; // オリジナルに戻す
+      return;
+    }
+    const _element: HTMLImageElement | HTMLCanvasElement = this._noFilterImage
+      ._element;
+    const { width, height } = _element;
+    this._image = new enchant.Surface(width, height);
+    const context: CanvasRenderingContext2D = this._image.context;
+    context.filter = filter;
+    context.drawImage(_element, 0, 0);
+  }
+
   set imageUrl(url: string) {
+    console.warn('imageUrl は非推奨になりました');
     if (typeof url !== 'string') {
       throw new Error(`${this.name}の imageUrl に文字列以外が代入されました`);
     }
