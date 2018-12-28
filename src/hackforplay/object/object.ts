@@ -476,9 +476,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (!this.map) return false; // 削除された
     const x = this.mapX + forward.x;
     const y = this.mapY + forward.y;
-    if (x < 0 || x >= this.map.tileNumX || y < 0 || y >= this.map.tileNumY)
+    if (
+      this.collideMapBoader &&
+      (x < 0 || x >= this.map.tileNumX || y < 0 || y >= this.map.tileNumY)
+    )
       return false; // 画面外
-    if (this.map.hitTest(x, y)) return false; // 壁
+    if (this.map.cmap && this.map.cmap[y][x] === 1) return false; // 障害物
     for (const item of RPGObject.collection) {
       if (
         this !== item &&
