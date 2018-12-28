@@ -1214,9 +1214,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _lastAssignedSkin?: Skin.Result; // 参照比較するためのプロパティ
   private _skin: Skin.Result | null = null; // Promise<(object: RPGObject) => void>
   get skin() {
+    console.warn('this.skin は非推奨になりました');
     return this._skin;
   }
   set skin(value) {
+    console.warn('this.skin は非推奨になりました. costume を使ってください');
     if (!value) return;
     const { _skin } = this;
     if (_skin) {
@@ -1227,6 +1229,17 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     } else {
       this._skin = value.then(this.applySkin);
     }
+  }
+
+  private _costume = '';
+  async costume(name: string) {
+    if (this._costume === name) return; // 同じ見た目なのでスルー
+    this._costume = name;
+    const skin: Skin.Result | null = Hack.skin(name);
+    if (!skin) return;
+    const dress = await skin;
+    if (this._costume !== name) return; // 読み込み中に見た目が変わった
+    this.applySkin(dress);
   }
 
   private applySkin = ((f: (object: RPGObject) => void) => {
