@@ -339,9 +339,9 @@ export default class Rule {
     if (x !== undefined && y !== undefined) {
       object.locate(x, y, map);
     }
-    this.tryPairing(object);
 
     this.registerRules(object, name, summoner);
+    this.tryPairing(object);
 
     return object;
   }
