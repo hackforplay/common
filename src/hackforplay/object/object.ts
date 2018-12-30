@@ -1215,7 +1215,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     await this.mayWalkTo(movements, unit8, prioritizeX);
   }
 
-  async chase8(nameOrTarget: string | RPGObject) {
+  chase4(nameOrTarget: string | RPGObject) {
+    return this.chase(nameOrTarget, false);
+  }
+
+  chase8(nameOrTarget: string | RPGObject) {
     return this.chase(nameOrTarget, true);
   }
 
