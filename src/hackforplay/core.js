@@ -84,7 +84,7 @@ logFunc.setHeight(180);
 
 // MODs
 game.on('awake', stopOnBlur);
-game.on('load', coordinate);
+game.once('load', coordinate);
 
 // patch to FireFox space key page down
 window.onkeydown = event => !(event.key === ' ');

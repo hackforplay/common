@@ -197,7 +197,11 @@ function createDefaultKeyboard() {
   });
 }
 
+let _initialized = false;
 game.onawake = () => {
+  if (_initialized) return;
+  _initialized = true;
+  game.onawake = () => {};
   // マウス座標
   let mouseX = null;
   let mouseY = null;
