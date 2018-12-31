@@ -4,7 +4,7 @@ import path from 'path';
 import createCompatibleMap from '../src/hackforplay/create-compatible-map';
 import enchant from './helpers/enchant';
 import createMapJson from './helpers/create-map-json';
-import { Image } from 'canvas-prebuilt';
+import { Image } from 'canvas';
 import RPGMap from './helpers/mock-rpg-map';
 
 // テストのための依存注入

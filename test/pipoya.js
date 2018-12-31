@@ -1,8 +1,8 @@
 import test from 'ava';
-import { Image } from 'canvas-prebuilt';
+import { Image } from 'canvas';
 import * as pipoya from './helpers/pipoya';
 
-test(`load pipoya.* dataURLs as an Image from canvas-prebuilt`, async t => {
+test(`load pipoya.* dataURLs as an Image from canvas`, async t => {
   const keys = Object.keys(pipoya);
 
   for (const key of keys) {
