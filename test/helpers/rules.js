@@ -49,8 +49,7 @@ rule.ゲームがはじまったとき(async function() {
 // ここからプレイヤーのルール
 rule.this = 'プレイヤー';
 rule.つくられたとき(async function() {
-  Player.set(this);
-  this.mod(('▼ スキン', Skin.ナイト));
+  // Player.set(this);
   this.family = ('▼ ファミリー', Family.プレイヤー);
   this.hp = 3; // 体力
   this.atk = 1; // こうげき力
@@ -68,7 +67,6 @@ rule.this = 'スライム';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(function() {
-  this.mod(('▼ スキン', Skin.スライム));
   this.family = ('▼ ファミリー', Family.ドクリツ);
   this.hp = 3;
   this.atk = 1;
@@ -96,7 +94,6 @@ rule.this = 'ゴールちてん';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(function() {
-  this.mod(('▼ スキン', Skin.キャッスル));
   Hack.log('おしろがみえるだろう あれがゴールだ'); // ヒントをだす
   /*+ このキャラクターになにかする ゲーム全体になにかする 条件 */
 });
@@ -119,7 +116,6 @@ rule.this = 'イモムシ';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.イモムシ));
   this.family = ('▼ ファミリー', Family.ドクリツ);
   this.hp = 2;
   this.atk = 1;
@@ -148,7 +144,6 @@ rule.this = 'コウモリ';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.コウモリ));
   this.family = ('▼ ファミリー', Family.ドクリツ);
   this.hp = 3;
   this.atk = 1;
@@ -180,7 +175,6 @@ rule.this = 'ウロボロス';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.ウロボロス));
   this.family = ('▼ ファミリー', Family.ドクリツ);
   this.hp = 10;
   this.atk = 1;
@@ -207,16 +201,10 @@ rule.this = 'ドラゴン';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.ドラゴン));
   this.family = ('▼ ファミリー', Family.ドクリツ);
   this.hp = 10;
   this.atk = 1;
   this.scale(2); // 大きさ
-  this.breath({
-    skin: ('▼ スキン', Skin.バクエン),
-    speed: 5,
-    scale: 1
-  });
 });
 // ここからキャラクターがたおされたときのルール
 rule.たおされたとき(async function() {
@@ -233,7 +221,6 @@ rule.this = 'ミノタウルス';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.ミノタウルス));
   this.family = ('▼ ファミリー', Family.ドクリツ);
   this.hp = 10;
   this.atk = 1;
@@ -259,9 +246,7 @@ rule.たおされたとき(async function() {
 rule.this = 'ハート';
 
 // ここからキャラクターがつくられたとき行うルール
-rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.ハート));
-});
+rule.つくられたとき(async function() {});
 // ここからキャラクターがふまれたときのルール
 rule.item = 'プレイヤー';
 rule.ふまれたとき(async function(item) {
@@ -279,7 +264,6 @@ rule.this = 'コイン';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.コイン));
   this.velocity(1, 0);
   this.force(0, 0.5);
 });
@@ -299,9 +283,7 @@ rule.ぶつかったとき(async function(item) {
 rule.this = 'スター';
 
 // ここからキャラクターがつくられたとき行うルール
-rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.スター));
-});
+rule.つくられたとき(async function() {});
 // ここまでキャラクターがつくられたとき行うルール
 // ここからキャラクターがふまれたときのルール
 rule.item = 'プレイヤー';
@@ -320,7 +302,6 @@ rule.this = 'ふしぎなカギ';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
-  this.mod(('▼ スキン', Skin.キー));
   this.locate(random(0, 15), random(0, 10), 'map1');
 });
 // ここまでキャラクターがつくられたとき行うルール
