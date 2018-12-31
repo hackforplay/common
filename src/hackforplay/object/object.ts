@@ -194,7 +194,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this.mayRotate) {
       // 画像は上向きと想定する
       const angle = (this.forward.angle() / Math.PI) * 180 + 90; // 基準は上,時計回りの度数法
-      this._rotation = (angle + 360) % 360;
+      this.rotation = (angle + 360) % 360;
     }
   }
 
@@ -1281,6 +1281,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     f(this); // スキンを適用
     var routine = this.getFrameOfBehavior[this.behavior];
     if (routine) this.frame = routine.call(this); // frame を設定し直す
+    this.rotateIfNeeded();
     return f;
   }).bind(this);
 

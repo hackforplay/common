@@ -334,7 +334,7 @@ export default class Rule {
     const object = new RPGObject();
     object._ruleInstance = this;
     if (dir) {
-      object.forward = dir();
+      object.forward = dir(object);
     }
     if (x !== undefined && y !== undefined) {
       object.locate(x, y, map);
