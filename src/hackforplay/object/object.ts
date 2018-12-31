@@ -88,7 +88,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _image?: typeof enchant.Surface;
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
 
-  constructor(mod?: DeprecatedSkin) {
+  constructor(mod?: (this: RPGObject) => void) {
     super(0, 0);
 
     this.moveTo(game.width, game.height);
@@ -962,7 +962,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._family = family;
   }
 
-  summon(skin: DeprecatedSkin, _class = RPGObject) {
+  summon(skin: (this: RPGObject) => void, _class = RPGObject) {
     // 自分と同じ Family を持つ従者とする
     const appended = new _class(skin);
     registerServant(this, appended);
