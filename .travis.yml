@@ -1,0 +1,14 @@
+language: node_js
+node_js: '8'
+cache: npm
+script:
+  - npx np patch --no-publish --any-branch
+deploy:
+  provider: npm
+  email: i101323@gmail.com
+  api_key:
+    secure: yTBiQSh3U1r9/btbqafWy9m/MomJbyBQ9t+oDtGOKZ3LrPjqZKlx4MpxfktjbLWzPc0u72vyPOIzBezRu8Y1rCgs1xbg7o/B1iI1DRttIfo5l18Qsi5lpzxgC21waFJgt1xOtE95O8Jw/0m8juLkg/+6CwJYwjdrRvm1fnA2I5I9iy0joAGTe86AlK+y6d8vfiOpS13EYXkimVmtDf+1Uu+1FePUohDrxrc34F+04rlof+Y0FUGwX3kU74ZrPY1y/GrDTW6P02Zyi056ieIDo5+Z3xVWy4I4FmaYX9CaFfbkaaxLkz4KWwG9Uqzb4Tevu+yPIvYs3DJynyA+pI5yEYiVww6FLIg1HkTjt6EEzwJucEBORmx5VYXpuxVRAWhs+SAl3l2TCZbddlW08X3JGFgK3VJfvGQdyt6zB1DnuQeLfCbNYQrpQqUCoynsmOJmwrG4FlmKhsTFIo1Tqj8ShV0SEbBXkrYi1qyud2KG9tY7uWpTV1cy8WBQ0ckQposjRBIUKpXhb6ZSVHQWtY9Div2BuCF52htHgy6yu4+Y9jfZI5+XIhi5kbn2l6Q6tmL10OScq5DWZ3CLedUgbWg6SOohcz2ursWn+ViUb82oqdRdO8U2pIA9ix2GVMVX6mqBG17E2G0E5RlqQ16YLB/bl7d5XBlWRH9cwEl3WguKGo8=
+  on:
+    tags: true
+    repo: hackforplay/common
+    all_branches: true
