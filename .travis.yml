@@ -1,7 +1,6 @@
 language: node_js
 node_js: '8'
 cache: npm
-
 deploy:
   provider: script
   script: npx semantic-release
@@ -9,3 +8,6 @@ deploy:
   on:
     repo: hackforplay/common
     all_branches: true
+env:
+  global:
+    secure: MMoESDPGoltg5J/LEjAMLwYDVXi1eDYjeCBiEXXmrAFGVLDayg/b3pFDBTBrOCmp0tLbIJN47bXgQhByKf70M57p0Xnrwmsl8mpYSl58pvBU/heRUFUY7NmT70r8jVW5jPOD3PRv2B2cyNmjtq0aiabTi6dw1JhrzohyRnzgMHiDiv2i+ib6coeL6QVQ3IV/DNGAfPNy0Qo3DZgx9qIcQtNShgTWxDDWJh5B26hnSf+WMsltOfcu0CSF5gp9aqh1m83+UTZo7N1sR8lPDINuGZL0BWFj9V/neployw1hFyS9b7W5OF1UwvXVgGJAFSs76ESxDvMdF5wCQrku2d16yJG5RPa5A5jnsREoYi92QOXNWD6qu2V4/RvB158gDS5flD11CDJW9hDQZSKK3CDbGLTbUvZw+z587barsIZCKxKuRzPuqzYelTkIUoQylHeN7PTMIi9OXuwpTWM8vHub0KByI0SqG8wZeqrGlsmohkCGym7wgKB/Bk/OsvxDu+7kiROZuj9CbHcvVmvNdFDapfdNneOdY/zdX9fPFPQJF+1rbh0P/PuTKspn4Xpw/dd8VqRb5arRy1ipKtQVMRk0/TjIKq/w86a/0G27/Fy594WTQeKa/2tXWX0eVsGsu5qx2GGZLX0F5Rbpj+MflFvMecbo2BlCcCeJBO0YLrg/2GI=
