@@ -12,11 +12,12 @@
     "test": "ava",
     "watch": "ava \"test/index.js\" --watch",
     "resources": "gsutil -m -h \"Cache-Control:public, max-age=3600\" cp -r src/resources gs://hackforplay-common",
-    "cors": "gsutil cors set cors.json gs://hackforplay-common"
+    "cors": "gsutil cors set cors.json gs://hackforplay-common",
+    "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hackforplay/common.git"
+    "url": "https://github.com/hackforplay/common.git"
   },
   "keywords": [
     "hackforplay"
@@ -61,7 +62,8 @@
     "typescript": "^3.1.6",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.9"
+    "webpack-dev-server": "^3.1.9",
+    "semantic-release": "^15.13.2"
   },
   "dependencies": {
     "@babel/runtime": "^7.1.2"
