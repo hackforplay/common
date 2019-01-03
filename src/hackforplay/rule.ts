@@ -1,5 +1,5 @@
 import RPGObject from './object/object';
-import { hasContract } from './family';
+import { hasContract, isOpposite } from './family';
 import { default as Hack } from './hack';
 import { Dir } from './dir';
 
@@ -32,6 +32,7 @@ function handleError(
 }
 
 const Anyone: unique symbol = Symbol('Rule.Anyone');
+const Enemy: unique symbol = Symbol('Rule.Enemy');
 
 type NoObjectListener = (this: void) => Promise<void>;
 type OneObjectListener = (this: RPGObject) => Promise<void>;
@@ -43,6 +44,7 @@ export default class Rule {
   constructor() {}
 
   static readonly Anyone = Anyone;
+  static readonly Enemy = Enemy;
 
   // public vars
   get this(): string | null {
@@ -56,7 +58,7 @@ export default class Rule {
   }
   private _this: string | null = null;
   private readonly _knownThisNames: string[] = [];
-  item: string | typeof Anyone | null = null;
+  item: string | typeof Enemy | typeof Anyone | null = null;
   // listeners
   private readonly _listenersOfNo: {
     [type: string]: NoObjectListener;
@@ -70,6 +72,7 @@ export default class Rule {
     [type: string]: {
       [name: string]: {
         [item: string]: TwoObjectListener;
+        [Enemy]?: TwoObjectListener;
         [Anyone]?: TwoObjectListener;
       };
     };
@@ -149,6 +152,11 @@ export default class Rule {
       // 特定のアセットにだけ作用
       await handleError(type, name, specify.call(object, item));
     }
+    const enemy = listeners[Enemy];
+    if (enemy && isOpposite(this, object)) {
+      // 自分の敵なら
+      await handleError(type, name, enemy.call(object, item));
+    }
     const anyone = listeners[Anyone];
     if (anyone) {
       // 誰でも良い
@@ -191,7 +199,11 @@ export default class Rule {
     if (!container) return false;
     const listeners = container[name];
     if (!listeners) return false;
-    return Boolean(listeners[Anyone]) || target.name in listeners;
+    return (
+      Boolean(listeners[Anyone]) ||
+      Boolean(listeners[Enemy]) ||
+      target.name in listeners
+    );
   }
 
   getCollection(name: string) {
