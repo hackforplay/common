@@ -266,7 +266,7 @@ export default class Rule {
     if (object.name !== name) return; // へんしんしたので終了
     // TODO: パフォーマンスが悪化しそうなので改善する
     requestAnimationFrame(() => {
-      if (Hack.world._stop || object._stop) {
+      if (Hack.world._stop || object._stop || !object.parentNode) {
         return this.runつねに(object, name);
       }
       this.runOneObjectLisener('つねに', object).then(() =>
