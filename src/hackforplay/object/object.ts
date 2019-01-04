@@ -586,6 +586,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
       // 移動
       this.moveTo(x, y);
+      this.updateCollider(); // TODO: 動的プロパティ
 
       this.dispatchEvent(new enchant.Event('walkmove'));
 
