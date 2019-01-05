@@ -38,6 +38,26 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   static _collectionTarget = [RPGObject];
   static collection: RPGObject[] = [];
   static _collective = true;
+  // へんしんするときに初期化するプロパティの設定
+  static readonly propNamesToInit = [
+    // 初期値で上書きしたいプロパティ
+    'damage',
+    'speed',
+    'opacity',
+    'velocityX',
+    'velocityY',
+    'accelerationX',
+    'accelerationY',
+    'mass',
+    'skill',
+    'fieldOfView',
+    'lengthOfView',
+    // 未初期化状態に戻したいプロパティ
+    '_atk',
+    '_penetrate',
+    '_collisionFlag',
+    '_isKinematic'
+  ];
 
   offset = {
     x: 0,
@@ -1170,13 +1190,23 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return appended;
   }
 
+  private static _initializedReference: RPGObject;
   へんしんする(name: string) {
     const { _ruleInstance, hp } = this;
     if (!_ruleInstance) return;
+
+    // 初期値を参照するためのインスタンスを作る
+    RPGObject._initializedReference =
+      RPGObject._initializedReference || new RPGObject();
+
+    // 一部のパラメータを初期値に戻す
+    for (const key of RPGObject.propNamesToInit) {
+      this[key] = RPGObject._initializedReference[key];
+    }
+
     _ruleInstance.installAsset(name);
     _ruleInstance.unregisterRules(this);
     _ruleInstance.registerRules(this, name);
-    this.hp = hp; // 体力だけは引き継ぐ
   }
 
   getNearest(collection: RPGObject[]): RPGObject | null {
