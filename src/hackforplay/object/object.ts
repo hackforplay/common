@@ -85,11 +85,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   skill: string = ''; // 攻撃時にしょうかんするアセットの名前
   fieldOfView: number = 1; // 自分を起点に隣何マスまで find 可能か
   lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
-  money: number = 0; // 持っているお金
   _mayRotate = false; // 向いている方向に合わせてスプライト自体を回転させるフラグ
 
   private _hp?: number;
   private _atk?: number;
+  private _money?: number; // 持っているお金
   private _isDamageObject = false;
   private _penetrate?: number; // ものに触れた時に貫通できる回数
   private _penetratedCount = 0; // すでに貫通した回数
@@ -203,6 +203,20 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       x: this.x - this.offset.x + 16,
       y: this.y - this.offset.y + 16
     };
+  }
+
+  get hasMoney() {
+    return this._money !== undefined;
+  }
+  get money() {
+    return this._money || 0;
+  }
+  set money(value: number) {
+    if (this._money === value) return;
+    this._money = value;
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return;
+    _ruleInstance.runOneObjectLisener('おかねがかわったとき', this);
   }
 
   updateCollider() {

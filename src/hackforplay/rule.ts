@@ -407,6 +407,9 @@ export default class Rule {
   すすめなかったとき(func: OneObjectListener) {
     this.addOneObjectLisener('すすめなかったとき', func);
   }
+  おかねがかわったとき(func: OneObjectListener) {
+    this.addOneObjectLisener('おかねがかわったとき', func);
+  }
   ふまれたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
   }
