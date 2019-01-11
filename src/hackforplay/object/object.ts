@@ -1401,6 +1401,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       await p; // await this.find() でみつけたときをループできるよう, 終了を待つ
     }
   }
+
+  toJSON() {
+    return {
+      name: this.name
+    };
+  }
 }
 
 function makeHpLabel(self: RPGObject) {
