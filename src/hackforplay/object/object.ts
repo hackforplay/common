@@ -1286,7 +1286,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    */
   async mayWalkTo(movements: Vector2[], unit8 = false, prioritizeX = false) {
     movements = movements.filter(vec => vec.x !== 0 || vec.y !== 0);
-    movements.sort((a, b) => (prioritizeX ? a.x - b.x : a.y - b.y));
+    movements.sort((a, b) => (prioritizeX ? b.x - a.x : b.y - a.y)); // 優先されている方の差が大きい順
     for (const forward of movements) {
       const unit = unit8 ? forward.unit8() : forward.unit();
       if (!Vector2.equal(this.forward, unit) || this.canWalk(unit)) {
