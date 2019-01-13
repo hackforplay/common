@@ -551,8 +551,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const ty = this.map.tileNumY;
 
     // 移動先
-    const nextX = this.mapX + forward.x;
-    const nextY = this.mapY + forward.y;
+    const unit = Vector2.from(forward).unit8();
+    const nextX = this.mapX + unit.x;
+    const nextY = this.mapY + unit.y;
 
     let isHit = this.map.hitTest(nextX * tw, nextY * th);
 
