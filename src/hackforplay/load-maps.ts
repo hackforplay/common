@@ -13,11 +13,8 @@ export default async function loadMaps(mapJsonFile: string) {
     const mapsJson = await feeles.fetchText(mapJsonFile);
     try {
       const maps = JSON.parse(mapsJson);
-      // 設定されていないマップに行った時
-      Hack.fallbackMapName = maps.fallback;
-      Hack.maps[maps.fallback] = await loadMap(
-        await feeles.fetchText(maps.fallback)
-      );
+      // 設定されていないマップに行った時に使うマップ定義
+      Hack.fallbackMapJson = await feeles.fetchText(maps.fallback);
       // マップの背景を設定
       for (const key of Object.keys(maps.files)) {
         Hack.maps[key] = await loadMap(await feeles.fetchText(maps.files[key]));
@@ -32,11 +29,25 @@ export default async function loadMaps(mapJsonFile: string) {
   }
 }
 
-function loadMap(mapJson: string): Promise<RPGMap> {
+const _cache: { [key: string]: Promise<RPGMap> } = {};
+
+export function generateMapFromFallback(mapName: string, setAsDefault = false) {
+  if (!Hack.fallbackMapJson) {
+    throw new Error('Hack.fallbackMapJson がありません');
+  }
+  _cache[mapName] =
+    _cache[mapName] || loadMap(Hack.fallbackMapJson, setAsDefault);
+  return _cache[mapName];
+}
+
+function loadMap(mapJson: string, setAsDefault = false): Promise<RPGMap> {
   const parsedMapJson = JSON.parse(mapJson);
   return new Promise(resolve => {
     const map = createCompatibleMap(parsedMapJson, {}, () =>
       resolve(map)
     ) as RPGMap;
+    if (setAsDefault) {
+      Hack.defaultParentNode = map.scene;
+    }
   });
 }

@@ -1,11 +1,9 @@
 import '../mod/stop';
-import SAT from '../lib/sat.min';
 import Hack from './hack';
 import './rpg-kit-rpgobjects';
 import './rpg-kit-color';
 import enchant from '../enchantjs/enchant';
 import Camera from './camera';
-import { CanvasRenderer } from '../enchantjs/enchant';
 import { KeyClass } from './key';
 import { isOpposite } from './family';
 import BehaviorTypes from './behavior-types';
@@ -13,6 +11,7 @@ import Keyboard from './keyboard';
 import { stringToArray, dakuten, handakuten } from './utils/string-utils';
 import RPGMap from './rpg-map';
 import game from './game';
+import { generateMapFromFallback } from './load-maps';
 
 game.preload(
   'resources/enchantjs/monster1.gif',
@@ -424,40 +423,28 @@ Hack.createMap = function(template) {
 };
 
 Hack.changeMap = function(mapName) {
-  (function(current, next) {
-    if (next === undefined) {
-      switch (typeof mapName) {
-        case 'string':
-          Hack.log(mapName + ' は、まだつくられていない');
-          break;
-        case 'object':
-          Hack.log('まだ マップが つくられていないようだ');
-          break;
-        case 'number':
-          Hack.log(
-            mapName + " ではなく 'map" + mapName + "' ではありませんか？"
-          );
-          break;
-        default:
-          Hack.log("Hack.changeMap('map2'); の ように かいてみよう");
-          break;
-      }
-    } else if (!current) {
-      // 最初のマップをロード
-      next.load();
-    } else if (current !== next) {
-      var r = function(n) {
-        n.parentNode.removeChild(n);
-      };
-      r(Hack.map.bmap);
-      r(Hack.map.scene);
-      r(Hack.map.fmap);
-      next.load();
-      current.dispatchEvent(new enchant.Event('leavemap'));
-      next.dispatchEvent(new enchant.Event('entermap'));
-    }
-  })(Hack.map, Hack.maps[mapName]);
+  const current = Hack.map;
+  const next = Hack.maps[mapName];
+  if (next === undefined) {
+    // マップが定義されていない => fallback で作成する
+    generateMapFromFallback(mapName, true).then(map => {
+      // 終わったら changeMap
+      _changeMap(current, map);
+    });
+  } else {
+    _changeMap(current, next);
+  }
 };
+function _changeMap(prev, next) {
+  if (prev) {
+    prev.parentNode.removeChild(Hack.map.bmap);
+    prev.parentNode.removeChild(Hack.map.scene);
+    prev.parentNode.removeChild(Hack.map.fmap);
+  }
+  next.load();
+  prev && prev.dispatchEvent(new enchant.Event('leavemap'));
+  next.dispatchEvent(new enchant.Event('entermap'));
+}
 
 /*  Dir2Vec
 directionをforwardに変換する。 0/down, 1/left, 2/right, 3/up

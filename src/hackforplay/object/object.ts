@@ -15,6 +15,7 @@ import * as Dir from '../dir';
 import * as Skin from '../skin';
 import * as N from './numbers';
 import Vector2, { IVector2 } from '../math/vector2';
+import { generateMapFromFallback } from '../load-maps';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -353,27 +354,35 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   locate(fromLeft: number, fromTop: number, mapName?: string) {
-    if (mapName && mapName in Hack.maps) {
-      if (
-        Hack.maps[mapName] instanceof RPGMap &&
-        this.map !== Hack.maps[mapName]
-      ) {
+    if (mapName) {
+      if (!(mapName in Hack.maps)) {
+        // 存在しないマップ
+        const hasZenkaku = /[０-９]/.exec(mapName); // 全角数字が含まれている場合は警告する
+        if (hasZenkaku) {
+          Hack.log(
+            `locate(${fromLeft}, ${fromTop}, ${mapName}) には全角の${
+              hasZenkaku[0]
+            }が入っています！全角/半角を押して半角文字にしましょう`
+          );
+          return;
+        }
+        generateMapFromFallback(mapName).then(map => {
+          Hack.maps[mapName] = map;
+          this.locate(fromLeft, fromTop, mapName); // マップができたらもう一度呼び出す
+        });
+        console.info(
+          `${mapName} is automaticaly generated. You can set background of map!`
+        );
+        return;
+      }
+      // オブジェクトのマップを移動させる
+      const map = Hack.maps[mapName] as RPGMap;
+      if (map instanceof RPGMap && this.map !== map) {
         // プレイヤーがワープする場合は, 先にマップを変更する
         if (this === (Camera.main && Camera.main.target)) {
           Hack.changeMap(mapName);
         }
-        Hack.maps[mapName].scene.addChild(this);
-      }
-    } else if (typeof mapName === 'string') {
-      const hasZenkaku = /[０-９]/.exec(mapName);
-      if (hasZenkaku) {
-        Hack.log(
-          `locate(${fromLeft}, ${fromTop}, ${mapName}) には全角の${
-            hasZenkaku[0]
-          }が入っています！全角/半角を押して半角文字にしましょう`
-        );
-      } else {
-        Hack.log(`${mapName} は まだつくられていない`);
+        map.scene.addChild(this);
       }
     }
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
