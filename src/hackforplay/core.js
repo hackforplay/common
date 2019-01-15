@@ -14,6 +14,7 @@ import find from './find';
 import deprecated from './deprecated';
 import createCompatibleMap from './create-compatible-map';
 import loadMap from './load-map';
+import loadMaps from './load-maps';
 import coordinate from '../mod/coordinate';
 import game from './game';
 import createDamageMod from './create-damage-mod';
@@ -76,6 +77,8 @@ Hack.parseMapJson = function parseMapJson(mapName, mapJson) {
 };
 
 Hack.loadMap = loadMap;
+
+Hack.loadMaps = loadMaps;
 
 // Advanced log
 Hack.logFunc = logFunc.default;
