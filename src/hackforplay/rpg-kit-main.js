@@ -437,9 +437,9 @@ Hack.changeMap = function(mapName) {
 };
 function _changeMap(prev, next) {
   if (prev && prev.parentNode) {
-    prev.parentNode.removeChild(Hack.map.bmap);
-    prev.parentNode.removeChild(Hack.map.scene);
-    prev.parentNode.removeChild(Hack.map.fmap);
+    prev.parentNode.removeChild(prev.bmap);
+    prev.parentNode.removeChild(prev.scene);
+    prev.parentNode.removeChild(prev.fmap);
   }
   next.load();
   prev && prev.dispatchEvent(new enchant.Event('leavemap'));

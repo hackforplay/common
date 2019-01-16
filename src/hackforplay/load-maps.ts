@@ -47,6 +47,7 @@ function loadMap(mapJson: string, setAsDefault = false): Promise<RPGMap> {
       resolve(map)
     ) as RPGMap;
     if (setAsDefault) {
+      Hack.map = map;
       Hack.defaultParentNode = map.scene;
     }
   });
