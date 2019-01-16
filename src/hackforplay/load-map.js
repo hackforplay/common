@@ -26,8 +26,9 @@ export default async function loadMap(mapName, url) {
         r(Hack.map.fmap);
         newMap.load();
       }
-      Hack.maps[mapName] = newMap;
       resolve();
     });
+    Hack.maps = Hack.maps || {};
+    Hack.maps[mapName] = newMap;
   });
 }

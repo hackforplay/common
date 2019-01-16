@@ -65,14 +65,12 @@ Hack.parseMapJson = function parseMapJson(mapName, mapJson) {
   const parsedMapJson = JSON.parse(mapJson);
   return new Promise(resolve => {
     let map;
-    const callback = () => {
-      if (mapName) {
-        Hack.maps = Hack.maps || {};
-        Hack.maps[mapName] = map;
-      }
-      resolve(map);
-    };
+    const callback = () => resolve(map);
     map = createCompatibleMap(parsedMapJson, {}, callback);
+    if (mapName) {
+      Hack.maps = Hack.maps || {};
+      Hack.maps[mapName] = map;
+    }
   });
 };
 
