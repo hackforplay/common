@@ -436,7 +436,7 @@ Hack.changeMap = function(mapName) {
   }
 };
 function _changeMap(prev, next) {
-  if (prev) {
+  if (prev && prev.parentNode) {
     prev.parentNode.removeChild(Hack.map.bmap);
     prev.parentNode.removeChild(Hack.map.scene);
     prev.parentNode.removeChild(Hack.map.fmap);
