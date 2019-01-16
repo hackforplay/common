@@ -441,7 +441,6 @@ function _changeMap(prev, next) {
     prev.parentNode.removeChild(prev.scene);
     prev.parentNode.removeChild(prev.fmap);
   }
-  debugger;
   next.load();
   prev && prev.dispatchEvent(new enchant.Event('leavemap'));
   next.dispatchEvent(new enchant.Event('entermap'));
