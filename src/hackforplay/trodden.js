@@ -17,7 +17,9 @@ const targetItemSetMap = new WeakMap();
  * NOTICE: "removetrodden" イベント中に locate で移動すると, うまく移動できない
  */
 export default function trodden() {
-  const collection = [...RPGObject.collection];
+  const collection = [...RPGObject.collection].filter(
+    item => item.map === Hack.map
+  ); // プレイヤーが今いるマップしか調べない
 
   // 2
   for (const item of collection) {
