@@ -1,4 +1,4 @@
-import Vector2 from 'hackforplay/math/vector2';
+import Vector2 from '../math/vector2';
 import Line from 'hackforplay/shapes/line';
 import { Surface, Event } from 'enchantjs/enchant';
 import RPGObject from './object';
@@ -46,7 +46,6 @@ class Laser extends RPGObject {
     this.height = h;
 
     this.damage = damage;
-    this.mod(Hack.createDamageMod(this.damage, this));
   }
 
   update() {

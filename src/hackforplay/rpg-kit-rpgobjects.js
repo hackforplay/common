@@ -931,9 +931,16 @@ game.on('enterframe', function() {
 function __physicsUpdateOnFrame(tick, frame, physics) {
   physics
     .map(function(self, index) {
-      // Physical Update
-      self.velocityX += self.accelerationX / frame;
-      self.velocityY += self.accelerationY / frame;
+      if (self._flyToward) {
+        // flyToward() を使った Physics Update (暫定処理)
+        const correction = 3.3; // 移動速度を walk と合わせるための係数
+        self.velocityX = self._flyToward.x * self.speed * correction;
+        self.velocityY = self._flyToward.y * self.speed * correction;
+      } else {
+        // force() を使った Physical Update (廃止予定)
+        self.velocityX += self.accelerationX / frame;
+        self.velocityY += self.accelerationY / frame;
+      }
       self.x += self.velocityX / frame;
       self.y += self.velocityY / frame;
       // Intersects

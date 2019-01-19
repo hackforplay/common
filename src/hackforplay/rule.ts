@@ -1,9 +1,10 @@
-import { default as RPGObject } from './object/object';
-import { hasContract } from './family';
+import RPGObject from './object/object';
+import { hasContract, isOpposite } from './family';
 import { default as Hack } from './hack';
 import { Dir } from './dir';
 
 interface Event {
+  target: RPGObject;
   item: RPGObject;
 }
 interface CollidedEvent extends Event {
@@ -22,7 +23,8 @@ function handleError(
 ): Promise<void> {
   if (promiseLike && promiseLike instanceof Promise) {
     return promiseLike.catch(error => {
-      console.error(`RuleError: ${title} of ${name}`);
+      console.error(error);
+      console.error(`above error was occured in "${name}" when "${title}"`);
       throwError(error);
     });
   }
@@ -30,6 +32,7 @@ function handleError(
 }
 
 const Anyone: unique symbol = Symbol('Rule.Anyone');
+const Enemy: unique symbol = Symbol('Rule.Enemy');
 
 type NoObjectListener = (this: void) => Promise<void>;
 type OneObjectListener = (this: RPGObject) => Promise<void>;
@@ -41,6 +44,7 @@ export default class Rule {
   constructor() {}
 
   static readonly Anyone = Anyone;
+  static readonly Enemy = Enemy;
 
   // public vars
   get this(): string | null {
@@ -52,30 +56,32 @@ export default class Rule {
     }
     this._this = value;
   }
-  _this: string | null = null;
-  _knownThisNames: string[] = [];
-  item: string | typeof Anyone | null = null;
+  private _this: string | null = null;
+  private readonly _knownThisNames: string[] = [];
+  item: string | typeof Enemy | typeof Anyone | null = null;
   // listeners
-  _listenersOfNo: {
+  private readonly _listenersOfNo: {
     [type: string]: NoObjectListener;
   } = {};
-  _listenersOfOne: {
+  private readonly _listenersOfOne: {
     [type: string]: {
       [name: string]: OneObjectListener;
     };
   } = {};
-  _listenersOfTwo: {
+  private readonly _listenersOfTwo: {
     [type: string]: {
       [name: string]: {
         [item: string]: TwoObjectListener;
+        [Enemy]?: TwoObjectListener;
         [Anyone]?: TwoObjectListener;
       };
     };
   } = {};
-  // collections
-  _collections: {
+  private readonly _collections: {
     [type: string]: RPGObject[];
   } = {};
+
+  private readonly _pairingWaitList: { [key: string]: RPGObject } = {};
 
   addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
@@ -140,15 +146,21 @@ export default class Rule {
     if (!container) return;
     const listeners = container[name];
     if (!listeners) return;
+    // 条件によって複数のルールが定義できる場合, 詳細度が細かいものから順に実行される
     const specify = listeners[itemName];
     if (specify) {
       // 特定のアセットにだけ作用
-      handleError(type, name, specify.call(object, item));
+      await handleError(type, name, specify.call(object, item));
+    }
+    const enemy = listeners[Enemy];
+    if (enemy && isOpposite(this, object)) {
+      // 自分の敵なら
+      await handleError(type, name, enemy.call(object, item));
     }
     const anyone = listeners[Anyone];
     if (anyone) {
       // 誰でも良い
-      handleError(type, name, anyone.call(object, item));
+      await handleError(type, name, anyone.call(object, item));
     }
   }
 
@@ -182,10 +194,37 @@ export default class Rule {
     return Boolean(container[name]);
   }
 
-  addToCollection(name: string, object: RPGObject) {
+  hasTwoObjectListenerWith(type: string, name: string, target: RPGObject) {
+    const container = this._listenersOfTwo[type];
+    if (!container) return false;
+    const listeners = container[name];
+    if (!listeners) return false;
+    return (
+      Boolean(listeners[Anyone]) ||
+      Boolean(listeners[Enemy]) ||
+      target.name in listeners
+    );
+  }
+
+  getCollection(name: string) {
+    if (!this._collections[name]) {
+      return [];
+    }
+    return [...this._collections[name]];
+  }
+
+  private addToCollection(object: RPGObject) {
     const collections =
-      this._collections[name] || (this._collections[name] = []);
+      this._collections[object.name] || (this._collections[object.name] = []);
     collections.push(object);
+  }
+
+  private removeFromCollection(object: RPGObject) {
+    const collections = this._collections[object.name];
+    if (!collections) return;
+    const index = collections.indexOf(object);
+    if (index < 0) return;
+    collections.splice(index, 1);
   }
 
   /**
@@ -203,23 +242,94 @@ export default class Rule {
   }
 
   /**
+   * ペアが空いていれば RPGObject.pairedObject に設定する
+   * @param object
+   */
+  private tryPairing(object: RPGObject) {
+    const waiting = this._pairingWaitList[object.name];
+    if (!waiting || object === waiting) {
+      this._pairingWaitList[object.name] = object; // 次のオブジェクトとペアリング
+      return;
+    }
+    // 互いに参照を持つ
+    object.pairedObject = waiting;
+    waiting.pairedObject = object;
+    delete this._pairingWaitList[object.name]; // ペアリング完了
+  }
+
+  /**
    * 「つねに」を再帰的にコールするラッパー
    * @param object RPGObject
+   * @param name string このアセットとして実行する (へんしんしたらストップしたい)
    */
-  runつねに(object: RPGObject) {
+  runつねに(object: RPGObject, name: string) {
+    if (object.name !== name) return; // へんしんしたので終了
     // TODO: パフォーマンスが悪化しそうなので改善する
     requestAnimationFrame(() => {
-      if (Hack.world._stop || object._stop) {
-        return this.runつねに(object);
+      if (Hack.world._stop || object._stop || !object.parentNode) {
+        return this.runつねに(object, name);
       }
       this.runOneObjectLisener('つねに', object).then(() =>
-        this.runつねに(object)
+        this.runつねに(object, name)
       );
     });
   }
 
   async runゲームがはじまったとき() {
     await this.runNoObjectListener('ゲームがはじまったとき');
+  }
+
+  registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
+    object.name = name;
+    if (this.hasOneObjectLisener('つくられたとき', name)) {
+      this.runOneObjectLisener('つくられたとき', object);
+    }
+    if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
+      this.runTwoObjectListener('しょうかんされたとき', object, summoner);
+    }
+    if (this.hasOneObjectLisener('つねに', name)) {
+      this.runつねに(object, name);
+    }
+    if (this.hasOneObjectLisener('こうげきするとき', name)) {
+      object.on('becomeattack', this.onこうげきするとき);
+    }
+    if (this.hasOneObjectLisener('たおされたとき', name)) {
+      object.on('becomedead', this.onたおされたとき);
+    }
+    if (this.hasTwoObjectListener('ふまれたとき', name)) {
+      object.on('addtrodden', this.onふまれたとき);
+    }
+    if (this.hasTwoObjectListener('ぶつかったとき', name)) {
+      object.on('triggerenter', this.onぶつかったとき);
+    }
+    if (
+      this.hasOneObjectLisener('すすめなかったとき', name) ||
+      this.hasTwoObjectListener('ぶつかったとき', name)
+    ) {
+      object.on('collided', this.onすすめなかったとき);
+    }
+    if (this.hasTwoObjectListener('こうげきされたとき', name)) {
+      object.on('attacked', this.onこうげきされたとき);
+    }
+    this.addToCollection(object);
+  }
+
+  unregisterRules(object: RPGObject) {
+    object.name = ''; // つねに() を終了させる
+    object.removeEventListener('becomeattack', this.onこうげきするとき);
+    object.removeEventListener('becomedead', this.onたおされたとき);
+    object.removeEventListener('addtrodden', this.onふまれたとき);
+    object.removeEventListener('triggerenter', this.onぶつかったとき);
+    object.removeEventListener('collided', this.onすすめなかったとき);
+    object.removeEventListener('attacked', this.onこうげきされたとき);
+    this.removeFromCollection(object);
+  }
+
+  installAsset(name: string) {
+    if (this._knownThisNames.indexOf(name) < 0) {
+      Hack.log(`${name} というアセットは ないかもしれない`);
+      feeles.install && feeles.install(name);
+    }
   }
 
   // 実際にコールする関数
@@ -231,88 +341,53 @@ export default class Rule {
     dir?: Dir,
     summoner?: RPGObject
   ) {
-    if (this._knownThisNames.indexOf(name) < 0) {
-      Hack.log(`${name} というアセットは ないかもしれない`);
-      feeles.install && feeles.install(name);
-    }
+    this.installAsset(name);
+
     const object = new RPGObject();
-    object.name = name;
     object._ruleInstance = this;
-    // つくられたとき (しょうかんしたときにも呼ばれる)
-    if (this.hasOneObjectLisener('つくられたとき', name)) {
-      this.runOneObjectLisener('つくられたとき', object);
-    }
-    // しょうかんされたとき
-    if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
-      this.runTwoObjectListener('しょうかんされたとき', object, summoner);
-    }
-
-    // インスタンスごとのパラメータ指定
     if (dir) {
-      object.forward = dir();
+      object.forward = dir(object);
     }
-    if (y !== undefined) {
+    if (x !== undefined && y !== undefined) {
       object.locate(x, y, map);
-    } else if (x !== undefined) {
-      object.locate(x, object.mapY, map);
     }
 
-    // つねに
-    if (this.hasOneObjectLisener('つねに', name)) {
-      // rule.つねに がある
-      this.runつねに(object);
-    }
-    if (this.hasOneObjectLisener('こうげきするとき', name)) {
-      object.on('becomeattack', () =>
-        this.runOneObjectLisener('こうげきするとき', object)
-      );
-    }
-    if (this.hasOneObjectLisener('たおされたとき', name)) {
-      // rule.たおされたとき がある
-      object.on('becomedead', () =>
-        this.runOneObjectLisener('たおされたとき', object)
-      );
-    }
-    if (this.hasTwoObjectListener('ふまれたとき', name)) {
-      // rule.ふまれたとき がある
-      object.on('addtrodden', (event: Event) =>
-        this.runTwoObjectListener('ふまれたとき', object, event.item)
-      );
-    }
-    if (this.hasTwoObjectListener('ぶつかったとき', name)) {
-      // rule.ぶつかったとき がある
-      object.on('triggerenter', (event: Event) => {
-        if (event && event.item) {
-          const { collisionFlag } = event.item;
-          if (collisionFlag && !hasContract(object, event.item)) {
-            // item が障害物で、かつ互いに「しょうかんされた」ものではないとき
-            this.runTwoObjectListener('ぶつかったとき', object, event.item);
-          }
-        }
-      });
-    }
-    if (
-      this.hasOneObjectLisener('すすめなかったとき', name) ||
-      this.hasTwoObjectListener('ぶつかったとき', name)
-    ) {
-      object.on('collided', (event: CollidedEvent) => {
-        if (event.map || event.hits.length === 0) {
-          // マップの枠か、cmapとぶつかった => 相手のいない衝突
-          this.runOneObjectLisener('すすめなかったとき', object);
-        } else {
-          // 何かとぶつかった
-          this.runTwoObjectListener('ぶつかったとき', object, event.item);
-        }
-      });
-    }
-    if (this.hasTwoObjectListener('こうげきされたとき', name)) {
-      object.on('attacked', (event: Event) => {
-        this.runTwoObjectListener('こうげきされたとき', object, event.item);
-      });
-    }
-    this.addToCollection(name, object); // コレクションからは永久に消えない
+    this.registerRules(object, name, summoner);
+    this.tryPairing(object);
+
     return object;
   }
+
+  private onこうげきするとき = ((e: Event) => {
+    this.runOneObjectLisener('こうげきするとき', e.target);
+  }).bind(this);
+  private onたおされたとき = ((e: Event) => {
+    this.runOneObjectLisener('たおされたとき', e.target);
+  }).bind(this);
+  private onすすめなかったとき = ((e: CollidedEvent) => {
+    if (e.map || e.hits.length === 0) {
+      // マップの枠か、cmapとぶつかった => 相手のいない衝突
+      this.runOneObjectLisener('すすめなかったとき', e.target);
+    } else {
+      // 何かとぶつかった
+      this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
+    }
+  }).bind(this);
+  private onふまれたとき = ((e: Event) => {
+    this.runTwoObjectListener('ふまれたとき', e.target, e.item);
+  }).bind(this);
+  private onぶつかったとき = ((e: Event) => {
+    if (e && e.item) {
+      const { collisionFlag } = e.item;
+      if (collisionFlag && !hasContract(e.target, e.item)) {
+        // item が障害物で、かつ互いに「しょうかんされた」ものではないとき
+        this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
+      }
+    }
+  }).bind(this);
+  private onこうげきされたとき = ((e: Event) => {
+    this.runTwoObjectListener('こうげきされたとき', e.target, e.item);
+  }).bind(this);
 
   ゲームがはじまったとき(func: NoObjectListener) {
     this.addNoObjectListener('ゲームがはじまったとき', func);
@@ -332,6 +407,9 @@ export default class Rule {
   すすめなかったとき(func: OneObjectListener) {
     this.addOneObjectLisener('すすめなかったとき', func);
   }
+  おかねがかわったとき(func: OneObjectListener) {
+    this.addOneObjectLisener('おかねがかわったとき', func);
+  }
   ふまれたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
   }
@@ -346,5 +424,8 @@ export default class Rule {
   }
   しょうかんされたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('しょうかんされたとき', func);
+  }
+  みつけたとき(func: TwoObjectListener) {
+    this.addTwoObjectListener('みつけたとき', func);
   }
 }

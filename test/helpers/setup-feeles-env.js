@@ -5,6 +5,7 @@ if (!global.feeles) {
   global.feeles = {
     env: {},
     fetchDataURL,
+    fetchText,
     throwError,
     connected: new Promise(() => {}),
     exports: () => {},
@@ -55,6 +56,23 @@ function fetchDataURL(src) {
       else {
         const dataURL = `data:${mime};base64,${data}`;
         resolve(dataURL);
+      }
+    });
+  });
+}
+
+/**
+ * Feeles 内のファイルをテキスト形式で取得する
+ * @param {String} src ソースファイルのパス
+ */
+function fetchText(src) {
+  throw new Error(src);
+  return new Promise((resolve, reject) => {
+    const filePath = require('path').resolve(__dirname, '../../src/', src);
+    require('fs').readFile(filePath, 'utf8', (err, data) => {
+      if (err) reject(err);
+      else {
+        resolve(data);
       }
     });
   });

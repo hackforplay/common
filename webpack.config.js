@@ -60,7 +60,8 @@ const common = {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': '*'
-    }
+    },
+    disableHostCheck: true
   }
 };
 

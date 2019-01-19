@@ -3,6 +3,7 @@ import enchant from '../enchantjs/enchant';
 import RPGObject from './object/object';
 import BehaviorTypes from './behavior-types';
 import game from './game';
+import Hack from './hack';
 
 game.on('enterframe', trodden);
 

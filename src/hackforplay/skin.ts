@@ -1,6 +1,5 @@
-import { default as game } from './game';
 import { default as enchant } from '../enchantjs/enchant';
-import { default as RPGObject } from './object/object';
+import RPGObject from './object/object';
 import { default as SAT } from '../lib/sat.min';
 import { default as BehaviorTypes } from './behavior-types';
 import { default as logFunc } from '../mod/logFunc';
@@ -23,8 +22,9 @@ export interface Skin {
     height: number;
   };
   direction: 1 | 4;
+  mayRotate: boolean;
 }
-type Result = Promise<(object: RPGObject) => void>;
+export type Result = Promise<(object: RPGObject) => void>;
 
 let baseUrl: string = 'https://storage.googleapis.com/hackforplay-skins/';
 export const getBaseUrl = () => baseUrl;
@@ -83,6 +83,7 @@ export const dress = (skin: Skin) => (object: RPGObject) => {
     x: skin.sprite.x,
     y: skin.sprite.y
   };
+  object._mayRotate = skin.mayRotate;
   // ダメージ判定用のポリゴン
   object.collider = new SAT.Box(
     new SAT.V(object.x, object.y),
@@ -102,6 +103,7 @@ export const dress = (skin: Skin) => (object: RPGObject) => {
     setD6(object, BehaviorTypes.Attack, a(3, 4, 4, 4, 5, 4, null, 1));
     setD6(object, BehaviorTypes.Dead, [1, null]);
   } else {
+    object.directionType = 'single';
     object.setFrame(BehaviorTypes.Idle, [1]);
     object.setFrame(BehaviorTypes.Walk, a(0, 10, null, 1));
     object.setFrame(BehaviorTypes.Attack, a(0, 12, null, 1));

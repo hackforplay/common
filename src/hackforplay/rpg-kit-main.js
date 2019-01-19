@@ -197,7 +197,11 @@ function createDefaultKeyboard() {
   });
 }
 
+let _initialized = false;
 game.onawake = () => {
+  if (_initialized) return;
+  _initialized = true;
+  game.onawake = () => {};
   // マウス座標
   let mouseX = null;
   let mouseY = null;
@@ -234,14 +238,6 @@ game.onawake = () => {
 
   Hack.cameraGroup = cameraGroup;
   game.rootScene.addChild(cameraGroup);
-
-  // デフォルトのカメラを作成する
-  const camera = (Hack.camera = Camera.main = new Camera());
-
-  // ゲーム開始時にデフォルトのカメラのターゲットが存在しないならプレイヤーを割り当てる
-  game.on('load', () => {
-    if (!camera.target) camera.target = Hack.player;
-  });
 
   // コントローラーグループ
   const controllerGroup = new enchant.Group();
@@ -356,34 +352,30 @@ game.onawake = () => {
   Hack.textarea.width = 340;
   Hack.textarea.height = 32;
 
-  // Life label
-  const lifeLabel = new enchant.ui.ScoreLabel(1000, 1000, 0);
-  Hack.lifeLabel = lifeLabel;
-  Hack.lifeLabel.label = 'HP:';
-  Hack.menuGroup.addChild(lifeLabel);
-  Hack.lifeLabel.moveTo(Hack.menuGroup.x + 10, Hack.menuGroup.y + 72);
-  game.on('enterframe', () => {
-    const player = self.player || Hack.player;
-    if (player && typeof player.hp === 'number') {
-      lifeLabel.score = player.hp;
+  // Life label (後方互換性 ~0.11)
+  Object.defineProperty(Hack, 'lifeLabel', {
+    get() {
+      console.warn(
+        `Hack.lifeLabel は非推奨になりました. Camera.numberLabels を使ってください`
+      );
+      return (
+        Camera.main &&
+        Camera.main._numberLabels.find(label => label._key === 'hp')
+      );
     }
   });
 
-  Hack.scoreLabel = (function(self, source) {
-    Object.keys(source)
-      .filter(function(key) {
-        var desc = Object.getOwnPropertyDescriptor(source, key);
-        return desc !== undefined && desc.enumerable;
-      })
-      .forEach(function(key) {
-        self[key] = source[key];
-      });
-    Hack.menuGroup.addChild(self);
-    return self;
-  })(
-    new enchant.ui.ScoreLabel(Hack.menuGroup.x + 10, Hack.menuGroup.y + 88),
-    Hack.scoreLabel
-  );
+  Object.defineProperty(Hack, 'scoreLabel', {
+    get() {
+      console.warn(
+        `Hack.scoreLabel は非推奨になりました. Camera.numberLabels を使ってください`
+      );
+      return (
+        Camera.main &&
+        Camera.main._numberLabels.find(label => label._key === 'money')
+      );
+    }
+  });
 
   feeles.setAlias('Hack', Hack);
   feeles.setAlias('game', game);
@@ -506,7 +498,7 @@ Hack.Attack = function(x, y, damage, pushX, pushY) {
       // ダメージ処理
       //   従来は onattacked イベントハンドラを使っていたが,
       //   処理を上書きされないようここに移した
-      if (!item.damageTime && typeof item.hp === 'number') {
+      if (!item.damageTime && item.hasHp) {
         // ダメージ判定が起こる状態で,
         if (isOpposite(item, this)) {
           // 敵対している相手(もしくはその関係者)なら
@@ -521,31 +513,21 @@ Hack.Attack = function(x, y, damage, pushX, pushY) {
     }, this);
 };
 
-/**
- * Hack.score
- * Generic scoring property
- * Invoke Hack.onscorechange
- */
-var scorechangeFlag = false;
+const scoreIsDeprecated =
+  'Hack.score は非推奨になりました. プレイヤーの「おかね」を使ってください';
 Object.defineProperty(Hack, 'score', {
-  enumerable: true,
-  configurable: false,
-  get: function() {
-    return Hack.scoreLabel.score;
-  },
-  set: function(value) {
-    if (Hack.scoreLabel.score !== value) {
-      Hack.scoreLabel.score = value;
-      scorechangeFlag = true;
+  get() {
+    console.warn(scoreIsDeprecated);
+    if (Camera.main && Camera.main.target) {
+      return Camera.main.target.money;
     }
-  }
-});
-Hack.scoreLabel = Object.create(null); // 仮オブジェクト
-Hack.score = 0; // Fire a event and Initialize score
-game.on('enterframe', function() {
-  if (scorechangeFlag && Hack.isPlaying) {
-    Hack.dispatchEvent(new enchant.Event('scorechange'));
-    scorechangeFlag = false;
+    return 0;
+  },
+  set(value) {
+    console.warn(scoreIsDeprecated);
+    if (Camera.main && Camera.main.target) {
+      Camera.main.target.money = value;
+    }
   }
 });
 
