@@ -5,6 +5,8 @@ import RPGMap from './rpg-map';
 import Hack from './hack';
 
 const feeles = (<any>window).feeles;
+const _cache: { [key: string]: Promise<RPGMap> } = {};
+let definitions: { [key: string]: Promise<string> } = {}; // File path of map definition
 
 export default async function loadMaps(mapJsonFile: string) {
   if (!feeles) return;
@@ -15,12 +17,9 @@ export default async function loadMaps(mapJsonFile: string) {
       const maps = JSON.parse(mapsJson);
       // 設定されていないマップに行った時に使うマップ定義
       Hack.fallbackMapJson = await feeles.fetchText(maps.fallback);
-      // マップの背景を設定
+      // その他のマップ定義ファイルのロードを開始
       for (const key of Object.keys(maps.files)) {
-        Hack.maps[key] = await loadMap(
-          await feeles.fetchText(maps.files[key]),
-          key
-        );
+        definitions[key] = feeles.fetchText(maps.files[key]);
       }
     } catch (error) {
       console.error('Error: Invalid maps.json', mapsJson);
@@ -32,24 +31,25 @@ export default async function loadMaps(mapJsonFile: string) {
   }
 }
 
-const _cache: { [key: string]: Promise<RPGMap> } = {};
-
-export function generateMapFromFallback(mapName: string, setAsDefault = false) {
-  if (!Hack.fallbackMapJson) {
-    throw new Error('Hack.fallbackMapJson がありません');
-  }
-  _cache[mapName] =
-    _cache[mapName] || loadMap(Hack.fallbackMapJson, mapName, setAsDefault);
+export function generateMapFromDefinition(
+  mapName: string,
+  setAsDefault = false
+) {
+  _cache[mapName] = _cache[mapName] || loadMap(mapName, setAsDefault);
   return _cache[mapName];
 }
 
-function loadMap(
-  mapJson: string,
-  mapName: string,
-  setAsDefault = false
-): Promise<RPGMap> {
-  const parsedMapJson = JSON.parse(mapJson);
+async function loadMap(mapName: string, setAsDefault = false): Promise<RPGMap> {
+  // definition(JSON) を取得
+  const mapJson = definitions[mapName]
+    ? await definitions[mapName]
+    : Hack.fallbackMapJson;
+  if (!mapJson) {
+    throw new Error('Hack.fallbackMapJson がありません');
+  }
+
   return new Promise(resolve => {
+    const parsedMapJson = JSON.parse(mapJson);
     const map = createCompatibleMap(parsedMapJson, {}, () =>
       resolve(map)
     ) as RPGMap;

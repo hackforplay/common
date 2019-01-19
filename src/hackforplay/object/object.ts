@@ -15,7 +15,7 @@ import * as Dir from '../dir';
 import * as Skin from '../skin';
 import * as N from './numbers';
 import Vector2, { IVector2 } from '../math/vector2';
-import { generateMapFromFallback } from '../load-maps';
+import { generateMapFromDefinition } from '../load-maps';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -366,7 +366,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           );
           return;
         }
-        generateMapFromFallback(mapName).then(map => {
+        generateMapFromDefinition(mapName).then(map => {
           Hack.maps[mapName] = map;
           this.locate(fromLeft, fromTop, mapName); // マップができたらもう一度呼び出す
         });
