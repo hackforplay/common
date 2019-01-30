@@ -16,6 +16,8 @@ import * as Skin from '../skin';
 import * as N from './numbers';
 import Vector2, { IVector2 } from '../math/vector2';
 import { generateMapFromFallback } from '../load-maps';
+import { default as soundEffect } from '../se';
+import { default as seFileName } from '../se-data';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -1425,6 +1427,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return {
       name: this.name
     };
+  }
+
+  private _seUrl = '';
+  se(name: string) {
+    const seName = seFileName(name);
+    this._seUrl = `http://127.0.0.1:8080/se/${seName}`;
+    soundEffect(this._seUrl);
   }
 }
 
