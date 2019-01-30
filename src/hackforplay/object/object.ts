@@ -368,7 +368,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           );
           return;
         }
-        generateMapFromFallback(mapName).then(map => {
+        generateMapFromDefinition(mapName).then(map => {
           Hack.maps[mapName] = map;
           this.locate(fromLeft, fromTop, mapName); // マップができたらもう一度呼び出す
         });
@@ -584,6 +584,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // 歩く先にあるオブジェクト
     const hits = RPGObject.collection.filter(obj => {
       return (
+        obj.map === Hack.map && // 今いるマップ
         obj.isKinematic &&
         obj.collisionFlag &&
         obj.mapX === nextX &&

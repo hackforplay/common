@@ -11,7 +11,7 @@ import Keyboard from './keyboard';
 import { stringToArray, dakuten, handakuten } from './utils/string-utils';
 import RPGMap from './rpg-map';
 import game from './game';
-import { generateMapFromFallback } from './load-maps';
+import { generateMapFromDefinition } from './load-maps';
 
 game.preload(
   'resources/enchantjs/monster1.gif',
@@ -422,29 +422,20 @@ Hack.createMap = function(template) {
   return map;
 };
 
-Hack.changeMap = function(mapName) {
+Hack.changeMap = async function(mapName) {
   const current = Hack.map;
-  const next = Hack.maps[mapName];
-  if (next === undefined) {
-    // マップが定義されていない => fallback で作成する
-    generateMapFromFallback(mapName, true).then(map => {
-      // 終わったら changeMap
-      _changeMap(current, map);
-    });
-  } else {
-    _changeMap(current, next);
-  }
-};
-function _changeMap(prev, next) {
-  if (prev && prev.parentNode) {
-    prev.parentNode.removeChild(prev.bmap);
-    prev.parentNode.removeChild(prev.scene);
-    prev.parentNode.removeChild(prev.fmap);
+  const next =
+    Hack.maps[mapName] || (await generateMapFromDefinition(mapName, true)); // マップが定義されていない => 定義ファイルから生成
+
+  if (current && current.parentNode) {
+    current.parentNode.removeChild(current.bmap);
+    current.parentNode.removeChild(current.scene);
+    current.parentNode.removeChild(current.fmap);
   }
   next.load();
-  prev && prev.dispatchEvent(new enchant.Event('leavemap'));
+  current && current.dispatchEvent(new enchant.Event('leavemap'));
   next.dispatchEvent(new enchant.Event('entermap'));
-}
+};
 
 /*  Dir2Vec
 directionをforwardに変換する。 0/down, 1/left, 2/right, 3/up
