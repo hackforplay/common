@@ -977,8 +977,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this._endless = virtual;
       // this._endless が空で上書きされたときストップ
       while (this._endless && this.parentNode) {
-        // つねに this._endless をコールし続ける
-        await this._endless(this, count++);
+        if (this.map === Hack.map) {
+          // つねに this._endless をコールし続ける
+          await this._endless(this, count++);
+        }
         // 安全ディレイ
         await this.wait();
       }
