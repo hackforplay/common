@@ -15,7 +15,7 @@ import * as Dir from '../dir';
 import * as Skin from '../skin';
 import * as N from './numbers';
 import Vector2, { IVector2 } from '../math/vector2';
-import { generateMapFromFallback } from '../load-maps';
+import { generateMapFromDefinition } from '../load-maps';
 import { default as soundEffect } from '../se';
 import { default as seFileName } from '../se-data';
 
@@ -1433,7 +1433,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _seUrl = '';
   se(name: string) {
     const seName = seFileName(name);
-    this._seUrl = `http://127.0.0.1:8080/se/${seName}`;
+    this._seUrl = `https://storage.googleapis.com/hackforplay-sounds/${seName}`;
     soundEffect(this._seUrl);
   }
 }
