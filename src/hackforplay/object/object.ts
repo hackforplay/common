@@ -1238,7 +1238,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   getNearest(collection: RPGObject[]): RPGObject | null {
     let nearestObject: RPGObject | null = null;
-    let nearestDistance: number = Infinity;
+    let nearestDistance = Infinity;
     for (const item of collection) {
       if (!item.parentNode || !item.scene) continue; // マップ上に存在しないオブジェクトはのぞく
       const dx = item.mapX - this.mapX;

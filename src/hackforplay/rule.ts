@@ -8,7 +8,7 @@ interface Event {
   item: RPGObject;
 }
 interface CollidedEvent extends Event {
-  map: Boolean;
+  map: boolean;
   hits: RPGObject[];
 }
 

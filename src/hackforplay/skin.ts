@@ -26,7 +26,7 @@ export interface Skin {
 }
 export type Result = Promise<(object: RPGObject) => void>;
 
-let baseUrl: string = 'https://storage.googleapis.com/hackforplay-skins/';
+let baseUrl = 'https://storage.googleapis.com/hackforplay-skins/';
 export const getBaseUrl = () => baseUrl;
 export const setBaseUrl = (url: string) => {
   baseUrl = url;
