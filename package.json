@@ -10,7 +10,7 @@
     "babel": "babel -d lib -D src --extensions '.js,.ts'",
     "format": "prettier --write '**/*.[j|t]s'",
     "lint": "eslint src --ext .js,.ts",
-    "test": "ava",
+    "test": "npm run lint && ava",
     "watch": "ava \"test/index.js\" --watch",
     "resources": "gsutil -m -h \"Cache-Control:public, max-age=3600\" cp -r src/resources gs://hackforplay-common",
     "cors": "gsutil cors set cors.json gs://hackforplay-common",
