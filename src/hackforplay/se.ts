@@ -41,6 +41,8 @@ export default async function soundEffect(jpName: string, fileName: string) {
     source.connect(gainNode);
     gainNode.connect(audioCtx.destination);
     gainNode.gain.value = 0.3;
-    source.start();
+    setTimeout(function() {
+      source.start();
+    }, 100);
   }
 }
