@@ -1,3 +1,5 @@
+import { default as Hack } from './hack';
+
 const audioData: { [key: string]: string } = {
   あわ01: 'bubble01.mp3',
   きぬずれ01: 'cloth01.mp3',
@@ -66,7 +68,10 @@ const audioData: { [key: string]: string } = {
 };
 
 export default function seFileName(audioName: string) {
-  var data = audioName;
+  const data = audioName;
   var fileName = audioData[data];
+  if (fileName === undefined) {
+    Hack.log(`'${audioName}' という名前の おと は ないみたい`);
+  }
   return fileName;
 }

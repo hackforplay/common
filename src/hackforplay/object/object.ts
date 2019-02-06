@@ -16,8 +16,8 @@ import * as Skin from '../skin';
 import * as N from './numbers';
 import Vector2, { IVector2 } from '../math/vector2';
 import { generateMapFromDefinition } from '../load-maps';
-import { default as soundEffect } from '../se';
-import { default as seFileName } from '../se-data';
+import soundEffect from '../se';
+import seFileName from '../se-data';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -1430,11 +1430,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     };
   }
 
-  private _seUrl = '';
   se(name: string) {
-    const seName = seFileName(name);
-    this._seUrl = `https://storage.googleapis.com/hackforplay-sounds/${seName}`;
-    soundEffect(this._seUrl);
+    const fileName = seFileName(name);
+    soundEffect(name, fileName);
   }
 }
 
