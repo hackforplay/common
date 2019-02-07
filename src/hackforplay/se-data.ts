@@ -1,5 +1,3 @@
-import { default as Hack } from './hack';
-
 export type AudioConfig = {
   // アップロードされたファイルの名前
   fileName: string;
@@ -270,7 +268,7 @@ export default function seFileName(audioName: string) {
   const data = audioName;
   var config = audioConfigs[data];
   if (config === undefined) {
-    Hack.log(`'${audioName}' という名前の おと は ないみたい`);
+    throw new Error(`'${audioName}' という名前の おと は ないみたい`);
   }
   return config.fileName;
 }
