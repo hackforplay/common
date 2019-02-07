@@ -19,6 +19,7 @@ import coordinate from '../mod/coordinate';
 import game from './game';
 import createDamageMod from './create-damage-mod';
 import skin, { getBaseUrl, setBaseUrl } from './skin';
+import { audioConfigs } from './se-data';
 
 // Assign synonyms
 Hack.assets = Hack.assets || {};
@@ -108,3 +109,8 @@ Object.defineProperty(Hack, 'baseUrl', {
   get: getBaseUrl,
   set: setBaseUrl
 });
+
+/**
+ * Hack.audioConfigs
+ */
+Hack.audioConfigs = audioConfigs;
