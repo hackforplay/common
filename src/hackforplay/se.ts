@@ -13,8 +13,8 @@ export default async function soundEffect(jpName: string) {
     return;
   }
   if (audioSource === undefined) {
-    var source = audioCtx.createBufferSource(); // source を作成
-    var gainNode = audioCtx.createGain();
+    const source = audioCtx.createBufferSource(); // source を作成
+    const gainNode = audioCtx.createGain();
 
     const url = `${Hack.seBaseUrl}${audioConfig.fileName}`;
     const audioData: ArrayBuffer = await feeles.fetchArrayBuffer(url);
@@ -37,8 +37,8 @@ export default async function soundEffect(jpName: string) {
     source.start();
   } else {
     // ロード済
-    var source = audioCtx.createBufferSource(); // source を作成
-    var gainNode = audioCtx.createGain();
+    const source = audioCtx.createBufferSource(); // source を作成
+    const gainNode = audioCtx.createGain();
     source.buffer = audioSource;
     source.connect(gainNode);
     gainNode.connect(audioCtx.destination);
