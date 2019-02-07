@@ -135,19 +135,19 @@ export const audioConfigs: { [key: string]: AudioConfig } = {
     delay: 0.1
   },
   パワーダウン01: {
-    fileName: 'powerdown01.mp3	',
+    fileName: 'powerdown01.mp3',
     delay: 0.1
   },
   パワーダウン02: {
-    fileName: 'powerdown02.mp3	',
+    fileName: 'powerdown02.mp3',
     delay: 0.1
   },
   パワーダウン03: {
-    fileName: 'powerdown03.mp3	',
+    fileName: 'powerdown03.mp3',
     delay: 0.1
   },
   パワーダウン04: {
-    fileName: 'powerdown04.mp3	',
+    fileName: 'powerdown04.mp3',
     delay: 0.1
   },
   パワーアップ01: {
