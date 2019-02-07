@@ -264,11 +264,11 @@ export const audioConfigs: { [key: string]: AudioConfig } = {
   }
 };
 
-export default function seFileName(audioName: string) {
+export function getConfig(audioName: string) {
   const data = audioName;
   var config = audioConfigs[data];
   if (config === undefined) {
     throw new Error(`'${audioName}' という名前の おと は ないみたい`);
   }
-  return config.fileName;
+  return config;
 }

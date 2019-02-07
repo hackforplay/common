@@ -17,7 +17,6 @@ import * as N from './numbers';
 import Vector2, { IVector2 } from '../math/vector2';
 import { generateMapFromDefinition } from '../load-maps';
 import soundEffect from '../se';
-import seFileName from '../se-data';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -1431,8 +1430,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   se(name: string) {
-    const fileName = seFileName(name);
-    soundEffect(name, fileName);
+    return soundEffect(name);
   }
 }
 
