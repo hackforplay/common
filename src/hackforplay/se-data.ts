@@ -265,8 +265,7 @@ export const audioConfigs: { [key: string]: AudioConfig } = {
 };
 
 export function getConfig(audioName: string) {
-  const data = audioName;
-  var config = audioConfigs[data];
+  const config = audioConfigs[audioName];
   if (config === undefined) {
     throw new Error(`'${audioName}' という名前の おと は ないみたい`);
   }
