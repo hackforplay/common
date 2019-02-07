@@ -43,8 +43,10 @@ export default async function soundEffect(jpName: string) {
     source.connect(gainNode);
     gainNode.connect(audioCtx.destination);
     gainNode.gain.value = 0.3;
-    setTimeout(function() {
+    if (audioConfig.delay > 0) {
+      setTimeout(() => source.start(), audioConfig.delay * 1000);
+    } else {
       source.start();
-    }, 100);
+    }
   }
 }
