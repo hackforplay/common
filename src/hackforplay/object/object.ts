@@ -17,7 +17,6 @@ import * as N from './numbers';
 import Vector2, { IVector2 } from '../math/vector2';
 import { generateMapFromDefinition } from '../load-maps';
 import soundEffect from '../se';
-import seFileName from '../se-data';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -988,8 +987,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this._endless = virtual;
       // this._endless が空で上書きされたときストップ
       while (this._endless && this.parentNode) {
-        // つねに this._endless をコールし続ける
-        await this._endless(this, count++);
+        if (this.map === Hack.map) {
+          // つねに this._endless をコールし続ける
+          await this._endless(this, count++);
+        }
         // 安全ディレイ
         await this.wait();
       }
@@ -1413,7 +1414,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           item.mapY <= rangeOfView.bottom
       )
       .filter(item =>
-        _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this.name, item)
+        _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this, item)
       );
     const found = this.getNearest(foundable);
     if (found) {
@@ -1431,8 +1432,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   se(name: string) {
-    const fileName = seFileName(name);
-    soundEffect(name, fileName);
+    return soundEffect(name);
   }
 }
 

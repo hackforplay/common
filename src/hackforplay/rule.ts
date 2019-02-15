@@ -194,15 +194,15 @@ export default class Rule {
     return Boolean(container[name]);
   }
 
-  hasTwoObjectListenerWith(type: string, name: string, target: RPGObject) {
+  hasTwoObjectListenerWith(type: string, self: RPGObject, item: RPGObject) {
     const container = this._listenersOfTwo[type];
     if (!container) return false;
-    const listeners = container[name];
+    const listeners = container[self.name];
     if (!listeners) return false;
     return (
       Boolean(listeners[Anyone]) ||
-      Boolean(listeners[Enemy]) ||
-      target.name in listeners
+      (Boolean(listeners[Enemy]) && isOpposite(self, item)) ||
+      item.name in listeners
     );
   }
 

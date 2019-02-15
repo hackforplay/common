@@ -1,77 +1,273 @@
-import { default as Hack } from './hack';
-
-const audioData: { [key: string]: string } = {
-  あわ01: 'bubble01.mp3',
-  きぬずれ01: 'cloth01.mp3',
-  きぬずれ02: 'cloth02.mp3',
-  かいふく01: 'cure01.mp3',
-  かいふく02: 'cure02.mp3',
-  ダメージ01: 'damage01.mp3',
-  ダメージ02: 'damage02.mp3',
-  ダメージ03: 'damage03.mp3',
-  ダメージ04: 'damage04.mp3',
-  ぶきみ01: 'darkness01.mp3',
-  ぶきみ02: 'darkness02.mp3',
-  やられた01: 'death01.mp3',
-  やられた02: 'death02.mp3',
-  はずれ01: 'error01.mp3',
-  ばくはつ01: 'explosion01.mp3',
-  ばくはつ02: 'explosion02.mp3',
-  ばくはつ03: 'explosion03.mp3',
-  ばくはつ04: 'explosion04.mp3',
-  ばくはつ05: 'explosion05.mp3',
-  おちる01: 'fall01.mp3',
-  ほのお01: 'fire01.mp3',
-  ほのお02: 'fire02.mp3',
-  ほのお03: 'fire03.mp3',
-  ゲームオーバー01: 'gameover01.mp3	',
-  ゲームオーバー02: 'gameover02.mp3	',
-  まほう01: 'magic01.mp3',
-  まほう02: 'magic02.mp3',
-  まほう03: 'magic03.mp3',
-  まほう04: 'magic04.mp3',
-  おかね01: 'money01.mp3',
-  おかね02: 'money02.mp3',
-  おかね03: 'money03.mp3',
-  パワーダウン01: 'powerdown01.mp3	',
-  パワーダウン02: 'powerdown02.mp3	',
-  パワーダウン03: 'powerdown03.mp3	',
-  パワーダウン04: 'powerdown04.mp3	',
-  パワーアップ01: 'powerup01.mp3',
-  パワーアップ02: 'powerup02.mp3',
-  パワーアップ03: 'powerup03.mp3',
-  パワーアップ04: 'powerup04.mp3',
-  パワーアップ05: 'powerup05.mp3',
-  にげる01: 'revive01.mp3',
-  なぞとき01: 'secret01.mp3',
-  ビーム01: 'shoot01.mp3',
-  ビーム02: 'shoot02.mp3',
-  ビーム03: 'shoot03.mp3',
-  ビーム04: 'shoot04.mp3',
-  ビーム05: 'shoot05.mp3',
-  かたな01: 'slice01.mp3',
-  じゅもん01: 'spell01.mp3',
-  せいかい01: 'succes01.mp3',
-  せいかい02: 'succes02.mp3',
-  せいかい03: 'succes03.mp3',
-  せいかい04: 'succes04.mp3',
-  あせ01: 'sweat01.mp3',
-  けんをふる01: 'swing01.mp3',
-  けんをふる02: 'swing02.mp3',
-  けんをふる03: 'swing03.mp3',
-  けんをふる04: 'swing04.mp3',
-  テレポート01: 'teleport01.mp3',
-  テレポート02: 'teleport02.mp3',
-  たおれる01: 'thud01.mp3',
-  むち01: 'whip01.mp3',
-  まじょ01: 'witch01.mp3'
+export type AudioConfig = {
+  // アップロードされたファイルの名前
+  fileName: string;
+  // 再生時に加えるディレイ [sec]
+  delay: number;
 };
 
-export default function seFileName(audioName: string) {
-  const data = audioName;
-  var fileName = audioData[data];
-  if (fileName === undefined) {
-    Hack.log(`'${audioName}' という名前の おと は ないみたい`);
+export const audioConfigs: { [key: string]: AudioConfig } = {
+  あわ01: {
+    fileName: 'bubble01.mp3',
+    delay: 0.1
+  },
+  きぬずれ01: {
+    fileName: 'cloth01.mp3',
+    delay: 0.1
+  },
+  きぬずれ02: {
+    fileName: 'cloth02.mp3',
+    delay: 0.1
+  },
+  かいふく01: {
+    fileName: 'cure01.mp3',
+    delay: 0.1
+  },
+  かいふく02: {
+    fileName: 'cure02.mp3',
+    delay: 0.1
+  },
+  ダメージ01: {
+    fileName: 'damage01.mp3',
+    delay: 0.1
+  },
+  ダメージ02: {
+    fileName: 'damage02.mp3',
+    delay: 0.1
+  },
+  ダメージ03: {
+    fileName: 'damage03.mp3',
+    delay: 0.1
+  },
+  ダメージ04: {
+    fileName: 'damage04.mp3',
+    delay: 0.1
+  },
+  ぶきみ01: {
+    fileName: 'darkness01.mp3',
+    delay: 0.1
+  },
+  ぶきみ02: {
+    fileName: 'darkness02.mp3',
+    delay: 0.1
+  },
+  やられた01: {
+    fileName: 'death01.mp3',
+    delay: 0.1
+  },
+  やられた02: {
+    fileName: 'death02.mp3',
+    delay: 0.1
+  },
+  はずれ01: {
+    fileName: 'error01.mp3',
+    delay: 0.1
+  },
+  ばくはつ01: {
+    fileName: 'explosion01.mp3',
+    delay: 0.1
+  },
+  ばくはつ02: {
+    fileName: 'explosion02.mp3',
+    delay: 0.1
+  },
+  ばくはつ03: {
+    fileName: 'explosion03.mp3',
+    delay: 0.1
+  },
+  ばくはつ04: {
+    fileName: 'explosion04.mp3',
+    delay: 0.1
+  },
+  ばくはつ05: {
+    fileName: 'explosion05.mp3',
+    delay: 0.1
+  },
+  おちる01: {
+    fileName: 'fall01.mp3',
+    delay: 0.1
+  },
+  ほのお01: {
+    fileName: 'fire01.mp3',
+    delay: 0.1
+  },
+  ほのお02: {
+    fileName: 'fire02.mp3',
+    delay: 0.1
+  },
+  ほのお03: {
+    fileName: 'fire03.mp3',
+    delay: 0.1
+  },
+  ゲームオーバー01: {
+    fileName: 'gameover01.mp3',
+    delay: 0.1
+  },
+  ゲームオーバー02: {
+    fileName: 'gameover02.mp3',
+    delay: 0.1
+  },
+  まほう01: {
+    fileName: 'magic01.mp3',
+    delay: 0.1
+  },
+  まほう02: {
+    fileName: 'magic02.mp3',
+    delay: 0.1
+  },
+  まほう03: {
+    fileName: 'magic03.mp3',
+    delay: 0.1
+  },
+  まほう04: {
+    fileName: 'magic04.mp3',
+    delay: 0.1
+  },
+  おかね01: {
+    fileName: 'money01.mp3',
+    delay: 0.1
+  },
+  おかね02: {
+    fileName: 'money02.mp3',
+    delay: 0.1
+  },
+  おかね03: {
+    fileName: 'money03.mp3',
+    delay: 0.1
+  },
+  パワーダウン01: {
+    fileName: 'powerdown01.mp3',
+    delay: 0.1
+  },
+  パワーダウン02: {
+    fileName: 'powerdown02.mp3',
+    delay: 0.1
+  },
+  パワーダウン03: {
+    fileName: 'powerdown03.mp3',
+    delay: 0.1
+  },
+  パワーダウン04: {
+    fileName: 'powerdown04.mp3',
+    delay: 0.1
+  },
+  パワーアップ01: {
+    fileName: 'powerup01.mp3',
+    delay: 0.1
+  },
+  パワーアップ02: {
+    fileName: 'powerup02.mp3',
+    delay: 0.1
+  },
+  パワーアップ03: {
+    fileName: 'powerup03.mp3',
+    delay: 0.1
+  },
+  パワーアップ04: {
+    fileName: 'powerup04.mp3',
+    delay: 0.1
+  },
+  パワーアップ05: {
+    fileName: 'powerup05.mp3',
+    delay: 0.1
+  },
+  にげる01: {
+    fileName: 'revive01.mp3',
+    delay: 0.1
+  },
+  なぞとき01: {
+    fileName: 'secret01.mp3',
+    delay: 0.1
+  },
+  ビーム01: {
+    fileName: 'shoot01.mp3',
+    delay: 0.1
+  },
+  ビーム02: {
+    fileName: 'shoot02.mp3',
+    delay: 0.1
+  },
+  ビーム03: {
+    fileName: 'shoot03.mp3',
+    delay: 0.1
+  },
+  ビーム04: {
+    fileName: 'shoot04.mp3',
+    delay: 0.1
+  },
+  ビーム05: {
+    fileName: 'shoot05.mp3',
+    delay: 0.1
+  },
+  かたな01: {
+    fileName: 'slice01.mp3',
+    delay: 0.1
+  },
+  じゅもん01: {
+    fileName: 'spell01.mp3',
+    delay: 0.1
+  },
+  せいかい01: {
+    fileName: 'succes01.mp3',
+    delay: 0.1
+  },
+  せいかい02: {
+    fileName: 'succes02.mp3',
+    delay: 0.1
+  },
+  せいかい03: {
+    fileName: 'succes03.mp3',
+    delay: 0.1
+  },
+  せいかい04: {
+    fileName: 'succes04.mp3',
+    delay: 0.1
+  },
+  あせ01: {
+    fileName: 'sweat01.mp3',
+    delay: 0.1
+  },
+  けんをふる01: {
+    fileName: 'swing01.mp3',
+    delay: 0.1
+  },
+  けんをふる02: {
+    fileName: 'swing02.mp3',
+    delay: 0.1
+  },
+  けんをふる03: {
+    fileName: 'swing03.mp3',
+    delay: 0.1
+  },
+  けんをふる04: {
+    fileName: 'swing04.mp3',
+    delay: 0.1
+  },
+  テレポート01: {
+    fileName: 'teleport01.mp3',
+    delay: 0.1
+  },
+  テレポート02: {
+    fileName: 'teleport02.mp3',
+    delay: 0.1
+  },
+  たおれる01: {
+    fileName: 'thud01.mp3',
+    delay: 0.1
+  },
+  むち01: {
+    fileName: 'whip01.mp3',
+    delay: 0.1
+  },
+  まじょ01: {
+    fileName: 'witch01.mp3',
+    delay: 0.1
   }
-  return fileName;
+};
+
+export function getConfig(audioName: string) {
+  const config = audioConfigs[audioName];
+  if (config === undefined) {
+    throw new Error(`'${audioName}' という名前の おと は ないみたい`);
+  }
+  return config;
 }

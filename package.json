@@ -39,7 +39,8 @@
       "canvas",
       "raf/polyfill",
       "./test/helpers/setup-jsdom.js",
-      "./test/helpers/setup-feeles-env.js"
+      "./test/helpers/setup-feeles-env.js",
+      "web-audio-test-api"
     ]
   },
   "devDependencies": {
@@ -66,6 +67,7 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.1.6",
+    "web-audio-test-api": "^0.5.2",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.9"
