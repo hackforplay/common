@@ -1414,7 +1414,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           item.mapY <= rangeOfView.bottom
       )
       .filter(item =>
-        _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this.name, item)
+        _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this, item)
       );
     const found = this.getNearest(foundable);
     if (found) {
