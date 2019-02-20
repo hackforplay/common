@@ -46,13 +46,9 @@ const MakeAnswers = function(i: number) {
   };
   answers[i].clear(); // 前の文章をクリア
   answers[i].show();
-  answers[i].on('touchend', function() {
-    windowDelete();
-  });
 };
 
 export default function talk(text: string, ...choices: string[]) {
-  console.log(choices);
   if (textArea.visible) windowDelete(); // 表示されてるウィンドウを消す
   choicesNum = choices.length - 1;
   choices.reverse(); // 下から上に表示するので、選択肢の配列をリバースする
@@ -69,12 +65,21 @@ export default function talk(text: string, ...choices: string[]) {
     answers.push(answer);
     MakeAnswers(choicesNum);
     answers[choicesNum].push('とじる'); // とじる 表示
+    answers[choicesNum].on('touchend', function() {
+      windowDelete();
+      return 'とじる';
+    });
   } else {
     for (var i = 0; i <= choicesNum; i++) {
       const answer = new TextArea(180, 32);
       answers.push(answer);
       MakeAnswers(i);
-      answers[i].push(choices[i]); // 選択肢のテキスト表示
+      const choice = choices[i];
+      answers[i].push(choice); // 選択肢のテキスト表示
+      answers[i].on('touchend', function() {
+        windowDelete();
+        return choice;
+      });
     }
   }
 }
