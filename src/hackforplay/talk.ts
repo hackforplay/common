@@ -9,12 +9,17 @@ var choicesNum: number = 0; // 選択肢の数
 const textArea = new TextArea(480, 200);
 textArea.autoResizeVertical = true;
 textArea.margin = 8;
+textArea.padding = 15;
+textArea.borderRadius = 14;
+textArea.borderColor = 'rgba(0, 0, 0, 0)';
+textArea.borderWidth = 0;
 textArea.defaultStyle = {
   color: '#fff',
   size: '18',
   family: 'PixelMplus, sans-serif',
   weight: 'bold',
-  align: 'left',
+  align: 'center',
+  lineSpace: 5,
   space: 0,
   ruby: null,
   rubyId: null
@@ -26,9 +31,12 @@ const MakeAnswers = function(i: number) {
   answers[i].y = 320 - textArea.height - answers[i].height * (i + 1);
   answers[i].margin = 2;
   answers[i].padding = 5;
+  answers[i].borderRadius = 14;
+  answers[i].borderColor = '#fff';
+  answers[i].borderWidth = 2;
   answers[i].defaultStyle = {
     color: '#fff',
-    size: '18',
+    size: '16',
     family: 'PixelMplus, sans-serif',
     weight: 'bold',
     align: 'center',
@@ -57,13 +65,13 @@ export default function talk(text: string, ...choices: string[]) {
   // 選択肢のボタンを作成
   if (choices.length === 0) {
     choicesNum = 0;
-    const answer = new TextArea(78, 35);
+    const answer = new TextArea(68, 32);
     answers.push(answer);
     MakeAnswers(choicesNum);
     answers[choicesNum].push('とじる'); // とじる 表示
   } else {
     for (var i = 0; i <= choicesNum; i++) {
-      const answer = new TextArea(200, 35);
+      const answer = new TextArea(180, 32);
       answers.push(answer);
       MakeAnswers(i);
       answers[i].push(choices[i]); // 選択肢のテキスト表示
