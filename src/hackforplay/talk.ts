@@ -1,6 +1,7 @@
 import { default as Hack } from './hack';
 import TextArea from '../hackforplay/ui/textarea';
 import game from '../hackforplay/game';
+import { resolve } from 'url';
 
 var answers: any = [];
 var choicesNum: number = 0; // 選択肢の数
@@ -49,39 +50,41 @@ const MakeAnswers = function(i: number) {
 };
 
 export default function talk(text: string, ...choices: string[]) {
-  if (textArea.visible) windowDelete(); // 表示されてるウィンドウを消す
-  choicesNum = choices.length - 1;
-  choices.reverse(); // 下から上に表示するので、選択肢の配列をリバースする
-  // 本文のテキストエリア作成
-  Hack.menuGroup.addChild(textArea);
-  textArea.show();
-  textArea.clear(); // 前の文章をクリア
-  textArea.push(text); // テキストを挿入
-  textArea.y = 320 - textArea.height;
-  // 選択肢のボタンを作成
-  if (choices.length === 0) {
-    choicesNum = 0;
-    const answer = new TextArea(68, 32);
-    answers.push(answer);
-    MakeAnswers(choicesNum);
-    answers[choicesNum].push('とじる'); // とじる 表示
-    answers[choicesNum].on('touchend', function() {
-      windowDelete();
-      return 'とじる';
-    });
-  } else {
-    for (var i = 0; i <= choicesNum; i++) {
-      const answer = new TextArea(180, 32);
-      answers.push(answer);
-      MakeAnswers(i);
-      const choice = choices[i];
-      answers[i].push(choice); // 選択肢のテキスト表示
-      answers[i].on('touchend', function() {
+  return new Promise(resolve => {
+    if (textArea.visible) windowDelete(); // 表示されてるウィンドウを消す
+    choicesNum = choices.length - 1;
+    choices.reverse(); // 下から上に表示するので、選択肢の配列をリバースする
+    // 本文のテキストエリア作成
+    Hack.menuGroup.addChild(textArea);
+    textArea.show();
+    textArea.clear(); // 前の文章をクリア
+    textArea.push(text); // テキストを挿入
+    textArea.y = 320 - textArea.height;
+    // 選択肢のボタンを作成
+    if (choices.length === 0) {
+      choicesNum = 0;
+      const textWindow = new TextArea(68, 32);
+      answers.push(textWindow);
+      MakeAnswers(choicesNum);
+      answers[choicesNum].push('とじる'); // とじる 表示
+      answers[choicesNum].on('touchend', function() {
         windowDelete();
-        return choice;
+        resolve('とじる');
       });
+    } else {
+      for (var i = 0; i <= choicesNum; i++) {
+        const textWindow = new TextArea(180, 32);
+        answers.push(textWindow);
+        const choice = choices[i];
+        MakeAnswers(i);
+        answers[i].push(choice); // 選択肢のテキスト表示
+        answers[i].on('touchend', function() {
+          windowDelete();
+          resolve(choice);
+        });
+      }
     }
-  }
+  });
 }
 
 export function windowDelete() {
