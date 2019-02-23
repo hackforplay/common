@@ -36,36 +36,21 @@ const feeles = (window as any).feeles;
 const _cache: { [name: string]: Result } = {};
 const _surfaces: { [name: string]: typeof enchant.Surface } = {};
 
-/**
- * Hack.skin
- */
-export default async function skin(
-  name: string | TemplateStringsArray
-): Result {
-  if (!feeles) throw new Error('window.feeles is not found');
-  if (name in _cache) return _cache[name + ''];
+const a = (...args: any[]): any[] => {
+  const array = [];
+  for (let index = 0; index < args.length; index += 2) {
+    const n = args[index];
+    const l: number = args[index + 1];
+    for (let i = 0; i < l; i++) array.push(n);
+  }
+  return array;
+};
 
-  const _promise = Promise.resolve()
-    .then(() => feeles.fetchText(baseUrl + name))
-    .catch(error => {
-      logFunc(`${name} というスキンは ないみたい`, true);
-      console.error(error);
-    })
-    .then(
-      json =>
-        new Promise((resolve: (_skin: Skin) => void, reject) => {
-          // スキンのダウンロード完了
-          const _skin: Skin = JSON.parse(json);
-          // Data URL をメモリに載せるまで待つ (preload)
-          const onComplete = () => resolve(_skin);
-          const surface = enchant.Surface.load(_skin.image, onComplete, reject);
-          _surfaces[name + ''] = surface;
-        })
-    )
-    .then(_skin => dress(_skin));
-
-  return (_cache[name + ''] = _promise);
-}
+const setD6 = (object: RPGObject, behavior: string, frame: any[]) => {
+  object.setFrame(behavior, () =>
+    frame.map(i => (i !== null && i >= 0 ? i + object.direction * 6 : i))
+  );
+};
 
 /**
  * 与えられたスキンを任意の RPGObject に適用するための関数を返す
@@ -111,18 +96,33 @@ export const dress = (skin: Skin) => (object: RPGObject) => {
   }
 };
 
-const setD6 = (object: RPGObject, behavior: string, frame: any[]) => {
-  object.setFrame(behavior, () =>
-    frame.map(i => (i !== null && i >= 0 ? i + object.direction * 6 : i))
-  );
-};
+/**
+ * Hack.skin
+ */
+export default async function skin(
+  name: string | TemplateStringsArray
+): Result {
+  if (!feeles) throw new Error('window.feeles is not found');
+  if (name in _cache) return _cache[name + ''];
 
-const a = (...args: any[]): any[] => {
-  const array = [];
-  for (let index = 0; index < args.length; index += 2) {
-    const n = args[index];
-    const l: number = args[index + 1];
-    for (let i = 0; i < l; i++) array.push(n);
-  }
-  return array;
-};
+  const _promise = Promise.resolve()
+    .then(() => feeles.fetchText(baseUrl + name))
+    .catch(error => {
+      logFunc(`${name} というスキンは ないみたい`, true);
+      console.error(error);
+    })
+    .then(
+      json =>
+        new Promise((resolve: (_skin: Skin) => void, reject) => {
+          // スキンのダウンロード完了
+          const _skin: Skin = JSON.parse(json);
+          // Data URL をメモリに載せるまで待つ (preload)
+          const onComplete = () => resolve(_skin);
+          const surface = enchant.Surface.load(_skin.image, onComplete, reject);
+          _surfaces[name + ''] = surface;
+        })
+    )
+    .then(_skin => dress(_skin));
+
+  return (_cache[name + ''] = _promise);
+}
