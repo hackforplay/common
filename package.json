@@ -9,7 +9,7 @@
     "prepublish": "webpack && npm run babel",
     "babel": "babel -d lib -D src --extensions '.js,.ts'",
     "format": "prettier --write '**/*.[j|t]s'",
-    "lint": "eslint src --ext .js,.ts",
+    "lint": "npx eslint src --ext .js,.ts",
     "test": "npm run lint && ava",
     "watch": "ava \"test/index.js\" --watch",
     "resources": "gsutil -m -h \"Cache-Control:public, max-age=3600\" cp -r src/resources gs://hackforplay-common",
