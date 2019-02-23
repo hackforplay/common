@@ -427,20 +427,18 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   ) {
     const target = this.age + Math.max(1, wait);
     let flag = true;
-
     const task = () => {
       if (this.age === target && flag) {
         callback.call(this);
-        stopTimeout();
+        stopTimeout.call(this);
       }
     };
-
-    const stopTimeout = () => {
+    this.on(timing, task);
+    function stopTimeout(this: RPGObject) {
       flag = false;
       this.removeEventListener(timing, task);
-    };
-    this.on(timing, task);
-    return stopTimeout;
+    }
+    return stopTimeout.bind(this);
   }
 
   private setInterval(

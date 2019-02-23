@@ -9,11 +9,11 @@ function refocus() {
   window.focus(); // focus game
 }
 
+const Hack = self.Hack || new enchant.EventTarget();
+
 function getEditor() {
   return Hack.enchantBook;
 }
-
-const Hack = self.Hack || new enchant.EventTarget();
 
 // Surface.load される時の基底パス
 Hack.basePath = 'https://storage.googleapis.com/hackforplay-common/';
