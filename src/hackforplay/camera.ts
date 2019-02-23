@@ -9,7 +9,7 @@ import { clamp } from './utils/math-utils';
 import * as N from './object/numbers';
 import Vector2 from './math/vector2';
 
-interface Rect {
+interface IRect {
   x: number;
   y: number;
   width: number;
@@ -168,7 +168,7 @@ class Camera extends enchant.Sprite {
   }
 
   // 描画範囲を画面に収める
-  clampRect(rect: Rect) {
+  clampRect(rect: IRect) {
     const { w, h } = this.getVisionSize();
 
     var over = false;
@@ -207,7 +207,7 @@ class Camera extends enchant.Sprite {
     return rect;
   }
 
-  _rectScale(rect: Rect, scale: number) {
+  _rectScale(rect: IRect, scale: number) {
     rect.x *= scale;
     rect.y *= scale;
     rect.width *= scale;

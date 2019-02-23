@@ -4,7 +4,7 @@ import { default as SAT } from '../lib/sat.min';
 import { default as BehaviorTypes } from './behavior-types';
 import { default as logFunc } from '../mod/logFunc';
 
-export interface Skin {
+export interface ISkin {
   name: string;
   image: string;
   column: number;
@@ -56,7 +56,7 @@ const setD6 = (object: RPGObject, behavior: string, frame: any[]) => {
  * 与えられたスキンを任意の RPGObject に適用するための関数を返す
  * @param skin スキンオブジェクト
  */
-export const dress = (skin: Skin) => (object: RPGObject) => {
+export const dress = (skin: ISkin) => (object: RPGObject) => {
   // あらかじめ Sprite の差分を調整しておく
   object.x += skin.sprite.x - object.offset.x;
   object.y += skin.sprite.y - object.offset.y;
@@ -113,9 +113,9 @@ export default async function skin(
     })
     .then(
       json =>
-        new Promise((resolve: (_skin: Skin) => void, reject) => {
+        new Promise((resolve: (_skin: ISkin) => void, reject) => {
           // スキンのダウンロード完了
-          const _skin: Skin = JSON.parse(json);
+          const _skin: ISkin = JSON.parse(json);
           // Data URL をメモリに載せるまで待つ (preload)
           const onComplete = () => resolve(_skin);
           const surface = enchant.Surface.load(_skin.image, onComplete, reject);

@@ -1,13 +1,13 @@
 import RPGObject from './object/object';
 import { hasContract, isOpposite } from './family';
 import { default as Hack } from './hack';
-import { Dir } from './dir';
+import { IDir } from './dir';
 
-interface Event {
+interface IEvent {
   target: RPGObject;
   item: RPGObject;
 }
-interface CollidedEvent extends Event {
+interface ICollidedEvent extends IEvent {
   map: boolean;
   hits: RPGObject[];
 }
@@ -338,7 +338,7 @@ export default class Rule {
     x?: number,
     y?: number,
     map?: string,
-    dir?: Dir,
+    dir?: IDir,
     summoner?: RPGObject
   ) {
     this.installAsset(name);
@@ -358,13 +358,13 @@ export default class Rule {
     return object;
   }
 
-  private onこうげきするとき = ((e: Event) => {
+  private onこうげきするとき = ((e: IEvent) => {
     this.runOneObjectLisener('こうげきするとき', e.target);
   }).bind(this);
-  private onたおされたとき = ((e: Event) => {
+  private onたおされたとき = ((e: IEvent) => {
     this.runOneObjectLisener('たおされたとき', e.target);
   }).bind(this);
-  private onすすめなかったとき = ((e: CollidedEvent) => {
+  private onすすめなかったとき = ((e: ICollidedEvent) => {
     if (e.map || e.hits.length === 0) {
       // マップの枠か、cmapとぶつかった => 相手のいない衝突
       this.runOneObjectLisener('すすめなかったとき', e.target);
@@ -373,10 +373,10 @@ export default class Rule {
       this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
     }
   }).bind(this);
-  private onふまれたとき = ((e: Event) => {
+  private onふまれたとき = ((e: IEvent) => {
     this.runTwoObjectListener('ふまれたとき', e.target, e.item);
   }).bind(this);
-  private onぶつかったとき = ((e: Event) => {
+  private onぶつかったとき = ((e: IEvent) => {
     if (e && e.item) {
       const { collisionFlag } = e.item;
       if (collisionFlag && !hasContract(e.target, e.item)) {
@@ -385,7 +385,7 @@ export default class Rule {
       }
     }
   }).bind(this);
-  private onこうげきされたとき = ((e: Event) => {
+  private onこうげきされたとき = ((e: IEvent) => {
     this.runTwoObjectListener('こうげきされたとき', e.target, e.item);
   }).bind(this);
 

@@ -922,7 +922,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
   }
 
-  turn(dir: Dir.Dir): void {
+  turn(dir: Dir.IDir): void {
     if (typeof dir !== 'function') {
       console.warn('this.turn() は非推奨になりました');
       return this.turn(Dir.rightHand);
@@ -1318,7 +1318,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  set dir(dir: Dir.Dir) {
+  set dir(dir: Dir.IDir) {
     console.warn('this.dir = ... は非推奨になりました. turn を使ってください');
     this.forward = dir(this);
   }
