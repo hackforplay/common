@@ -178,27 +178,27 @@ class Camera extends enchant.Sprite {
 
     var over = false;
 
-    var _d_x = false;
-    var _d_y = false;
+    var dx = false;
+    var dy = false;
 
     if (w < rect.width) {
-      _d_x = true;
+      dx = true;
       rect.x = (rect.width - w) / 2;
     }
     if (h < rect.height) {
-      _d_y = true;
+      dy = true;
       rect.y = (rect.height - h) / 2;
     }
 
     var b = false;
 
     if (w > Hack.map.width) {
-      _d_x = true;
+      dx = true;
       rect.x = -(w - Hack.map.width) / 2;
     }
 
     if (h > Hack.map.height) {
-      _d_y = true;
+      dy = true;
       rect.y = -(h - Hack.map.height) / 2;
     }
 
@@ -206,8 +206,8 @@ class Camera extends enchant.Sprite {
       return rect;
     }
 
-    if (!_d_x) rect.x = clamp(rect.x, 0.0, Hack.map.width - w);
-    if (!_d_y) rect.y = clamp(rect.y, 0.0, Hack.map.height - h);
+    if (!dx) rect.x = clamp(rect.x, 0.0, Hack.map.width - w);
+    if (!dy) rect.y = clamp(rect.y, 0.0, Hack.map.height - h);
 
     return rect;
   }
