@@ -32,7 +32,7 @@ export const setBaseUrl = (url: string) => {
   baseUrl = url;
 };
 
-const feeles = (<any>window).feeles;
+const feeles = (window as any).feeles;
 const _cache: { [name: string]: Result } = {};
 const _surfaces: { [name: string]: typeof enchant.Surface } = {};
 

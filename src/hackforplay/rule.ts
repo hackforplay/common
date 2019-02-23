@@ -13,7 +13,7 @@ interface CollidedEvent extends Event {
 }
 
 function throwError(error: Error) {
-  return (<any>window).feeles.throwError.apply(null, arguments);
+  return (window as any).feeles.throwError.apply(null, arguments);
 }
 
 function handleError(
@@ -38,7 +38,7 @@ type NoObjectListener = (this: void) => Promise<void>;
 type OneObjectListener = (this: RPGObject) => Promise<void>;
 type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
 
-const feeles = (<any>window).feeles || {};
+const feeles = (window as any).feeles || {};
 
 export default class Rule {
   constructor() {}

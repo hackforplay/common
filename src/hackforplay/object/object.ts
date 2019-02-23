@@ -100,7 +100,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
   private _collisionFlag?: boolean;
   private _isKinematic?: boolean; // this.isKinematic (Default: true)
-  private _layer: number = (<any>RPGMap).Layer.Middle;
+  private _layer: number = (RPGMap as any).Layer.Middle;
   private _collidedNodes: any[] = []; // 衝突した Node リスト
   private hpchangeFlag = false;
   private getFrameOfBehavior: { [key: string]: () => (number | null)[] } = {};
@@ -724,7 +724,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this === Hack.player) return; // プレイヤーのレイヤー移動を禁止
     if (value === this._layer) return;
 
-    const { Layer } = <any>RPGMap;
+    const { Layer } = RPGMap as any;
 
     // Range of layer
     var sortingOrder = Object.keys(Layer).map(function(key) {
@@ -752,7 +752,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   bringOver() {
-    const { Layer } = <any>RPGMap;
+    const { Layer } = RPGMap as any;
     // 現在のレイヤーより大きいレイヤーのうち最も小さいもの
     var uppers = Object.keys(Layer)
       .map(key => {
@@ -766,7 +766,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   bringUnder() {
-    const { Layer } = <any>RPGMap;
+    const { Layer } = RPGMap as any;
     // 現在のレイヤーより小さいレイヤーのうち最も大きいもの
     var unders = Object.keys(Layer)
       .map(key => {
@@ -933,8 +933,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   dispatchEvent(event: any) {
     enchant.EventTarget.prototype.dispatchEvent.call(this, event);
     // Synonym Event を発火
-    const events = <any>synonyms.events;
-    const synonym: any = <any>events[event.type];
+    const events = (synonyms as any).events;
+    const synonym: any = (events as any)[event.type];
     if (synonym) {
       var clone = Object.assign({}, event, {
         type: synonym
@@ -945,7 +945,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   isListening(eventType: string) {
     // eventType のリスナーを持っているか
-    const events = <any>synonyms.events;
+    const events = (synonyms as any).events;
     var synonym = events[eventType];
     return (
       this['on' + eventType] ||
@@ -1089,7 +1089,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     console.warn('breath は非推奨になりました');
     params = {
       // デフォルトのパラメータ
-      skin: (<any>DeprecatedSkin).バクエン,
+      skin: (DeprecatedSkin as any).バクエン,
       speed: 5,
       scale: 1,
       ...params
@@ -1437,7 +1437,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 }
 
 function makeHpLabel(self: RPGObject) {
-  const label = new (<any>enchant).ui.ScoreLabel();
+  const label = new (enchant as any).ui.ScoreLabel();
   label.label = 'HP:';
   label.opacity = 0;
   self.parentNode.addChild(label);

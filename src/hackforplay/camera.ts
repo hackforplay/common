@@ -313,7 +313,7 @@ class Camera extends enchant.Sprite {
   private createNumberLabel(key: keyof N.INumbers) {
     const {
       ui: { ScoreLabel }
-    } = <any>enchant;
+    } = enchant as any;
     const label = new ScoreLabel(this.w, this.h); // 見えない位置で初期化
     label.label = key.toUpperCase() + ':';
     label._key = key;

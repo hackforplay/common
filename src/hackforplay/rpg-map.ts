@@ -36,10 +36,10 @@ export default class RPGMap extends enchant.EventTarget {
     this._tileNumY = tileNumY;
 
     this.scene = new enchant.Group(); // マップ上に存在するオブジェクトをまとめるグループ
-    (<any>this.scene).ref = this;
+    (this as any).scene.ref = this;
     this.scene.on('enterframe', this.autoSorting);
     this.scene.on('childadded', function(this: any) {
-      const { ref } = <any>this;
+      const { ref } = this as any;
       ref && (ref.layerChangeFlag = true);
     });
 
@@ -77,7 +77,7 @@ export default class RPGMap extends enchant.EventTarget {
     Hack.defaultParentNode = this.scene;
     if (!this.isLoaded) {
       this.isLoaded = true;
-      (<any>this).dispatchEvent(new enchant.Event('load'));
+      (this as any).dispatchEvent(new enchant.Event('load'));
     }
     if (Hack.player) this.scene.addChild(Hack.player);
     Hack.statusLabel = this.name;
@@ -89,7 +89,7 @@ export default class RPGMap extends enchant.EventTarget {
 
   autoSorting() {
     var ref: RPGMap =
-      this instanceof RPGMap ? this : (<any>this).ref || Hack.map;
+      this instanceof RPGMap ? this : (this as any).ref || Hack.map;
     if (ref.layerChangeFlag) {
       ref.scene.childNodes.sort((a: RPGObject, b: RPGObject) => {
         if (!('layer' in a) && !('layer' in b)) return 0;
@@ -114,7 +114,7 @@ export default class RPGMap extends enchant.EventTarget {
     if (!this._type) {
       // 初期値は（0,0）のタイル
       Object.keys(dictionary)
-        .filter(key => (<any>dictionary)[key] === this.bmap._data[0][0][0])
+        .filter(key => (dictionary as any)[key] === this.bmap._data[0][0][0])
         .forEach(key => (this._type = key));
     }
     return this._type;
@@ -123,7 +123,7 @@ export default class RPGMap extends enchant.EventTarget {
     if (value !== this._type && dictionary.hasOwnProperty(value)) {
       this._type = value;
       // typeによってbmapを初期化
-      var frame = (<any>dictionary)[value];
+      var frame = (dictionary as any)[value];
       this.bmap.loadData(
         new Array(this.height)
           .fill(0)
