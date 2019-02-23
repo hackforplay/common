@@ -17,25 +17,25 @@ interface IRect {
 }
 
 class Camera extends enchant.Sprite {
-  static collection: Camera[] = [];
-  static main: Camera | null = null;
+  public static collection: Camera[] = [];
+  public static main: Camera | null = null;
 
-  x: number;
-  y: number;
+  public x: number;
+  public y: number;
 
-  background = '#000';
+  public background = '#000';
 
-  enabled = true;
-  target: RPGObject | null = null;
-  center: Vector2 | null = null;
-  clip = true;
-  clipScaleFunction = Math.min;
-  clamp = true;
-  scale = 1;
+  public enabled = true;
+  public target: RPGObject | null = null;
+  public center: Vector2 | null = null;
+  public clip = true;
+  public clipScaleFunction = Math.min;
+  public clamp = true;
+  public scale = 1;
 
-  border = false;
-  borderColor = '#000';
-  borderLineWidth = 1;
+  public border = false;
+  public borderColor = '#000';
+  public borderLineWidth = 1;
 
   // カメラに表示されるHPなどのラベル
   private _numberLabels: any[] = [];
@@ -50,7 +50,12 @@ class Camera extends enchant.Sprite {
     }
   }
 
-  constructor(x = 0, y = 0, w: number = game.width, h: number = game.height) {
+  public constructor(
+    x = 0,
+    y = 0,
+    w: number = game.width,
+    h: number = game.height
+  ) {
     super(w, h);
 
     this.image = new enchant.Surface(w, h);
@@ -64,21 +69,21 @@ class Camera extends enchant.Sprite {
     Camera.collection.push(this);
   }
 
-  get w() {
+  public get w() {
     return this.width;
   }
-  set w(value: number) {
+  public set w(value: number) {
     this.width = value;
   }
 
-  get h() {
+  public get h() {
     return this.height;
   }
-  set h(value: number) {
+  public set h(value: number) {
     this.height = value;
   }
 
-  resize(w: number, h: number) {
+  public resize(w: number, h: number) {
     w = Math.ceil(w);
     h = Math.ceil(h);
 
@@ -100,7 +105,7 @@ class Camera extends enchant.Sprite {
     return this;
   }
 
-  getCenter() {
+  public getCenter() {
     // center 固定
     if (this.center) return this.center;
 
@@ -127,7 +132,7 @@ class Camera extends enchant.Sprite {
     // console.error('Camera#getCenter');
   }
 
-  getScale() {
+  public getScale() {
     // クリップしない
     if (!this.clipScaleFunction) return this.scale;
 
@@ -141,7 +146,7 @@ class Camera extends enchant.Sprite {
   }
 
   // 描画範囲を取得する
-  getRenderRect() {
+  public getRenderRect() {
     var center = this.getCenter();
 
     var x = center.x;
@@ -168,7 +173,7 @@ class Camera extends enchant.Sprite {
   }
 
   // 描画範囲を画面に収める
-  clampRect(rect: IRect) {
+  public clampRect(rect: IRect) {
     const { w, h } = this.getVisionSize();
 
     var over = false;
@@ -207,7 +212,7 @@ class Camera extends enchant.Sprite {
     return rect;
   }
 
-  _rectScale(rect: IRect, scale: number) {
+  private _rectScale(rect: IRect, scale: number) {
     rect.x *= scale;
     rect.y *= scale;
     rect.width *= scale;
@@ -216,7 +221,7 @@ class Camera extends enchant.Sprite {
   }
 
   // スクリーン座標をゲーム内座標に変換する
-  projection(screenX: number, screenY: number) {
+  public projection(screenX: number, screenY: number) {
     const renderRect = this.getRenderRect();
     return [
       renderRect.x + (screenX - this.x) * (renderRect.width / this.width),
@@ -225,7 +230,7 @@ class Camera extends enchant.Sprite {
   }
 
   // カメラ上の座標を計算する
-  getNodeRect(node: RPGObject) {
+  public getNodeRect(node: RPGObject) {
     var renderRect = this.getRenderRect();
     var scale = this.getScale();
 
@@ -242,7 +247,7 @@ class Camera extends enchant.Sprite {
     return this._rectScale(rect, 1.0 / scale);
   }
 
-  getVisionSize() {
+  public getVisionSize() {
     const scale = this.getScale();
     return {
       w: this.w * scale,
@@ -250,17 +255,17 @@ class Camera extends enchant.Sprite {
     };
   }
 
-  zoom(value: number) {
+  public zoom(value: number) {
     this.scale /= value;
   }
 
-  borderStyle(lineWidth: number, color: string) {
+  public borderStyle(lineWidth: number, color: string) {
     this.border = true;
     this.borderLineWidth = lineWidth;
     this.borderColor = color;
   }
 
-  drawBorder() {
+  public drawBorder() {
     if (!this.border) return;
     const context = this.image.context;
     context.strokeStyle = this.borderColor;
@@ -268,7 +273,7 @@ class Camera extends enchant.Sprite {
     context.strokeRect(0, 0, this.w, this.h);
   }
 
-  render() {
+  public render() {
     const context = this.image.context;
 
     var center = this.getCenter();
@@ -302,14 +307,14 @@ class Camera extends enchant.Sprite {
     this.drawBorder();
   }
 
-  remove() {
+  public remove() {
     super.remove();
     Camera.collection = Camera.collection.filter(camera => {
       return camera !== this;
     });
   }
 
-  _computeFramePosition() {
+  private _computeFramePosition() {
     // サイズが変更されたときに呼ばれる
     super._computeFramePosition();
     this.resize(this.w, this.h);

@@ -41,16 +41,14 @@ type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
 const feeles = (window as any).feeles || {};
 
 export default class Rule {
-  constructor() {}
-
-  static readonly Anyone = Anyone;
-  static readonly Enemy = Enemy;
+  public static readonly Anyone = Anyone;
+  public static readonly Enemy = Enemy;
 
   // public vars
-  get this(): string | null {
+  public get this(): string | null {
     return this._this;
   }
-  set this(value: string | null) {
+  public set this(value: string | null) {
     if (value && this._knownThisNames.indexOf(value) < 0) {
       this._knownThisNames.push(value);
     }
@@ -58,7 +56,7 @@ export default class Rule {
   }
   private _this: string | null = null;
   private readonly _knownThisNames: string[] = [];
-  item: string | typeof Enemy | typeof Anyone | null = null;
+  public item: string | typeof Enemy | typeof Anyone | null = null;
   // listeners
   private readonly _listenersOfNo: {
     [type: string]: NoObjectListener;
@@ -83,20 +81,20 @@ export default class Rule {
 
   private readonly _pairingWaitList: { [key: string]: RPGObject } = {};
 
-  addNoObjectListener(type: string, func: NoObjectListener) {
+  public addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
       throw new Error(`${type} はすでに決まっています`);
     }
     this._listenersOfNo[type] = func;
   }
 
-  async runNoObjectListener(type: string) {
+  public async runNoObjectListener(type: string) {
     if (this._listenersOfNo[type]) {
       await handleError(type, '', this._listenersOfNo[type]());
     }
   }
 
-  addOneObjectLisener(type: string, func: OneObjectListener) {
+  public addOneObjectLisener(type: string, func: OneObjectListener) {
     const name = this._this;
     if (!name) {
       throw new Error(`${type} の this がありません`);
@@ -109,7 +107,7 @@ export default class Rule {
     listeners[name] = func;
   }
 
-  async runOneObjectLisener(type: string, object: RPGObject) {
+  public async runOneObjectLisener(type: string, object: RPGObject) {
     const name: string = object.name || '';
     const listeners = this._listenersOfOne[type];
     if (!listeners) return;
@@ -119,7 +117,7 @@ export default class Rule {
     }
   }
 
-  addTwoObjectListener(type: string, func: TwoObjectListener) {
+  public addTwoObjectListener(type: string, func: TwoObjectListener) {
     const name = this._this;
     if (!name) {
       throw new Error(`${type} の this がありません`);
@@ -139,7 +137,11 @@ export default class Rule {
     listeners[item] = func;
   }
 
-  async runTwoObjectListener(type: string, object: RPGObject, item: RPGObject) {
+  public async runTwoObjectListener(
+    type: string,
+    object: RPGObject,
+    item: RPGObject
+  ) {
     const name: string = object.name || '';
     const itemName: string = item.name || '';
     const container = this._listenersOfTwo[type];
@@ -169,7 +171,7 @@ export default class Rule {
    * @param type
    * @param name アセットの名前
    */
-  hasListener(type: string, name?: string) {
+  public hasListener(type: string, name?: string) {
     if (this.hasNoObjectListener(type)) return true;
     if (!name) return false;
     return (
@@ -178,23 +180,27 @@ export default class Rule {
     );
   }
 
-  hasNoObjectListener(type: string) {
+  public hasNoObjectListener(type: string) {
     return Boolean(this._listenersOfNo[type]);
   }
 
-  hasOneObjectLisener(type: string, name: string) {
+  public hasOneObjectLisener(type: string, name: string) {
     const listeners = this._listenersOfOne[type];
     if (!listeners) return false;
     return Boolean(listeners[name]);
   }
 
-  hasTwoObjectListener(type: string, name: string) {
+  public hasTwoObjectListener(type: string, name: string) {
     const container = this._listenersOfTwo[type];
     if (!container) return false;
     return Boolean(container[name]);
   }
 
-  hasTwoObjectListenerWith(type: string, self: RPGObject, item: RPGObject) {
+  public hasTwoObjectListenerWith(
+    type: string,
+    self: RPGObject,
+    item: RPGObject
+  ) {
     const container = this._listenersOfTwo[type];
     if (!container) return false;
     const listeners = container[self.name];
@@ -206,7 +212,7 @@ export default class Rule {
     );
   }
 
-  getCollection(name: string) {
+  public getCollection(name: string) {
     if (!this._collections[name]) {
       return [];
     }
@@ -233,7 +239,7 @@ export default class Rule {
    * @param sender
    * @param name
    */
-  message(sender: RPGObject, name: string) {
+  public message(sender: RPGObject, name: string) {
     const collections = this._collections[name];
     if (!collections) return;
     for (const item of collections) {
@@ -262,7 +268,7 @@ export default class Rule {
    * @param object RPGObject
    * @param name string このアセットとして実行する (へんしんしたらストップしたい)
    */
-  runつねに(object: RPGObject, name: string) {
+  public runつねに(object: RPGObject, name: string) {
     if (object.name !== name) return; // へんしんしたので終了
     // TODO: パフォーマンスが悪化しそうなので改善する
     requestAnimationFrame(() => {
@@ -275,11 +281,11 @@ export default class Rule {
     });
   }
 
-  async runゲームがはじまったとき() {
+  public async runゲームがはじまったとき() {
     await this.runNoObjectListener('ゲームがはじまったとき');
   }
 
-  registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
+  public registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
     object.name = name;
     if (this.hasOneObjectLisener('つくられたとき', name)) {
       this.runOneObjectLisener('つくられたとき', object);
@@ -314,7 +320,7 @@ export default class Rule {
     this.addToCollection(object);
   }
 
-  unregisterRules(object: RPGObject) {
+  public unregisterRules(object: RPGObject) {
     object.name = ''; // つねに() を終了させる
     object.removeEventListener('becomeattack', this.onこうげきするとき);
     object.removeEventListener('becomedead', this.onたおされたとき);
@@ -325,7 +331,7 @@ export default class Rule {
     this.removeFromCollection(object);
   }
 
-  installAsset(name: string) {
+  public installAsset(name: string) {
     if (this._knownThisNames.indexOf(name) < 0) {
       Hack.log(`${name} というアセットは ないかもしれない`);
       feeles.install && feeles.install(name);
@@ -333,7 +339,7 @@ export default class Rule {
   }
 
   // 実際にコールする関数
-  つくる(
+  public つくる(
     name: string,
     x?: number,
     y?: number,
@@ -389,43 +395,43 @@ export default class Rule {
     this.runTwoObjectListener('こうげきされたとき', e.target, e.item);
   }).bind(this);
 
-  ゲームがはじまったとき(func: NoObjectListener) {
+  public ゲームがはじまったとき(func: NoObjectListener) {
     this.addNoObjectListener('ゲームがはじまったとき', func);
   }
-  つくられたとき(func: OneObjectListener) {
+  public つくられたとき(func: OneObjectListener) {
     this.addOneObjectLisener('つくられたとき', func);
   }
-  つねに(func: OneObjectListener) {
+  public つねに(func: OneObjectListener) {
     this.addOneObjectLisener('つねに', func);
   }
-  こうげきするとき(func: OneObjectListener) {
+  public こうげきするとき(func: OneObjectListener) {
     this.addOneObjectLisener('こうげきするとき', func);
   }
-  たおされたとき(func: OneObjectListener) {
+  public たおされたとき(func: OneObjectListener) {
     this.addOneObjectLisener('たおされたとき', func);
   }
-  すすめなかったとき(func: OneObjectListener) {
+  public すすめなかったとき(func: OneObjectListener) {
     this.addOneObjectLisener('すすめなかったとき', func);
   }
-  おかねがかわったとき(func: OneObjectListener) {
+  public おかねがかわったとき(func: OneObjectListener) {
     this.addOneObjectLisener('おかねがかわったとき', func);
   }
-  ふまれたとき(func: TwoObjectListener) {
+  public ふまれたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
   }
-  ぶつかったとき(func: TwoObjectListener) {
+  public ぶつかったとき(func: TwoObjectListener) {
     this.addTwoObjectListener('ぶつかったとき', func);
   }
-  こうげきされたとき(func: TwoObjectListener) {
+  public こうげきされたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('こうげきされたとき', func);
   }
-  メッセージされたとき(func: TwoObjectListener) {
+  public メッセージされたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('メッセージされたとき', func);
   }
-  しょうかんされたとき(func: TwoObjectListener) {
+  public しょうかんされたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('しょうかんされたとき', func);
   }
-  みつけたとき(func: TwoObjectListener) {
+  public みつけたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('みつけたとき', func);
   }
 }

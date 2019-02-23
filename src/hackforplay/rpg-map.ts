@@ -12,21 +12,26 @@ import RPGObject from './object/object';
  * レイヤー化された切り替え可能なマップ
  */
 export default class RPGMap extends enchant.EventTarget {
-  bmap: any;
-  fmap: any;
-  scene: any;
-  isLoaded = false;
-  layerChangeFlag = false;
-  reflectionLines: Line[] = [];
-  imagePath = '';
+  public bmap: any;
+  public fmap: any;
+  public scene: any;
+  public isLoaded = false;
+  public layerChangeFlag = false;
+  public reflectionLines: Line[] = [];
+  public imagePath = '';
 
   private _tileNumX = 15;
   private _tileNumY = 10;
   private _name = '';
   private _type = '';
-  _surface: any;
+  public _surface: any;
 
-  constructor(tileWidth = 32, tileHeight = 32, tileNumX = 15, tileNumY = 10) {
+  public constructor(
+    tileWidth = 32,
+    tileHeight = 32,
+    tileNumX = 15,
+    tileNumY = 10
+  ) {
     super();
 
     this.bmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより奥に表示されるマップ
@@ -61,7 +66,7 @@ export default class RPGMap extends enchant.EventTarget {
     ];
   }
 
-  load() {
+  public load() {
     if (!this.image && this.imagePath) {
       this.image = game.assets[this.imagePath];
       if (!this.image) {
@@ -83,11 +88,11 @@ export default class RPGMap extends enchant.EventTarget {
     Hack.statusLabel = this.name;
   }
 
-  hitTest(x: number, y: number): boolean {
+  public hitTest(x: number, y: number): boolean {
     return this.bmap.hitTest(x, y);
   }
 
-  autoSorting() {
+  public autoSorting() {
     var ref: RPGMap =
       this instanceof RPGMap ? this : (this as any).ref || Hack.map;
     if (ref.layerChangeFlag) {
@@ -101,7 +106,7 @@ export default class RPGMap extends enchant.EventTarget {
     }
   }
 
-  get name() {
+  public get name() {
     if (!this._name) {
       var result = Object.keys(Hack.maps).filter(
         key => Hack.maps[key] === this
@@ -110,7 +115,7 @@ export default class RPGMap extends enchant.EventTarget {
     }
     return this._name;
   }
-  get type() {
+  public get type() {
     if (!this._type) {
       // 初期値は（0,0）のタイル
       Object.keys(dictionary)
@@ -119,7 +124,7 @@ export default class RPGMap extends enchant.EventTarget {
     }
     return this._type;
   }
-  set type(value) {
+  public set type(value) {
     if (value !== this._type && dictionary.hasOwnProperty(value)) {
       this._type = value;
       // typeによってbmapを初期化
@@ -136,22 +141,22 @@ export default class RPGMap extends enchant.EventTarget {
         new Array(this.height).fill(0).map(() => new Array(this.width).fill(0));
     }
   }
-  get width(): number {
+  public get width(): number {
     return this.bmap.width;
   }
-  get height(): number {
+  public get height(): number {
     return this.bmap.height;
   }
 
-  _walkablePositions: IVector2[] = []; // cmap から 0 のマスだけを配列化したもの
-  get walkablePositions(): IVector2[] {
+  private _walkablePositions: IVector2[] = []; // cmap から 0 のマスだけを配列化したもの
+  public get walkablePositions(): IVector2[] {
     return this._walkablePositions;
   }
   // Collisino Map. (this.bmap.collisionData)
-  get cmap(): (0 | 1)[][] | null {
+  public get cmap(): (0 | 1)[][] | null {
     return this.bmap.collisionData;
   }
-  set cmap(value) {
+  public set cmap(value) {
     if (!value) return;
     this.bmap.collisionData = value;
     // cmap は 0 のとき歩ける
@@ -164,31 +169,31 @@ export default class RPGMap extends enchant.EventTarget {
   }
 
   // bmap Image (enchant.Surface)
-  get image() {
+  public get image() {
     return this.bmap.image;
   }
-  set image(value) {
+  public set image(value) {
     this.bmap.image = this.fmap.image = value;
   }
-  get tileWidth(): number {
+  public get tileWidth(): number {
     return this.bmap.tileWidth;
   }
-  get tileHeight(): number {
+  public get tileHeight(): number {
     return this.bmap.tileHeight;
   }
-  get tileNumX() {
+  public get tileNumX() {
     return this._tileNumX;
   }
-  get tileNumY() {
+  public get tileNumY() {
     return this._tileNumY;
   }
 
-  set background(value: any) {
+  public set background(value: any) {
     this.bmap.overwrite = value;
     this.bmap.redraw();
   }
 
-  set foreground(value: any) {
+  public set foreground(value: any) {
     this.fmap.overwrite = value;
     this.fmap.redraw();
   }
