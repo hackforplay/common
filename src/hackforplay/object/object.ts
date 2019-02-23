@@ -83,7 +83,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public colliders?: any;
   public isAutoPickUp?: boolean;
   public pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
-  private _ruleInstance?: Rule;
+  public _ruleInstance?: Rule;
   public skill: string = ''; // 攻撃時にしょうかんするアセットの名前
   public fieldOfView: number = 1; // 自分を起点に隣何マスまで find 可能か
   public lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
@@ -400,7 +400,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     else _remove.call(this);
   }
 
-  private setFrame(
+  public setFrame(
     behavior: string,
     frame: (number | null)[] | ((this: RPGObject) => (number | null)[])
   ) {
