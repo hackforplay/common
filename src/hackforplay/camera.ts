@@ -9,7 +9,12 @@ import { clamp } from './utils/math-utils';
 import * as N from './object/numbers';
 import Vector2 from './math/vector2';
 
-interface Rect { x: number; y: number; width: number; height: number }
+interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 class Camera extends enchant.Sprite {
   static collection: Camera[] = [];
