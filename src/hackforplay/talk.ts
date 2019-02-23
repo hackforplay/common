@@ -23,7 +23,28 @@ textArea.defaultStyle = {
   rubyId: null
 };
 
-const makeAnswer = function(choice: string, resolve: (text: string) => void) {
+const theWorld = () => {
+  let timeIsStopped = true;
+  const stopAndStop = () => {
+    if (timeIsStopped) {
+      Hack.world.stop();
+      requestAnimationFrame(stopAndStop);
+    } else {
+      Hack.world.resume();
+    }
+  };
+  stopAndStop();
+  const resume = () => {
+    timeIsStopped = false;
+  };
+  return resume;
+};
+
+const makeAnswer = function(
+  choice: string,
+  resolve: (text: string) => void,
+  starPlatinum: () => void
+) {
   const textWindow = new TextArea(180, 32);
   Hack.menuGroup.addChild(textWindow); // メニューにaddChild
   textWindow.x = 480 - textWindow.w;
@@ -49,6 +70,7 @@ const makeAnswer = function(choice: string, resolve: (text: string) => void) {
   textWindow.show();
   textWindow.push(choice); // 選択肢のテキスト表示
   textWindow.on('touchend', function() {
+    starPlatinum();
     windowDelete();
     resolve(choice);
   });
@@ -57,6 +79,7 @@ const makeAnswer = function(choice: string, resolve: (text: string) => void) {
 
 export default function talk(text: string, ...choices: string[]) {
   return new Promise(resolve => {
+    const starPlatinum = theWorld();
     if (textArea.visible) windowDelete(); // 表示されてるウィンドウを消す
     choices.reverse(); // 下から上に表示するので、選択肢の配列をリバースする
     // 本文のテキストエリア作成
@@ -69,8 +92,8 @@ export default function talk(text: string, ...choices: string[]) {
       choices.push('とじる'); // 選択肢のテキスト表示
     }
     // 選択肢のボタンを作成
-    for (var choice of choices) {
-      const answer = makeAnswer(choice, resolve);
+    for (const choice of choices) {
+      const answer = makeAnswer(choice, resolve, starPlatinum);
       answers.push(answer);
     }
   });
