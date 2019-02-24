@@ -874,7 +874,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         }
         break;
       case 'quadruple':
-        var dir = Hack.Vec2Dir(this._forward);
+        const dir = Hack.Vec2Dir(this._forward);
         const c = this._graphicColumn || 9; // ６列画像に対応する
         this.frame = [dir * c + (this.frame % c)];
         break;

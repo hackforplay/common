@@ -119,7 +119,7 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
   let core = enchant.Core.instance;
   let surface = new enchant.Surface(width, height);
   this._surface = surface;
-  var canvas = surface._element;
+  const canvas = surface._element;
   canvas.style.position = 'absolute';
   if (enchant.ENV.RETINA_DISPLAY && core.scale === 2) {
     canvas.width = width * 2;
@@ -162,7 +162,6 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
 
   let source = image._element;
   let context = this._context;
-  var canvas = context.canvas;
 
   context.clearRect(x, y, width, height);
   for (let i = 0, len = this._data.length; i < len; i++) {

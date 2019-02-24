@@ -97,7 +97,7 @@ EventEmitter.prototype.listeners = function listeners(event, exists) {
   if (!available) return [];
   if (available.fn) return [available.fn];
 
-  for (var i = 0, l = available.length, ee = new Array(l); i < l; i++) {
+  for (let i = 0, l = available.length, ee = new Array(l); i < l; i++) {
     ee[i] = available[i].fn;
   }
 
@@ -257,7 +257,7 @@ EventEmitter.prototype.removeListener = function removeListener(
       else delete this._events[evt];
     }
   } else {
-    for (var i = 0, events = [], length = listeners.length; i < length; i++) {
+    for (let i = 0, events = [], length = listeners.length; i < length; i++) {
       if (
         listeners[i].fn !== fn ||
         (once && !listeners[i].once) ||
