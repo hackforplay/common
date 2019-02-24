@@ -49,7 +49,6 @@ class Laser extends RPGObject {
   }
 
   update() {
-    const context = this.context;
     const reflectionLines = Hack.map.reflectionLines;
 
     this.position += this.speed;

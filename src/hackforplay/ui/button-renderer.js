@@ -69,9 +69,6 @@ export default class ButtonRenderer extends EventTarget {
 
     context.globalAlpha = props.alpha;
 
-    const x = this.x + context.currentTransform.e;
-    const y = this.y + context.currentTransform.f;
-
     if (this.isHover(Hack.mouseX, Hack.mouseY, context)) {
       props.borderWidth = props.hoverBorderWidth;
     }

@@ -1,5 +1,3 @@
-import Line from '../shapes/line';
-
 /**
  * @param {CanvasRenderingContext2D} context Context
  * @param {number} x       X

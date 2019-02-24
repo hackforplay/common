@@ -15,7 +15,7 @@ export function unregister() {
  * @param damage
  * @param attacker
  */
-export default function createDamageMod(damage?: number, attacker?: RPGObject) {
+export default function createDamageMod(damage?: number) {
   console.warn(
     'Hack.createDamgeMod は非推奨になりました. damage プロパティを使ってください'
   );

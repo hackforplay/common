@@ -1,7 +1,7 @@
 import { default as Hack } from './hack';
 import { getConfig } from './se-data';
 
-const feeles = (<any>window).feeles;
+const feeles = (window as any).feeles;
 const data: { [key: string]: AudioBuffer | null | undefined } = {};
 const audioCtx = new AudioContext();
 Hack.seBaseUrl = 'https://storage.googleapis.com/hackforplay-sounds/';

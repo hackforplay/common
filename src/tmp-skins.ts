@@ -51,8 +51,8 @@ for (const { key, fileName, width, height } of avatars) {
     this.collider = new SAT.Box(new SAT.V(this.x, this.y), 32, 32).toPolygon();
     this.collider.setOffset(new SAT.V(-this.offset.x, -this.offset.y));
   };
-  (<any>Skin)[key] = func;
-  (<any>Skin).__name.set(func, key);
+  (Skin as any)[key] = func;
+  (Skin as any).__name.set(func, key);
 }
 
 function setFrameD6(object: RPGObject, behavior: string, frame: any[]) {
@@ -177,6 +177,6 @@ for (const { key, fileName, width, height } of items) {
     this.collider = new SAT.Box(new SAT.V(this.x, this.y), 32, 32).toPolygon();
     this.collider.setOffset(new SAT.V(-this.offset.x, -this.offset.y));
   };
-  (<any>Skin)[key] = func;
-  (<any>Skin).__name.set(func, key);
+  (Skin as any)[key] = func;
+  (Skin as any).__name.set(func, key);
 }

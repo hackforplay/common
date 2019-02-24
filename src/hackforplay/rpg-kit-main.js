@@ -55,8 +55,8 @@ Hack.on('load', function() {
   if (Hack.maps && !Hack.maps['next']) {
     Object.defineProperty(Hack.maps, 'next', {
       get: function() {
-        var next = null;
-        Object.keys(Hack.maps).reduce(function(previousKey, currentKey, index) {
+        let next = null;
+        Object.keys(Hack.maps).reduce(function(previousKey, currentKey) {
           next = Hack.map === Hack.maps[previousKey] ? currentKey : next;
         });
         return next;
@@ -66,7 +66,7 @@ Hack.on('load', function() {
   if (Hack.maps && !Hack.maps['current']) {
     Object.defineProperty(Hack.maps, 'current', {
       get: function() {
-        var current = null;
+        let current = null;
         Object.keys(Hack.maps).forEach(function(key) {
           current = Hack.map === Hack.maps[key] ? key : current;
         });
@@ -77,7 +77,7 @@ Hack.on('load', function() {
   if (Hack.maps && !Hack.maps['previous']) {
     Object.defineProperty(Hack.maps, 'previous', {
       get: function() {
-        var previous = null;
+        let previous = null;
         Object.keys(Hack.maps).reduceRight(function(previousKey, currentKey) {
           previous =
             Hack.map === Hack.maps[previousKey] ? currentKey : previous;
@@ -342,7 +342,7 @@ game.onawake = () => {
       Hack.openEditor();
     }
   });
-  Hack.onhintset = function(event) {
+  Hack.onhintset = function() {
     Hack.enchantBookIcon.visible = true;
   };
 
@@ -394,7 +394,7 @@ Hack.createMap = function(template) {
   if (zenkaku) {
     Hack.log(`⚠️ 全かくの ${zenkaku[0]} がマップに入っています!`);
   }
-  var source = template
+  let source = template
     .split('\n')
     .map(function(line) {
       return line.match(/\s*\d+[\s\|]?/g);
@@ -402,16 +402,16 @@ Hack.createMap = function(template) {
     .filter(function(line) {
       return Array.isArray(line);
     });
-  var int = function(item) {
+  let int = function(item) {
     return parseInt(item, 10);
   };
-  var bmap = source.map(function(line) {
+  let bmap = source.map(function(line) {
     return line.map(int);
   });
-  var bar = function(item) {
+  let bar = function(item) {
     return item.substr(-1) === '|' ? 1 : 0;
   };
-  var cmap = source.map(function(line) {
+  let cmap = source.map(function(line) {
     return line.map(bar);
   });
 
@@ -467,7 +467,7 @@ Hack.Dir2Vec = function(dir) {
   }
 };
 
-Hack.Attack = function(x, y, damage, pushX, pushY) {
+Hack.Attack = function(x, y, damage) {
   RPGObject.collection
     .filter(function(item) {
       return item.mapX === x && item.mapY === y && item !== this;
@@ -484,7 +484,7 @@ Hack.Attack = function(x, y, damage, pushX, pushY) {
           item.hp -= damage;
         }
       }
-      var e = new enchant.Event('attacked');
+      let e = new enchant.Event('attacked');
       e.attacker = e.item = this;
       e.damage = damage || 0;
       item.dispatchEvent(e);
@@ -517,7 +517,7 @@ enchant.Timeline.prototype.become = function(type, time) {
   this.add(
     new enchant.Action({
       onactionstart: function() {
-        var capital = type[0].toUpperCase() + type.substr(1).toLowerCase();
+        let capital = type[0].toUpperCase() + type.substr(1).toLowerCase();
         if (
           this instanceof RPGObject &&
           BehaviorTypes.hasOwnProperty(capital)

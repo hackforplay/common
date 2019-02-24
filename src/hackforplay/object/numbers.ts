@@ -24,7 +24,7 @@ const reflectINumbers: INumbers = {
   lengthOfView: 0
 };
 
-export const keys = <(keyof INumbers)[]>Object.keys(reflectINumbers);
+export const keys = Object.keys(reflectINumbers) as (keyof INumbers)[];
 
 const keysOfINumbers: { [key: string]: keyof INumbers } = {
   hp: 'hp',

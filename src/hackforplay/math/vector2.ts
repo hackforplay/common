@@ -6,40 +6,40 @@ export interface IVector2 {
 }
 
 export default class Vector2 implements IVector2 {
-  x = 0;
-  y = 0;
+  public x = 0;
+  public y = 0;
 
-  constructor(x = 0, y = 0) {
+  public constructor(x = 0, y = 0) {
     this.x = x;
     this.y = y;
   }
 
-  set(x = 0, y = 0) {
+  public set(x = 0, y = 0) {
     this.x = x;
     this.y = y;
   }
 
-  clone() {
+  public clone() {
     return new Vector2(this.x, this.y);
   }
 
-  add(vec: IVector2) {
+  public add(vec: IVector2) {
     return new Vector2(this.x + vec.x, this.y + vec.y);
   }
 
-  subtract(vec: IVector2) {
+  public subtract(vec: IVector2) {
     return new Vector2(this.x - vec.x, this.y - vec.y);
   }
 
-  scale(scalar: number) {
+  public scale(scalar: number) {
     return new Vector2(this.x * scalar, this.y * scalar);
   }
 
-  dot(vec: IVector2) {
+  public dot(vec: IVector2) {
     return this.x * vec.x + this.y + vec.y;
   }
 
-  moveTowards(vec: Vector2, t: number) {
+  public moveTowards(vec: Vector2, t: number) {
     // Linearly interpolates between vectors A and B by t.
     // t = 0 returns A, t = 1 returns B
     t = Math.min(t, 1); // still allow negative t
@@ -47,25 +47,25 @@ export default class Vector2 implements IVector2 {
     return this.add(diff.scale(t));
   }
 
-  magnitude() {
+  public magnitude() {
     return Math.sqrt(this.magnitudeSqr());
   }
 
-  magnitudeSqr() {
+  public magnitudeSqr() {
     return this.x * this.x + this.y * this.y;
   }
 
-  distance(vec: IVector2) {
+  public distance(vec: IVector2) {
     return Math.sqrt(this.distanceSqr(vec));
   }
 
-  distanceSqr(vec: IVector2) {
+  public distanceSqr(vec: IVector2) {
     const deltaX = this.x - vec.x;
     const deltaY = this.y - vec.y;
     return deltaX * deltaX + deltaY * deltaY;
   }
 
-  normalize() {
+  public normalize() {
     const mag = this.magnitude();
     const vector = this.clone();
     if (Math.abs(mag) < 1e-9) {
@@ -78,11 +78,11 @@ export default class Vector2 implements IVector2 {
     return vector;
   }
 
-  angle() {
+  public angle() {
     return Math.atan2(this.y, this.x);
   }
 
-  rotate(rad: number) {
+  public rotate(rad: number) {
     const cos = Math.cos(rad);
     const sin = Math.sin(rad);
     const vector = new Vector2();
@@ -97,19 +97,19 @@ export default class Vector2 implements IVector2 {
    * 見た目上は「時計回りに回転する」ことになる
    * @param deg 度数法による角度
    */
-  rotateDegree(deg: number) {
+  public rotateDegree(deg: number) {
     return this.rotate((deg / 180) * Math.PI);
   }
 
-  cross(vec: IVector2) {
+  public cross(vec: IVector2) {
     return this.x * vec.y - vec.x * this.y;
   }
 
-  toSAT() {
+  public toSAT() {
     return new SAT.Vector(this.x, this.y);
   }
 
-  unit() {
+  public unit() {
     return Math.abs(this.x) >= Math.abs(this.y)
       ? this.x >= 0
         ? new Vector2(1, 0)
@@ -119,16 +119,16 @@ export default class Vector2 implements IVector2 {
       : new Vector2(0, -1);
   }
 
-  unit8() {
+  public unit8() {
     if (this.x === 0 && this.y === 0) return new Vector2(1, 0);
     return new Vector2(Math.sign(this.x), Math.sign(this.y));
   }
 
-  static from(vec: IVector2) {
+  public static from(vec: IVector2) {
     return new Vector2(vec.x, vec.y);
   }
 
-  static equal(a: IVector2, b: IVector2) {
+  public static equal(a: IVector2, b: IVector2) {
     return a.x === b.x && a.y === b.y;
   }
 }

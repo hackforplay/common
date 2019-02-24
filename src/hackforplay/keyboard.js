@@ -3,9 +3,8 @@ import '../enchantjs/ui.enchant';
 import '../enchantjs/fix';
 import './rpg-kit-main';
 import game from './game';
-import { roundRect } from './utils/canvas2d-utils';
 import { stringToArray } from './utils/string-utils';
-import { step, between, clamp } from './utils/math-utils';
+import { step, between } from './utils/math-utils';
 
 import ButtonRenderer from './ui/button-renderer';
 

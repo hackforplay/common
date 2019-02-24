@@ -9,43 +9,53 @@ import { clamp } from './utils/math-utils';
 import * as N from './object/numbers';
 import Vector2 from './math/vector2';
 
-type Rect = { x: number; y: number; width: number; height: number };
-
-class Camera extends enchant.Sprite {
-  static collection: Camera[] = [];
-  static main: Camera | null = null;
-
+interface IRect {
   x: number;
   y: number;
+  width: number;
+  height: number;
+}
 
-  background = '#000';
+class Camera extends enchant.Sprite {
+  public static collection: Camera[] = [];
+  public static main: Camera | null = null;
 
-  enabled = true;
-  target: RPGObject | null = null;
-  center: Vector2 | null = null;
-  clip = true;
-  clipScaleFunction = Math.min;
-  clamp = true;
-  scale = 1;
+  public x: number;
+  public y: number;
 
-  border = false;
-  borderColor = '#000';
-  borderLineWidth = 1;
+  public background = '#000';
+
+  public enabled = true;
+  public target: RPGObject | null = null;
+  public center: Vector2 | null = null;
+  public clip = true;
+  public clipScaleFunction = Math.min;
+  public clamp = true;
+  public scale = 1;
+
+  public border = false;
+  public borderColor = '#000';
+  public borderLineWidth = 1;
 
   // カメラに表示されるHPなどのラベル
   private _numberLabels: any[] = [];
   private static _numberLabels: (keyof N.INumbers)[] = ['hp', 'money'];
-  static get numberLabels() {
+  public static get numberLabels() {
     return Camera._numberLabels;
   }
-  static set numberLabels(value) {
+  public static set numberLabels(value) {
     Camera._numberLabels = value;
     for (const camera of Camera.collection) {
       camera.refreshNumberLabels();
     }
   }
 
-  constructor(x = 0, y = 0, w: number = game.width, h: number = game.height) {
+  public constructor(
+    x = 0,
+    y = 0,
+    w: number = game.width,
+    h: number = game.height
+  ) {
     super(w, h);
 
     this.image = new enchant.Surface(w, h);
@@ -59,21 +69,21 @@ class Camera extends enchant.Sprite {
     Camera.collection.push(this);
   }
 
-  get w() {
+  public get w() {
     return this.width;
   }
-  set w(value: number) {
+  public set w(value: number) {
     this.width = value;
   }
 
-  get h() {
+  public get h() {
     return this.height;
   }
-  set h(value: number) {
+  public set h(value: number) {
     this.height = value;
   }
 
-  resize(w: number, h: number) {
+  public resize(w: number, h: number) {
     w = Math.ceil(w);
     h = Math.ceil(h);
 
@@ -95,7 +105,7 @@ class Camera extends enchant.Sprite {
     return this;
   }
 
-  getCenter() {
+  public getCenter() {
     // center 固定
     if (this.center) return this.center;
 
@@ -122,7 +132,7 @@ class Camera extends enchant.Sprite {
     // console.error('Camera#getCenter');
   }
 
-  getScale() {
+  public getScale() {
     // クリップしない
     if (!this.clipScaleFunction) return this.scale;
 
@@ -136,21 +146,21 @@ class Camera extends enchant.Sprite {
   }
 
   // 描画範囲を取得する
-  getRenderRect() {
-    var center = this.getCenter();
+  public getRenderRect() {
+    let center = this.getCenter();
 
-    var x = center.x;
-    var y = center.y;
+    let x = center.x;
+    let y = center.y;
 
-    var scale = this.getScale();
+    let scale = this.getScale();
 
-    var w = this.width * scale;
-    var h = this.height * scale;
+    let w = this.width * scale;
+    let h = this.height * scale;
 
     x -= w / 2;
     y -= h / 2;
 
-    var rect = {
+    let rect = {
       x: x,
       y: y,
       width: w,
@@ -163,32 +173,32 @@ class Camera extends enchant.Sprite {
   }
 
   // 描画範囲を画面に収める
-  clampRect(rect: Rect) {
+  public clampRect(rect: IRect) {
     const { w, h } = this.getVisionSize();
 
-    var over = false;
+    let over = false;
 
-    var _d_x = false;
-    var _d_y = false;
+    let dx = false;
+    let dy = false;
 
     if (w < rect.width) {
-      _d_x = true;
+      dx = true;
       rect.x = (rect.width - w) / 2;
     }
     if (h < rect.height) {
-      _d_y = true;
+      dy = true;
       rect.y = (rect.height - h) / 2;
     }
 
-    var b = false;
+    let b = false;
 
     if (w > Hack.map.width) {
-      _d_x = true;
+      dx = true;
       rect.x = -(w - Hack.map.width) / 2;
     }
 
     if (h > Hack.map.height) {
-      _d_y = true;
+      dy = true;
       rect.y = -(h - Hack.map.height) / 2;
     }
 
@@ -196,13 +206,13 @@ class Camera extends enchant.Sprite {
       return rect;
     }
 
-    if (!_d_x) rect.x = clamp(rect.x, 0.0, Hack.map.width - w);
-    if (!_d_y) rect.y = clamp(rect.y, 0.0, Hack.map.height - h);
+    if (!dx) rect.x = clamp(rect.x, 0.0, Hack.map.width - w);
+    if (!dy) rect.y = clamp(rect.y, 0.0, Hack.map.height - h);
 
     return rect;
   }
 
-  _rectScale(rect: Rect, scale: number) {
+  private _rectScale(rect: IRect, scale: number) {
     rect.x *= scale;
     rect.y *= scale;
     rect.width *= scale;
@@ -211,7 +221,7 @@ class Camera extends enchant.Sprite {
   }
 
   // スクリーン座標をゲーム内座標に変換する
-  projection(screenX: number, screenY: number) {
+  public projection(screenX: number, screenY: number) {
     const renderRect = this.getRenderRect();
     return [
       renderRect.x + (screenX - this.x) * (renderRect.width / this.width),
@@ -220,14 +230,14 @@ class Camera extends enchant.Sprite {
   }
 
   // カメラ上の座標を計算する
-  getNodeRect(node: RPGObject) {
-    var renderRect = this.getRenderRect();
-    var scale = this.getScale();
+  public getNodeRect(node: RPGObject) {
+    let renderRect = this.getRenderRect();
+    let scale = this.getScale();
 
-    var x = node.x - renderRect.x;
-    var y = node.y - renderRect.y;
+    let x = node.x - renderRect.x;
+    let y = node.y - renderRect.y;
 
-    var rect = {
+    let rect = {
       x: x,
       y: y,
       width: node.width,
@@ -237,7 +247,7 @@ class Camera extends enchant.Sprite {
     return this._rectScale(rect, 1.0 / scale);
   }
 
-  getVisionSize() {
+  public getVisionSize() {
     const scale = this.getScale();
     return {
       w: this.w * scale,
@@ -245,17 +255,17 @@ class Camera extends enchant.Sprite {
     };
   }
 
-  zoom(value: number) {
+  public zoom(value: number) {
     this.scale /= value;
   }
 
-  borderStyle(lineWidth: number, color: string) {
+  public borderStyle(lineWidth: number, color: string) {
     this.border = true;
     this.borderLineWidth = lineWidth;
     this.borderColor = color;
   }
 
-  drawBorder() {
+  public drawBorder() {
     if (!this.border) return;
     const context = this.image.context;
     context.strokeStyle = this.borderColor;
@@ -263,18 +273,15 @@ class Camera extends enchant.Sprite {
     context.strokeRect(0, 0, this.w, this.h);
   }
 
-  render() {
+  public render() {
     const context = this.image.context;
 
-    var center = this.getCenter();
+    let center = this.getCenter();
 
     if (!center) return;
 
-    var x = center.x;
-    var y = center.y;
-
-    var rect = this.getRenderRect();
-    var r = rect;
+    let rect = this.getRenderRect();
+    let r = rect;
 
     if (this.background) {
       context.fillStyle = this.background;
@@ -297,14 +304,14 @@ class Camera extends enchant.Sprite {
     this.drawBorder();
   }
 
-  remove() {
+  public remove() {
     super.remove();
     Camera.collection = Camera.collection.filter(camera => {
       return camera !== this;
     });
   }
 
-  _computeFramePosition() {
+  private _computeFramePosition() {
     // サイズが変更されたときに呼ばれる
     super._computeFramePosition();
     this.resize(this.w, this.h);
@@ -313,7 +320,7 @@ class Camera extends enchant.Sprite {
   private createNumberLabel(key: keyof N.INumbers) {
     const {
       ui: { ScoreLabel }
-    } = <any>enchant;
+    } = enchant as any;
     const label = new ScoreLabel(this.w, this.h); // 見えない位置で初期化
     label.label = key.toUpperCase() + ':';
     label._key = key;
@@ -359,13 +366,13 @@ Camera.arrange = function(
   border = true,
   filter?: (camera: Camera) => boolean
 ) {
-  var for2d = function(
+  let for2d = function(
     x: number,
     y: number,
     callback: (a: number, b: number) => void
   ) {
-    for (var a = 0; a < x; ++a) {
-      for (var b = 0; b < y; ++b) {
+    for (let a = 0; a < x; ++a) {
+      for (let b = 0; b < y; ++b) {
         callback(a, b);
       }
     }
@@ -379,8 +386,8 @@ Camera.arrange = function(
   }
 
   // 並べるカメラだけ取得
-  var index = 0;
-  var cameras = Camera.collection.filter(
+  let index = 0;
+  let cameras = Camera.collection.filter(
     filter ||
       function(camera) {
         return camera.enabled;
@@ -390,7 +397,7 @@ Camera.arrange = function(
   // 再配置
   for2d(y, x, function(y2, x2) {
     if (index >= cameras.length) return;
-    var camera = cameras[index++];
+    let camera = cameras[index++];
 
     camera.moveTo((game.width / x) * x2, (game.height / y) * y2);
     camera.resize(game.width / x, game.height / y);
