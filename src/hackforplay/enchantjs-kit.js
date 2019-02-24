@@ -3,7 +3,7 @@ import game from './game';
 // リサイズ時にゲームの scale を調節
 document.documentElement.style.overflow = 'hidden';
 window.addEventListener('resize', function() {
-  var fWidth = parseInt(window.innerWidth, 10),
+  let fWidth = parseInt(window.innerWidth, 10),
     fHeight = parseInt(window.innerHeight, 10);
   if (fWidth && fHeight) {
     game.scale = Math.min(fWidth / game.width, fHeight / game.height);

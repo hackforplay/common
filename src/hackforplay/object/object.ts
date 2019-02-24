@@ -271,7 +271,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       'playerexit',
       'pickedup'
     ];
-    for (var i = 0; i < noCollisionEvents.length; i++) {
+    for (let i = 0; i < noCollisionEvents.length; i++) {
       if (this.isListening(noCollisionEvents[i])) {
         return false;
       }
@@ -342,7 +342,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     if (this.isBehaviorChanged) {
       // begin animation
-      var routine = this.getFrameOfBehavior[this.behavior];
+      let routine = this.getFrameOfBehavior[this.behavior];
       if (routine) this.frame = routine.call(this);
       // becomeイベント内でbehaviorが変更された場合、
       // 次のフレームで１度だけbecomeイベントが発火します。
@@ -725,11 +725,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { Layer } = RPGMap as any;
 
     // Range of layer
-    var sortingOrder = Object.keys(Layer).map(function(key) {
+    let sortingOrder = Object.keys(Layer).map(function(key) {
       return Layer[key];
     });
-    var max = Math.max.apply(null, sortingOrder);
-    var min = Math.min.apply(null, sortingOrder);
+    let max = Math.max.apply(null, sortingOrder);
+    let min = Math.min.apply(null, sortingOrder);
     this._layer = Math.max(Math.min(value, max), min);
 
     // 他オブジェクトはプレイヤーレイヤーに干渉できないようにする
@@ -752,7 +752,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private bringOver() {
     const { Layer } = RPGMap as any;
     // 現在のレイヤーより大きいレイヤーのうち最も小さいもの
-    var uppers = Object.keys(Layer)
+    let uppers = Object.keys(Layer)
       .map(key => {
         return Layer[key];
       }, this)
@@ -766,7 +766,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private bringUnder() {
     const { Layer } = RPGMap as any;
     // 現在のレイヤーより小さいレイヤーのうち最も大きいもの
-    var unders = Object.keys(Layer)
+    let unders = Object.keys(Layer)
       .map(key => {
         return Layer[key];
       }, this)
@@ -798,7 +798,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
 
     // 正規化
-    var length = Math.pow(vector.x, 2) + Math.pow(vector.y, 2);
+    let length = Math.pow(vector.x, 2) + Math.pow(vector.y, 2);
     if (length > 0) length = 1 / length;
     vector = {
       x: vector.x * length,
@@ -819,7 +819,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     node.velocity(vector.x, vector.y);
 
-    var angle = 0;
+    let angle = 0;
 
     // 対象が MapObject かつベクトルの長さが 0.0 より大きいなら
     if (
@@ -938,7 +938,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const events = (synonyms as any).events;
     const synonym: any = (events as any)[event.type];
     if (synonym) {
-      var clone = Object.assign({}, event, {
+      let clone = Object.assign({}, event, {
         type: synonym
       });
       enchant.EventTarget.prototype.dispatchEvent.call(this, clone);
@@ -948,7 +948,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private isListening(eventType: string) {
     // eventType のリスナーを持っているか
     const events = (synonyms as any).events;
-    var synonym = events[eventType];
+    let synonym = events[eventType];
     return (
       this['on' + eventType] ||
       this._listeners[eventType] ||
@@ -1362,7 +1362,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private applySkin = ((f: (object: RPGObject) => void) => {
     f(this); // スキンを適用
-    var routine = this.getFrameOfBehavior[this.behavior];
+    let routine = this.getFrameOfBehavior[this.behavior];
     if (routine) this.frame = routine.call(this); // frame を設定し直す
     this.rotateIfNeeded();
     return f;

@@ -40,8 +40,8 @@ Object.defineProperties(enchant.Sprite.prototype, {
       ) {
         // limited 432*192 size
         if (this.image.width * this.image.height <= 82944) {
-          var i = this.image.context ? this.image : this.image.clone();
-          var res = i.context.getImageData(0, 0, i.width, i.height);
+          let i = this.image.context ? this.image : this.image.clone();
+          let res = i.context.getImageData(0, 0, i.width, i.height);
           this._originalColor = getRepresentativeColor(res.data);
         } else {
           this._originalColor = null;
@@ -57,19 +57,19 @@ Object.defineProperties(enchant.Sprite.prototype, {
 // 代表色を抽出
 function getRepresentativeColor(data) {
   // RGB色空間Viに存在するピクセルの数をカウント
-  var space = [],
+  let space = [],
     palette = [];
-  for (var index = data.length - 4; index >= 0; index -= 4) {
+  for (let index = data.length - 4; index >= 0; index -= 4) {
     if (data[index + 3] > 0) {
-      var rgb = Array.prototype.slice.call(data, index, index + 3).join(' ');
+      let rgb = Array.prototype.slice.call(data, index, index + 3).join(' ');
       if (palette.indexOf(rgb) === -1) palette.push(rgb);
-      var i = palette.indexOf(rgb);
+      let i = palette.indexOf(rgb);
       space[i] = (space[i] >> 0) + 1;
     }
   }
-  var black = palette.indexOf('0 0 0');
+  let black = palette.indexOf('0 0 0');
   if (black !== -1) space[black] = 0; // 黒は輪郭線として代表色にはさせない
-  var max = Math.max.apply(null, space);
+  let max = Math.max.apply(null, space);
   return space.length > 0
     ? palette[space.indexOf(max)].split(' ').map(function(s) {
         return s >> 0;
@@ -88,21 +88,21 @@ enchant.Sprite.prototype.moveColor = function(before, after) {
   // Transfer
   this._origin = this._origin || this.image; // 元画像を参照
   this.image = this._origin.clone(); // 他のSpriteに影響を与えないようコピー
-  var imageData = this.image.context.getImageData(
+  let imageData = this.image.context.getImageData(
       0,
       0,
       this.image.width,
       this.image.height
     ),
     data = imageData.data;
-  var filter = [0, 0, 0].map(function(_, c) {
-    var scaleL = after[c] / before[c];
-    var scaleR = (255 - after[c]) / (255 - before[c]);
+  let filter = [0, 0, 0].map(function(_, c) {
+    let scaleL = after[c] / before[c];
+    let scaleR = (255 - after[c]) / (255 - before[c]);
     return new Array(256).fill(0).map(function(e, i) {
       return i < before[c] ? i * scaleL : 255 - (255 - i) * scaleR;
     });
   });
-  for (var index = data.length - 4; index >= 0; index -= 4) {
+  for (let index = data.length - 4; index >= 0; index -= 4) {
     if (data[index + 3] > 0) {
       data[index + 0] = filter[0][data[index + 0]];
       data[index + 1] = filter[1][data[index + 1]];

@@ -11,6 +11,7 @@
   },
   "plugins": ["@typescript-eslint/eslint-plugin"],
   "rules": {
+    "no-var": "error",
     "@typescript-eslint/no-use-before-define": [
       "error",
       { "functions": false, "classes": false }

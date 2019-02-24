@@ -10,8 +10,8 @@ class Effect extends RPGObject {
     this.image = game.assets['resources/enchantjs/x2/effect0.png'];
     this.isKinematic = false;
     this.velocity(velocityX, velocityY);
-    var frame = new Array(lifetime);
-    for (var i = frame.length - 1; i >= 0; i--) {
+    let frame = new Array(lifetime);
+    for (let i = frame.length - 1; i >= 0; i--) {
       frame[i] = ((i / lifetime) * 5) >> 0;
     }
     this.frame = frame;

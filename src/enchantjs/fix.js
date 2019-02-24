@@ -116,8 +116,8 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
   width = this.width;
   height = this.height;
 
-  var core = enchant.Core.instance;
-  var surface = new enchant.Surface(width, height);
+  let core = enchant.Core.instance;
+  let surface = new enchant.Surface(width, height);
   this._surface = surface;
   var canvas = surface._element;
   canvas.style.position = 'absolute';
@@ -135,7 +135,7 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
   if (this._image == null) {
     return;
   }
-  var image, tileWidth, tileHeight, dx, dy;
+  let image, tileWidth, tileHeight, dx, dy;
   if (this._doubledImage) {
     image = this._doubledImage;
     tileWidth = this._tileWidth * 2;
@@ -153,28 +153,28 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
     dx = -this._offsetX;
     dy = -this._offsetY;
   }
-  var row = (image.width / tileWidth) | 0;
-  var col = (image.height / tileHeight) | 0;
-  var left = Math.max(((x + dx) / tileWidth) | 0, 0);
-  var top = Math.max(((y + dy) / tileHeight) | 0, 0);
-  var right = Math.ceil((x + dx + width) / tileWidth);
-  var bottom = Math.ceil((y + dy + height) / tileHeight);
+  let row = (image.width / tileWidth) | 0;
+  let col = (image.height / tileHeight) | 0;
+  let left = Math.max(((x + dx) / tileWidth) | 0, 0);
+  let top = Math.max(((y + dy) / tileHeight) | 0, 0);
+  let right = Math.ceil((x + dx + width) / tileWidth);
+  let bottom = Math.ceil((y + dy + height) / tileHeight);
 
-  var source = image._element;
-  var context = this._context;
+  let source = image._element;
+  let context = this._context;
   var canvas = context.canvas;
 
   context.clearRect(x, y, width, height);
-  for (var i = 0, len = this._data.length; i < len; i++) {
-    var data = this._data[i];
-    var r = Math.min(right, data[0].length);
-    var b = Math.min(bottom, data.length);
+  for (let i = 0, len = this._data.length; i < len; i++) {
+    let data = this._data[i];
+    let r = Math.min(right, data[0].length);
+    let b = Math.min(bottom, data.length);
     for (y = top; y < b; y++) {
       for (x = left; x < r; x++) {
-        var n = data[y][x];
+        let n = data[y][x];
         if (0 <= n && n < row * col) {
-          var sx = (n % row) * tileWidth;
-          var sy = ((n / row) | 0) * tileHeight;
+          let sx = (n % row) * tileWidth;
+          let sy = ((n / row) | 0) * tileHeight;
           context.drawImage(
             source,
             sx,
@@ -302,10 +302,10 @@ enchant.EventTarget.prototype.dispatchEvent = function dispatchEvent(event) {
       const res = this['on' + event.type](event);
       reportAsyncError(res, event, this);
     }
-    var listeners = this._listeners[event.type];
+    let listeners = this._listeners[event.type];
     if (listeners != null) {
       listeners = listeners.slice();
-      for (var i = 0, len = listeners.length; i < len; i++) {
+      for (let i = 0, len = listeners.length; i < len; i++) {
         const res = listeners[i].call(this, event);
         reportAsyncError(res, event, this);
       }
