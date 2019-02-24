@@ -8,7 +8,6 @@ export default function(code) {
     eval(code);
   } catch (error) {
     // Hack.onerror を発火
-    const Event = enchant.Event;
     const errorEvent = new enchant.Event('error');
     errorEvent.target = Hack;
     errorEvent.error = error;

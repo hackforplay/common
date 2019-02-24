@@ -8,14 +8,14 @@ enchant.Node.prototype.resume = function() {
   this._stop = false;
 };
 
-enchant.Core.prototype._tick = function(time) {
-  var e = new enchant.Event('enterframe');
-  var now = window.getTime();
-  var elapsed = (e.elapsed = now - this.currentTime);
+enchant.Core.prototype._tick = function() {
+  let e = new enchant.Event('enterframe');
+  let now = window.getTime();
+  let elapsed = (e.elapsed = now - this.currentTime);
   this.currentTime = now;
   this._actualFps = elapsed > 0 ? 1000 / elapsed : 0;
-  var nodes = this.currentScene.childNodes.slice();
-  var push = Array.prototype.push;
+  let nodes = this.currentScene.childNodes.slice();
+  let push = Array.prototype.push;
 
   while (nodes.length) {
     const node = nodes.pop();

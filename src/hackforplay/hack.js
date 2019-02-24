@@ -9,10 +9,6 @@ function refocus() {
   window.focus(); // focus game
 }
 
-function getEditor() {
-  return Hack.enchantBook;
-}
-
 const Hack = self.Hack || new enchant.EventTarget();
 
 // Surface.load される時の基底パス
@@ -50,9 +46,9 @@ Hack.on('error', function(event) {
 Hack.fun2str = function(func) {
   // 関数の文字列化
   if (func instanceof Function) {
-    var str = func.toString().match(/^function[^\{]*\{\n?(\s*)([\s\S]*)\}$/);
+    let str = func.toString().match(/^function[^\{]*\{\n?(\s*)([\s\S]*)\}$/);
     if (str !== null) {
-      var indent = str[1].match(/(.*)$/)[0];
+      let indent = str[1].match(/(.*)$/)[0];
       return str[2]
         .split('\n' + indent)
         .join('\n')
@@ -126,8 +122,8 @@ game.on('awake', () => {
 // 画面に文字を表示する（次の行に追加）
 Hack.log = function() {
   try {
-    var values = [];
-    for (var i = arguments.length - 1; i >= 0; i--) {
+    let values = [];
+    for (let i = arguments.length - 1; i >= 0; i--) {
       switch (typeof arguments[i]) {
         case 'object':
           values[i] = JSON.stringify(arguments[i]);
@@ -164,12 +160,12 @@ Hack.clearLog = function() {
 // enchantBook
 Hack.enchantBook = function() {
   // scope: new Entity
-  var isEditorReady = false;
+  let isEditorReady = false;
   Hack.on('editorready', function() {
     isEditorReady = true;
   });
 
-  var _hint = '';
+  let _hint = '';
   Object.defineProperty(Hack, 'hint', {
     configurable: true,
     enumerable: true,
@@ -192,7 +188,7 @@ Hack.enchantBook = function() {
           },
           '/'
         );
-        var e = new enchant.Event('hintset');
+        let e = new enchant.Event('hintset');
         e.value = _hint;
         e.rawValue = value;
         Hack.dispatchEvent(e);
@@ -263,7 +259,7 @@ Hack.createLabel = function(text, prop) {
         this[key] = prop[key];
       }, this);
     }
-    var parent = this.defaultParentNode || Hack.defaultParentNode;
+    let parent = this.defaultParentNode || Hack.defaultParentNode;
     if (parent) {
       parent.addChild(this);
     }
@@ -278,7 +274,7 @@ Hack.createSprite = function(width, height, prop) {
         this[key] = prop[key];
       }, this);
     }
-    var parent = this.defaultParentNode || Hack.defaultParentNode;
+    let parent = this.defaultParentNode || Hack.defaultParentNode;
     if (parent) {
       parent.addChild(this);
     }
@@ -292,8 +288,8 @@ Hack.overlay = function() {
     // scope: createSprite()
 
     this.image = new enchant.Surface(game.width, game.height);
-    for (var i = 0; i < args.length; i++) {
-      var fill = args[i];
+    for (let i = 0; i < args.length; i++) {
+      let fill = args[i];
       switch (true) {
         case fill instanceof enchant.Surface:
           this.image.draw(fill, 0, 0, game.width, game.height);
@@ -318,7 +314,7 @@ Hack.overlay = function() {
 };
 
 (function() {
-  var playing = true;
+  let playing = true;
 
   Object.defineProperty(Hack, 'isPlaying', {
     configurable: true,
@@ -341,7 +337,7 @@ Hack.overlay = function() {
 
   // 初期値
   Hack.ongameclear = function() {
-    var lay = Hack.overlay(
+    let lay = Hack.overlay(
       'rgba(0,0,0,0.4)',
       'resources/hackforplay/clear.png'
     );
@@ -368,7 +364,7 @@ Hack.overlay = function() {
   };
 
   Hack.ongameover = function() {
-    var lay = Hack.overlay(
+    let lay = Hack.overlay(
       'rgba(0,0,0,0.4)',
       'resources/hackforplay/gameover.png'
     );
@@ -399,9 +395,9 @@ Hack.overlay = function() {
 (function() {
   game.rootScene.name = 'RootScene';
 
-  var visible, overlay;
+  let visible, overlay;
 
-  var GUIParts = [];
+  let GUIParts = [];
 
   // メニュー全体を包括するグループ つねに手前に描画される
   // Hack.menuGroup でアクセスできる
@@ -432,7 +428,7 @@ Hack.overlay = function() {
   });
 
   // Hack.menuOpener Sprite 読み取り専用プロパティ
-  var opener = Hack.createSprite(32, 32, {
+  let opener = Hack.createSprite(32, 32, {
     visible: false,
     x: 438,
     y: 10,
@@ -477,7 +473,7 @@ Hack.overlay = function() {
 
     overlay.tl.fadeOut(6);
 
-    GUIParts.forEach(function(item, index) {
+    GUIParts.forEach(function(item) {
       item.tl
         .fadeOut(8, enchant.Easing.BACK_EASEIN)
         .and()
@@ -523,7 +519,7 @@ Hack.overlay = function() {
       function() {
         // GUIParts,overlayを100ミリ秒間非表示にする
         GUIParts.concat(overlay).forEach(function(item) {
-          var visibility = item.visible;
+          let visibility = item.visible;
           item.visible = false;
           setTimeout(function() {
             item.visible = visibility;
@@ -576,7 +572,7 @@ Hack.overlay = function() {
  * condition: if (obj.---- === condition) { predicate(); }
  */
 Hack.define = function(obj, prop, condition, predicate) {
-  var _value = null,
+  let _value = null,
     descriptor = Object.getOwnPropertyDescriptor(obj, prop);
   if (arguments.length < 4)
     return Hack.define(Hack, arguments[0], arguments[1], arguments[2]);
@@ -604,7 +600,7 @@ Hack.define = function(obj, prop, condition, predicate) {
       };
     } else {
       // Extend setter
-      var setter = descriptor.set;
+      let setter = descriptor.set;
       descriptor.set = function(value) {
         setter.call(obj, value);
         if (value === condition && predicate instanceof Function) {
@@ -645,7 +641,7 @@ game.addEventListener('load', function() {
  * @return [r, g, b]
  */
 (function() {
-  var ctx = new enchant.Surface(1, 1).context;
+  let ctx = new enchant.Surface(1, 1).context;
   Hack.css2rgb = function(style) {
     if (typeof style === 'string') {
       ctx.fillStyle = style;
@@ -678,7 +674,7 @@ Hack.Vec2Dir = function(vec) {
   if (vec.x === 0 && vec.y === 0) {
     return null;
   }
-  var deg = (Math.atan2(vec.y, vec.x) / Math.PI) * 180;
+  let deg = (Math.atan2(vec.y, vec.x) / Math.PI) * 180;
   if (-135 <= deg && deg <= -45) {
     return 3;
   } // up

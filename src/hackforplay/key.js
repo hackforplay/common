@@ -76,9 +76,9 @@ Key.v.observe(function(key) {
 
 */
 
-var Key = {};
+let Key = {};
 
-var keyCode = {
+let keyCode = {
   num0: 48,
   num1: 49,
   num2: 50,
@@ -154,7 +154,7 @@ Object.keys(keyCode)
     game.keybind(value, value);
   });
 
-var KeyClass = enchant.Class.create({
+let KeyClass = enchant.Class.create({
   initialize: function() {
     this.listeners = [];
   },
@@ -183,8 +183,8 @@ var KeyClass = enchant.Class.create({
 
   update: function(input) {
     // 前フレームの状態を保持する
-    var pressed = this.pressed;
-    var released = this.released;
+    let pressed = this.pressed;
+    let released = this.released;
     // 入力の状態を更新する
     this.count = input ? this.count + 1 : 0;
     // press, release, observe を呼び出す
@@ -203,7 +203,7 @@ var KeyClass = enchant.Class.create({
         return listener.type === type;
       })
       .forEach(function(listener) {
-        var thisArg = listener.thisArg === undefined ? this : listener.thisArg;
+        let thisArg = listener.thisArg === undefined ? this : listener.thisArg;
         listener.listener.call(thisArg, this);
       }, this);
   },

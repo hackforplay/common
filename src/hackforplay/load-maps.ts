@@ -1,10 +1,8 @@
-/* global feeles */
-
 import createCompatibleMap from './create-compatible-map';
 import RPGMap from './rpg-map';
 import Hack from './hack';
 
-const feeles = (<any>window).feeles;
+const feeles = (window as any).feeles;
 const _cache: { [key: string]: Promise<RPGMap> } = {};
 let definitions: { [key: string]: Promise<string> } = {}; // File path of map definition
 

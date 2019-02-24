@@ -38,7 +38,7 @@ enchant.Surface.load = function(src, callback, onerror) {
     surface.addEventListener('error', onerror);
   }
   image.onerror = function() {
-    var e = new enchant.Event(enchant.Event.ERROR);
+    let e = new enchant.Event(enchant.Event.ERROR);
     e.message = 'Cannot load an asset: ' + image.src;
     game.dispatchEvent(e);
     surface.dispatchEvent(e);

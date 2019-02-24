@@ -1,11 +1,11 @@
-export type AudioConfig = {
+export interface IAudioConfig {
   // アップロードされたファイルの名前
   fileName: string;
   // 再生時に加えるディレイ [sec]
   delay: number;
-};
+}
 
-export const audioConfigs: { [key: string]: AudioConfig } = {
+export const audioConfigs: { [key: string]: IAudioConfig } = {
   あわ01: {
     fileName: 'bubble01.mp3',
     delay: 0.1

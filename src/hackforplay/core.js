@@ -1,4 +1,3 @@
-import enchant from '../enchantjs/enchant';
 import './rpg-kit-main';
 import './camera';
 import './loader';

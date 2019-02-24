@@ -3,7 +3,7 @@ import game from './game';
 // リサイズ時にゲームの scale を調節
 document.documentElement.style.overflow = 'hidden';
 window.addEventListener('resize', function() {
-  var fWidth = parseInt(window.innerWidth, 10),
+  let fWidth = parseInt(window.innerWidth, 10),
     fHeight = parseInt(window.innerHeight, 10);
   if (fWidth && fHeight) {
     game.scale = Math.min(fWidth / game.width, fHeight / game.height);
@@ -15,30 +15,31 @@ window.addEventListener('resize', function() {
 // 'capture' メッセージを受けてcanvasの画像を返す
 window.addEventListener('message', function(event) {
   if (typeof event.data === 'object' && event.data.query === 'capture') {
-    var canvas;
-    try {
-      canvas = game.currentScene._layers.Canvas._element;
-    } catch (e) {
-      if (!game.ready) {
-        game.on('load', send);
+    const getCanvas = () => {
+      try {
+        return game.currentScene._layers.Canvas._element;
+      } catch (error) {}
+    };
+    const send = () => {
+      const canvas = getCanvas();
+      if (!canvas) {
+        if (!game.ready) {
+          game.on('load', send);
+        } else {
+          throw new Error('enchantjs-kit.js: canvas element is not found');
+        }
       }
-      return;
-    }
-  }
-  send();
-
-  function send() {
-    return;
-    var canvas = game.currentScene._layers.Canvas._element;
-    event.source.postMessage(
-      {
-        query: event.data.responseQuery,
-        value: canvas.toDataURL(),
-        width: canvas.width,
-        height: canvas.height
-      },
-      event.origin
-    );
+      event.source.postMessage(
+        {
+          query: event.data.responseQuery,
+          value: canvas.toDataURL(),
+          width: canvas.width,
+          height: canvas.height
+        },
+        event.origin
+      );
+    };
+    send();
   }
 });
 

@@ -20,7 +20,7 @@ class MapObject extends RPGObject {
   }
 
   get name() {
-    var search = '';
+    let search = '';
     Object.keys(MapObject.dictionary).forEach(function(key) {
       if (MapObject.dictionary[key] === this.frame) {
         search = key;
@@ -75,13 +75,13 @@ Object.keys(dictionary).forEach(function(name) {
 
 function tryFetchMapImage(name) {
   if (game.assets['resources/enchantjs/x2/dotmat.gif']) {
-    var length = 20,
+    let length = 20,
       w = 32,
       h = 32;
-    var frame = MapObject.dictionary[name],
+    let frame = MapObject.dictionary[name],
       x = (frame % length) * w,
       y = ((frame / length) >> 0) * h;
-    var s = new enchant.Surface(w, h);
+    let s = new enchant.Surface(w, h);
     s.draw(
       game.assets['resources/enchantjs/x2/dotmat.gif'],
       x,
