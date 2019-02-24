@@ -437,6 +437,9 @@ class TextArea extends enchant.Sprite {
     }
   }
 
+  renderBackground(context) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  renderBorder(context) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+
   render() {
     const context = this.context;
 
