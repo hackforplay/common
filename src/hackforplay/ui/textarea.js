@@ -117,7 +117,7 @@ class TextArea extends enchant.Sprite {
     return this;
   }
 
-  show(text) {
+  show() {
     this.visible = true;
   }
 
@@ -125,7 +125,7 @@ class TextArea extends enchant.Sprite {
     this.visible = false;
   }
 
-  clear(text) {
+  clear() {
     this.values = [];
     this.source = '';
     this.document = null;
@@ -252,7 +252,6 @@ class TextArea extends enchant.Sprite {
     let addLine = 0;
     let previousLineIndex = -1;
     let previousCharIsAlphabet = false;
-    let previousCharStyleId = null;
     let previousCharRubyId = null;
     let previousCharAlign = null;
 
@@ -437,9 +436,6 @@ class TextArea extends enchant.Sprite {
       );
     }
   }
-
-  renderBackground(context) {}
-  renderBorder(context) {}
 
   render() {
     const context = this.context;

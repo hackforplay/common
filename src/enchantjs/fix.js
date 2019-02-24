@@ -101,7 +101,6 @@ enchant.Timeline.prototype.async = function async() {
 enchant.Map.prototype.cvsRender = function cvsRender(context) {
   if (!this.width || !this.height) return;
 
-  const core = enchant.Core.instance;
   const canvas = this._context.canvas;
 
   this.updateBuffer();
@@ -266,7 +265,7 @@ extend(enchant.Group, function() {
   // 重いのでデフォルトは false
   this.autoSorting = false;
 
-  this.on('childadded', a => {
+  this.on('childadded', () => {
     if (this.autoSorting) {
       this.sortChildren();
     }

@@ -13,7 +13,7 @@ interface ICollidedEvent extends IEvent {
 }
 
 function throwError(error: Error) {
-  return (window as any).feeles.throwError.apply(null, arguments);
+  return (window as any).feeles.throwError.apply(null, [error]);
 }
 
 function handleError(

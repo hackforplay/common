@@ -1,5 +1,4 @@
 import SAT from '../lib/sat.min';
-import enchant from '../enchantjs/enchant';
 import RPGObject from './object/object';
 import BehaviorTypes from './behavior-types';
 import game from './game';

@@ -111,18 +111,3 @@ enchant.Sprite.prototype.moveColor = function(before, after) {
   }
   this.image.context.putImageData(imageData, 0, 0);
 };
-
-function rgb256toNum64(r, g, b) {
-  if (arguments[0] instanceof Array) {
-    return rgb256toNum64.call(
-      null,
-      arguments[0][0],
-      arguments[0][1],
-      arguments[0][2]
-    );
-  }
-  var R2 = (r >> 6) & 3; // 2bits of R
-  var G2 = (g >> 6) & 3;
-  var B2 = (b >> 6) & 3;
-  return (R2 << 4) | (G2 << 2) | B2; // RRGGBB 6bit value
-}

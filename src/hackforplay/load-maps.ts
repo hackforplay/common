@@ -1,5 +1,3 @@
-/* global feeles */
-
 import createCompatibleMap from './create-compatible-map';
 import RPGMap from './rpg-map';
 import Hack from './hack';

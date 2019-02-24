@@ -11,10 +11,6 @@ function refocus() {
 
 const Hack = self.Hack || new enchant.EventTarget();
 
-function getEditor() {
-  return Hack.enchantBook;
-}
-
 // Surface.load される時の基底パス
 Hack.basePath = 'https://storage.googleapis.com/hackforplay-common/';
 
@@ -477,7 +473,7 @@ Hack.overlay = function() {
 
     overlay.tl.fadeOut(6);
 
-    GUIParts.forEach(function(item, index) {
+    GUIParts.forEach(function(item) {
       item.tl
         .fadeOut(8, enchant.Easing.BACK_EASEIN)
         .and()

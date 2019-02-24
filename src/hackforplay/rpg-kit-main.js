@@ -56,7 +56,7 @@ Hack.on('load', function() {
     Object.defineProperty(Hack.maps, 'next', {
       get: function() {
         var next = null;
-        Object.keys(Hack.maps).reduce(function(previousKey, currentKey, index) {
+        Object.keys(Hack.maps).reduce(function(previousKey, currentKey) {
           next = Hack.map === Hack.maps[previousKey] ? currentKey : next;
         });
         return next;
@@ -342,7 +342,7 @@ game.onawake = () => {
       Hack.openEditor();
     }
   });
-  Hack.onhintset = function(event) {
+  Hack.onhintset = function() {
     Hack.enchantBookIcon.visible = true;
   };
 
@@ -467,7 +467,7 @@ Hack.Dir2Vec = function(dir) {
   }
 };
 
-Hack.Attack = function(x, y, damage, pushX, pushY) {
+Hack.Attack = function(x, y, damage) {
   RPGObject.collection
     .filter(function(item) {
       return item.mapX === x && item.mapY === y && item !== this;

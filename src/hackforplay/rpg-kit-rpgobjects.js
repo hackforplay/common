@@ -2,7 +2,6 @@ import enchant from '../enchantjs/enchant';
 import './rpg-kit-main';
 import '../enchantjs/ui.enchant';
 import Hack from './hack';
-import * as synonyms from './synonyms';
 import SAT from '../lib/sat.min';
 import RPGObject from './object/object';
 import MapObject from './object/map-object';
@@ -930,7 +929,7 @@ game.on('enterframe', function() {
 
 function __physicsUpdateOnFrame(tick, frame, physics) {
   physics
-    .map(function(self, index) {
+    .map(function(self) {
       if (self._flyToward) {
         // flyToward() を使った Physics Update (暫定処理)
         const correction = 3.3; // 移動速度を walk と合わせるための係数

@@ -280,9 +280,6 @@ class Camera extends enchant.Sprite {
 
     if (!center) return;
 
-    var x = center.x;
-    var y = center.y;
-
     var rect = this.getRenderRect();
     var r = rect;
 

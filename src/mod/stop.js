@@ -8,7 +8,7 @@ enchant.Node.prototype.resume = function() {
   this._stop = false;
 };
 
-enchant.Core.prototype._tick = function(time) {
+enchant.Core.prototype._tick = function() {
   var e = new enchant.Event('enterframe');
   var now = window.getTime();
   var elapsed = (e.elapsed = now - this.currentTime);

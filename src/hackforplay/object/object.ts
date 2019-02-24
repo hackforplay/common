@@ -136,7 +136,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.on('enterframe', this.geneticUpdate);
 
     // HPLabel
-    this.on('hpchange', (e: any) => {
+    this.on('hpchange', () => {
       if (this.hasHp && this.showHpLabel) {
         this.hpLabel = this.hpLabel || makeHpLabel(this);
         this.hpLabel.score = this.hp;
@@ -1222,7 +1222,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private static _initializedReference: RPGObject;
   public へんしんする(name: string) {
-    const { _ruleInstance, hp } = this;
+    const { _ruleInstance } = this;
     if (!_ruleInstance) return;
 
     // 初期値を参照するためのインスタンスを作る
@@ -1447,7 +1447,7 @@ function makeHpLabel(self: RPGObject) {
   label.label = 'HP:';
   label.opacity = 0;
   self.parentNode.addChild(label);
-  self.on('enterframe', (e: any) => {
+  self.on('enterframe', () => {
     if (self.parentNode && self.parentNode !== label.parentNode) {
       self.parentNode.addChild(label);
     }
