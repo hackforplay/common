@@ -324,7 +324,6 @@ class TextArea extends enchant.Sprite {
         currentX = 0;
       }
 
-      previousCharStyleId = char.style.id;
       previousCharRubyId = char.style.rubyId;
       previousLineIndex = char.lineIndex;
       previousCharIsAlphabet = char.isAlphabet;
