@@ -2,6 +2,7 @@ import { default as Hack } from './hack';
 import TextArea from '../hackforplay/ui/textarea';
 
 var answers: any = [];
+var talks: any = [];
 
 // テキストエリアを生成
 const textArea = new TextArea(480, 200);
@@ -21,6 +22,14 @@ textArea.defaultStyle = {
   space: 0,
   ruby: null,
   rubyId: null
+};
+
+const showTextArea = function(text: string) {
+  Hack.menuGroup.addChild(textArea);
+  textArea.show();
+  textArea.clear(); // 前の文章をクリア
+  textArea.push(text); // テキストを挿入
+  textArea.y = 320 - textArea.height;
 };
 
 const theWorld = () => {
@@ -77,17 +86,19 @@ const makeAnswer = function(
   return textWindow;
 };
 
+var talkedText = '';
 export default function talk(text: string, ...choices: string[]) {
   return new Promise(resolve => {
     const starPlatinum = theWorld();
-    if (textArea.visible) windowDelete(); // 表示されてるウィンドウを消す
+    if (textArea.visible) {
+      talks.push(talkedText);
+      talks.push(answers);
+      windowDelete(); // 表示されてるウィンドウを消す
+    }
+    talkedText = text;
     choices.reverse(); // 下から上に表示するので、選択肢の配列をリバースする
     // 本文のテキストエリア作成
-    Hack.menuGroup.addChild(textArea);
-    textArea.show();
-    textArea.clear(); // 前の文章をクリア
-    textArea.push(text); // テキストを挿入
-    textArea.y = 320 - textArea.height;
+    showTextArea(text);
     if (choices.length === 0) {
       choices.push('とじる'); // 選択肢のテキスト表示
     }
@@ -95,6 +106,11 @@ export default function talk(text: string, ...choices: string[]) {
     for (const choice of choices) {
       const answer = makeAnswer(choice, resolve, starPlatinum);
       answers.push(answer);
+    }
+    if (talks.length !== 0) {
+      console.log(talks);
+      const replied = talks.pop();
+      const talked = talks.pop();
     }
   });
 }
