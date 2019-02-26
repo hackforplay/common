@@ -1442,7 +1442,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return soundEffect(name);
   }
 
-  async talk(text: string, ...choices: string[]) {
+  public async talk(text: string, ...choices: string[]) {
     return talk(text, ...choices);
   }
 }
