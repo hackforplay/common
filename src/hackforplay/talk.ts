@@ -58,7 +58,6 @@ const theWorld = () => {
 };
 
 const windowDelete = function() {
-  if (!textArea.visible) return;
   Hack.popupGroup.removeChild(textArea);
   for (const answer of answers) {
     Hack.popupGroup.removeChild(answer);
@@ -123,8 +122,8 @@ export default function talk(text: string, ...choices: string[]) {
     const talkInfo: ITalkInfo = {
       talkMessage: text,
       choices,
-      resolve: resolve,
-      resume: resume
+      resolve,
+      resume
     };
     talkStack.unshift(talkInfo); // talkStack配列の一番前に追加
     windowDelete(); // 後優先なのですでに表示されているものは一旦消す
