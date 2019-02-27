@@ -57,6 +57,7 @@ class TextArea extends enchant.Sprite {
       family: 'PixelMplus, sans-serif',
       weight: 'bold',
       align: 'left',
+      lineSpace: 0,
       space: 0,
       ruby: null,
       rubyId: null
@@ -379,7 +380,8 @@ class TextArea extends enchant.Sprite {
         char.y = currentY;
         char.h = maxFontSize;
       }
-      currentY += maxFontSize;
+      const { lineSpace } = line[0].style; // defaultStyle に lineSpace が指定されていない場合 undefined になる => 0 にする
+      currentY += (lineSpace || 0) + maxFontSize;
       this.values.push(...line);
     }
 
