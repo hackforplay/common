@@ -33,7 +33,7 @@ textArea.defaultStyle = {
 };
 
 const showTextArea = function(text: string) {
-  Hack.menuGroup.addChild(textArea);
+  Hack.popupGroup.addChild(textArea);
   textArea.show();
   textArea.clear(); // 前の文章をクリア
   textArea.push(text); // テキストを挿入
@@ -59,9 +59,9 @@ const theWorld = () => {
 
 const windowDelete = function() {
   if (!textArea.visible) return;
-  Hack.menuGroup.removeChild(textArea);
+  Hack.popupGroup.removeChild(textArea);
   for (const answer of answers) {
-    Hack.menuGroup.removeChild(answer);
+    Hack.popupGroup.removeChild(answer);
   }
   answers = [];
 };
@@ -72,7 +72,7 @@ const makeAnswer = function(
   resume: () => void
 ) {
   const textWindow = new TextArea(180, 32);
-  Hack.menuGroup.addChild(textWindow); // メニューにaddChild
+  Hack.popupGroup.addChild(textWindow); // メニューにaddChild
   textWindow.x = 480 - textWindow.w;
   textWindow.y =
     320 - textArea.height - textWindow.height * (answers.length + 1);
