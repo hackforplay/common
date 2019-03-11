@@ -3,6 +3,7 @@ import SAT from '../lib/sat.min';
 import { default as RPGObject } from './object/object';
 import { isOpposite } from './family';
 import game from './game';
+import Hack from './hack';
 
 game.on('enterframe', update);
 export function unregister() {
@@ -36,7 +37,8 @@ export default function createDamageMod(damage?: number, attacker?: RPGObject) {
 
 export function update() {
   const nonDamagers = RPGObject.collection.filter(
-    item => !item.isDamageObject && item.damageTime === 0 && item.scene
+    item =>
+      !item.isDamageObject && item.damageTime === 0 && item.map === Hack.map
   ); // ダメージをうける可能性のあるオブジェクト
 
   for (const pair of [...damagePairs]) {
@@ -44,7 +46,7 @@ export function update() {
     const index = damagePairs.indexOf(pair);
     if (index === -1) continue;
     const { damager, attacker } = pair;
-    if (!damager.scene) continue; // 異なるマップのダメージオブジェクトをスキップ
+    if (!damager.map !== Hack.map) continue; // 異なるマップのダメージオブジェクトをスキップ
     const damage =
       typeof pair.damage === 'number' ? pair.damage : <number>damager.atk;
     if (

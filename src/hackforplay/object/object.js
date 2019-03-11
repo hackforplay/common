@@ -406,6 +406,7 @@ class RPGObject extends enchant.Sprite {
     // 歩く先にあるオブジェクト
     const hits = RPGObject.collection.filter(obj => {
       return (
+        obj.map === Hack.map && // 今いるマップ
         obj.isKinematic &&
         obj.collisionFlag &&
         obj.mapX === nextX &&
