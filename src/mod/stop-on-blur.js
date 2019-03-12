@@ -44,4 +44,9 @@ export default function stopOnBlur() {
   window.addEventListener('focus', updateStyle);
   window.addEventListener('blur', updateStyle);
   updateStyle();
+
+  // for iOS Safari
+  window.addEventListener('touchstart', () => {
+    window.focus(); // Emit focus event
+  });
 }
