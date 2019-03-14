@@ -46,7 +46,7 @@ export function update() {
     const index = damagePairs.indexOf(pair);
     if (index === -1) continue;
     const { damager, attacker } = pair;
-    if (damager.map !== Hack.map) continue; // 異なるマップのダメージオブジェクトをスキップ
+    if (damager.map !== Hack.map) continue; // 異なるマップのダメージオブジェクトをスキップ patch
     const damage =
       typeof pair.damage === 'number' ? pair.damage : <number>damager.atk;
     if (
