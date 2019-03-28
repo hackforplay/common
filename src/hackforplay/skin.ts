@@ -3,6 +3,7 @@ import RPGObject from './object/object';
 import { default as SAT } from '../lib/sat.min';
 import { default as BehaviorTypes } from './behavior-types';
 import { default as logFunc } from '../mod/logFunc';
+import Skin from './deprecated-skin';
 
 export interface ISkin {
   name: string;
@@ -23,6 +24,12 @@ export interface ISkin {
   };
   direction: 1 | 4;
   mayRotate: boolean;
+  frame?: {
+    idle?: number[];
+    walk?: number[];
+    attack?: number[];
+    dead?: number[];
+  };
 }
 export type Result = Promise<(object: RPGObject) => void>;
 
@@ -88,11 +95,16 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
     setD6(object, BehaviorTypes.Attack, a(3, 4, 4, 4, 5, 4, null, 1));
     setD6(object, BehaviorTypes.Dead, [1, null]);
   } else {
+    var idleFrames = (skin.frame && skin.frame.idle) || [1, 1];
+    var walkFrames = (skin.frame && skin.frame.walk) || [0, 10];
+    var attackFrames = (skin.frame && skin.frame.attack) || [0, 12];
+    var deadFrames = (skin.frame && skin.frame.dead) || [0, 1];
+    // セット
     object.directionType = 'single';
-    object.setFrame(BehaviorTypes.Idle, [1]);
-    object.setFrame(BehaviorTypes.Walk, a(0, 10, null, 1));
-    object.setFrame(BehaviorTypes.Attack, a(0, 12, null, 1));
-    object.setFrame(BehaviorTypes.Dead, [0, null]);
+    object.setFrame(BehaviorTypes.Idle, a(...idleFrames));
+    object.setFrame(BehaviorTypes.Walk, a(...walkFrames));
+    object.setFrame(BehaviorTypes.Attack, a(...attackFrames));
+    object.setFrame(BehaviorTypes.Dead, a(...deadFrames));
   }
 };
 
