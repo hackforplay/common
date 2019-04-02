@@ -108,7 +108,7 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
       4
     ];
     const deadFrames6 = (skin.frame && skin.frame.dead) || [1, 1];
-    // セット
+    // 配列をオブジェクトにセット
     object.directionType = 'quadruple';
     setD6(object, BehaviorTypes.Idle, a(...idleFrames6));
     setD6(object, BehaviorTypes.Walk, a(...walkFrames6, null, 1));
@@ -119,7 +119,7 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
     const walkFrames = (skin.frame && skin.frame.walk) || [0, 10];
     const attackFrames = (skin.frame && skin.frame.attack) || [0, 12];
     const deadFrames = (skin.frame && skin.frame.dead) || [0, 1];
-    // セット
+    // 配列をオブジェクトにセット
     object.directionType = 'single';
     object.setFrame(BehaviorTypes.Idle, a(...idleFrames));
     object.setFrame(BehaviorTypes.Walk, a(...walkFrames, null, 1));
