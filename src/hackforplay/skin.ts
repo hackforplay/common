@@ -3,7 +3,6 @@ import RPGObject from './object/object';
 import { default as SAT } from '../lib/sat.min';
 import { default as BehaviorTypes } from './behavior-types';
 import { default as logFunc } from '../mod/logFunc';
-import Skin from './deprecated-skin';
 
 export interface ISkin {
   name: string;
@@ -89,22 +88,43 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
 
   // TODO: ６列 or １列で決め打ちしているが, そもそも列数で判断すべきではない
   if (skin.column === 6) {
+    const idleFrames6 = (skin.frame && skin.frame.idle) || [1, 1];
+    const walkFrames6 = (skin.frame && skin.frame.walk) || [
+      0,
+      3,
+      1,
+      3,
+      2,
+      3,
+      1,
+      1
+    ];
+    const attackFrames6 = (skin.frame && skin.frame.attack) || [
+      3,
+      4,
+      4,
+      4,
+      5,
+      4
+    ];
+    const deadFrames6 = (skin.frame && skin.frame.dead) || [1, 1];
+    // セット
     object.directionType = 'quadruple';
-    setD6(object, BehaviorTypes.Idle, [1]);
-    setD6(object, BehaviorTypes.Walk, [0, 0, 0, 1, 1, 1, 2, 2, 2, 1, null]);
-    setD6(object, BehaviorTypes.Attack, a(3, 4, 4, 4, 5, 4, null, 1));
-    setD6(object, BehaviorTypes.Dead, [1, null]);
+    setD6(object, BehaviorTypes.Idle, a(...idleFrames6));
+    setD6(object, BehaviorTypes.Walk, a(...walkFrames6, null, 1));
+    setD6(object, BehaviorTypes.Attack, a(...attackFrames6, null, 1));
+    setD6(object, BehaviorTypes.Dead, a(...deadFrames6, null, 1));
   } else {
-    var idleFrames = (skin.frame && skin.frame.idle) || [1, 1];
-    var walkFrames = (skin.frame && skin.frame.walk) || [0, 10];
-    var attackFrames = (skin.frame && skin.frame.attack) || [0, 12];
-    var deadFrames = (skin.frame && skin.frame.dead) || [0, 1];
+    const idleFrames = (skin.frame && skin.frame.idle) || [1, 1];
+    const walkFrames = (skin.frame && skin.frame.walk) || [0, 10];
+    const attackFrames = (skin.frame && skin.frame.attack) || [0, 12];
+    const deadFrames = (skin.frame && skin.frame.dead) || [0, 1];
     // セット
     object.directionType = 'single';
     object.setFrame(BehaviorTypes.Idle, a(...idleFrames));
-    object.setFrame(BehaviorTypes.Walk, a(...walkFrames));
-    object.setFrame(BehaviorTypes.Attack, a(...attackFrames));
-    object.setFrame(BehaviorTypes.Dead, a(...deadFrames));
+    object.setFrame(BehaviorTypes.Walk, a(...walkFrames, null, 1));
+    object.setFrame(BehaviorTypes.Attack, a(...attackFrames, null, 1));
+    object.setFrame(BehaviorTypes.Dead, a(...deadFrames, null, 1));
   }
 };
 
