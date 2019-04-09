@@ -3,8 +3,10 @@ import enchant from '../enchantjs/enchant';
 import Hack from '../hackforplay/hack';
 import '../hackforplay/core';
 import game from '../hackforplay/game';
+import Camera from '../hackforplay/camera';
 
-const { MutableText } = enchant.ui;
+const MutableText = (enchant as any).ui.MutableText;
+
 const imageDataUrl =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAAXNSR0IArs4c6QAAAcRJREFUeAHt2y1OA1EUBeD3hpJ6HAl7QCIwOPbABnBIFoHEsQK2gUEg2QMJDk8K8+hr0p8ES+Yk9KvppObc+U7v1PSV4kWAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAIH/IFCTN3F2306Gw++7WttFrfV4yllaa++t1adxcXD7clPfpszezYoVsMKfj69DaUe7A019PZb6MX4Op6kSZlPf8Dqvf/OHUo6er2exL0Gf5fzhq5XlLMvLq/VsU74vDTKv/tjJJP9OTc4SLGDaZ/5v9u0nU//+bJNLiRWwO8Q+Xysg3L4CFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8DFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8DFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8D9rWA/v/88L1v4pOzxDagH47YCIQvkrPEzgf0kyllPl6u/p8fLGB1QGMx3KZGiG1AP5HST6aMY3lMPAJ6Zs9Ono5JlS6XAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECfy/wA9qGU1T+GdfUAAAAAElFTkSuQmCC';
 
@@ -26,7 +28,7 @@ export default function coordinate() {
   sprite.moveTo(360, 300);
   enchant.Surface.load(
     imageDataUrl,
-    event => {
+    (event: any) => {
       sprite.image = event.target;
       Hack.menuGroup.addChild(sprite);
     },
@@ -38,10 +40,11 @@ export default function coordinate() {
   Hack.coordinateSprite = label;
 
   // マウスの位置を追跡
-  game._element.addEventListener('mousemove', event => {
+  const div: HTMLDivElement = game._element;
+  div.addEventListener('mousemove', event => {
     const { clientX, clientY } = event;
-    let x = '';
-    let y = '';
+    let x = -1;
+    let y = -1;
 
     // マウスが重なっている一番手前のカメラを取得
     const camera = Camera.collection
@@ -64,14 +67,14 @@ export default function coordinate() {
     sprite.moveTo((x - 1) * 32, (y - 1) * 32);
   });
 
-  const visibilitySetter = value => () => {
+  const visibilitySetter = (value: boolean) => () => {
     label.visible = value;
     sprite.visible = value;
   };
   // マウスが離れたら非表示にする
-  game._element.addEventListener('mouseleave', visibilitySetter(false));
+  div.addEventListener('mouseleave', visibilitySetter(false));
   // マウスが戻ってきたらまた表示する
-  game._element.addEventListener('mouseenter', visibilitySetter(true));
+  div.addEventListener('mouseenter', visibilitySetter(true));
 
   Hack.menuGroup.addChild(label);
 }
