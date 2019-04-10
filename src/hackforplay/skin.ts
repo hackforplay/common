@@ -58,6 +58,8 @@ const setD6 = (object: RPGObject, behavior: string, frame: any[]) => {
   );
 };
 
+const nope = () => {};
+
 /**
  * 与えられたスキンを任意の RPGObject に適用するための関数を返す
  * @param skin スキンオブジェクト
@@ -139,10 +141,6 @@ export default async function skin(
 
   const _promise = Promise.resolve()
     .then(() => feeles.fetchText(baseUrl + name))
-    .catch(error => {
-      logFunc(`${name} というスキンは ないみたい`, true);
-      console.error(error);
-    })
     .then(
       json =>
         new Promise((resolve: (_skin: ISkin) => void, reject) => {
@@ -154,7 +152,12 @@ export default async function skin(
           _surfaces[name + ''] = surface;
         })
     )
-    .then(_skin => dress(_skin));
+    .then(_skin => dress(_skin))
+    .catch(error => {
+      logFunc(`${name} というスキンは ないみたい`, true);
+      console.error(error);
+      return nope;
+    });
 
   return (_cache[name + ''] = _promise);
 }
