@@ -38,6 +38,9 @@ function startFrameCoroutine(
 
 const walkingObjects = new WeakSet<RPGObject>(); // https://bit.ly/2KqB1Gz
 
+const opt = <T>(opt: T | undefined, def: T): T =>
+  opt !== undefined ? opt : def;
+
 export default class RPGObject extends enchant.Sprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   private static _collectionTarget = [RPGObject];
@@ -1207,7 +1210,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   /**
    * summon の rule.つくる バージョン
    */
-  public しょうかんする(name: string) {
+  public しょうかんする(
+    name: string,
+    x?: number,
+    y?: number,
+    map?: string,
+    vec?: Vector2
+  ) {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
@@ -1218,10 +1227,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     const appended = _ruleInstance.つくる(
       name,
-      this.mapX + this.forward.x,
-      this.mapY + this.forward.y,
-      this.map ? this.map.name : undefined,
-      () => Vector2.from(this.forward),
+      opt(x, this.mapX + this.forward.x),
+      opt(y, this.mapY + this.forward.y),
+      opt(map, this.map ? this.map.name : undefined),
+      () => opt(vec, Vector2.from(this.forward)),
       this
     );
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
