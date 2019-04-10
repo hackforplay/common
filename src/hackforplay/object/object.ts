@@ -1262,7 +1262,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private static _initializedReference: RPGObject;
   public へんしんする(name: string) {
-    const { _ruleInstance } = this;
+    const { _ruleInstance, _hp } = this;
     if (!_ruleInstance) return;
 
     // 初期値を参照するためのインスタンスを作る
@@ -1277,6 +1277,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     _ruleInstance.installAsset(name);
     _ruleInstance.unregisterRules(this);
     _ruleInstance.registerRules(this, name);
+    if (_hp !== undefined) {
+      this.hp = _hp; // https://bit.ly/2P37rph
+    }
   }
 
   private getNearest(collection: RPGObject[]): RPGObject | null {
