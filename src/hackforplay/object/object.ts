@@ -36,6 +36,8 @@ function startFrameCoroutine(
   });
 }
 
+const walkingObjects = new WeakSet<RPGObject>(); // https://bit.ly/2KqB1Gz
+
 export default class RPGObject extends enchant.Sprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   private static _collectionTarget = [RPGObject];
@@ -389,6 +391,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
+    walkingObjects.delete(this);
   }
 
   public destroy(delay = 0) {
@@ -512,9 +515,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     distance = Math.round(distance);
 
     // distance 回歩く
+    walkingObjects.add(this);
     for (let i = 0; i < distance; ++i) {
       await startFrameCoroutine(this, this.walkImpl(forward || this.forward));
     }
+    walkingObjects.delete(this); // delete する必要はないが, 意味的に一応しておく
   }
 
   public walkRight() {
@@ -551,6 +556,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private *walkImpl(forward: IVector2) {
     if (!this.map) return;
+    if (!walkingObjects.has(this)) return;
+
     // タイルのサイズ
     const tw = this.map.tileWidth;
     const th = this.map.tileHeight;
