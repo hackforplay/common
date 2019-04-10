@@ -39,10 +39,7 @@ export default function coordinate() {
   // Hack に参照を追加
   Hack.coordinateSprite = label;
 
-  // マウスの位置を追跡
-  const div: HTMLDivElement = game._element;
-  div.addEventListener('mousemove', event => {
-    const { clientX, clientY } = event;
+  const setPosition = (clientX: number, clientY: number) => {
     let x = -1;
     let y = -1;
 
@@ -65,6 +62,13 @@ export default function coordinate() {
     label.moveTo(labelX, clientY);
     // 枠を移動
     sprite.moveTo((x - 1) * 32, (y - 1) * 32);
+  };
+
+  // マウスの位置を追跡
+  const div: HTMLDivElement = game._element;
+  div.addEventListener('mousemove', event => {
+    const { clientX, clientY } = event;
+    setPosition(clientX, clientY);
   });
 
   const visibilitySetter = (value: boolean) => () => {
@@ -75,6 +79,18 @@ export default function coordinate() {
   div.addEventListener('mouseleave', visibilitySetter(false));
   // マウスが戻ってきたらまた表示する
   div.addEventListener('mouseenter', visibilitySetter(true));
+
+  // タッチされた位置
+  div.addEventListener('touchstart', event => {
+    const visible = !label.visible; // toggle
+    label.visible = visible;
+    sprite.visible = visible;
+    if (!visible) return;
+    const primaryTouch = event.touches.item(0);
+    if (!primaryTouch) return;
+    const { clientX, clientY } = primaryTouch;
+    setPosition(clientX, clientY);
+  });
 
   Hack.menuGroup.addChild(label);
 }
