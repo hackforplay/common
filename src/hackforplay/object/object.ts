@@ -1215,7 +1215,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     x?: number,
     y?: number,
     map?: string,
-    vec?: Vector2
+    dir?: Dir.IDir
   ) {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
@@ -1230,7 +1230,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       opt(x, this.mapX + this.forward.x),
       opt(y, this.mapY + this.forward.y),
       opt(map, this.map ? this.map.name : undefined),
-      () => opt(vec, Vector2.from(this.forward)),
+      opt(dir, () => Vector2.from(this.forward)),
       this
     );
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
