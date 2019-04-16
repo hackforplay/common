@@ -285,9 +285,9 @@ export default class Rule {
     await this.runNoObjectListener('ゲームがはじまったとき');
   }
 
-  _previousNow = 0;
-  _elapsedTimeCounter = 0; // 0-999 number
-  _isTimerEnabled = false;
+  private _previousNow = 0;
+  private _elapsedTimeCounter = 0; // 0-999 number
+  private _isTimerEnabled = false;
   private progressTime: FrameRequestCallback = ((time: number) => {
     if (!this._isTimerEnabled) return;
     const elapsed = time - this._previousNow;
