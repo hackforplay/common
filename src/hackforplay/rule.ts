@@ -296,7 +296,7 @@ export default class Rule {
     this.previousNow = time;
     this.timerId = requestAnimationFrame(this.progressTime);
 
-    if (Hack.world._stop) return;
+    if (Hack.world._stop || !Hack.isPlaying) return;
     this.elapsedTimeCounter += elapsed;
     if (this.elapsedTimeCounter >= 1000) {
       this.runじかんがすすんだとき();
