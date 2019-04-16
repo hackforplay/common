@@ -194,6 +194,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._atk = value;
   }
 
+  public get time() {
+    return Hack.time;
+  }
+
+  public set time(value) {
+    Hack.time = value;
+  }
+
   public get map(): RPGMap | null {
     return this.parentNode ? this.parentNode.ref : null;
   }

@@ -8,6 +8,7 @@ export interface INumbers {
   fieldOfView: number;
   lengthOfView: number;
   money: number;
+  time: number;
 }
 
 // reflection の機能がないので,
@@ -19,6 +20,7 @@ const reflectINumbers: INumbers = {
   damage: 0,
   penetrate: 0,
   money: 0,
+  time: 0,
 
   fieldOfView: 0,
   lengthOfView: 0
