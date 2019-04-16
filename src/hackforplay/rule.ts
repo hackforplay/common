@@ -282,6 +282,7 @@ export default class Rule {
   }
 
   public async runゲームがはじまったとき() {
+    this.startTimer(); // 自動的にタイマーをスタートさせる
     await this.runNoObjectListener('ゲームがはじまったとき');
   }
 
