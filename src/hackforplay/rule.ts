@@ -286,20 +286,21 @@ export default class Rule {
     await this.runNoObjectListener('ゲームがはじまったとき');
   }
 
-  private _previousNow = 0;
-  private _elapsedTimeCounter = 0; // 0-999 number
-  private _isTimerEnabled = false;
+  private previousNow = 0;
+  private elapsedTimeCounter = 0; // 0-999 number
+  private isTimerEnabled = false;
+  private timerId = 0;
   private progressTime: FrameRequestCallback = ((time: number) => {
-    if (!this._isTimerEnabled) return;
-    const elapsed = time - this._previousNow;
-    this._previousNow = time;
-    requestAnimationFrame(this.progressTime);
+    if (!this.isTimerEnabled) return;
+    const elapsed = time - this.previousNow;
+    this.previousNow = time;
+    this.timerId = requestAnimationFrame(this.progressTime);
 
     if (Hack.world._stop) return;
-    this._elapsedTimeCounter += elapsed;
-    if (this._elapsedTimeCounter >= 1000) {
+    this.elapsedTimeCounter += elapsed;
+    if (this.elapsedTimeCounter >= 1000) {
       this.runじかんがすすんだとき();
-      this._elapsedTimeCounter -= 1000;
+      this.elapsedTimeCounter -= 1000;
     }
   }).bind(this);
 
@@ -315,13 +316,15 @@ export default class Rule {
   }
 
   public startTimer() {
-    this._previousNow = performance.now();
-    this._isTimerEnabled = true;
-    requestAnimationFrame(this.progressTime);
+    if (this.isTimerEnabled) return;
+    this.isTimerEnabled = true;
+    this.previousNow = performance.now();
+    this.timerId = requestAnimationFrame(this.progressTime);
   }
 
   public stopTimer() {
-    this._isTimerEnabled = false;
+    this.isTimerEnabled = false;
+    cancelAnimationFrame(this.timerId);
   }
 
   public registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
