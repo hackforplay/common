@@ -700,4 +700,16 @@ Object.defineProperty(Hack, 'statusLabel', {
   }
 });
 
+// ゲームの経過時間を知るためのプロパティ
+let _time = 0;
+Object.defineProperty(Hack, 'time', {
+  enumerable: true,
+  get() {
+    return _time;
+  },
+  set(value) {
+    _time = Math.max(0, Math.ceil(value));
+  }
+});
+
 export default Hack;

@@ -285,6 +285,44 @@ export default class Rule {
     await this.runNoObjectListener('ゲームがはじまったとき');
   }
 
+  _previousNow = 0;
+  _elapsedTimeCounter = 0; // 0-999 number
+  _isTimerEnabled = false;
+  private progressTime: FrameRequestCallback = ((time: number) => {
+    if (!this._isTimerEnabled) return;
+    const elapsed = time - this._previousNow;
+    this._previousNow = time;
+    requestAnimationFrame(this.progressTime);
+
+    if (Hack.world._stop) return;
+    this._elapsedTimeCounter += elapsed;
+    if (this._elapsedTimeCounter >= 1000) {
+      this.runじかんがすすんだとき();
+      this._elapsedTimeCounter -= 1000;
+    }
+  }).bind(this);
+
+  private runじかんがすすんだとき() {
+    Hack.time++;
+    const listeners = this._listenersOfOne['じかんがすすんだとき'];
+    if (!listeners) return;
+    for (const name of Object.keys(listeners)) {
+      for (const item of this.getCollection(name)) {
+        this.runOneObjectLisener('じかんがすすんだとき', item);
+      }
+    }
+  }
+
+  public startTimer() {
+    this._previousNow = performance.now();
+    this._isTimerEnabled = true;
+    requestAnimationFrame(this.progressTime);
+  }
+
+  public stopTimer() {
+    this._isTimerEnabled = false;
+  }
+
   public registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
     object.name = name;
     if (this.hasOneObjectLisener('つくられたとき', name)) {
@@ -415,6 +453,9 @@ export default class Rule {
   }
   public おかねがかわったとき(func: OneObjectListener) {
     this.addOneObjectLisener('おかねがかわったとき', func);
+  }
+  public じかんがすすんだとき(func: OneObjectListener) {
+    this.addOneObjectLisener('じかんがすすんだとき', func);
   }
   public ふまれたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
