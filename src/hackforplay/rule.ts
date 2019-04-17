@@ -155,7 +155,7 @@ export default class Rule {
       await handleError(type, name, specify.call(object, item));
     }
     const enemy = listeners[Enemy];
-    if (enemy && isOpposite(this, object) && item.hp > 0) {
+    if (enemy && isOpposite(item, object) && item.hp > 0) {
       // 自分の敵なら
       await handleError(type, name, enemy.call(object, item));
     }
