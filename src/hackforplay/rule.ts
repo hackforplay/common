@@ -297,7 +297,7 @@ export default class Rule {
     this.timerId = requestAnimationFrame(this.progressTime);
 
     if (Hack.world._stop || !Hack.isPlaying) return;
-    this.elapsedTimeCounter += elapsed;
+    this.elapsedTimeCounter += Math.min(elapsed, 100); // ブラウザタブが離れた時のために, 1frame < 100ms 以内に詰める
     if (this.elapsedTimeCounter >= 1000) {
       this.runじかんがすすんだとき();
       this.elapsedTimeCounter -= 1000;
