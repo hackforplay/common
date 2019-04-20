@@ -41,7 +41,7 @@ class Camera extends enchant.Sprite {
   private _numberLabels: any[] = [];
   private static _numberLabels: (keyof N.INumbers)[] = ['hp', 'money', 'time'];
   public static get numberLabels() {
-    return Camera._numberLabels;
+    return Camera._numberLabels.slice();
   }
   public static set numberLabels(value) {
     Camera._numberLabels = value;
