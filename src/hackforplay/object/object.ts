@@ -1438,6 +1438,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private _isJustBeingFound = false; // みつけたときに同フレーム内で this.find() して Stackoverflow するのを防ぐフラグ
   public async find() {
+    if (!Hack.isPlaying) return; // ゲームが終了している
     if (this.behavior !== BehaviorTypes.Idle) return;
     if (this._isJustBeingFound) return; // 同フレーム内でみつけたときがコールされたばかり
     const { _ruleInstance } = this;
