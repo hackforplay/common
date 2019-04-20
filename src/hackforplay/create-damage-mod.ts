@@ -60,19 +60,22 @@ export function update() {
       return false;
     });
 
-    for (const object of hits) {
-      object.damageTime = object.attackedDamageTime; // チカチカする
-      if (object.hasHp) {
-        object.hp -= damager.damage; // 体力が number なら減らす
+    if (Hack.isPlaying) {
+      // ゲームが継続している間しかダメージは入らないが、当たり判定はある
+      for (const object of hits) {
+        object.damageTime = object.attackedDamageTime; // チカチカする
+        if (object.hasHp) {
+          object.hp -= damager.damage; // 体力が number なら減らす
+        }
+        // イベントを発火させる
+        object.dispatchEvent(
+          new enchant.Event('attacked', {
+            attacker: attacker || damager, // attacker は弾などのエフェクトの場合もある
+            item: attacker || damager, // 引数名の統一
+            damage: damager.damage
+          })
+        );
       }
-      // イベントを発火させる
-      object.dispatchEvent(
-        new enchant.Event('attacked', {
-          attacker: attacker || damager, // attacker は弾などのエフェクトの場合もある
-          item: attacker || damager, // 引数名の統一
-          damage: damager.damage
-        })
-      );
     }
 
     if (hits.length > 0) {
