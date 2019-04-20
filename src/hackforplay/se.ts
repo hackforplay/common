@@ -4,7 +4,6 @@ import { getConfig } from './se-data';
 const feeles = (window as any).feeles;
 const data: { [key: string]: AudioBuffer | null | undefined } = {};
 const audioCtx = new AudioContext();
-Hack.seBaseUrl = 'https://storage.googleapis.com/hackforplay-sounds/';
 
 export default async function soundEffect(jpName: string) {
   const audioConfig = getConfig(jpName);

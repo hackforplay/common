@@ -712,4 +712,6 @@ Object.defineProperty(Hack, 'time', {
   }
 });
 
+Hack.seBaseUrl = 'https://storage.googleapis.com/hackforplay-sounds/';
+
 export default Hack;
