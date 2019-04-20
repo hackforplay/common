@@ -269,6 +269,7 @@ export default class Rule {
    * @param name string このアセットとして実行する (へんしんしたらストップしたい)
    */
   public runつねに(object: RPGObject, name: string) {
+    if (!Hack.isPlaying) return; // ゲームが終了した
     if (object.name !== name) return; // へんしんしたので終了
     // TODO: パフォーマンスが悪化しそうなので改善する
     requestAnimationFrame(() => {
