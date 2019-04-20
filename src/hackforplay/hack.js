@@ -2,6 +2,7 @@ import enchant from '../enchantjs/enchant';
 import TextArea from './ui/textarea';
 import game from './game';
 import requestPostMessage from './request-post-message';
+import Camera from './camera';
 
 function refocus() {
   window.document.activeElement.blur(); // Blur an enchantBook
@@ -711,6 +712,21 @@ Object.defineProperty(Hack, 'time', {
     _time = Math.max(0, Math.ceil(value));
   }
 });
+
+Hack.showLabel = key => {
+  if (!Camera.numberLabels.includes(key)) {
+    Camera.numberLabels = Camera.numberLabels.concat(key);
+  }
+};
+
+Hack.hideLabel = key => {
+  const labels = Camera.numberLabels;
+  const index = labels.indexOf(key);
+  if (index > -1) {
+    labels.splice(index, 1);
+    Camera.numberLabels = labels;
+  }
+};
 
 Hack.seBaseUrl = 'https://storage.googleapis.com/hackforplay-sounds/';
 
