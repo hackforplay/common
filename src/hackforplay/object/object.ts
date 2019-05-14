@@ -236,6 +236,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     _ruleInstance.runOneObjectLisener('おかねがかわったとき', this);
   }
 
+  public get isPlayer() {
+    return Boolean(Camera && Camera.main && Camera.main.target === this);
+  }
+
   private updateCollider() {
     this.collider.pos.x = this.x;
     this.collider.pos.y = this.y;
@@ -400,7 +404,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       const map = Hack.maps[mapName] as RPGMap;
       if (map instanceof RPGMap && this.map !== map) {
         // プレイヤーがワープする場合は, 先にマップを変更する
-        if (this === (Camera.main && Camera.main.target)) {
+        if (this.isPlayer) {
           Hack.changeMap(mapName);
         }
         map.scene.addChild(this);
