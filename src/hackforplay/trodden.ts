@@ -25,6 +25,7 @@ export default function trodden() {
   // 2
   for (const item of collection) {
     if (walkingRPGObjects.has(item) && item.behavior === BehaviorTypes.Idle) {
+      // 1. 歩き終わったタイミングをフックする
       const targets = collection.filter(target => isTrodden(target, item));
       for (const target of targets) {
         dispatch('addtrodden', target, item);
@@ -37,6 +38,7 @@ export default function trodden() {
           itemSet.add(item);
         }
       }
+      walkingRPGObjects.delete(item);
     }
   }
 
@@ -55,15 +57,6 @@ export default function trodden() {
       if (itemSet.size < 1) {
         targetItemSetMap.delete(target);
       }
-    }
-  }
-
-  // 1
-  for (const item of collection) {
-    if (item.behavior === BehaviorTypes.Walk) {
-      walkingRPGObjects.add(item);
-    } else {
-      walkingRPGObjects.delete(item);
     }
   }
 }
@@ -100,4 +93,12 @@ function dispatch(name: string, target: RPGObject, item: RPGObject) {
 
 export function unregister() {
   game.off('enterframe', trodden);
+}
+
+/**
+ * 歩き始めた（何か踏むかもしれない）オブジェクトを登録する
+ * @param item 歩き始めたオブジェクト
+ */
+export function registerWalkingObject(item: RPGObject) {
+  walkingRPGObjects.add(item);
 }
