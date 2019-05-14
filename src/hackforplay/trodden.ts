@@ -1,13 +1,14 @@
+import { default as enchant } from '../enchantjs/enchant';
 import SAT from '../lib/sat.min';
-import RPGObject from './object/object';
 import BehaviorTypes from './behavior-types';
 import game from './game';
 import Hack from './hack';
+import RPGObject from './object/object';
 
 game.on('enterframe', trodden);
 
-const walkingRPGObjects = new WeakSet();
-const targetItemSetMap = new WeakMap();
+const walkingRPGObjects = new WeakSet<RPGObject>();
+const targetItemSetMap = new WeakMap<RPGObject, Set<RPGObject>>();
 
 /**
  * 1. 任意の RPGObject(item) が Walk から Idle になった (歩き終えた) とき,
@@ -27,12 +28,12 @@ export default function trodden() {
       const targets = collection.filter(target => isTrodden(target, item));
       for (const target of targets) {
         dispatch('addtrodden', target, item);
-        if (!targetItemSetMap.has(target)) {
+        const itemSet = targetItemSetMap.get(target);
+        if (!itemSet) {
           const itemSet = new Set();
           itemSet.add(item);
           targetItemSetMap.set(target, itemSet);
         } else {
-          const itemSet = targetItemSetMap.get(target);
           itemSet.add(item);
         }
       }
@@ -43,8 +44,8 @@ export default function trodden() {
   // さっきまで踏んでいたオブジェクトが今も残っているか調べる
   // オブジェクトは collection から削除されている可能性があることに注意する
   for (const target of collection) {
-    if (targetItemSetMap.has(target)) {
-      const itemSet = targetItemSetMap.get(target);
+    const itemSet = targetItemSetMap.get(target);
+    if (itemSet) {
       for (const item of new Set(itemSet)) {
         if (!isTrodden(target, item)) {
           dispatch('removetrodden', target, item);
@@ -72,7 +73,7 @@ export default function trodden() {
  * @param {RPGObject} target ふまれるかも知れないオブジェクトのコライダー
  * @param {RPGObject} item ふむかも知れないオブジェクト
  */
-function isTrodden(target, item) {
+function isTrodden(target: RPGObject, item: RPGObject) {
   if (
     target === item ||
     !RPGObject.collection.includes(target) ||
@@ -80,7 +81,7 @@ function isTrodden(target, item) {
   ) {
     return false;
   }
-  const colliders = target.colliders || [target.collider];
+  const colliders: any[] = target.colliders || [target.collider];
   const p = new SAT.Vector(item.center.x, item.center.y);
   return colliders.some(poly => SAT.pointInPolygon(p, poly));
 }
@@ -91,8 +92,8 @@ function isTrodden(target, item) {
  * @param {RPGObject} target ふまれたオブジェクト
  * @param {RPGObject} item ふんだオブジェクト
  */
-function dispatch(name, target, item) {
-  const event = new Event(name);
+function dispatch(name: string, target: RPGObject, item: RPGObject) {
+  const event = new enchant.Event(name);
   event.item = item;
   target.dispatchEvent(event);
 }
