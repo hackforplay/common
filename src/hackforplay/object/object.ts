@@ -651,6 +651,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const beginY = this.y;
 
     for (let frame = 1; frame <= endFrame; ++frame) {
+      if (!walkingObjects.has(this)) break;
       // アニメーション番号を算出
       this.frame = animation[Math.floor((animation.length / endFrame) * frame)];
 
@@ -670,10 +671,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       yield;
     }
 
-    // 移動の誤差を修正
-    this.x = beginX + tw * forward.x;
-    this.y = beginY + th * forward.y;
-    this.updateCollider(); // TODO: 動的プロパティ
+    if (walkingObjects.has(this)) {
+      // 移動の誤差を修正
+      this.x = nextX;
+      this.y = nextY;
+      this.updateCollider(); // TODO: 動的プロパティ
+    }
 
     this.dispatchEvent(new enchant.Event('walkend'));
 
