@@ -566,6 +566,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return true;
   }
 
+  private walkDestination?: IVector2;
   private *walkImpl(forward: IVector2) {
     if (!this.map) return;
     if (!walkingObjects.has(this)) return;
@@ -580,13 +581,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     // 移動先
     const unit = Vector2.from(forward).unit8();
-    const nextX = this.mapX + unit.x;
-    const nextY = this.mapY + unit.y;
+    const nextMapX = this.mapX + unit.x;
+    const nextMapY = this.mapY + unit.y;
 
-    let isHit = this.map.hitTest(nextX * tw, nextY * th);
+    let isHit = this.map.hitTest(nextMapX * tw, nextMapY * th);
 
     // 画面外
-    if (nextX < 0 || nextX >= tx || nextY < 0 || nextY >= ty) {
+    if (nextMapX < 0 || nextMapX >= tx || nextMapY < 0 || nextMapY >= ty) {
       // 画面外なら歩かない
       if (this.collideMapBoader) {
         this.dispatchCollidedEvent([], true);
@@ -604,8 +605,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         obj.map === Hack.map && // 今いるマップ
         obj.isKinematic &&
         obj.collisionFlag &&
-        obj.mapX === nextX &&
-        obj.mapY === nextY
+        (obj.walkDestination
+          ? // 行こうとしているマスで判断
+            obj.walkDestination.x === nextMapX &&
+            obj.walkDestination.y === nextMapY
+          : // 今いるマスで判断
+            obj.mapX === nextMapX && obj.mapY === nextMapY)
       );
     });
 
@@ -638,27 +643,28 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // 最後に null が入っているので削除
     animation.pop();
 
-    // 1F の移動量
-    let move = 1.0 / animation.length;
-
-    // 移動量に速度をかける
-    move *= this.speed;
+    const baseSpeed = Math.max(1, animation.length); // speed=1 の時にかかる frame
 
     // 1 マス移動するのにかかるフレーム数
     // 最速でも 1 フレームはかかるようになっている
-    const endFrame = Math.ceil(1.0 / move);
+    const requiredFrames = Math.ceil(baseSpeed / this.speed);
 
     // 移動開始座標
     const beginX = this.x;
     const beginY = this.y;
+    const nextX = beginX + tw * unit.x;
+    const nextY = beginY + th * unit.y;
 
-    for (let frame = 1; frame <= endFrame; ++frame) {
+    this.walkDestination = new Vector2(nextMapX, nextMapY); // 歩行中にぶつからないようにする
+    // startCoroutine の時点で 1frame 遅れていると考えて, 1 から始める
+    for (let frame = 1; frame < requiredFrames; ++frame) {
       if (!walkingObjects.has(this)) break;
       // アニメーション番号を算出
-      this.frame = animation[Math.floor((animation.length / endFrame) * frame)];
+      this.frame = animation[frame % animation.length];
 
-      const x = beginX + move * tw * frame * forward.x;
-      const y = beginY + move * th * frame * forward.y;
+      const t = frame / requiredFrames;
+      const x = beginX + t * (nextX - beginX);
+      const y = beginY + t * (nextY - beginY);
 
       // 移動
       this.moveTo(x, y);
@@ -666,12 +672,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
       this.dispatchEvent(new enchant.Event('walkmove'));
 
-      // 最終フレームなら待たない
-      if (frame === endFrame) break;
-
       // 1 フレーム待機する
       yield;
     }
+    this.walkDestination = undefined;
 
     if (walkingObjects.has(this)) {
       // 移動の誤差を修正
@@ -680,6 +684,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this.updateCollider(); // TODO: 動的プロパティ
     }
 
+    this.dispatchEvent(new enchant.Event('walkmove'));
     this.dispatchEvent(new enchant.Event('walkend'));
 
     this.behavior = BehaviorTypes.Idle;
