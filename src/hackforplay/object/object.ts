@@ -1,23 +1,23 @@
 import { default as enchant } from '../../enchantjs/enchant';
 import '../../enchantjs/ui.enchant';
-import { default as Hack } from '../hack';
-import * as synonyms from '../synonyms';
-import { default as DeprecatedSkin } from '../deprecated-skin';
-import { default as Family, registerServant, getMaster } from '../family';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
-import RPGMap from '../rpg-map';
-import { default as game } from '../game';
-import { randomRange, randomCollection } from '../random';
-import Rule from '../rule';
 import { default as Camera } from '../camera';
+import { default as DeprecatedSkin } from '../deprecated-skin';
 import * as Dir from '../dir';
-import * as Skin from '../skin';
-import * as N from './numbers';
-import Vector2, { IVector2 } from '../math/vector2';
+import { default as Family, getMaster, registerServant } from '../family';
+import { default as game } from '../game';
+import { default as Hack } from '../hack';
 import { generateMapFromDefinition } from '../load-maps';
+import Vector2, { IVector2 } from '../math/vector2';
+import { randomCollection, randomRange } from '../random';
+import RPGMap from '../rpg-map';
+import Rule from '../rule';
 import soundEffect from '../se';
+import * as Skin from '../skin';
+import * as synonyms from '../synonyms';
 import talk from '../talk';
+import * as N from './numbers';
 import { registerWalkingObject } from '../trodden';
 
 // 1 フレーム ( enterframe ) 間隔で next する
