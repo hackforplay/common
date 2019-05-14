@@ -615,8 +615,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       else isHit = false;
     }
 
+    // プレイヤーだけは例外的に仲間のいるマスをすり抜けられる
+    const mayCollideItems = this.isPlayer
+      ? RPGObject.collection.filter(item => this.family !== item.family)
+      : [...RPGObject.collection];
+
     // 歩く先にあるオブジェクト
-    const hits = RPGObject.collection.filter(obj => {
+    const hits = mayCollideItems.filter(obj => {
       return (
         obj.map === Hack.map && // 今いるマップ
         obj.isKinematic &&
