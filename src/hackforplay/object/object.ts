@@ -369,7 +369,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  public locate(fromLeft: number, fromTop: number, mapName?: string) {
+  public locate(
+    fromLeft: number,
+    fromTop: number,
+    mapName?: string,
+    ignoreTrodden = false
+  ) {
     if (mapName) {
       if (!(mapName in Hack.maps)) {
         // 存在しないマップ
@@ -384,7 +389,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         }
         generateMapFromDefinition(mapName).then(map => {
           Hack.maps[mapName] = map;
-          this.locate(fromLeft, fromTop, mapName); // マップができたらもう一度呼び出す
+          this.locate(fromLeft, fromTop, mapName, ignoreTrodden); // マップができたらもう一度呼び出す
         });
         console.info(
           `${mapName} is automaticaly generated. You can set background of map!`
@@ -400,6 +405,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         }
         map.scene.addChild(this);
       }
+    }
+    if (
+      !ignoreTrodden &&
+      (fromLeft !== this.mapX || fromTop !== this.mapY || mapName)
+    ) {
+      // 位置に変更があれば trodden をフックできるようにする
+      registerWalkingObject(this);
     }
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
@@ -634,7 +646,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // 歩く
     this.behavior = BehaviorTypes.Walk;
     this.dispatchEvent(new enchant.Event('walkstart'));
-    registerWalkingObject(this)
+    registerWalkingObject(this);
 
     // 衝突リストを初期化
     this._collidedNodes = [];
@@ -1197,7 +1209,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this.behavior !== BehaviorTypes.Idle) return;
     const { pairedObject } = portal;
     if (!pairedObject || !pairedObject.map) return;
-    this.locate(pairedObject.mapX, pairedObject.mapY, pairedObject.map.name);
+    this.locate(
+      pairedObject.mapX,
+      pairedObject.mapY,
+      pairedObject.map.name,
+      true
+    );
   }
 
   public teleportRandom() {
