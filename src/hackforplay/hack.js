@@ -737,4 +737,9 @@ Object.defineProperty(Hack, 'code', {
   get: getCode
 });
 
+/**
+ * Experimental
+ */
+Hack.emphasizeCode = () => console.log('魔道書が光り輝いている!');
+
 export default Hack;
