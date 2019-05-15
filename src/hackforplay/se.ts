@@ -1,11 +1,13 @@
+import { fetchArrayBuffer, throwError } from './feeles';
 import { default as Hack } from './hack';
 import { getConfig } from './se-data';
 
-const feeles = (window as any).feeles;
 const data: { [key: string]: AudioBuffer | null | undefined } = {};
 const audioCtx = new AudioContext();
 
 export default async function soundEffect(jpName: string) {
+  if (!fetchArrayBuffer) return;
+
   const audioConfig = getConfig(jpName);
   const audioSource = data[jpName];
   if (audioSource === null) {
@@ -16,7 +18,7 @@ export default async function soundEffect(jpName: string) {
     const gainNode = audioCtx.createGain();
 
     const url = `${Hack.seBaseUrl}${audioConfig.fileName}`;
-    const audioData: ArrayBuffer = await feeles.fetchArrayBuffer(url);
+    const audioData: ArrayBuffer = await fetchArrayBuffer(url);
 
     // array buffer を audio buffer に変換
     audioCtx.decodeAudioData(
@@ -30,7 +32,7 @@ export default async function soundEffect(jpName: string) {
       },
 
       function(e) {
-        feeles.throwError(e);
+        throwError && throwError(e);
       }
     );
     source.start();

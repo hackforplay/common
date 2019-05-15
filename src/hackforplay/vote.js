@@ -1,5 +1,7 @@
+import { env } from './feeles';
+
 /* Feeles Voting System */
-const { USER_UUID, VERSION_UUID } = feeles.env;
+const { USER_UUID, VERSION_UUID } = env;
 export const isEnabled = !!(USER_UUID && VERSION_UUID);
 export const API = `https://www.feeles.com/api`;
 export const API_V1 = `${API}/v1/vote?user=${USER_UUID}&version=${VERSION_UUID}`;

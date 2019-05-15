@@ -1,3 +1,5 @@
+import { fetch } from '../hackforplay/feeles';
+
 const a_href = false;
 const img_src = false;
 const audio_src = false;
@@ -46,21 +48,21 @@ function resourceLoader(node, src, set) {
     return;
   }
   // If relative path:
-  feeles
-    .fetch(getFeelesName(src))
-    .then(response => response.blob())
-    .then(blob => {
-      const url = URL.createObjectURL(blob);
-      const revokeHandler = () => {
-        node.removeEventListener('load', revokeHandler);
-        node.removeEventListener('error', revokeHandler);
-        URL.revokeObjectURL(url);
-      };
-      node.addEventListener('load', revokeHandler);
-      node.addEventListener('error', revokeHandler);
+  fetch &&
+    fetch(getFeelesName(src))
+      .then(response => response.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const revokeHandler = () => {
+          node.removeEventListener('load', revokeHandler);
+          node.removeEventListener('error', revokeHandler);
+          URL.revokeObjectURL(url);
+        };
+        node.addEventListener('load', revokeHandler);
+        node.addEventListener('error', revokeHandler);
 
-      set(url);
-    });
+        set(url);
+      });
 }
 
 /**

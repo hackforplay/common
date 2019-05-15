@@ -1,5 +1,6 @@
-import Hack from './hack';
 import createCompatibleMap from './create-compatible-map';
+import { fetch } from './feeles';
+import Hack from './hack';
 
 /**
  * マップJSONをインターネットから取得してマップにセットする
@@ -12,7 +13,7 @@ export default async function loadMap(mapName, url) {
       'Hack.loadMap: mapName must be string and not be empty'
     );
   }
-  const res = await feeles.fetch(url);
+  const res = await fetch(url);
   const json = await res.text();
   const scene = JSON.parse(json);
 

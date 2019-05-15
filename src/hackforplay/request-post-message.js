@@ -1,4 +1,4 @@
-const _global = new Function('return this')();
+import { connected } from './feeles';
 
 /**
  * IDE に対してメッセージを送信する
@@ -9,14 +9,13 @@ const _global = new Function('return this')();
  * @returns {Promise}
  */
 export default function requestPostMessage(query, value, reply, continuous) {
-  if (!_global.feeles) throw new Error(`feeles is not defined`);
-  if (!feeles.connected) throw new Error(`feeles.connected is not defined`);
+  if (!connected) throw new Error(`feeles.connected is not defined`);
   const message = {
     id: getUniqueId(),
     query,
     value
   };
-  return feeles.connected.then(function(_ref) {
+  return connected.then(function(_ref) {
     return new Promise(function(resolve, reject) {
       if (reply) {
         _ref.port.addEventListener('message', function task(event) {

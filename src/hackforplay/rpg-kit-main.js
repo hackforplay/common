@@ -12,6 +12,7 @@ import { stringToArray, dakuten, handakuten } from './utils/string-utils';
 import RPGMap from './rpg-map';
 import game from './game';
 import { generateMapFromDefinition } from './load-maps';
+import { connected, setAlias } from './feeles';
 
 game.preload(
   'resources/enchantjs/monster1.gif',
@@ -254,23 +255,24 @@ game.onawake = () => {
   game.rootScene.addChild(world);
 
   // Feeles の Stop/Resume 機能
-  feeles.connected.then(({ port }) => {
-    port.addEventListener('message', e => {
-      switch (e.data.query) {
-        case 'stop':
-          if (typeof Hack.world.stop === 'function') {
-            Hack.world.stop();
-          }
-          break;
-        case 'resume':
-          if (typeof Hack.world.resume === 'function') {
-            Hack.world.resume();
-          }
-        default:
-          break;
-      }
+  connected &&
+    connected.then(({ port }) => {
+      port.addEventListener('message', e => {
+        switch (e.data.query) {
+          case 'stop':
+            if (typeof Hack.world.stop === 'function') {
+              Hack.world.stop();
+            }
+            break;
+          case 'resume':
+            if (typeof Hack.world.resume === 'function') {
+              Hack.world.resume();
+            }
+          default:
+            break;
+        }
+      });
     });
-  });
 
   // ワールドが描画される前に描画先をマップのサーフェイスに差し替える
   world.on('prerender', ({ canvasRenderer }) => {
@@ -376,8 +378,8 @@ game.onawake = () => {
     }
   });
 
-  feeles.setAlias('Hack', Hack);
-  feeles.setAlias('game', game);
+  setAlias && setAlias('Hack', Hack);
+  setAlias && setAlias('game', game);
 };
 
 RPGMap.Layer = {

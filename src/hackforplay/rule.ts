@@ -1,7 +1,8 @@
-import RPGObject from './object/object';
-import { hasContract, isOpposite } from './family';
-import { default as Hack } from './hack';
 import { IDir } from './dir';
+import { hasContract, isOpposite } from './family';
+import { install, throwError } from './feeles';
+import { default as Hack } from './hack';
+import RPGObject from './object/object';
 
 interface IEvent {
   target: RPGObject;
@@ -10,10 +11,6 @@ interface IEvent {
 interface ICollidedEvent extends IEvent {
   map: boolean;
   hits: RPGObject[];
-}
-
-function throwError(error: Error) {
-  return (window as any).feeles.throwError.apply(null, [error]);
 }
 
 function handleError(
@@ -25,7 +22,7 @@ function handleError(
     return promiseLike.catch(error => {
       console.error(error);
       console.error(`above error was occured in "${name}" when "${title}"`);
-      throwError(error);
+      throwError && throwError(error);
     });
   }
   return Promise.resolve();
@@ -37,8 +34,6 @@ const Enemy: unique symbol = Symbol('Rule.Enemy');
 type NoObjectListener = (this: void) => Promise<void>;
 type OneObjectListener = (this: RPGObject) => Promise<void>;
 type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
-
-const feeles = (window as any).feeles || {};
 
 export default class Rule {
   public static readonly Anyone = Anyone;
@@ -377,7 +372,7 @@ export default class Rule {
   public installAsset(name: string) {
     if (this._knownThisNames.indexOf(name) < 0) {
       Hack.log(`${name} というアセットは ないかもしれない`);
-      feeles.install && feeles.install(name);
+      install && install(name);
     }
   }
 

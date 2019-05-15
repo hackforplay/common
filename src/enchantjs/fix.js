@@ -1,4 +1,5 @@
-import enchant from './enchant';
+import { throwError } from '../hackforplay/feeles';
+import enchant, { CanvasRenderer } from './enchant';
 
 if (enchant.Core.instance !== null) {
   throw new Error(
@@ -199,8 +200,6 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
 enchant.Event.RESIZE = 'resize';
 enchant.Event.RENDERED = 'rendered';
 
-import { CanvasRenderer } from './enchant';
-
 const canvasRenderer = CanvasRenderer.instance;
 
 canvasRenderer.targetSurface = null;
@@ -311,7 +310,7 @@ enchant.EventTarget.prototype.dispatchEvent = function dispatchEvent(event) {
     }
   } catch (error) {
     // イベントリスナーが同期関数だった場合の例外処理
-    feeles.throwError(error);
+    throwError(error);
     throw error;
   }
 };
@@ -325,7 +324,7 @@ function reportAsyncError(maybePromise, event, _this) {
     maybePromise.catch(error => {
       console.error(`Runtime error in event '${event.type}'`, error);
       console.info('Above error was occured to', _this);
-      feeles.throwError(error);
+      throwError(error);
     });
   }
 }

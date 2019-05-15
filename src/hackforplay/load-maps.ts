@@ -1,31 +1,32 @@
 import createCompatibleMap from './create-compatible-map';
-import RPGMap from './rpg-map';
+import { fetchText, throwError } from './feeles';
 import Hack from './hack';
+import RPGMap from './rpg-map';
 
-const feeles = (window as any).feeles;
 const _cache: { [key: string]: Promise<RPGMap> } = {};
 let definitions: { [key: string]: Promise<string> } = {}; // File path of map definition
 
 export default async function loadMaps(mapJsonFile: string) {
-  if (!feeles) return;
+  if (!fetchText) return;
+
   try {
     // maps.json を参照してマップを構築する
-    const mapsJson = await feeles.fetchText(mapJsonFile);
+    const mapsJson = await fetchText(mapJsonFile);
     try {
       const maps = JSON.parse(mapsJson);
       // 設定されていないマップに行った時に使うマップ定義
-      Hack.fallbackMapJson = await feeles.fetchText(maps.fallback);
+      Hack.fallbackMapJson = await fetchText(maps.fallback);
       // その他のマップ定義ファイルのロードを開始
       for (const key of Object.keys(maps.files)) {
-        definitions[key] = feeles.fetchText(maps.files[key]);
+        definitions[key] = fetchText(maps.files[key]);
       }
     } catch (error) {
       console.error('Error: Invalid maps.json', mapsJson);
-      feeles.throwError(new Error(error));
+      throwError && throwError(new Error(error));
     }
   } catch (error) {
     console.error('Error: maps.json がありません');
-    feeles.throwError(new Error(error));
+    throwError && throwError(new Error(error));
   }
 }
 

@@ -19,6 +19,7 @@ import game from './game';
 import createDamageMod from './create-damage-mod';
 import skin, { getBaseUrl, setBaseUrl } from './skin';
 import { getConfig, audioConfigs } from './se-data';
+import { setTimeout } from './feeles';
 
 // Assign synonyms
 Hack.assets = Hack.assets || {};
@@ -37,7 +38,7 @@ function checkDeprecated() {
     console.error(message);
   } else {
     // また調べる
-    feeles.setTimeout(checkDeprecated, 1000);
+    setTimeout(checkDeprecated, 1000);
   }
 }
 game.on('load', checkDeprecated);

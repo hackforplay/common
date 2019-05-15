@@ -1,8 +1,10 @@
 import enchant from '../enchantjs/enchant';
-import TextArea from './ui/textarea';
-import game from './game';
-import requestPostMessage from './request-post-message';
 import Camera from './camera';
+import { reload, throwError } from './feeles';
+import game from './game';
+import { getCode, setCode } from './repl';
+import requestPostMessage from './request-post-message';
+import TextArea from './ui/textarea';
 
 function refocus() {
   window.document.activeElement.blur(); // Blur an enchantBook
@@ -22,8 +24,8 @@ Hack.start = function() {
   Hack.dispatchEvent(new enchant.Event('load'));
   game.start().error(e => {
     console.error('ERROR', e);
-    if (feeles.throwError) {
-      feeles.throwError(e);
+    if (throwError) {
+      throwError(e);
     }
   });
   window.focus();
@@ -353,7 +355,7 @@ Hack.overlay = function() {
         defaultParentNode: Hack.overlayGroup,
         ontouchend: function() {
           // [RETRY] がクリックされたとき
-          feeles.reload(false);
+          reload(false);
         }
       }).tl.moveTo(
         314 - game.rootScene.x,
@@ -380,7 +382,7 @@ Hack.overlay = function() {
         defaultParentNode: Hack.overlayGroup,
         ontouchend: function() {
           // [RETRY] がクリックされたとき
-          feeles.reload(false);
+          reload(false);
         }
       }).tl.moveTo(
         157 - game.rootScene.x,
@@ -729,5 +731,10 @@ Hack.hideLabel = key => {
 };
 
 Hack.seBaseUrl = 'https://storage.googleapis.com/hackforplay-sounds/';
+
+Object.defineProperty(Hack, 'code', {
+  set: setCode,
+  get: getCode
+});
 
 export default Hack;

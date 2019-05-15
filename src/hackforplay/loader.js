@@ -1,4 +1,5 @@
 import enchant from '../enchantjs/enchant';
+import { fetchDataURL, throwError } from './feeles';
 import game from './game';
 import Hack from './hack';
 
@@ -57,16 +58,16 @@ enchant.Surface.load = function(src, callback, onerror) {
     return surface;
   }
 
-  feeles
-    .fetchDataURL(src)
-    .then(function(dataURL) {
-      image.src = dataURL;
-      // 一部の MOD の為に元画像の情報を残す
-      image.originalSource = src;
-    })
-    .catch(error => {
-      feeles.throwError(error);
-    });
+  fetchDataURL &&
+    fetchDataURL(src)
+      .then(function(dataURL) {
+        image.src = dataURL;
+        // 一部の MOD の為に元画像の情報を残す
+        image.originalSource = src;
+      })
+      .catch(error => {
+        throwError && throwError(error);
+      });
 
   return surface;
 };

@@ -3,6 +3,7 @@ import RPGObject from './object/object';
 import { default as SAT } from '../lib/sat.min';
 import { default as BehaviorTypes } from './behavior-types';
 import { default as logFunc } from '../mod/logFunc';
+import { fetchText } from './feeles';
 
 export interface ISkin {
   name: string;
@@ -38,7 +39,6 @@ export const setBaseUrl = (url: string) => {
   baseUrl = url;
 };
 
-const feeles = (window as any).feeles;
 const _cache: { [name: string]: Result } = {};
 const _surfaces: { [name: string]: typeof enchant.Surface } = {};
 
@@ -136,11 +136,15 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
 export default async function skin(
   name: string | TemplateStringsArray
 ): Result {
-  if (!feeles) throw new Error('window.feeles is not found');
   if (name in _cache) return _cache[name + ''];
 
   const _promise = Promise.resolve()
-    .then(() => feeles.fetchText(baseUrl + name))
+    .then(() => {
+      if (!fetchText) {
+        throw new Error('feeles.fetchText is not defined');
+      }
+      return fetchText(baseUrl + name);
+    })
     .then(
       json =>
         new Promise((resolve: (_skin: ISkin) => void, reject) => {
