@@ -3,10 +3,11 @@
  */
 
 const _global = new Function('return this')();
-const feeles = _global.feeles as Feeles | undefined;
-if (typeof feeles !== 'object') {
+if (typeof _global.feeles !== 'object') {
   throw new Error('feeles is not defined');
 }
+
+export const feeles = _global.feeles as Feeles;
 
 export interface Feeles {
   /**
