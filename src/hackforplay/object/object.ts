@@ -1215,7 +1215,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public teleport(portal: RPGObject) {
-    if (this.behavior !== BehaviorTypes.Idle) return;
     const { pairedObject } = portal;
     if (!pairedObject || !pairedObject.map) return;
     this.locate(
@@ -1227,7 +1226,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public teleportRandom() {
-    if (this.behavior !== BehaviorTypes.Idle) return;
     const { map } = this;
     if (!map) return;
     const pos = randomCollection(map.walkablePositions);
