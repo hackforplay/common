@@ -1329,6 +1329,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     let nearestDistance = Infinity;
     for (const item of collection) {
       if (!item.parentNode || !item.scene) continue; // マップ上に存在しないオブジェクトはのぞく
+      if (item.map !== this.map) continue; // 違うマップにいる場合はのぞく
       const dx = item.mapX - this.mapX;
       const dy = item.mapY - this.mapY;
       const distance = dx * dx + dy * dy;
@@ -1353,6 +1354,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         ? this.getNearest(_ruleInstance.getCollection(nameOrTarget))
         : nameOrTarget;
     if (!item || !item.parentNode) return;
+    if (item.map !== this.map) return; // 違うマップにいる場合は追わない
 
     const dx = item.mapX - this.mapX;
     const dy = item.mapY - this.mapY;
@@ -1500,6 +1502,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       .filter(
         item =>
           item !== this &&
+          item.map === this.map && // 同じマップにいる場合のみ見つけられる
           rangeOfView.left <= item.mapX &&
           item.mapX <= rangeOfView.right &&
           rangeOfView.top <= item.mapY &&
