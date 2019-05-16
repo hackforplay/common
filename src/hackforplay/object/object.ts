@@ -1341,21 +1341,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return nearestObject;
   }
 
-  /**
-   * 指定されたアセットのインスタンスのうち一つを追う
-   * いない場合は何もしない
-   * @param {String} nameOrTarget
-   */
-  public async chase(nameOrTarget: string | RPGObject, unit8 = false) {
-    const { _ruleInstance } = this;
-    if (!_ruleInstance) return;
-    const item =
-      typeof nameOrTarget === 'string'
-        ? this.getNearest(_ruleInstance.getCollection(nameOrTarget))
-        : nameOrTarget;
-    if (!item || !item.parentNode) return;
-    if (item.map !== this.map) return; // 違うマップにいる場合は追わない
-
+  private chaseSameMap(item: RPGObject, unit8: boolean) {
+    if (this.map !== item.map) return; // 違うマップなら追わない
     const dx = item.mapX - this.mapX;
     const dy = item.mapY - this.mapY;
     const farXthanY = dx - dy;
@@ -1370,7 +1357,59 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     movements.push(new Vector2(dx, 0));
     movements.push(new Vector2(0, dy));
 
-    await this.mayWalkTo(movements, unit8, prioritizeX);
+    return this.mayWalkTo(movements, unit8, prioritizeX);
+  }
+
+  /**
+   * 仲間としてプレイヤーを追いかける
+   */
+  private async chaseDifferentMap(item: RPGObject, unit8: boolean) {
+    if (item.map === this.map) {
+      // マップが同じなら
+      await this.chaseSameMap(item, unit8);
+    } else if (item.map) {
+      // 違うマップまで付いていく. この時足元にある階段やアイテムには反応しない
+      this.locate(item.mapX, item.mapY, item.map.name, true);
+    }
+  }
+
+  /**
+   * もし自分がプレイヤーの仲間で、プレイヤーを一度でも追いかけたら、その参照を保持する
+   */
+  private followingPlayer?: RPGObject;
+  /**
+   * 指定されたアセットのインスタンスのうち一つを追う
+   * いない場合は何もしない
+   * @param {String} nameOrTarget
+   */
+  public async chase(nameOrTarget: string | RPGObject, unit8 = false) {
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return;
+
+    if (
+      this.followingPlayer &&
+      (this.followingPlayer === nameOrTarget ||
+        this.followingPlayer.name === nameOrTarget)
+    ) {
+      // プレイヤーを追いかける場合、例外的に別のマップへ追いかける
+      return await this.chaseDifferentMap(this.followingPlayer, unit8);
+    }
+
+    const item =
+      typeof nameOrTarget === 'string'
+        ? this.getNearest(_ruleInstance.getCollection(nameOrTarget))
+        : nameOrTarget;
+    if (!item || !item.parentNode) return;
+
+    if (!this.followingPlayer) {
+      if (item.family === this.family && item.isPlayer) {
+        // 追いかけている相手が仲間のプレイヤーであれば、参照を保持する
+        this.followingPlayer = item;
+      }
+    }
+
+    // 相手のいるマスへ１歩すすむ
+    return this.chaseSameMap(item, unit8);
   }
 
   public chase4(nameOrTarget: string | RPGObject) {
