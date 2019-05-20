@@ -3,7 +3,7 @@ node_js: '8'
 cache: npm
 deploy:
   provider: script
-  script: npx semantic-release
+  script: npx semantic-release --branch v0.12.x
   skip_cleanup: true
   on:
     repo: hackforplay/common
