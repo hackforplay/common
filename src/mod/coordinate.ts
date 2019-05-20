@@ -71,8 +71,8 @@ export default function coordinate() {
     event => {
       const { clientX, clientY } = event;
       const rect = div.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
+      const x = (clientX - rect.left) / game.scale;
+      const y = (clientY - rect.top) / game.scale;
       if (0 <= x && x <= rect.width && 0 <= y && y <= rect.height) {
         setPosition(x, y);
       }
@@ -107,8 +107,8 @@ export default function coordinate() {
       if (!primaryTouch) return;
       const { clientX, clientY } = primaryTouch;
       const rect = div.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
+      const x = (clientX - rect.left) / game.scale;
+      const y = (clientY - rect.top) / game.scale;
       if (0 <= x && x <= rect.width && 0 <= y && y <= rect.height) {
         setPosition(x, y);
       }
