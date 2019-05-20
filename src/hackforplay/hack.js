@@ -1,8 +1,7 @@
 import enchant from '../enchantjs/enchant';
 import Camera from './camera';
-import { reload, throwError } from './feeles';
+import { code$, reload, throwError } from './feeles';
 import game from './game';
-import { getCode, setCode } from './repl';
 import requestPostMessage from './request-post-message';
 import TextArea from './ui/textarea';
 
@@ -733,8 +732,12 @@ Hack.hideLabel = key => {
 Hack.seBaseUrl = 'https://storage.googleapis.com/hackforplay-sounds/';
 
 Object.defineProperty(Hack, 'code', {
-  set: setCode,
-  get: getCode
+  set(code) {
+    code$ && code$.next(code);
+  },
+  get() {
+    return code$ ? code$.value : '';
+  }
 });
 
 /**

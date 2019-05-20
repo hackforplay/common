@@ -73,7 +73,8 @@
     "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.2"
+    "@babel/runtime": "^7.1.2",
+    "rxjs": "^6.5.2"
   },
   "engines": {
     "node": "^10.13.0"

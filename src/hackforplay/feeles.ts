@@ -1,3 +1,5 @@
+import { BehaviorSubject } from 'rxjs';
+
 /**
  * 実行環境側で用意される API の型情報だけを用意したもの
  */
@@ -10,6 +12,8 @@ if (typeof _global.feeles !== 'object') {
 export const feeles = _global.feeles as Feeles;
 
 export interface Feeles {
+  code$?: BehaviorSubject<string>;
+  pause$: BehaviorSubject<boolean>;
   /**
    * Deprecated
    */
@@ -63,6 +67,8 @@ export interface Feeles {
   eval?: (code: string) => void;
 }
 
+export const code$ = feeles.code$;
+export const pause$ = feeles.pause$;
 export const env = feeles.env || { VERSION_UUID: '', USER_UUID: '' };
 export const connected = feeles.connected;
 export const fetch = feeles.fetch;
