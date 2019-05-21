@@ -73,7 +73,7 @@ export default function coordinate() {
       const rect = div.getBoundingClientRect();
       const x = (clientX - rect.left) / game.scale;
       const y = (clientY - rect.top) / game.scale;
-      if (0 <= x && x <= rect.width && 0 <= y && y <= rect.height) {
+      if (0 <= x && x <= game.width && 0 <= y && y <= game.height) {
         setPosition(x, y);
       }
     },
@@ -109,7 +109,7 @@ export default function coordinate() {
       const rect = div.getBoundingClientRect();
       const x = (clientX - rect.left) / game.scale;
       const y = (clientY - rect.top) / game.scale;
-      if (0 <= x && x <= rect.width && 0 <= y && y <= rect.height) {
+      if (0 <= x && x <= game.width && 0 <= y && y <= game.height) {
         setPosition(x, y);
       }
     },
