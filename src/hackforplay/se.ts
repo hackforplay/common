@@ -1,12 +1,12 @@
-import { fetchArrayBuffer, throwError } from './feeles';
+import { audioContextReady, fetchArrayBuffer, throwError } from './feeles';
 import { default as Hack } from './hack';
 import { getConfig } from './se-data';
 
 const data: { [key: string]: AudioBuffer | null | undefined } = {};
-const audioCtx = new AudioContext();
 
 export default async function soundEffect(jpName: string) {
   if (!fetchArrayBuffer) return;
+  const audioCtx = await audioContextReady;
 
   const audioConfig = getConfig(jpName);
   const audioSource = data[jpName];
