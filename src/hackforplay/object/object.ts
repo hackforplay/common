@@ -38,6 +38,7 @@ function startFrameCoroutine(
 }
 
 const walkingObjects = new WeakSet<RPGObject>(); // https://bit.ly/2KqB1Gz
+const followingPlayerObjects = new WeakSet<RPGObject>();
 
 const opt = <T>(opt: T | undefined, def: T): T =>
   opt !== undefined ? opt : def;
@@ -403,9 +404,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       // オブジェクトのマップを移動させる
       const map = Hack.maps[mapName] as RPGMap;
       if (map instanceof RPGMap && this.map !== map) {
-        // プレイヤーがワープする場合は, 先にマップを変更する
         if (this.isPlayer) {
+          // プレイヤーがワープする場合は, 先にマップを変更する
           Hack.changeMap(mapName);
+          // つき従えているキャラクターをワープさせる
+          for (const item of [...RPGObject.collection]) {
+            if (followingPlayerObjects.has(item)) {
+              item.locate(fromLeft, fromTop, mapName); // 一旦フラグが消失してしまうので,
+              followingPlayerObjects.add(item); // すぐ元に戻す
+            }
+          }
         }
         map.scene.addChild(this);
       }
@@ -420,6 +428,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
     walkingObjects.delete(this);
+    followingPlayerObjects.delete(this); // プレイヤーとはぐれた
   }
 
   public destroy(delay = 0) {
@@ -1361,23 +1370,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   /**
-   * 仲間としてプレイヤーを追いかける
-   */
-  private async chaseDifferentMap(item: RPGObject, unit8: boolean) {
-    if (item.map === this.map) {
-      // マップが同じなら
-      await this.chaseSameMap(item, unit8);
-    } else if (item.map) {
-      // 違うマップまで付いていく. この時足元にある階段やアイテムには反応しない
-      this.locate(item.mapX, item.mapY, item.map.name, true);
-    }
-  }
-
-  /**
-   * もし自分がプレイヤーの仲間で、プレイヤーを一度でも追いかけたら、その参照を保持する
-   */
-  private followingPlayer?: RPGObject;
-  /**
    * 指定されたアセットのインスタンスのうち一つを追う
    * いない場合は何もしない
    * @param {String} nameOrTarget
@@ -1386,25 +1378,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { _ruleInstance } = this;
     if (!_ruleInstance) return;
 
-    if (
-      this.followingPlayer &&
-      (this.followingPlayer === nameOrTarget ||
-        this.followingPlayer.name === nameOrTarget)
-    ) {
-      // プレイヤーを追いかける場合、例外的に別のマップへ追いかける
-      return await this.chaseDifferentMap(this.followingPlayer, unit8);
-    }
-
     const item =
       typeof nameOrTarget === 'string'
         ? this.getNearest(_ruleInstance.getCollection(nameOrTarget))
         : nameOrTarget;
     if (!item || !item.parentNode) return;
 
-    if (!this.followingPlayer) {
+    if (!followingPlayerObjects.has(this)) {
       if (item.family === this.family && item.isPlayer) {
         // 追いかけている相手が仲間のプレイヤーであれば、参照を保持する
-        this.followingPlayer = item;
+        followingPlayerObjects.add(this);
       }
     }
 
