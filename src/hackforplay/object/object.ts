@@ -38,6 +38,7 @@ function startFrameCoroutine(
 }
 
 const walkingObjects = new WeakSet<RPGObject>(); // https://bit.ly/2KqB1Gz
+const followingPlayerObjects = new WeakSet<RPGObject>();
 
 const opt = <T>(opt: T | undefined, def: T): T =>
   opt !== undefined ? opt : def;
@@ -403,9 +404,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       // オブジェクトのマップを移動させる
       const map = Hack.maps[mapName] as RPGMap;
       if (map instanceof RPGMap && this.map !== map) {
-        // プレイヤーがワープする場合は, 先にマップを変更する
         if (this.isPlayer) {
+          // プレイヤーがワープする場合は, 先にマップを変更する
           Hack.changeMap(mapName);
+          // つき従えているキャラクターをワープさせる
+          for (const item of [...RPGObject.collection]) {
+            if (followingPlayerObjects.has(item)) {
+              item.locate(fromLeft, fromTop, mapName); // 一旦フラグが消失してしまうので,
+              followingPlayerObjects.add(item); // すぐ元に戻す
+            }
+          }
         }
         map.scene.addChild(this);
       }
@@ -420,6 +428,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
     walkingObjects.delete(this);
+    followingPlayerObjects.delete(this); // プレイヤーとはぐれた
   }
 
   public destroy(delay = 0) {
@@ -1341,21 +1350,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return nearestObject;
   }
 
-  /**
-   * 指定されたアセットのインスタンスのうち一つを追う
-   * いない場合は何もしない
-   * @param {String} nameOrTarget
-   */
-  public async chase(nameOrTarget: string | RPGObject, unit8 = false) {
-    const { _ruleInstance } = this;
-    if (!_ruleInstance) return;
-    const item =
-      typeof nameOrTarget === 'string'
-        ? this.getNearest(_ruleInstance.getCollection(nameOrTarget))
-        : nameOrTarget;
-    if (!item || !item.parentNode) return;
-    if (item.map !== this.map) return; // 違うマップにいる場合は追わない
-
+  private chaseSameMap(item: RPGObject, unit8: boolean) {
+    if (this.map !== item.map) return; // 違うマップなら追わない
     const dx = item.mapX - this.mapX;
     const dy = item.mapY - this.mapY;
     const farXthanY = dx - dy;
@@ -1370,7 +1366,32 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     movements.push(new Vector2(dx, 0));
     movements.push(new Vector2(0, dy));
 
-    await this.mayWalkTo(movements, unit8, prioritizeX);
+    return this.mayWalkTo(movements, unit8, prioritizeX);
+  }
+
+  /**
+   * 指定されたアセットのインスタンスのうち一つを追う
+   * いない場合は何もしない
+   * @param {String} nameOrTarget
+   */
+  public async chase(nameOrTarget: string | RPGObject, unit8 = false) {
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return;
+    const item =
+      typeof nameOrTarget === 'string'
+        ? this.getNearest(_ruleInstance.getCollection(nameOrTarget))
+        : nameOrTarget;
+    if (!item || !item.parentNode) return;
+
+    if (!followingPlayerObjects.has(this)) {
+      if (item.family === this.family && item.isPlayer) {
+        // 追いかけている相手が仲間のプレイヤーであれば、参照を保持する
+        followingPlayerObjects.add(this);
+      }
+    }
+
+    // 相手のいるマスへ１歩すすむ
+    return this.chaseSameMap(item, unit8);
   }
 
   public chase4(nameOrTarget: string | RPGObject) {
