@@ -410,7 +410,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           // つき従えているキャラクターをワープさせる
           for (const item of [...RPGObject.collection]) {
             if (followingPlayerObjects.has(item)) {
-              item.locate(fromLeft, fromTop, mapName); // 一旦フラグが消失してしまうので,
+              item.locate(fromLeft, fromTop, mapName, true); // 一旦フラグが消失してしまうので,
               followingPlayerObjects.add(item); // すぐ元に戻す
             }
           }
