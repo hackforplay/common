@@ -1,6 +1,6 @@
 import enchant from '../enchantjs/enchant';
 import Camera from './camera';
-import { code$, reload, throwError } from './feeles';
+import { code$, emphasizeCode, reload, throwError } from './feeles';
 import game from './game';
 import requestPostMessage from './request-post-message';
 import TextArea from './ui/textarea';
@@ -740,9 +740,6 @@ Object.defineProperty(Hack, 'code', {
   }
 });
 
-/**
- * Experimental
- */
-Hack.emphasizeCode = () => console.log('魔道書が光り輝いている!');
+Hack.emphasizeCode = emphasizeCode;
 
 export default Hack;

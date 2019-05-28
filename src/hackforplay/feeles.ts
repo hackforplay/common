@@ -23,7 +23,7 @@ export interface Feeles {
   code$: BehaviorSubject<string>;
   pause$: BehaviorSubject<boolean>;
   input$: BehaviorSubject<IButtonInput>;
-  emphasizeEditor: () => void;
+  emphasizeCode: () => void;
   audioContextReady: Promise<AudioContext>;
   /**
    * Deprecated
@@ -81,7 +81,7 @@ export interface Feeles {
 export const code$ = feeles.code$;
 export const pause$ = feeles.pause$;
 export const input$ = feeles.input$;
-export const emphasizeEditor = feeles.emphasizeEditor;
+export const emphasizeCode = feeles.emphasizeCode;
 export const audioContextReady = feeles.audioContextReady;
 export const env = feeles.env || { VERSION_UUID: '', USER_UUID: '' };
 export const connected = feeles.connected;
