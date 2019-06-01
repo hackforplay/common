@@ -56,6 +56,8 @@ const common = {
   },
 
   devServer: {
+    hot: false,
+    inline: false,
     contentBase: path.join(__dirname, 'dist'),
     headers: {
       'Access-Control-Allow-Origin': '*',
