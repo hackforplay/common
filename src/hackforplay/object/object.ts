@@ -609,20 +609,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const nextMapX = this.mapX + unit.x;
     const nextMapY = this.mapY + unit.y;
 
-    let isHit = this.map.hitTest(nextMapX * tw, nextMapY * th);
-
-    // 画面外
-    if (nextMapX < 0 || nextMapX >= tx || nextMapY < 0 || nextMapY >= ty) {
-      // 画面外なら歩かない
-      if (this.collideMapBoader) {
-        this.dispatchCollidedEvent([], true);
-        // 1 フレーム待つ
-        yield;
-        return;
-      }
-      // 画面外に判定はない
-      else isHit = false;
-    }
+    const isHitCMap = this.map.hitTest(nextMapX * tw, nextMapY * th); // cmap が 1 のマス
+    const isHitMapBorder =
+      (this.collideMapBoader && nextMapX < 0) ||
+      nextMapX >= tx ||
+      nextMapY < 0 ||
+      nextMapY >= ty; // 画面外にいこうとしている
 
     // プレイヤーだけは例外的に仲間のいるマスをすり抜けられる
     const mayCollideItems = this.isPlayer
@@ -651,8 +643,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._collidedNodes.push(...newHits);
 
     // 障害物があるので歩けない
-    if (isHit || hits.length) {
-      this.dispatchCollidedEvent(newHits, false);
+    if (isHitCMap || isHitMapBorder || hits.length) {
+      this.dispatchCollidedEvent(newHits, isHitMapBorder);
       // 1 フレーム待つ
       yield;
       return;
