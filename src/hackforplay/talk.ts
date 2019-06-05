@@ -1,5 +1,6 @@
 import { default as Hack } from './hack';
 import TextArea from '../hackforplay/ui/textarea';
+import Key from './key';
 
 let answers: TextArea[] = [];
 
@@ -110,6 +111,28 @@ const makeAnswer = function(
         answers.push(answerWindow);
       }
     }
+  });
+  // スペースキーでウィンドウを閉じたい
+  Key.space.release(function() {
+    if (choice === 'とじる') {
+      resolve(choice);
+      windowDelete();
+      resume();
+      talkStack.shift();
+      if (talkStack.length >= 1) {
+        showTextArea(talkStack[0].talkMessage);
+        for (const choice of talkStack[0].choices) {
+          const answerWindow = makeAnswer(
+            choice,
+            talkStack[0].resolve,
+            talkStack[0].resume
+          );
+          answers.push(answerWindow);
+        }
+      }
+      console.log('window delete');
+    }
+    console.log('push space');
   });
   return textWindow;
 };
