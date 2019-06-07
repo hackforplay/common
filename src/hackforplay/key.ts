@@ -234,15 +234,15 @@ let KeyClass: IKeyClass = enchant.Class.create({
     });
   },
 
-  press: function(listener: any, thisArg: any) {
+  press: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('press', listener, thisArg);
   },
 
-  release: function(listener: any, thisArg: any) {
+  release: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('release', listener, thisArg);
   },
 
-  observe: function(listener: any, thisArg: any) {
+  observe: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('observe', listener, thisArg);
   }
 } as any);
