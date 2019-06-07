@@ -91,6 +91,8 @@ export interface IKeyClass {
   press<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
   release<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
   observe<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
+  pressOnce<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
+  releaseOnce<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
   update(input: any): void;
 }
 
@@ -223,6 +225,10 @@ let KeyClass: IKeyClass = enchant.Class.create({
       .forEach(function(this: any, listener: any) {
         let thisArg = listener.thisArg === undefined ? this : listener.thisArg;
         listener.listener.call(thisArg, this);
+        if (listener.once) {
+          const index = this.listeners.indexOf(listener);
+          if (index > -1) this.listeners.splice(index, 1);
+        }
       }, this);
   },
 
@@ -230,7 +236,17 @@ let KeyClass: IKeyClass = enchant.Class.create({
     this.listeners.push({
       type: type,
       listener: event,
-      thisArg: thisArg
+      thisArg: thisArg,
+      once: false
+    });
+  },
+
+  once: function(type: any, event: any, thisArg: any) {
+    this.listeners.push({
+      type: type,
+      listener: event,
+      thisArg: thisArg,
+      once: true
     });
   },
 
@@ -244,6 +260,14 @@ let KeyClass: IKeyClass = enchant.Class.create({
 
   observe: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('observe', listener, thisArg);
+  },
+
+  pressOnce: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+    this.on('press', listener, thisArg);
+  },
+
+  releaseOnce: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+    this.on('release', listener, thisArg);
   }
 } as any);
 
