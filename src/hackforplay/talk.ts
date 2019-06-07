@@ -1,5 +1,5 @@
-import { default as Hack } from './hack';
 import TextArea from '../hackforplay/ui/textarea';
+import { default as Hack } from './hack';
 import Key from './key';
 
 let answers: TextArea[] = [];
