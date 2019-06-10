@@ -41,8 +41,11 @@ const showTextArea = function(text: string) {
   textArea.y = 320 - textArea.height;
 };
 
+// 外から参照したいので出してみる
+let timeIsStopped = false;
+
 const theWorld = () => {
-  let timeIsStopped = true;
+  timeIsStopped = true;
   const stopAndStop = () => {
     if (timeIsStopped) {
       Hack.world.stop();
@@ -112,28 +115,6 @@ const makeAnswer = function(
       }
     }
   });
-  // スペースキーでウィンドウを閉じたい
-  Key.space.release(function() {
-    if (choice === 'とじる') {
-      resolve(choice);
-      windowDelete();
-      resume();
-      talkStack.shift();
-      if (talkStack.length >= 1) {
-        showTextArea(talkStack[0].talkMessage);
-        for (const choice of talkStack[0].choices) {
-          const answerWindow = makeAnswer(
-            choice,
-            talkStack[0].resolve,
-            talkStack[0].resume
-          );
-          answers.push(answerWindow);
-        }
-      }
-      console.log('window delete');
-    }
-    console.log('push space');
-  });
   return textWindow;
 };
 
@@ -159,5 +140,27 @@ export default function talk(text: string, ...choices: string[]) {
       const answerWindow = makeAnswer(choice, resolve, resume);
       answers.push(answerWindow);
     }
+
+    // スペースキーでウィンドウを閉じたい
+    Key.space.release(() => {
+      if (choices.length === 1 && timeIsStopped === true) {
+        resolve(choices[0]);
+        console.log(`window delete ${choices[0]},${timeIsStopped}`);
+        windowDelete();
+        resume();
+        talkStack.shift();
+        if (talkStack.length >= 1) {
+          showTextArea(talkStack[0].talkMessage);
+          for (const choice of talkStack[0].choices) {
+            const answerWindow = makeAnswer(
+              choice,
+              talkStack[0].resolve,
+              talkStack[0].resume
+            );
+            answers.push(answerWindow);
+          }
+        }
+      }
+    });
   });
 }
