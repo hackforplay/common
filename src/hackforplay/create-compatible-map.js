@@ -83,6 +83,7 @@ export default function createCompatibleMap(
         if (!square) {
           throw new Error(notFound(table, x, y));
         }
+        if (square.placement.type === 'Nope') return p; // nope!
         return p.concat(index);
       }, []);
       if (tileIndexes.length > 0) {
