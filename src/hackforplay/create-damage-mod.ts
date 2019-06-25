@@ -29,7 +29,7 @@ export default function createDamageMod(damage?: number) {
 export function update() {
   const nonDamagers = RPGObject.collection.filter(
     item =>
-      !item.isInvinsible &&
+      !item.isInvincible &&
       !item.isDamageObject &&
       item.damageTime === 0 &&
       item.map === Hack.map // 今いるマップ
