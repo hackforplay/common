@@ -75,7 +75,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   };
   public damage = 0; // 0 以外のとき, ふれたときに与えるダメージ
   public speed = 1.0;
-  public opacity = 1;
   public collideMapBoader = true; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
   public velocityX = 0;
   public velocityY = 0;
@@ -235,6 +234,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { _ruleInstance } = this;
     if (!_ruleInstance) return;
     _ruleInstance.runOneObjectLisener('おかねがかわったとき', this);
+  }
+
+  public get opacity() {
+    return this._opacity as number;
+  }
+
+  public set opacity(value: number) {
+    (this as any)._opacity = Math.max(0, Math.min(value));
   }
 
   public get isPlayer() {
