@@ -6,7 +6,7 @@ import { closeCode, feeles, openCode, runCode, saveAs } from './feeles';
  */
 
 const fileName = 'code.js';
-let code = '';
+let code = ''; // eslint-disable-line
 
 const hook = {
   run: (code: string) => {}
