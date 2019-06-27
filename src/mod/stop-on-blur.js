@@ -20,7 +20,7 @@ export default function stopOnBlur() {
 
   const updateStyle = () => {
     if (this._element) {
-      this._element.style.opacity = document.hasFocus() ? 1.0 : 0.3;
+      // this._element.style.opacity = document.hasFocus() ? 1.0 : 0.3;
     }
     if (Hack.world) {
       if (document.hasFocus()) {
