@@ -1,6 +1,14 @@
 language: node_js
 node_js: '8'
-cache: npm
+cache:
+  - npm
+  - directories:
+    - "$HOME/google-cloud-sdk/"
+before_deploy:
+  - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf "$HOME/google-cloud-sdk"; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+  - source /home/travis/google-cloud-sdk/path.bash.inc
+  - gcloud --quiet version
+  - gcloud --quiet components update
 deploy:
   - provider: script
     script: npx semantic-release
@@ -8,17 +16,12 @@ deploy:
     on:
       repo: hackforplay/common
       all_branches: true
-  - provider: gcs
-    access_key_id: GOOGATJ4CLT6LEFALYXVT4QL
-    secret_access_key:
-      secure: hmVK6Law0Hiq8lQoelx273vqjFnzg3j7BblUazIApdmfI4dHmO16hlFj/eOQVzHoLs06PtKf35jm90G9yk7dN/gqh/jQPEiBNl56QzhEMT9JZl4X87mggEuN4U+LuwLUgGFsMApdL7nxXJP4f8veFPWq4FfkcY5lkrIVfZ1cWEe105cCCPeNd8+QT87UZT4kP95CXD92WLW3PWIR1I2vtG+3TzBwcEUWYYrH/h3aQipCSfPurTxvsfvxsyr57XqO8RerSl6lLdJtjmCg/1Hvg9MIQ69f6iW/XCE6iaVQDPlChRV1ST90+hKlC6DeDQwlQgO/GZ98IdJJuT0TiZM5fhFNl2e7WowFMyY86QTGYuVnuWWV2LQNK60fsozbVoNrsmSKNBgkZUG7mS3my+B2ZH6gSiLgKL6H0wTw25/tXJ032d8839pjQRkdr4ODiAdkH8hQShpK7FMSq3Id9y4R9w8k5aDeMvViwCabaCgWvmon54d//QP3a0buD4Lyhv56p7S49WOYBT00uF+lNKnvwPkyJ64dUNMHe3nf1XIKWHoxl4h6VBlksFrE5CVkqzXaMjLIjBXyIeNoejlGXZ0KULIgWg5YaIfmeK43jhas+QJucpFjo42NHFjbQ7SqvY0auZm4FbgVACSt5rk4JwLqrdSXKM7AH6FQclMUoLQ9++Q=
-    bucket: cdn.hackforplay.xyz/common/test
+  - provider: script
+    script: ./deploy.sh
     skip_cleanup: true
-    local-dir: dist
-    cache_control: public, max-age=600
     on:
       repo: hackforplay/common
-      tags: true
+      # tags: true
 env:
   global:
   - secure: MMoESDPGoltg5J/LEjAMLwYDVXi1eDYjeCBiEXXmrAFGVLDayg/b3pFDBTBrOCmp0tLbIJN47bXgQhByKf70M57p0Xnrwmsl8mpYSl58pvBU/heRUFUY7NmT70r8jVW5jPOD3PRv2B2cyNmjtq0aiabTi6dw1JhrzohyRnzgMHiDiv2i+ib6coeL6QVQ3IV/DNGAfPNy0Qo3DZgx9qIcQtNShgTWxDDWJh5B26hnSf+WMsltOfcu0CSF5gp9aqh1m83+UTZo7N1sR8lPDINuGZL0BWFj9V/neployw1hFyS9b7W5OF1UwvXVgGJAFSs76ESxDvMdF5wCQrku2d16yJG5RPa5A5jnsREoYi92QOXNWD6qu2V4/RvB158gDS5flD11CDJW9hDQZSKK3CDbGLTbUvZw+z587barsIZCKxKuRzPuqzYelTkIUoQylHeN7PTMIi9OXuwpTWM8vHub0KByI0SqG8wZeqrGlsmohkCGym7wgKB/Bk/OsvxDu+7kiROZuj9CbHcvVmvNdFDapfdNneOdY/zdX9fPFPQJF+1rbh0P/PuTKspn4Xpw/dd8VqRb5arRy1ipKtQVMRk0/TjIKq/w86a/0G27/Fy594WTQeKa/2tXWX0eVsGsu5qx2GGZLX0F5Rbpj+MflFvMecbo2BlCcCeJBO0YLrg/2GI=
