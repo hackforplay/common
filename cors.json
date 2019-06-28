@@ -1,17 +1,8 @@
 [
   {
-    "origin": [
-      "http://localhost:3000",
-      "https://www.hackforplay.xyz",
-      "https://earlybird.hackforplay.xyz"
-    ],
-    "responseHeader": [
-      "Content-Type",
-      "Accept",
-      "X-Requested-With",
-      "Access-Control-Allow-Credentials"
-    ],
-    "method": ["GET", "HEAD", "OPTIONS"],
+    "origin": ["*"],
+    "responseHeader": ["Content-Type"],
+    "method": ["GET"],
     "maxAgeSeconds": 3600
   }
 ]
