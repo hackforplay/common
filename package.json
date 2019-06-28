@@ -4,6 +4,7 @@
   "description": "Common package for building stages in hackforplay",
   "main": "lib/index.js",
   "unpkg": "dist/main.min.js",
+  "files": ["dist"],
   "scripts": {
     "start": "webpack-dev-server",
     "prepublish": "webpack && npm run babel",
