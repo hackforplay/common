@@ -10,8 +10,8 @@ export const right: IDir = () => new Vector2(1, 0);
 export const down: IDir = () => new Vector2(0, 1);
 export const left: IDir = () => new Vector2(-1, 0);
 
-export const rightHand: IDir = self => self.forward.rotateDegree(90);
-export const leftHand: IDir = self => self.forward.rotateDegree(-90);
+export const rightHand: IDir = self => self.forward.rotateDegree(90).unit();
+export const leftHand: IDir = self => self.forward.rotateDegree(-90).unit();
 export const behind: IDir = self => self.forward.scale(-1);
 
 const m = -1;
