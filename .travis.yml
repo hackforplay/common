@@ -1,18 +1,28 @@
 language: node_js
 node_js: '8'
-cache: npm
+cache:
+  - npm
+  - directories:
+    - "$HOME/google-cloud-sdk"
+before_deploy:
+  - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash > /dev/null; fi
+  - source /home/travis/google-cloud-sdk/path.bash.inc
+  - gcloud --quiet version
+  - gcloud --quiet components update
 deploy:
-  provider: script
-  script: npx semantic-release --branch 0.19.x
-  skip_cleanup: true
-  on:
-    repo: hackforplay/common
-    all_branches: true
+  - provider: script
+    script: npx semantic-release --branch 0.19.x
+    skip_cleanup: true
+    on:
+      repo: hackforplay/common
+      all_branches: true
+  - provider: script
+    script: ./deploy.sh
+    skip_cleanup: true
+    on:
+      repo: hackforplay/common
+      tags: true
 env:
   global:
-    - secure: MMoESDPGoltg5J/LEjAMLwYDVXi1eDYjeCBiEXXmrAFGVLDayg/b3pFDBTBrOCmp0tLbIJN47bXgQhByKf70M57p0Xnrwmsl8mpYSl58pvBU/heRUFUY7NmT70r8jVW5jPOD3PRv2B2cyNmjtq0aiabTi6dw1JhrzohyRnzgMHiDiv2i+ib6coeL6QVQ3IV/DNGAfPNy0Qo3DZgx9qIcQtNShgTWxDDWJh5B26hnSf+WMsltOfcu0CSF5gp9aqh1m83+UTZo7N1sR8lPDINuGZL0BWFj9V/neployw1hFyS9b7W5OF1UwvXVgGJAFSs76ESxDvMdF5wCQrku2d16yJG5RPa5A5jnsREoYi92QOXNWD6qu2V4/RvB158gDS5flD11CDJW9hDQZSKK3CDbGLTbUvZw+z587barsIZCKxKuRzPuqzYelTkIUoQylHeN7PTMIi9OXuwpTWM8vHub0KByI0SqG8wZeqrGlsmohkCGym7wgKB/Bk/OsvxDu+7kiROZuj9CbHcvVmvNdFDapfdNneOdY/zdX9fPFPQJF+1rbh0P/PuTKspn4Xpw/dd8VqRb5arRy1ipKtQVMRk0/TjIKq/w86a/0G27/Fy594WTQeKa/2tXWX0eVsGsu5qx2GGZLX0F5Rbpj+MflFvMecbo2BlCcCeJBO0YLrg/2GI=
-    - secure: c70gRQuc2C6IQNIV5J15GenPyALonX5nIOY133a35AEfwh+4C1xLO8/QC21aZPUlXFQbKdqnnOhChi7/sqUhi6fvmRlwStfLfvDeUQny2aKmTcxBG88iDmj3CUw0r7yigE1MxpGgUCsJj8uHMrbudQOAz5BpAAnyOMc9i18cBEmIelTPIz7nUgGMPLA1enb1eqHICNrvA0enCCfNL9KTBxjTtqsfuXmp6pm4yBFJoNweW0QeR/E8FETCXWMPRaGjhpDvjdfn/RfoRtonKXgMNA8mjY6yBE5pfY/S2bfG/joslwAdapc0aPVN72NeHONHvIt5blZn0grg3iH5j9sY/73UsZmKi4zlBuQBA7nEjJSIfh8AnTbLVq09kkeNPCAtv/y1Us1+Yoliii6+wMpDwJIbOgMRjrjnChNFK86mDcmWT2crKjNK7h1RPaZ/JHgYTO00zHOUMKIPYEJwYVaH7T/miwsyW6jrpK7oh4fyoFh8IPH9Ufi6EpqH4QN8YgVB1UHzyxprL8Pv8LXuwtEDBUflMwubyL0oVKaj0l5yM0/NHoI7SkCDwfSuxn8elNuSYWj/c+1P9+NlNrZA/i1+3YqqqCpUR3nE4Itgwky5Qtf7+1v091lJUuoSb8pHDMpLLx6OhvvyiKkpI8ZbOEUQ15RVJxtn0QZgBLNe9sFDmsg=
-notifications:
-  slack:
-    on_success: never
-    secure: L2LjcXmXpx/HbYXtz+O032gBtPfbIaZd+MC7OTAxJo0VBmlshorf7+ZxYYLfILpHeJ3rJ245vjC6+ozfl3PWjSBX9g1HdUiFh6CJlcfqyJ7k9iEOlOLZhP/S6/GRdVjjHXYGEymrthr5B1fDS9CwtD50VmPjmlJa/R17GRVOV1AgqpFLSlplVmtYoU4yNBl+jhdyHoPYCbJKdMyFnw0U2qRsiq7VlJouZmYmpjliBAOTkoWgI6oEeqO5jIJ8rFC/+U6XXadfozPCVeLWYqAncCtmgUd6gtJW/lhEZzxBuXcPFCt2ISdNTtQDQNqbaSWzB08v6ghPzHceDxwaw2FSRXyYP+CSqCTGOhH7r7xLDp4Uj3PopkcQZO+y1syP/aTvH9OlurGGXomqeu6MMD/L/B/uAagGSZFTdwIp2wDxecs83XUpZG9NUNcN1uhpXD+YEqsPk55RiLvo/p5WoqhPKocQKk2j/uk903NMSaX4mUYCv2Qr1nYcjx2DVNMPa6RgqNdNh4hTKMO1PxUiCOXMfrmm5QZXB+2RA6z9NOwmvpI6zL5KsmlgFQXzDQaS6LQI5sLgarN8A5ZT6f/eNI9tjZp2tJtqknzuzpm5bfHYREfF3U9iPcbVvBCyNVME3PKZAje7PlM2z3sEmaRlMdKLrgD0cl+s4owzCfj1yAWqKJw=
+  - secure: MMoESDPGoltg5J/LEjAMLwYDVXi1eDYjeCBiEXXmrAFGVLDayg/b3pFDBTBrOCmp0tLbIJN47bXgQhByKf70M57p0Xnrwmsl8mpYSl58pvBU/heRUFUY7NmT70r8jVW5jPOD3PRv2B2cyNmjtq0aiabTi6dw1JhrzohyRnzgMHiDiv2i+ib6coeL6QVQ3IV/DNGAfPNy0Qo3DZgx9qIcQtNShgTWxDDWJh5B26hnSf+WMsltOfcu0CSF5gp9aqh1m83+UTZo7N1sR8lPDINuGZL0BWFj9V/neployw1hFyS9b7W5OF1UwvXVgGJAFSs76ESxDvMdF5wCQrku2d16yJG5RPa5A5jnsREoYi92QOXNWD6qu2V4/RvB158gDS5flD11CDJW9hDQZSKK3CDbGLTbUvZw+z587barsIZCKxKuRzPuqzYelTkIUoQylHeN7PTMIi9OXuwpTWM8vHub0KByI0SqG8wZeqrGlsmohkCGym7wgKB/Bk/OsvxDu+7kiROZuj9CbHcvVmvNdFDapfdNneOdY/zdX9fPFPQJF+1rbh0P/PuTKspn4Xpw/dd8VqRb5arRy1ipKtQVMRk0/TjIKq/w86a/0G27/Fy594WTQeKa/2tXWX0eVsGsu5qx2GGZLX0F5Rbpj+MflFvMecbo2BlCcCeJBO0YLrg/2GI=
+  - secure: c70gRQuc2C6IQNIV5J15GenPyALonX5nIOY133a35AEfwh+4C1xLO8/QC21aZPUlXFQbKdqnnOhChi7/sqUhi6fvmRlwStfLfvDeUQny2aKmTcxBG88iDmj3CUw0r7yigE1MxpGgUCsJj8uHMrbudQOAz5BpAAnyOMc9i18cBEmIelTPIz7nUgGMPLA1enb1eqHICNrvA0enCCfNL9KTBxjTtqsfuXmp6pm4yBFJoNweW0QeR/E8FETCXWMPRaGjhpDvjdfn/RfoRtonKXgMNA8mjY6yBE5pfY/S2bfG/joslwAdapc0aPVN72NeHONHvIt5blZn0grg3iH5j9sY/73UsZmKi4zlBuQBA7nEjJSIfh8AnTbLVq09kkeNPCAtv/y1Us1+Yoliii6+wMpDwJIbOgMRjrjnChNFK86mDcmWT2crKjNK7h1RPaZ/JHgYTO00zHOUMKIPYEJwYVaH7T/miwsyW6jrpK7oh4fyoFh8IPH9Ufi6EpqH4QN8YgVB1UHzyxprL8Pv8LXuwtEDBUflMwubyL0oVKaj0l5yM0/NHoI7SkCDwfSuxn8elNuSYWj/c+1P9+NlNrZA/i1+3YqqqCpUR3nE4Itgwky5Qtf7+1v091lJUuoSb8pHDMpLLx6OhvvyiKkpI8ZbOEUQ15RVJxtn0QZgBLNe9sFDmsg=
