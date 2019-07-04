@@ -54,7 +54,9 @@ const a = (...args: any[]): any[] => {
 
 const setD6 = (object: RPGObject, behavior: string, frame: any[]) => {
   object.setFrame(behavior, () =>
-    frame.map(i => (i !== null && i >= 0 ? i + object.direction * 6 : i))
+    frame.map(i =>
+      i !== null && i >= 0 ? i + object.direction * object._graphicColumn : i
+    )
   );
 };
 
@@ -89,7 +91,7 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   object._graphicColumn = skin.column; // 後方互換性
 
   // TODO: ６列 or １列で決め打ちしているが, そもそも列数で判断すべきではない
-  if (skin.column === 6) {
+  if (skin.direction === 4) {
     const idleFrames6 = (skin.frame && skin.frame.idle) || [1, 1];
     const walkFrames6 = (skin.frame && skin.frame.walk) || [
       0,
