@@ -253,7 +253,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this._frame as number;
   }
 
-  public set frame(value: number | (number | null)[]) {
+  public set frame(value: number | null | (number | null)[]) {
     // deep compare はしない
     if (this._frame === value || this._frameSequence === value) return;
 
