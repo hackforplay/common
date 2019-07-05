@@ -482,9 +482,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  private getFrame() {
-    if (this.getFrameOfBehavior[this.behavior] instanceof Function) {
-      return this.getFrameOfBehavior[this.behavior].call(this);
+  private getFrame(behavior: string = this.behavior) {
+    if (this.getFrameOfBehavior[behavior] instanceof Function) {
+      return this.getFrameOfBehavior[behavior].call(this);
     }
     return [];
   }
@@ -1490,8 +1490,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private applySkin = ((f: (object: RPGObject) => void) => {
     f(this); // スキンを適用
-    let routine = this.getFrameOfBehavior[this.behavior];
-    if (routine) this.frame = routine.call(this); // frame を設定し直す
+    const animation = this.getFrame();
+    if (animation.length > 0) {
+      this.frame = animation;
+    } else {
+      // 初期値として, init アニメーションを適用
+      this.frame = this.getFrame('init');
+    }
     this.rotateIfNeeded();
     return f;
   }).bind(this);
