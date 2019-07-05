@@ -249,6 +249,26 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return Boolean(Camera && Camera.main && Camera.main.target === this);
   }
 
+  public get frame() {
+    return this._frame as number;
+  }
+
+  public set frame(value: number | number[]) {
+    // deep compare はしない
+    if (this._frame === value || this._frameSequence === value) return;
+
+    if (Array.isArray(value)) {
+      // アニメーションを [] にすることで frame の上書きをスキップできる
+      if (value.length < 1) return;
+      (this as any)._frameSequence = value;
+    }
+    if (typeof value === 'number') {
+      (this as any)._frameSequence = null;
+      (this as any)._frame = value;
+      this._computeFramePosition();
+    }
+  }
+
   private updateCollider() {
     this.collider.pos.x = this.x;
     this.collider.pos.y = this.y;
