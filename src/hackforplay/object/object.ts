@@ -552,13 +552,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.behavior = BehaviorTypes.Attack;
     const dx = this.mapX + this.forward.x;
     const dy = this.mapY + this.forward.y;
+    let damageObject: RPGObject
 
     if (this.skill) {
       // アセットをしょうかんする
       this.しょうかんする(this.skill);
     } else {
       // ダメージを与えるオブジェクトを生成する
-      const damageObject = new RPGObject();
+      damageObject = new RPGObject();
       damageObject.damage = this.atk;
       registerServant(this, damageObject);
       damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
@@ -568,14 +569,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       } else {
         damageObject.locate(dx, dy);
       }
-      damageObject.setTimeout(
-        () => damageObject.destroy(),
-        this.getFrameLength()
-      );
     }
 
     this.once(enchant.Event.ANIMATION_END, () => {
       this.behavior = BehaviorTypes.Idle;
+      if (damageObject) {
+        damageObject.destroy();
+      }
     });
   }
 
