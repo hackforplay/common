@@ -1,6 +1,6 @@
+import game from '../hackforplay/game';
 import Hack from '../hackforplay/hack';
 import TextArea from '../hackforplay/ui/textarea';
-import game from '../hackforplay/game';
 
 const messages = []; // 一旦メッセージを貯めておくキュー
 
@@ -74,7 +74,7 @@ export function logAtPoint(text, x, y) {
 }
 
 // canvas のテキストエリアを生成
-const textArea = new TextArea(480, 200);
+export const textArea = new TextArea(480, 200);
 textArea.autoResizeVertical = true;
 textArea.x = (480 - textArea.w) / 2;
 textArea.y = 0;
@@ -89,7 +89,7 @@ textArea.defaultStyle = {
   ruby: null,
   rubyId: null
 };
-Hack.textArea = textArea;
+
 const okButton = new TextArea(200, 38);
 okButton.x = (480 - okButton.w) / 2;
 okButton.on('enterframe', () => {
@@ -148,8 +148,6 @@ export function handleOkButtonPush() {
 
 okButton.on('touchend', handleOkButtonPush);
 
-Hack.on('gameclear', hide); // ゲームクリア時閉じる
-Hack.on('gameover', hide); // ゲームオーバー時閉じる
 okButton.push('OK');
 
 game.on('awake', () => {
