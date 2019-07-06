@@ -112,7 +112,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _layer: number = (RPGMap as any).Layer.Middle;
   private _collidedNodes: any[] = []; // 衝突した Node リスト
   private hpchangeFlag = false;
-  private getFrameOfBehavior: { [key: string]: () => (number | null)[] } = {};
   private hpLabel?: any;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
   private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
@@ -486,24 +485,30 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     else _remove.call(this);
   }
 
-  public setFrame(
+  private setFrame(
     behavior: string,
-    frame: (number | null)[] | ((this: RPGObject) => (number | null)[])
+    replace: (number | null)[] | ((this: RPGObject) => (number | null)[])
   ) {
-    // behavior is Type:string
-    // frame is Frames:array or Getter:function
-    if (typeof frame === 'function') {
-      this.getFrameOfBehavior[behavior] = frame;
-    } else {
-      this.getFrameOfBehavior[behavior] = () => frame;
-    }
+    console.error(
+      'RPGObject::setFrame は非推奨になりました. v0.23 以降で削除されます'
+    );
+    const { currentSkin } = this;
+    if (!currentSkin) return;
+    const frame = (currentSkin.frame = currentSkin.frame || {});
+    replace = typeof replace === 'function' ? replace.call(this) : replace;
+    frame[behavior as keyof typeof frame] = replace;
   }
 
   private getFrame(behavior: string = this.behavior) {
-    if (this.getFrameOfBehavior[behavior] instanceof Function) {
-      return this.getFrameOfBehavior[behavior].call(this);
-    }
-    return [];
+    console.error(
+      'RPGObject::getFrame は非推奨になりました. v0.23 以降で削除されます'
+    );
+    const frame =
+      this.currentSkin &&
+      this.currentSkin.frame &&
+      this.currentSkin.frame[behavior as keyof Skin.ISkin['frame']];
+    if (!frame) return [];
+    return Skin.decode(frame);
   }
 
   private setTimeout(
@@ -996,16 +1001,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     behavior: string,
     frame: (number | null)[] | (() => (number | null)[])
   ) {
-    const array = typeof frame === 'function' ? frame() : frame;
-
-    this.setFrame(behavior, () => {
-      const _array: (number | null)[] = [];
-      array.forEach((item, index) => {
-        _array[index] =
-          item !== null && item >= 0 ? item + this.direction * 9 : item;
-      }, this);
-      return _array;
-    });
+    this.setFrame(behavior, frame);
   }
 
   public turn(dir: Dir.IDir): void {

@@ -1,9 +1,8 @@
 import { default as enchant } from '../enchantjs/enchant';
-import RPGObject from './object/object';
 import { default as SAT } from '../lib/sat.min';
-import { default as BehaviorTypes } from './behavior-types';
 import { default as logFunc } from '../mod/logFunc';
 import { fetchText } from './feeles';
+import RPGObject from './object/object';
 
 export interface ISkin {
   name: string;
@@ -55,14 +54,6 @@ export function decode(...args: (number | null)[]): (number | null)[] {
   return array;
 }
 
-const setD6 = (object: RPGObject, behavior: string, frame: any[]) => {
-  object.setFrame(behavior, () =>
-    frame.map(i =>
-      i !== null && i >= 0 ? i + object.direction * object._graphicColumn : i
-    )
-  );
-};
-
 const nope = () => {};
 
 /**
@@ -93,45 +84,24 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   ); // (x, y) は Sprite の起点 -> Sprite の分を引く, collider の分を足す
   object._graphicColumn = skin.column; // 後方互換性
 
+  // アニメーションの初期値を設定する
+  const frame = (skin.frame = skin.frame || {});
   if (skin.direction === 4) {
-    const idleFrames6 = (skin.frame && skin.frame.idle) || [1, 1];
-    const walkFrames6 = (skin.frame && skin.frame.walk) || [
-      0,
-      3,
-      1,
-      3,
-      2,
-      3,
-      1,
-      1
-    ];
-    const attackFrames6 = (skin.frame && skin.frame.attack) || [
-      3,
-      4,
-      4,
-      4,
-      5,
-      4
-    ];
-    const deadFrames6 = (skin.frame && skin.frame.dead) || [1, 1];
-    // 配列をオブジェクトにセット
     object.directionType = 'quadruple';
-    setD6(object, BehaviorTypes.Idle, decode(...idleFrames6));
-    setD6(object, BehaviorTypes.Walk, decode(...walkFrames6, null, 1));
-    setD6(object, BehaviorTypes.Attack, decode(...attackFrames6, null, 1));
-    setD6(object, BehaviorTypes.Dead, decode(...deadFrames6, null, 1));
+    frame.idle = frame.idle || [1, 1];
+    frame.walk = frame.walk || [0, 3, 1, 3, 2, 3, 1, 1];
+    frame.attack = frame.attack || [3, 4, 4, 4, 5, 4];
+    frame.dead = frame.dead || [1, 1];
   } else {
-    const idleFrames = (skin.frame && skin.frame.idle) || [1, 1];
-    const walkFrames = (skin.frame && skin.frame.walk) || [0, 10];
-    const attackFrames = (skin.frame && skin.frame.attack) || [0, 12];
-    const deadFrames = (skin.frame && skin.frame.dead) || [0, 1];
-    // 配列をオブジェクトにセット
-    object.directionType = 'single';
-    object.setFrame(BehaviorTypes.Idle, decode(...idleFrames));
-    object.setFrame(BehaviorTypes.Walk, decode(...walkFrames, null, 1));
-    object.setFrame(BehaviorTypes.Attack, decode(...attackFrames, null, 1));
-    object.setFrame(BehaviorTypes.Dead, decode(...deadFrames, null, 1));
+    frame.idle = frame.idle || [1, 1];
+    frame.walk = frame.walk || [0, 10];
+    frame.attack = frame.attack || [0, 12];
+    frame.dead = frame.dead || [0, 1];
   }
+  // 互換性のため. アニメーションの終端を追加する
+  frame.walk.push(null, 1);
+  frame.attack.push(null, 1);
+  frame.dead.push(null, 1);
   // skin の参照を保持する
   object.currentSkin = skin;
 };
