@@ -118,6 +118,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
   private _image?: typeof enchant.Surface;
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
+  private isBehaviorChanged = false;
 
   public constructor(mod?: (this: RPGObject) => void) {
     super(0, 0);
@@ -787,7 +788,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this._behavior;
   }
 
-  private isBehaviorChanged = false;
   public set behavior(value) {
     if (typeof value === 'string') {
       this.isBehaviorChanged = true;
