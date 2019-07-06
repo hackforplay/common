@@ -127,7 +127,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     // Destroy when dead
     this.on('becomedead', () => {
-      this.destroy(this.getFrame().length);
+      this.destroy(this.getFrameLength());
     });
     this.on('hpchange', () => {
       if (this.hp <= 0) {
@@ -249,6 +249,20 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public get isPlayer() {
     return Boolean(Camera && Camera.main && Camera.main.target === this);
+  }
+
+  private getFrameLength() {
+    const { _frameSequence, isBehaviorChanged } = this;
+    if (isBehaviorChanged) {
+      console.error(
+        'this.isBehaviorChanged が true のとき、this.getFrameLength() は正しく計算できません.'
+      );
+    }
+    if (!Array.isArray(_frameSequence)) return 0;
+    for (let index = 0; index < _frameSequence.length; index++) {
+      if (_frameSequence[index] === null) return index;
+    }
+    return 0; // means Infinity
   }
 
   private computeFrame(direction = this.direction, behavior = this.behavior) {
@@ -559,15 +573,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       }
       damageObject.setTimeout(
         () => damageObject.destroy(),
-        this.getFrame().length
+        this.getFrameLength()
       );
     }
 
-    await new Promise(resolve => {
-      this.setTimeout(resolve, this.getFrame().length);
+    this.once(enchant.Event.ANIMATION_END, () => {
+      this.behavior = BehaviorTypes.Idle;
     });
-
-    this.behavior = BehaviorTypes.Idle;
   }
 
   public async walk(distance = 1, forward?: IVector2, setForward = true) {
@@ -692,11 +704,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // 衝突リストを初期化
     this._collidedNodes = [];
 
-    const animation = [...this.getFrame()];
-    // 最後に null が入っているので削除
-    animation.pop();
 
-    const baseSpeed = Math.max(1, animation.length); // speed=1 の時にかかる frame
+    let baseSpeed = 12; // speed=1 の時にかかる frame
+    const walkAnim = this.currentSkin && this.currentSkin.frame && this.currentSkin.frame.walk;
+    if (walkAnim) {
+      baseSpeed = Skin.decode(...walkAnim).length - 1;
+    }
 
     // 1 マス移動するのにかかるフレーム数
     // 最速でも 1 フレームはかかるようになっている
@@ -1483,13 +1496,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private applySkin = ((f: (object: RPGObject) => void) => {
     f(this); // スキンを適用
-    const animation = this.getFrame();
-    if (animation.length > 0) {
-      (this as any)._frameSequence = animation;
-    } else {
-      // 初期値として, init アニメーションを適用
-      this.computeFrame(this.direction, 'init');
-    }
+    // 現在の behavior に応じた frame をセットする.
+    // もし frame が存在しなければ(e.g. frame=[]), init を適用する
+    this.computeFrame(this.direction, BehaviorTypes.Init);
+    this.computeFrame(); // なければスキップされる -> init が適用される
     this.rotateIfNeeded();
     return f;
   }).bind(this);
