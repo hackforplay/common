@@ -46,7 +46,10 @@ export function decode(...args: (number | null)[]): (number | null)[] {
   const array = [];
   for (let index = 0; index < args.length; index += 2) {
     const n = args[index];
-    const l: number = args[index + 1];
+    const l = args[index + 1];
+    if (l === null) {
+      throw new Error('Invalid skin frame: ' + JSON.stringify(args));
+    }
     for (let i = 0; i < l; i++) array.push(n);
   }
   return array;
