@@ -25,10 +25,10 @@ export interface ISkin {
   direction: 1 | 4;
   mayRotate: boolean;
   frame?: {
-    idle?: number[];
-    walk?: number[];
-    attack?: number[];
-    dead?: number[];
+    idle?: (number | null)[];
+    walk?: (number | null)[];
+    attack?: (number | null)[];
+    dead?: (number | null)[];
   };
 }
 export type Result = Promise<(object: RPGObject) => void>;
