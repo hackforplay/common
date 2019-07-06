@@ -42,7 +42,7 @@ export const setBaseUrl = (url: string) => {
 const _cache: { [name: string]: Result } = {};
 const _surfaces: { [name: string]: typeof enchant.Surface } = {};
 
-const a = (...args: any[]): any[] => {
+export function decode(...args: (number | null)[]): (number | null)[] {
   const array = [];
   for (let index = 0; index < args.length; index += 2) {
     const n = args[index];
@@ -50,7 +50,7 @@ const a = (...args: any[]): any[] => {
     for (let i = 0; i < l; i++) array.push(n);
   }
   return array;
-};
+}
 
 const setD6 = (object: RPGObject, behavior: string, frame: any[]) => {
   object.setFrame(behavior, () =>
@@ -112,10 +112,10 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
     const deadFrames6 = (skin.frame && skin.frame.dead) || [1, 1];
     // 配列をオブジェクトにセット
     object.directionType = 'quadruple';
-    setD6(object, BehaviorTypes.Idle, a(...idleFrames6));
-    setD6(object, BehaviorTypes.Walk, a(...walkFrames6, null, 1));
-    setD6(object, BehaviorTypes.Attack, a(...attackFrames6, null, 1));
-    setD6(object, BehaviorTypes.Dead, a(...deadFrames6, null, 1));
+    setD6(object, BehaviorTypes.Idle, decode(...idleFrames6));
+    setD6(object, BehaviorTypes.Walk, decode(...walkFrames6, null, 1));
+    setD6(object, BehaviorTypes.Attack, decode(...attackFrames6, null, 1));
+    setD6(object, BehaviorTypes.Dead, decode(...deadFrames6, null, 1));
   } else {
     const idleFrames = (skin.frame && skin.frame.idle) || [1, 1];
     const walkFrames = (skin.frame && skin.frame.walk) || [0, 10];
@@ -123,10 +123,10 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
     const deadFrames = (skin.frame && skin.frame.dead) || [0, 1];
     // 配列をオブジェクトにセット
     object.directionType = 'single';
-    object.setFrame(BehaviorTypes.Idle, a(...idleFrames));
-    object.setFrame(BehaviorTypes.Walk, a(...walkFrames, null, 1));
-    object.setFrame(BehaviorTypes.Attack, a(...attackFrames, null, 1));
-    object.setFrame(BehaviorTypes.Dead, a(...deadFrames, null, 1));
+    object.setFrame(BehaviorTypes.Idle, decode(...idleFrames));
+    object.setFrame(BehaviorTypes.Walk, decode(...walkFrames, null, 1));
+    object.setFrame(BehaviorTypes.Attack, decode(...attackFrames, null, 1));
+    object.setFrame(BehaviorTypes.Dead, decode(...deadFrames, null, 1));
   }
   // skin の参照を保持する
   object.currentSkin = skin;
