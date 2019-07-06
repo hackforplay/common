@@ -93,7 +93,6 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   ); // (x, y) は Sprite の起点 -> Sprite の分を引く, collider の分を足す
   object._graphicColumn = skin.column; // 後方互換性
 
-  // TODO: ６列 or １列で決め打ちしているが, そもそも列数で判断すべきではない
   if (skin.direction === 4) {
     const idleFrames6 = (skin.frame && skin.frame.idle) || [1, 1];
     const walkFrames6 = (skin.frame && skin.frame.walk) || [
