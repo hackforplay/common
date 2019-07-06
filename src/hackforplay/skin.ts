@@ -82,7 +82,6 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   object.collider.setOffset(
     new SAT.V(skin.collider.x - skin.sprite.x, skin.collider.y - skin.sprite.y)
   ); // (x, y) は Sprite の起点 -> Sprite の分を引く, collider の分を足す
-  object._graphicColumn = skin.column; // 後方互換性
 
   // アニメーションの初期値を設定する
   const frame = (skin.frame = skin.frame || {});

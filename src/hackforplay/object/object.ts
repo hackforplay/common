@@ -265,18 +265,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   private computeFrame(direction = this.direction, behavior = this.behavior) {
-    const { _graphicColumn, _width, _image, currentSkin } = this;
+    const { _width, _image, currentSkin } = this;
     if (!_image || !_width || !currentSkin) return;
 
-    // skin.column または動的に計算された column
-    let column = 6;
-    if (typeof _graphicColumn === 'number') {
-      column = _graphicColumn;
-    } else {
-      column = (_image.width / (_width || 32)) | 0;
-    }
-
-    const { frame } = currentSkin;
+    const { frame, column } = currentSkin;
     if (!frame || !(behavior in frame)) return;
     const key = behavior as keyof NonNullable<Skin.ISkin['frame']>;
     const animation = frame[key];
