@@ -788,6 +788,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public get behavior() {
     return this._behavior;
   }
+
+  private isBehaviorChanged = false;
   public set behavior(value) {
     if (typeof value === 'string') {
       this.isBehaviorChanged = true;
