@@ -128,6 +128,8 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
     object.setFrame(BehaviorTypes.Attack, a(...attackFrames, null, 1));
     object.setFrame(BehaviorTypes.Dead, a(...deadFrames, null, 1));
   }
+  // skin の参照を保持する
+  object.currentSkin = skin;
 };
 
 /**
