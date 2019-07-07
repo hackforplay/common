@@ -140,11 +140,11 @@ function showNextIfExist() {
     textArea.push(current.talkMessage); // テキストを挿入
     textArea.y = 320 - textArea.height;
     // ボタンを生成
-    for (const choice of current.choices) {
+    for (const [index, choice] of current.choices.entries()) {
       const button = new TextArea(config.button.width, config.button.height);
       Object.assign(button, config.button);
       Hack.popupGroup.addChild(button); // メニューにaddChild
-      button.y = 320 - textArea.height - button.height * (answers.length + 1);
+      button.y = 320 - textArea.height - button.height * (index + 1);
       button.clear(); // 前の文章をクリア
       button.show();
       button.push(choice); // 選択肢のテキスト表示
