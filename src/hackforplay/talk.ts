@@ -85,21 +85,6 @@ const theWorld = () => {
   };
 };
 
-const makeAnswer = function(choice: string, resolve: (text: string) => void) {
-  const textWindow = new TextArea(config.button.width, config.button.height);
-  Object.assign(textWindow, config.button);
-  Hack.popupGroup.addChild(textWindow); // メニューにaddChild
-  textWindow.y =
-    320 - textArea.height - textWindow.height * (answers.length + 1);
-  textWindow.clear(); // 前の文章をクリア
-  textWindow.show();
-  textWindow.push(choice); // 選択肢のテキスト表示
-  textWindow.on('touchend', function() {
-    resolve(choice);
-  });
-  return textWindow;
-};
-
 export default function talk(text: string, ...choices: string[]) {
   const resume = theWorld();
   return new Promise<string>(resolve => {
@@ -154,9 +139,19 @@ function showNextIfExist() {
     textArea.clear(); // 前の文章をクリア
     textArea.push(current.talkMessage); // テキストを挿入
     textArea.y = 320 - textArea.height;
+    // ボタンを生成
     for (const choice of current.choices) {
-      const answerWindow = makeAnswer(choice, current.resolve);
-      answers.push(answerWindow);
+      const button = new TextArea(config.button.width, config.button.height);
+      Object.assign(button, config.button);
+      Hack.popupGroup.addChild(button); // メニューにaddChild
+      button.y = 320 - textArea.height - button.height * (answers.length + 1);
+      button.clear(); // 前の文章をクリア
+      button.show();
+      button.push(choice); // 選択肢のテキスト表示
+      button.on('touchend', function() {
+        current.resolve(choice);
+      });
+      answers.push(button);
     }
   } else {
     Hack.popupGroup.removeChild(textArea);
