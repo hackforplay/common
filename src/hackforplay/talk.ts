@@ -137,13 +137,6 @@ export default function talk(text: string, ...choices: string[]) {
       const answerWindow = makeAnswer(choice, resolve);
       answers.push(answerWindow);
     }
-
-    // スペースキーでウィンドウを閉じたい
-    Key.space.release(() => {
-      if (choices.length === 1 && timeIsStopped === true) {
-        resolve(choices[0]);
-      }
-    });
   }).then(choise => {
     resume();
     windowDelete();
@@ -158,3 +151,13 @@ export default function talk(text: string, ...choices: string[]) {
     return choise;
   });
 }
+
+// スペースキーでウィンドウを閉じたい
+Key.space.release(() => {
+  const [current] = talkStack;
+  if (!current) return;
+  const { choices, resolve } = current;
+  if (choices.length === 1 && timeIsStopped === true) {
+    resolve(choices[0]);
+  }
+});
