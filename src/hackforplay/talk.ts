@@ -2,6 +2,56 @@ import TextArea from '../hackforplay/ui/textarea';
 import { default as Hack } from './hack';
 import Key from './key';
 
+export interface IConfig {
+  text: Partial<TextArea>;
+  button: Partial<TextArea>;
+}
+
+export const config: IConfig = {
+  text: {
+    width: 480,
+    height: 200,
+    autoResizeVertical: true,
+    margin: 8,
+    padding: 15,
+    borderRadius: 14,
+    borderColor: 'rgba(0, 0, 0, 0)',
+    borderWidth: 0,
+    defaultStyle: {
+      color: '#fff',
+      size: '18',
+      family: 'PixelMplus, sans-serif',
+      weight: 'bold',
+      align: 'center',
+      lineSpace: 5,
+      space: 0,
+      ruby: null,
+      rubyId: null
+    }
+  },
+  button: {
+    width: 180,
+    height: 32,
+    x: 300,
+    margin: 2,
+    padding: 5,
+    borderRadius: 14,
+    borderColor: '#fff',
+    borderWidth: 2,
+    defaultStyle: {
+      color: '#fff',
+      size: '16',
+      family: 'PixelMplus, sans-serif',
+      weight: 'bold',
+      align: 'center',
+      lineSpace: 0,
+      space: 0,
+      ruby: null,
+      rubyId: null
+    }
+  }
+};
+
 let answers: TextArea[] = [];
 
 export interface ITalkInfo {
@@ -14,24 +64,8 @@ export interface ITalkInfo {
 const talkStack: ITalkInfo[] = [];
 
 // テキストエリアを生成
-const textArea = new TextArea(480, 200);
-textArea.autoResizeVertical = true;
-textArea.margin = 8;
-textArea.padding = 15;
-textArea.borderRadius = 14;
-textArea.borderColor = 'rgba(0, 0, 0, 0)';
-textArea.borderWidth = 0;
-textArea.defaultStyle = {
-  color: '#fff',
-  size: '18',
-  family: 'PixelMplus, sans-serif',
-  weight: 'bold',
-  align: 'center',
-  lineSpace: 5,
-  space: 0,
-  ruby: null,
-  rubyId: null
-};
+const textArea = new TextArea(config.text.width, config.text.height);
+Object.assign(textArea, config.text);
 
 const showTextArea = function(text: string) {
   Hack.popupGroup.addChild(textArea);
@@ -74,27 +108,11 @@ const makeAnswer = function(
   resolve: (text: string) => void,
   resume: () => void
 ) {
-  const textWindow = new TextArea(180, 32);
+  const textWindow = new TextArea(config.button.width, config.button.height);
+  Object.assign(textWindow, config.button);
   Hack.popupGroup.addChild(textWindow); // メニューにaddChild
-  textWindow.x = 480 - textWindow.w;
   textWindow.y =
     320 - textArea.height - textWindow.height * (answers.length + 1);
-  textWindow.margin = 2;
-  textWindow.padding = 5;
-  textWindow.borderRadius = 14;
-  textWindow.borderColor = '#fff';
-  textWindow.borderWidth = 2;
-  textWindow.defaultStyle = {
-    color: '#fff',
-    size: '16',
-    family: 'PixelMplus, sans-serif',
-    weight: 'bold',
-    align: 'center',
-    lineSpace: 0,
-    space: 0,
-    ruby: null,
-    rubyId: null
-  };
   textWindow.clear(); // 前の文章をクリア
   textWindow.show();
   textWindow.push(choice); // 選択肢のテキスト表示
