@@ -52,8 +52,6 @@ export const config: IConfig = {
   }
 };
 
-let answers: TextArea[] = [];
-
 export interface ITalkInfo {
   talkMessage: string;
   choices: string[];
@@ -117,6 +115,8 @@ Key.space.release(() => {
     resolve(choices[0]);
   }
 });
+
+let answers: TextArea[] = [];
 
 /**
  * もしも次の talk が talkStack にあれば表示する
