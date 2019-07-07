@@ -88,7 +88,6 @@ const theWorld = () => {
 export default function talk(text: string, ...choices: string[]) {
   const resume = theWorld();
   return new Promise<string>(resolve => {
-    choices.reverse(); // 下から上に表示するので、選択肢の配列をリバースする
     // 情報をtalkInfo配列に一度格納
     const talkInfo: ITalkInfo = {
       talkMessage: text,
@@ -144,7 +143,10 @@ function showNextIfExist() {
       const button = new TextArea(config.button.width, config.button.height);
       Object.assign(button, config.button);
       Hack.popupGroup.addChild(button); // メニューにaddChild
-      button.y = 320 - textArea.height - button.height * (index + 1);
+      button.y =
+        320 -
+        textArea.height -
+        button.height * (current.choices.length - index);
       button.clear(); // 前の文章をクリア
       button.show();
       button.push(choice); // 選択肢のテキスト表示
