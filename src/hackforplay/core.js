@@ -7,7 +7,6 @@ import Hack from './hack';
 import * as synonyms from './synonyms';
 import Skin from './deprecated-skin';
 import '../mod/collider-debugger';
-import stopOnBlur from '../mod/stop-on-blur';
 import * as logFunc from '../mod/logFunc';
 import find from './find';
 import deprecated from './deprecated';
@@ -85,7 +84,6 @@ Hack.logAtPoint = logFunc.logAtPoint;
 logFunc.setHeight(180);
 
 // MODs
-game.on('awake', stopOnBlur);
 game.once('load', coordinate);
 
 // patch to FireFox space key page down

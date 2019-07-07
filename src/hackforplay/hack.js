@@ -1,9 +1,9 @@
 import enchant from '../enchantjs/enchant';
+import { textArea, hide } from '../mod/logFunc';
 import Camera from './camera';
 import { code$, emphasizeCode, reload, throwError } from './feeles';
 import game from './game';
 import requestPostMessage from './request-post-message';
-import TextArea from './ui/textarea';
 
 function refocus() {
   window.document.activeElement.blur(); // Blur an enchantBook
@@ -110,16 +110,12 @@ Hack.textarea = function() {
   return this;
 }.call(new enchant.Entity());
 
-// canvas のテキストエリアを生成
-const textArea = new TextArea(380, 60);
-textArea.moveTo(60, 5);
-textArea.verticalNormalizedPosition = 1;
-textArea.autoResizeVertical = true;
-textArea.maxHeight = 310;
 Hack.textArea = textArea;
 game.on('awake', () => {
   Hack.menuGroup.addChild(textArea);
 });
+Hack.on('gameclear', hide); // ゲームクリア時閉じる
+Hack.on('gameover', hide); // ゲームオーバー時閉じる
 
 // 画面に文字を表示する（次の行に追加）
 Hack.log = function() {

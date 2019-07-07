@@ -4,6 +4,7 @@
   "description": "Common package for building stages in hackforplay",
   "main": "lib/index.js",
   "unpkg": "dist/main.min.js",
+  "files": ["dist"],
   "scripts": {
     "start": "webpack-dev-server",
     "prepublish": "webpack && npm run babel",
@@ -59,7 +60,7 @@
     "canvas": "^2.2.0",
     "eslint": "^5.13.0",
     "eslint-config-prettier": "^4.0.0",
-    "jsdom": "^14.0.0",
+    "jsdom": "^15.0.0",
     "np": "^5.0.0",
     "prettier": "^1.14.2",
     "raf": "^3.4.1",

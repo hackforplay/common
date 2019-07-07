@@ -151,8 +151,8 @@ rule.つくられたとき(async function() {
 // ここまでキャラクターがつくられたとき行うルール
 // ここからキャラクターがつねに行うルール
 rule.つねに(async function() {
-  const moveX = 32 * Math.sign(player.mapX - this.mapX);
-  const moveY = 32 * Math.sign(player.mapY - this.mapY);
+  const moveX = 32 * Math.sign(window.player.mapX - this.mapX);
+  const moveY = 32 * Math.sign(window.player.mapY - this.mapY);
   this.forward = [moveX, moveY];
   await this.walk(); // あるく
   await this.attack(); // こうげきする
