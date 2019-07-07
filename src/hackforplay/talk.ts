@@ -112,15 +112,6 @@ const makeAnswer = function(choice: string, resolve: (text: string) => void) {
   textWindow.push(choice); // 選択肢のテキスト表示
   textWindow.on('touchend', function() {
     resolve(choice);
-    windowDelete();
-    talkStack.shift();
-    if (talkStack.length >= 1) {
-      showTextArea(talkStack[0].talkMessage);
-      for (const choice of talkStack[0].choices) {
-        const answerWindow = makeAnswer(choice, talkStack[0].resolve);
-        answers.push(answerWindow);
-      }
-    }
   });
   return textWindow;
 };
@@ -151,20 +142,19 @@ export default function talk(text: string, ...choices: string[]) {
     Key.space.release(() => {
       if (choices.length === 1 && timeIsStopped === true) {
         resolve(choices[0]);
-        console.log(`window delete ${choices[0]},${timeIsStopped}`);
-        windowDelete();
-        talkStack.shift();
-        if (talkStack.length >= 1) {
-          showTextArea(talkStack[0].talkMessage);
-          for (const choice of talkStack[0].choices) {
-            const answerWindow = makeAnswer(choice, talkStack[0].resolve);
-            answers.push(answerWindow);
-          }
-        }
       }
     });
   }).then(choise => {
     resume();
+    windowDelete();
+    talkStack.shift();
+    if (talkStack.length >= 1) {
+      showTextArea(talkStack[0].talkMessage);
+      for (const choice of talkStack[0].choices) {
+        const answerWindow = makeAnswer(choice, talkStack[0].resolve);
+        answers.push(answerWindow);
+      }
+    }
     return choise;
   });
 }
