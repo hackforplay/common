@@ -1,3 +1,4 @@
+import { default as enchant } from '../enchantjs/enchant';
 import TextArea from '../hackforplay/ui/textarea';
 import { default as Hack } from './hack';
 import Key from './key';
@@ -5,6 +6,12 @@ import Key from './key';
 export interface IConfig {
   text: Partial<TextArea>;
   button: Partial<TextArea>;
+  cursor: {
+    size: number;
+    offsetX: number;
+    borderColor: string;
+    fillColor: string;
+  };
 }
 
 export const config: IConfig = {
@@ -49,12 +56,19 @@ export const config: IConfig = {
       ruby: null,
       rubyId: null
     }
+  },
+  cursor: {
+    size: 20,
+    offsetX: -8,
+    borderColor: 'rgb(255, 255, 255)',
+    fillColor: 'rgb(255, 255, 255)'
   }
 };
 
 export interface ITalkInfo {
   talkMessage: string;
   choices: string[];
+  cursor: number;
   resolve: (answer: string) => void;
 }
 
@@ -90,6 +104,7 @@ export default function talk(text: string, ...choices: string[]) {
     const talkInfo: ITalkInfo = {
       talkMessage: text,
       choices,
+      cursor: 0,
       resolve
     };
     talkStack.unshift(talkInfo); // talkStack配列の一番前に追加
@@ -106,17 +121,36 @@ export default function talk(text: string, ...choices: string[]) {
   });
 }
 
+let answers: TextArea[] = [];
+let cursor = makeCursor();
+
 // スペースキーでウィンドウを閉じたい
 Key.space.release(() => {
   const [current] = talkStack;
   if (!current) return;
-  const { choices, resolve } = current;
-  if (choices.length === 1 && timeIsStopped === true) {
-    resolve(choices[0]);
+  const { choices, resolve, cursor } = current;
+  resolve(choices[cursor]);
+});
+
+// カーソルキー上で移動
+Key.up.release(() => {
+  const [current] = talkStack;
+  if (!current) return;
+  if (current.cursor > 0) {
+    current.cursor--;
+    cursor.y -= config.button.height;
   }
 });
 
-let answers: TextArea[] = [];
+// カーソルキー下で移動
+Key.down.release(() => {
+  const [current] = talkStack;
+  if (!current) return;
+  if (current.cursor < current.choices.length - 1) {
+    current.cursor++;
+    cursor.y += config.button.height;
+  }
+});
 
 /**
  * もしも次の talk が talkStack にあれば表示する
@@ -147,6 +181,9 @@ function showNextIfExist() {
         320 -
         textArea.height -
         button.height * (current.choices.length - index);
+      if (index === current.cursor) {
+        cursor.y = button.y + button.height / 2 - cursor.height / 2;
+      }
       button.clear(); // 前の文章をクリア
       button.show();
       button.push(choice); // 選択肢のテキスト表示
@@ -155,7 +192,28 @@ function showNextIfExist() {
       });
       answers.push(button);
     }
+    Hack.popupGroup.addChild(cursor); // カーソルを常に手前に表示
+    cursor.x = 480 - (config.button.width || 0) + config.cursor.offsetX;
   } else {
     Hack.popupGroup.removeChild(textArea);
+    Hack.popupGroup.removeChild(cursor);
   }
+}
+
+function makeCursor() {
+  const l = config.cursor.size >> 0;
+  const triangle = new enchant.Surface(l, l);
+  const ctx: CanvasRenderingContext2D = triangle.context;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo((l * Math.sqrt(3)) / 2, l / 2);
+  ctx.lineTo(0, l);
+  ctx.closePath();
+  ctx.fillStyle = config.cursor.fillColor;
+  ctx.strokeStyle = config.cursor.borderColor;
+  ctx.fill();
+  ctx.stroke();
+  const cursor = new enchant.Sprite(l, l);
+  cursor.image = triangle;
+  return cursor;
 }
