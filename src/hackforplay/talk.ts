@@ -127,27 +127,15 @@ export default function talk(text: string, ...choices: string[]) {
       resolve
     };
     talkStack.unshift(talkInfo); // talkStack配列の一番前に追加
-    windowDelete(); // 後優先なのですでに表示されているものは一旦消す
-    showTextArea(text); // 本文のテキストエリア作成
     // 選択肢のボタンを作成
     if (choices.length === 0) {
       choices.push('とじる'); // 選択肢のテキスト表示
     }
-    for (const choice of choices) {
-      const answerWindow = makeAnswer(choice, resolve);
-      answers.push(answerWindow);
-    }
+    showNextIfExist();
   }).then(choise => {
     resume();
-    windowDelete();
     talkStack.shift();
-    if (talkStack.length >= 1) {
-      showTextArea(talkStack[0].talkMessage);
-      for (const choice of talkStack[0].choices) {
-        const answerWindow = makeAnswer(choice, talkStack[0].resolve);
-        answers.push(answerWindow);
-      }
-    }
+    showNextIfExist();
     return choise;
   });
 }
@@ -161,3 +149,19 @@ Key.space.release(() => {
     resolve(choices[0]);
   }
 });
+
+/**
+ * もしも次の talk が talkStack にあれば表示する
+ * なければメッセージウィンドウを削除する
+ */
+function showNextIfExist() {
+  windowDelete();
+  const [current] = talkStack;
+  if (current) {
+    showTextArea(current.talkMessage);
+    for (const choice of current.choices) {
+      const answerWindow = makeAnswer(choice, current.resolve);
+      answers.push(answerWindow);
+    }
+  }
+}
