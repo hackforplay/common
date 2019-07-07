@@ -66,14 +66,6 @@ const talkStack: ITalkInfo[] = [];
 const textArea = new TextArea(config.text.width, config.text.height);
 Object.assign(textArea, config.text);
 
-const showTextArea = function(text: string) {
-  Hack.popupGroup.addChild(textArea);
-  textArea.show();
-  textArea.clear(); // 前の文章をクリア
-  textArea.push(text); // テキストを挿入
-  textArea.y = 320 - textArea.height;
-};
-
 // 外から参照したいので出してみる
 let timeIsStopped = false;
 
@@ -91,14 +83,6 @@ const theWorld = () => {
   return () => {
     timeIsStopped = false;
   };
-};
-
-const windowDelete = function() {
-  Hack.popupGroup.removeChild(textArea);
-  for (const answer of answers) {
-    Hack.popupGroup.removeChild(answer);
-  }
-  answers = [];
 };
 
 const makeAnswer = function(choice: string, resolve: (text: string) => void) {
@@ -155,13 +139,26 @@ Key.space.release(() => {
  * なければメッセージウィンドウを削除する
  */
 function showNextIfExist() {
-  windowDelete();
+  // 古いボタンを削除
+  for (const answer of answers) {
+    Hack.popupGroup.removeChild(answer);
+  }
+  answers = [];
+  // 新しい talkInfo を取得, もしあれば表示
   const [current] = talkStack;
   if (current) {
-    showTextArea(current.talkMessage);
+    if (!textArea.parentNode) {
+      Hack.popupGroup.addChild(textArea);
+      textArea.show();
+    }
+    textArea.clear(); // 前の文章をクリア
+    textArea.push(current.talkMessage); // テキストを挿入
+    textArea.y = 320 - textArea.height;
     for (const choice of current.choices) {
       const answerWindow = makeAnswer(choice, current.resolve);
       answers.push(answerWindow);
     }
+  } else {
+    Hack.popupGroup.removeChild(textArea);
   }
 }
