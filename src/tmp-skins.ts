@@ -41,7 +41,6 @@ for (const { key, fileName, width, height } of avatars) {
       y: -(this.height - unitSize) / 1.2
     };
 
-    this._graphicColumn = 6; // ６列画像に対応
     setFrameD6(this, BehaviorTypes.Idle, [1]);
     setFrameD6(this, BehaviorTypes.Walk, [0, 0, 0, 1, 1, 1, 2, 2, 2, 1, null]);
     setFrameD6(this, BehaviorTypes.Attack, a(3, 4, 4, 4, 5, 4, null, 1));

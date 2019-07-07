@@ -96,6 +96,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
   public _mayRotate = false; // 向いている方向に合わせてスプライト自体を回転させるフラグ
   public isInvincible = false; // ダメージを受けなくなるフラグ
+  public currentSkin?: Skin.ISkin; // 適用されているスキン
 
   private _hp?: number;
   private _atk?: number;
@@ -111,12 +112,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _layer: number = (RPGMap as any).Layer.Middle;
   private _collidedNodes: any[] = []; // 衝突した Node リスト
   private hpchangeFlag = false;
-  private getFrameOfBehavior: { [key: string]: () => (number | null)[] } = {};
   private hpLabel?: any;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
   private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
   private _image?: typeof enchant.Surface;
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
+  private isBehaviorChanged = false;
 
   public constructor(mod?: (this: RPGObject) => void) {
     super(0, 0);
@@ -125,7 +126,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     // Destroy when dead
     this.on('becomedead', () => {
-      this.destroy(this.getFrame().length);
+      this.destroy(this.getFrameLength());
     });
     this.on('hpchange', () => {
       if (this.hp <= 0) {
@@ -249,6 +250,34 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return Boolean(Camera && Camera.main && Camera.main.target === this);
   }
 
+  private getFrameLength() {
+    const { _frameSequence, isBehaviorChanged } = this;
+    if (isBehaviorChanged) {
+      console.error(
+        'this.isBehaviorChanged が true のとき、this.getFrameLength() は正しく計算できません.'
+      );
+    }
+    if (!Array.isArray(_frameSequence)) return 0;
+    for (let index = 0; index < _frameSequence.length; index++) {
+      if (_frameSequence[index] === null) return index;
+    }
+    return 0; // means Infinity
+  }
+
+  private computeFrame(direction = this.direction, behavior = this.behavior) {
+    const { _width, _image, currentSkin } = this;
+    if (!_image || !_width || !currentSkin) return;
+
+    const { frame, column } = currentSkin;
+    if (!frame || !(behavior in frame)) return;
+    const key = behavior as keyof NonNullable<Skin.ISkin['frame']>;
+    const animation = frame[key];
+    if (!animation || animation.length < 1) return; // skip
+    (this as any)._frameSequence = Skin.decode(...animation).map(n =>
+      n === null ? null : n + column * direction
+    );
+  }
+
   private updateCollider() {
     this.collider.pos.x = this.x;
     this.collider.pos.y = this.y;
@@ -370,8 +399,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     if (this.isBehaviorChanged) {
       // begin animation
-      let routine = this.getFrameOfBehavior[this.behavior];
-      if (routine) this.frame = routine.call(this);
+      this.computeFrame();
       // becomeイベント内でbehaviorが変更された場合、
       // 次のフレームで１度だけbecomeイベントが発火します。
       this.isBehaviorChanged = false;
@@ -449,24 +477,30 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     else _remove.call(this);
   }
 
-  public setFrame(
+  private setFrame(
     behavior: string,
-    frame: (number | null)[] | ((this: RPGObject) => (number | null)[])
+    replace: (number | null)[] | ((this: RPGObject) => (number | null)[])
   ) {
-    // behavior is Type:string
-    // frame is Frames:array or Getter:function
-    if (typeof frame === 'function') {
-      this.getFrameOfBehavior[behavior] = frame;
-    } else {
-      this.getFrameOfBehavior[behavior] = () => frame;
-    }
+    console.error(
+      'RPGObject::setFrame は非推奨になりました. v0.23 以降で削除されます'
+    );
+    const { currentSkin } = this;
+    if (!currentSkin) return;
+    const frame = (currentSkin.frame = currentSkin.frame || {});
+    replace = typeof replace === 'function' ? replace.call(this) : replace;
+    frame[behavior as keyof typeof frame] = replace;
   }
 
-  private getFrame() {
-    if (this.getFrameOfBehavior[this.behavior] instanceof Function) {
-      return this.getFrameOfBehavior[this.behavior].call(this);
-    }
-    return [];
+  private getFrame(behavior: string = this.behavior) {
+    console.error(
+      'RPGObject::getFrame は非推奨になりました. v0.23 以降で削除されます'
+    );
+    const frame =
+      this.currentSkin &&
+      this.currentSkin.frame &&
+      this.currentSkin.frame[behavior as keyof Skin.ISkin['frame']];
+    if (!frame) return [];
+    return Skin.decode(frame);
   }
 
   private setTimeout(
@@ -518,13 +552,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.behavior = BehaviorTypes.Attack;
     const dx = this.mapX + this.forward.x;
     const dy = this.mapY + this.forward.y;
+    let damageObject: RPGObject
 
     if (this.skill) {
       // アセットをしょうかんする
       this.しょうかんする(this.skill);
     } else {
       // ダメージを与えるオブジェクトを生成する
-      const damageObject = new RPGObject();
+      damageObject = new RPGObject();
       damageObject.damage = this.atk;
       registerServant(this, damageObject);
       damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
@@ -534,17 +569,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       } else {
         damageObject.locate(dx, dy);
       }
-      damageObject.setTimeout(
-        () => damageObject.destroy(),
-        this.getFrame().length
-      );
     }
 
-    await new Promise(resolve => {
-      this.setTimeout(resolve, this.getFrame().length);
+    this.once(enchant.Event.ANIMATION_END, () => {
+      this.behavior = BehaviorTypes.Idle;
+      if (damageObject) {
+        damageObject.destroy();
+      }
     });
-
-    this.behavior = BehaviorTypes.Idle;
   }
 
   public async walk(distance = 1, forward?: IVector2, setForward = true) {
@@ -669,11 +701,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // 衝突リストを初期化
     this._collidedNodes = [];
 
-    const animation = [...this.getFrame()];
-    // 最後に null が入っているので削除
-    animation.pop();
 
-    const baseSpeed = Math.max(1, animation.length); // speed=1 の時にかかる frame
+    let baseSpeed = 12; // speed=1 の時にかかる frame
+    const walkAnim = this.currentSkin && this.currentSkin.frame && this.currentSkin.frame.walk;
+    if (walkAnim) {
+      baseSpeed = Skin.decode(...walkAnim).length - 1;
+    }
 
     // 1 マス移動するのにかかるフレーム数
     // 最速でも 1 フレームはかかるようになっている
@@ -689,9 +722,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // startCoroutine の時点で 1frame 遅れていると考えて, 1 から始める
     for (let frame = 1; frame < requiredFrames; ++frame) {
       if (!walkingObjects.has(this)) break;
-      // アニメーション番号を算出
-      this.frame = animation[frame % animation.length];
-
       const t = frame / requiredFrames;
       const x = beginX + t * (nextX - beginX);
       const y = beginY + t * (nextY - beginY);
@@ -767,6 +797,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public get behavior() {
     return this._behavior;
   }
+
   public set behavior(value) {
     if (typeof value === 'string') {
       this.isBehaviorChanged = true;
@@ -923,25 +954,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       );
     }
     this._forward = vec.normalize();
-    switch (this._directionType) {
-      case 'single':
-        break;
-      case 'double':
-        // 画像は左向きと想定する
-        if (this._forward.x !== 0) {
-          this.scaleX = -Math.sign(this._forward.x) * Math.abs(this.scaleX);
-        }
-        break;
-      case 'quadruple':
-        const dir = Hack.Vec2Dir(this._forward);
-        const c = this._graphicColumn || 9; // ６列画像に対応する
-        this.frame = [dir * c + (this.frame % c)];
-        break;
-      default:
-        // 未設定
-        break;
-    }
+    this.computeFrame();
     this.rotateIfNeeded();
+    // 互換性保持
+    if (this._directionType === 'double') {
+      // 画像は左向きと想定する
+      if (this._forward.x !== 0) {
+        this.scaleX = -Math.sign(this._forward.x) * Math.abs(this.scaleX);
+      }
+    }
   }
 
   public get direction() {
@@ -960,6 +981,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       case 'single':
       case 'quadruple':
         this._forward = Hack.Dir2Vec(value);
+        this.computeFrame(value);
         break;
       case 'double':
         this._forward = new Vector2(Math.sign(value) || -1, 0);
@@ -971,16 +993,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     behavior: string,
     frame: (number | null)[] | (() => (number | null)[])
   ) {
-    const array = typeof frame === 'function' ? frame() : frame;
-
-    this.setFrame(behavior, () => {
-      const _array: (number | null)[] = [];
-      array.forEach((item, index) => {
-        _array[index] =
-          item !== null && item >= 0 ? item + this.direction * 9 : item;
-      }, this);
-      return _array;
-    });
+    this.setFrame(behavior, frame);
   }
 
   public turn(dir: Dir.IDir): void {
@@ -988,7 +1001,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       console.warn('this.turn() は非推奨になりました');
       return this.turn(Dir.rightHand);
     }
-    this.forward = dir(this);
+    this._forward = dir(this);
+    this.computeFrame();
   }
 
   public dispatchEvent(event: any) {
@@ -1470,8 +1484,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private applySkin = ((f: (object: RPGObject) => void) => {
     f(this); // スキンを適用
-    let routine = this.getFrameOfBehavior[this.behavior];
-    if (routine) this.frame = routine.call(this); // frame を設定し直す
+    // 現在の behavior に応じた frame をセットする.
+    // もし frame が存在しなければ(e.g. frame=[]), init を適用する
+    this.computeFrame(this.direction, BehaviorTypes.Init);
+    this.computeFrame(); // なければスキップされる -> init が適用される
     this.rotateIfNeeded();
     return f;
   }).bind(this);
