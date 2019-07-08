@@ -37,12 +37,12 @@ export const config: IConfig = {
     }
   },
   button: {
-    width: 180,
-    height: 32,
-    x: 300,
-    margin: 2,
-    padding: 5,
-    borderRadius: 14,
+    width: 186,
+    height: 48,
+    x: 290,
+    margin: 4,
+    padding: 10.5,
+    borderRadius: 20,
     borderColor: '#fff',
     borderWidth: 2,
     defaultStyle: {
