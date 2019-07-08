@@ -11,7 +11,7 @@ before_deploy:
   - gcloud --quiet components update
 deploy:
   - provider: script
-    script: npx semantic-release
+    script: npx semantic-release --branch 0.22.x
     skip_cleanup: true
     on:
       repo: hackforplay/common
