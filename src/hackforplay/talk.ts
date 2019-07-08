@@ -1,47 +1,88 @@
-import { default as Hack } from './hack';
+import { default as enchant } from '../enchantjs/enchant';
 import TextArea from '../hackforplay/ui/textarea';
+import { default as Hack } from './hack';
+import Key from './key';
 
-let answers: TextArea[] = [];
+export interface IConfig {
+  text: Partial<TextArea>;
+  button: Partial<TextArea>;
+  cursor: {
+    size: number;
+    offsetX: number;
+    borderColor: string;
+    fillColor: string;
+  };
+}
+
+export const config: IConfig = {
+  text: {
+    width: 480,
+    height: 200,
+    autoResizeVertical: true,
+    margin: 8,
+    padding: 15,
+    borderRadius: 14,
+    borderColor: 'rgba(0, 0, 0, 0)',
+    borderWidth: 0,
+    defaultStyle: {
+      color: '#fff',
+      size: '18',
+      family: 'PixelMplus, sans-serif',
+      weight: 'bold',
+      align: 'center',
+      lineSpace: 5,
+      space: 0,
+      ruby: null,
+      rubyId: null
+    }
+  },
+  button: {
+    width: 186,
+    height: 48,
+    x: 290,
+    margin: 4,
+    padding: 10.5,
+    borderRadius: 20,
+    borderColor: '#fff',
+    borderWidth: 2,
+    defaultStyle: {
+      color: '#fff',
+      size: '16',
+      family: 'PixelMplus, sans-serif',
+      weight: 'bold',
+      align: 'center',
+      lineSpace: 0,
+      space: 0,
+      ruby: null,
+      rubyId: null
+    }
+  },
+  cursor: {
+    size: 20,
+    offsetX: -8,
+    borderColor: 'rgb(255, 255, 255)',
+    fillColor: 'rgb(255, 255, 255)'
+  }
+};
 
 export interface ITalkInfo {
   talkMessage: string;
   choices: string[];
+  cursor: number;
   resolve: (answer: string) => void;
-  resume: () => void;
 }
 
 const talkStack: ITalkInfo[] = [];
 
 // テキストエリアを生成
-const textArea = new TextArea(480, 200);
-textArea.autoResizeVertical = true;
-textArea.margin = 8;
-textArea.padding = 15;
-textArea.borderRadius = 14;
-textArea.borderColor = 'rgba(0, 0, 0, 0)';
-textArea.borderWidth = 0;
-textArea.defaultStyle = {
-  color: '#fff',
-  size: '18',
-  family: 'PixelMplus, sans-serif',
-  weight: 'bold',
-  align: 'center',
-  lineSpace: 5,
-  space: 0,
-  ruby: null,
-  rubyId: null
-};
+const textArea = new TextArea(config.text.width, config.text.height);
+Object.assign(textArea, config.text);
 
-const showTextArea = function(text: string) {
-  Hack.popupGroup.addChild(textArea);
-  textArea.show();
-  textArea.clear(); // 前の文章をクリア
-  textArea.push(text); // テキストを挿入
-  textArea.y = 320 - textArea.height;
-};
+// 外から参照したいので出してみる
+let timeIsStopped = false;
 
 const theWorld = () => {
-  let timeIsStopped = true;
+  timeIsStopped = true;
   const stopAndStop = () => {
     if (timeIsStopped) {
       Hack.world.stop();
@@ -51,90 +92,128 @@ const theWorld = () => {
     }
   };
   stopAndStop();
-  const resume = () => {
+  return () => {
     timeIsStopped = false;
   };
-  return resume;
-};
-
-const windowDelete = function() {
-  Hack.popupGroup.removeChild(textArea);
-  for (const answer of answers) {
-    Hack.popupGroup.removeChild(answer);
-  }
-  answers = [];
-};
-
-const makeAnswer = function(
-  choice: string,
-  resolve: (text: string) => void,
-  resume: () => void
-) {
-  const textWindow = new TextArea(180, 32);
-  Hack.popupGroup.addChild(textWindow); // メニューにaddChild
-  textWindow.x = 480 - textWindow.w;
-  textWindow.y =
-    320 - textArea.height - textWindow.height * (answers.length + 1);
-  textWindow.margin = 2;
-  textWindow.padding = 5;
-  textWindow.borderRadius = 14;
-  textWindow.borderColor = '#fff';
-  textWindow.borderWidth = 2;
-  textWindow.defaultStyle = {
-    color: '#fff',
-    size: '16',
-    family: 'PixelMplus, sans-serif',
-    weight: 'bold',
-    align: 'center',
-    lineSpace: 0,
-    space: 0,
-    ruby: null,
-    rubyId: null
-  };
-  textWindow.clear(); // 前の文章をクリア
-  textWindow.show();
-  textWindow.push(choice); // 選択肢のテキスト表示
-  textWindow.on('touchend', function() {
-    resolve(choice);
-    windowDelete();
-    resume();
-    talkStack.shift();
-    if (talkStack.length >= 1) {
-      showTextArea(talkStack[0].talkMessage);
-      for (const choice of talkStack[0].choices) {
-        const answerWindow = makeAnswer(
-          choice,
-          talkStack[0].resolve,
-          talkStack[0].resume
-        );
-        answers.push(answerWindow);
-      }
-    }
-  });
-  return textWindow;
 };
 
 export default function talk(text: string, ...choices: string[]) {
-  return new Promise(resolve => {
-    const resume = theWorld();
-    choices.reverse(); // 下から上に表示するので、選択肢の配列をリバースする
+  const resume = theWorld();
+  return new Promise<string>(resolve => {
     // 情報をtalkInfo配列に一度格納
     const talkInfo: ITalkInfo = {
       talkMessage: text,
       choices,
-      resolve,
-      resume
+      cursor: 0,
+      resolve
     };
     talkStack.unshift(talkInfo); // talkStack配列の一番前に追加
-    windowDelete(); // 後優先なのですでに表示されているものは一旦消す
-    showTextArea(text); // 本文のテキストエリア作成
     // 選択肢のボタンを作成
     if (choices.length === 0) {
       choices.push('とじる'); // 選択肢のテキスト表示
     }
-    for (const choice of choices) {
-      const answerWindow = makeAnswer(choice, resolve, resume);
-      answers.push(answerWindow);
-    }
+    showNextIfExist();
+  }).then(choise => {
+    resume();
+    talkStack.shift();
+    showNextIfExist();
+    return choise;
   });
+}
+
+let answers: TextArea[] = [];
+let cursor = makeCursor();
+
+// スペースキーでウィンドウを閉じたい
+Key.space.release(() => {
+  const [current] = talkStack;
+  if (!current) return;
+  const { choices, resolve, cursor } = current;
+  resolve(choices[cursor]);
+});
+
+// カーソルキー上で移動
+Key.up.release(() => {
+  const [current] = talkStack;
+  if (!current) return;
+  if (current.cursor > 0) {
+    current.cursor--;
+    cursor.y -= config.button.height;
+  }
+});
+
+// カーソルキー下で移動
+Key.down.release(() => {
+  const [current] = talkStack;
+  if (!current) return;
+  if (current.cursor < current.choices.length - 1) {
+    current.cursor++;
+    cursor.y += config.button.height;
+  }
+});
+
+/**
+ * もしも次の talk が talkStack にあれば表示する
+ * なければメッセージウィンドウを削除する
+ */
+function showNextIfExist() {
+  // 古いボタンを削除
+  for (const answer of answers) {
+    Hack.popupGroup.removeChild(answer);
+  }
+  answers = [];
+  // 新しい talkInfo を取得, もしあれば表示
+  const [current] = talkStack;
+  if (current) {
+    if (!textArea.parentNode) {
+      Hack.popupGroup.addChild(textArea);
+      textArea.show();
+    }
+    textArea.clear(); // 前の文章をクリア
+    textArea.push(current.talkMessage); // テキストを挿入
+    textArea.y = 320 - textArea.height;
+    // ボタンを生成
+    for (const [index, choice] of current.choices.entries()) {
+      const button = new TextArea(config.button.width, config.button.height);
+      Object.assign(button, config.button);
+      Hack.popupGroup.addChild(button); // メニューにaddChild
+      button.y =
+        320 -
+        textArea.height -
+        button.height * (current.choices.length - index);
+      if (index === current.cursor) {
+        cursor.y = button.y + button.height / 2 - cursor.height / 2;
+      }
+      button.clear(); // 前の文章をクリア
+      button.show();
+      button.push(choice); // 選択肢のテキスト表示
+      button.on('touchend', function() {
+        current.resolve(choice);
+      });
+      answers.push(button);
+    }
+    Hack.popupGroup.addChild(cursor); // カーソルを常に手前に表示
+    cursor.x = 480 - (config.button.width || 0) + config.cursor.offsetX;
+  } else {
+    Hack.popupGroup.removeChild(textArea);
+    Hack.popupGroup.removeChild(cursor);
+  }
+}
+
+function makeCursor() {
+  const l = config.cursor.size >> 0;
+  const triangle = new enchant.Surface(l, l);
+  const ctx: CanvasRenderingContext2D = triangle.context;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo((l * Math.sqrt(3)) / 2, l / 2);
+  ctx.lineTo(0, l);
+  ctx.closePath();
+  ctx.fillStyle = config.cursor.fillColor;
+  ctx.strokeStyle = config.cursor.borderColor;
+  ctx.fill();
+  ctx.stroke();
+  const cursor = new enchant.Sprite(l, l);
+  cursor.image = triangle;
+  return cursor;
 }

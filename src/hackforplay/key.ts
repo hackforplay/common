@@ -1,5 +1,6 @@
 import enchant from '../enchantjs/enchant';
 import game from './game';
+import { keys } from './type-guards';
 
 /*
 
@@ -76,7 +77,26 @@ Key.v.observe(function(key) {
 
 */
 
-let Key = {};
+interface IKeyClassListener<ThisArg> {
+  (this: ThisArg, key: IKeyClass): void;
+}
+
+export interface IKeyClass {
+  new (): IKeyClass; // eslint-disable-line
+  name: string;
+  count: number;
+  readonly clicked: boolean;
+  readonly pressed: boolean;
+  readonly released: boolean;
+  press<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
+  release<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
+  observe<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
+  pressOnce<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
+  releaseOnce<T = IKeyClass>(listener: IKeyClassListener<T>, thisArg?: T): void;
+  update(input: any): void;
+}
+
+let Key: { [P in keyof typeof keyCode]: IKeyClass } = {} as any; // eslint-disable-line
 
 let keyCode = {
   num0: 48,
@@ -146,7 +166,7 @@ let keyCode = {
   esc: 243
 };
 
-Object.keys(keyCode)
+keys(keyCode)
   .map(function(key) {
     return keyCode[key];
   })
@@ -154,7 +174,7 @@ Object.keys(keyCode)
     game.keybind(value, value);
   });
 
-let KeyClass = enchant.Class.create({
+let KeyClass: IKeyClass = enchant.Class.create({
   initialize: function() {
     this.listeners = [];
   },
@@ -164,24 +184,24 @@ let KeyClass = enchant.Class.create({
   count: 0,
 
   clicked: {
-    get: function() {
+    get: function(this: IKeyClass) {
       return this.count === 1;
     }
   },
 
   pressed: {
-    get: function() {
+    get: function(this: IKeyClass) {
       return this.count > 0;
     }
   },
 
   released: {
-    get: function() {
+    get: function(this: IKeyClass) {
       return this.count <= 0;
     }
   },
 
-  update: function(input) {
+  update: function(input: any) {
     // 前フレームの状態を保持する
     let pressed = this.pressed;
     let released = this.released;
@@ -197,39 +217,61 @@ let KeyClass = enchant.Class.create({
     this.dispatch('observe');
   },
 
-  dispatch: function(type) {
+  dispatch: function(type: any) {
     this.listeners
-      .filter(function(listener) {
+      .filter(function(listener: any) {
         return listener.type === type;
       })
-      .forEach(function(listener) {
+      .forEach(function(this: any, listener: any) {
         let thisArg = listener.thisArg === undefined ? this : listener.thisArg;
         listener.listener.call(thisArg, this);
+        if (listener.once) {
+          const index = this.listeners.indexOf(listener);
+          if (index > -1) this.listeners.splice(index, 1);
+        }
       }, this);
   },
 
-  on: function(type, event, thisArg) {
+  on: function(type: any, event: any, thisArg: any) {
     this.listeners.push({
       type: type,
       listener: event,
-      thisArg: thisArg
+      thisArg: thisArg,
+      once: false
     });
   },
 
-  press: function(listener, thisArg) {
+  once: function(type: any, event: any, thisArg: any) {
+    this.listeners.push({
+      type: type,
+      listener: event,
+      thisArg: thisArg,
+      once: true
+    });
+  },
+
+  press: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('press', listener, thisArg);
   },
 
-  release: function(listener, thisArg) {
+  release: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('release', listener, thisArg);
   },
 
-  observe: function(listener, thisArg) {
+  observe: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('observe', listener, thisArg);
-  }
-});
+  },
 
-Object.keys(keyCode).forEach(function(key) {
+  pressOnce: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+    this.on('press', listener, thisArg);
+  },
+
+  releaseOnce: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+    this.on('release', listener, thisArg);
+  }
+} as any);
+
+keys(keyCode).forEach(function(key) {
   Key[key] = new KeyClass();
   Key[key].name = key;
 });
@@ -243,11 +285,11 @@ const alias = {
 };
 
 game.on('enterframe', function() {
-  Object.keys(keyCode).forEach(function(key) {
+  keys(keyCode).forEach(function(key) {
     let input = game.input[keyCode[key]];
 
     // ui.enchant.js などの対策
-    if (key in alias) {
+    for (const key of keys(alias)) {
       input = input || game.input[alias[key]];
     }
 
