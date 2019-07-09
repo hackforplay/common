@@ -473,6 +473,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public destroy(delay = 0) {
     const _remove = () => {
+      this.dispatchEvent(new enchant.Event('destroy')); // ondestroy event を発火
       this.remove();
       if (this.shadow) this.shadow.remove();
       if (this.hpLabel) this.hpLabel.remove();
@@ -578,6 +579,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     await new Promise(resolve => {
       this.setTimeout(resolve, this.getFrameLength());
+      this.on('destroy', resolve);
     });
 
     this.behavior = BehaviorTypes.Idle;
