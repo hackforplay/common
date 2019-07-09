@@ -552,7 +552,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.behavior = BehaviorTypes.Attack;
     const dx = this.mapX + this.forward.x;
     const dy = this.mapY + this.forward.y;
-    let damageObject: RPGObject
+    let damageObject: RPGObject;
 
     if (this.skill) {
       // アセットをしょうかんする
@@ -561,6 +561,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       // ダメージを与えるオブジェクトを生成する
       damageObject = new RPGObject();
       damageObject.damage = this.atk;
+      damageObject.collisionFlag = false;
       registerServant(this, damageObject);
       damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
       damageObject.collider.setOffset(new SAT.V(12, 12));
@@ -701,9 +702,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // 衝突リストを初期化
     this._collidedNodes = [];
 
-
     let baseSpeed = 12; // speed=1 の時にかかる frame
-    const walkAnim = this.currentSkin && this.currentSkin.frame && this.currentSkin.frame.walk;
+    const walkAnim =
+      this.currentSkin && this.currentSkin.frame && this.currentSkin.frame.walk;
     if (walkAnim) {
       baseSpeed = Skin.decode(...walkAnim).length - 1;
     }
