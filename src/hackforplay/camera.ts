@@ -58,6 +58,7 @@ class Camera extends enchant.Sprite {
   ) {
     super(w, h);
 
+    this.touchEnabled = false; // タッチイベントを無効化する
     this.image = new enchant.Surface(w, h);
 
     this.x = x;
