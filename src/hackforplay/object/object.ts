@@ -251,11 +251,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   private getFrameLength() {
-    const { _frameSequence, isBehaviorChanged } = this;
+    const { _frameSequence, isBehaviorChanged, behavior, currentSkin } = this;
     if (isBehaviorChanged) {
-      console.error(
-        'this.isBehaviorChanged が true のとき、this.getFrameLength() は正しく計算できません.'
-      );
+      if (!currentSkin) return 0; // Cannot compute
+      const { frame } = currentSkin;
+      if (!frame || !(behavior in frame)) return 0; // Cannot compute
+      const key = behavior as keyof NonNullable<Skin.ISkin['frame']>;
+      const animation = frame[key];
+      if (!animation || animation.length < 1) return 0; // No length
+      return Skin.decode(...animation).length; // null と関係なく長さを取得
     }
     if (!Array.isArray(_frameSequence)) return 0;
     for (let index = 0; index < _frameSequence.length; index++) {
