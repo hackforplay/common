@@ -556,7 +556,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.behavior = BehaviorTypes.Attack;
     const dx = this.mapX + this.forward.x;
     const dy = this.mapY + this.forward.y;
-    let damageObject: RPGObject;
+    let damageObject: RPGObject | undefined;
 
     if (this.skill) {
       // アセットをしょうかんする
@@ -576,12 +576,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       }
     }
 
-    this.once(enchant.Event.ANIMATION_END, () => {
-      this.behavior = BehaviorTypes.Idle;
-      if (damageObject) {
-        damageObject.destroy();
-      }
+    await new Promise(resolve => {
+      this.setTimeout(resolve, this.getFrameLength());
     });
+
+    this.behavior = BehaviorTypes.Idle;
+    damageObject && damageObject.destroy();
   }
 
   public async walk(distance = 1, forward?: IVector2, setForward = true) {
