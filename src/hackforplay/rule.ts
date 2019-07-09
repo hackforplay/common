@@ -340,6 +340,9 @@ export default class Rule {
     if (this.hasOneObjectLisener('たおされたとき', name)) {
       object.on('becomedead', this.onたおされたとき);
     }
+    if (this.hasOneObjectLisener('タップされたとき', name)) {
+      object.on('touchend', this.onタップされたとき);
+    }
     if (this.hasTwoObjectListener('ふまれたとき', name)) {
       object.on('addtrodden', this.onふまれたとき);
     }
@@ -408,6 +411,9 @@ export default class Rule {
   private onたおされたとき = ((e: IEvent) => {
     this.runOneObjectLisener('たおされたとき', e.target);
   }).bind(this);
+  private onタップされたとき = ((e: IEvent) => {
+    this.runOneObjectLisener('タップされたとき', e.target);
+  }).bind(this);
   private onすすめなかったとき = ((e: ICollidedEvent) => {
     if (e.map || e.hits.length === 0) {
       // マップの枠か、cmapとぶつかった => 相手のいない衝突
@@ -456,6 +462,9 @@ export default class Rule {
   }
   public じかんがすすんだとき(func: OneObjectListener) {
     this.addOneObjectLisener('じかんがすすんだとき', func);
+  }
+  public タップされたとき(func: OneObjectListener) {
+    this.addOneObjectLisener('タップされたとき', func);
   }
   public ふまれたとき(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
