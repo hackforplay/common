@@ -147,6 +147,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.on('hpchange', () => {
       if (this.hasHp && this.showHpLabel) {
         this.hpLabel = this.hpLabel || makeHpLabel(this);
+        this.hpLabel.label = 'HP:';
         this.hpLabel.score = this.hp;
         this.hpLabel.opacity = 1;
       }
