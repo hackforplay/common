@@ -1578,6 +1578,19 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public async talk(text: string, ...choices: string[]) {
     return talk(text, ...choices);
   }
+
+  public async speak(text: string) {
+    const utterThis = new SpeechSynthesisUtterance(text);
+    return new Promise((resolve, reject) => {
+      utterThis.addEventListener('end', () => {
+        resolve();
+      });
+      utterThis.addEventListener('error', e => {
+        reject(e);
+      });
+      speechSynthesis.speak(utterThis);
+    });
+  }
 }
 
 function makeHpLabel(self: RPGObject) {
