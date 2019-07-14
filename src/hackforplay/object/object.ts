@@ -17,8 +17,8 @@ import soundEffect from '../se';
 import * as Skin from '../skin';
 import * as synonyms from '../synonyms';
 import talk from '../talk';
+import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import * as N from './numbers';
-import { registerWalkingObject } from '../trodden';
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
@@ -459,10 +459,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         map.scene.addChild(this);
       }
     }
-    if (
-      !ignoreTrodden &&
-      (fromLeft !== this.mapX || fromTop !== this.mapY || mapName)
-    ) {
+    if (ignoreTrodden) {
+      // 移動後に trodden が発生しないようにする
+      unregisterWalkingObject(this);
+    } else if (fromLeft !== this.mapX || fromTop !== this.mapY || mapName) {
       // 位置に変更があれば trodden をフックできるようにする
       registerWalkingObject(this);
     }

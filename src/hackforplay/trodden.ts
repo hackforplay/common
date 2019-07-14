@@ -102,3 +102,7 @@ export function unregister() {
 export function registerWalkingObject(item: RPGObject) {
   walkingRPGObjects.add(item);
 }
+
+export function unregisterWalkingObject(item: RPGObject) {
+  walkingRPGObjects.delete(item);
+}
