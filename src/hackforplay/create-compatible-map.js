@@ -195,6 +195,7 @@ class RPGMapImageBuffer {
       return this.cacheImage[index]; // すでにロードされた画像
     }
     const img = new Image();
+    img.crossOrigin = 'anonymous';
     // src から画像をロードし, waitinglist に Promise を追加する
     const promise = new Promise((resolve, reject) => {
       img.onload = () => resolve();
