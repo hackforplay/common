@@ -18,6 +18,7 @@ enchant.Surface.load = function(src, callback, onerror) {
   }
 
   const image = new Image();
+  image.crossOrigin = 'anonymous';
   const surface = Object.create(enchant.Surface.prototype, {
     context: {
       value: null
