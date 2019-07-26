@@ -961,7 +961,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         `${value} は forward に代入できません (${this.name})`
       );
     }
-    this._forward = vec.normalize();
+    this._forward = vec.unit();
     this.computeFrame();
     this.rotateIfNeeded();
     // 互換性保持
@@ -1285,8 +1285,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    */
   public しょうかんする(
     name: string,
-    x?: number,
-    y?: number,
+    forward = 0,
+    right = 0,
     map?: string,
     dir?: Dir.IDir
   ) {
@@ -1300,8 +1300,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     const appended = _ruleInstance.つくる(
       name,
-      opt(x, this.mapX + this.forward.x),
-      opt(y, this.mapY + this.forward.y),
+      this.mapX + this.forward.x * right,
+      this.mapY + this.forward.y * forward,
       opt(map, this.map ? this.map.name : undefined),
       opt(dir, () => Vector2.from(this.forward)),
       this
