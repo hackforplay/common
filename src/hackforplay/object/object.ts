@@ -1002,6 +1002,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     frame: (number | null)[] | (() => (number | null)[])
   ) {
     this.setFrame(behavior, frame);
+    if (this.currentSkin) {
+      this.currentSkin.column = 9;
+    }
   }
 
   public turn(dir: Dir.IDir): void {
