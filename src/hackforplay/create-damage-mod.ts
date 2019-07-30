@@ -16,8 +16,8 @@ export function unregister() {
  * @param attacker
  */
 export default function createDamageMod(damage?: number) {
-  console.warn(
-    'Hack.createDamgeMod は非推奨になりました. damage プロパティを使ってください'
+  console.error(
+    'Hack.createDamgeMod は非推奨になり, v0.24 で削除されます. damage プロパティを使ってください'
   );
   return function damageMod(this: RPGObject) {
     this.isDamageObject = true; // ダメージ処理を行うフラグ

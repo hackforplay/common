@@ -356,8 +356,8 @@ game.onawake = () => {
   // Life label (後方互換性 ~0.11)
   Object.defineProperty(Hack, 'lifeLabel', {
     get() {
-      console.warn(
-        `Hack.lifeLabel は非推奨になりました. Camera.numberLabels を使ってください`
+      console.error(
+        `Hack.lifeLabel は非推奨になり, v0.24 で削除されます. 代わりに Camera.numberLabels を使ってください`
       );
       return (
         Camera.main &&
@@ -368,8 +368,8 @@ game.onawake = () => {
 
   Object.defineProperty(Hack, 'scoreLabel', {
     get() {
-      console.warn(
-        `Hack.scoreLabel は非推奨になりました. Camera.numberLabels を使ってください`
+      console.error(
+        `Hack.scoreLabel は非推奨になり, v0.24 で削除されます. 代わりに Camera.numberLabels を使ってください`
       );
       return (
         Camera.main &&
@@ -494,17 +494,17 @@ Hack.Attack = function(x, y, damage) {
 };
 
 const scoreIsDeprecated =
-  'Hack.score は非推奨になりました. プレイヤーの「おかね」を使ってください';
+  'Hack.score は非推奨になり, v0.24 で削除されます. 代わりにプレイヤーの「おかね」を使ってください';
 Object.defineProperty(Hack, 'score', {
   get() {
-    console.warn(scoreIsDeprecated);
+    console.error(scoreIsDeprecated);
     if (Camera.main && Camera.main.target) {
       return Camera.main.target.money;
     }
     return 0;
   },
   set(value) {
-    console.warn(scoreIsDeprecated);
+    console.error(scoreIsDeprecated);
     if (Camera.main && Camera.main.target) {
       Camera.main.target.money = value;
     }

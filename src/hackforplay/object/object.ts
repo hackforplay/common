@@ -157,7 +157,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // アセット
     if (typeof mod === 'function') {
       console.error(
-        'new RPGObject に引数を与える使い方は非推奨です. この機能は v1 で削除されます'
+        'new RPGObject に引数を与える使い方は v0.24 で削除されます. 代わりに costume を使ってください'
       );
       this.mod(mod);
       // Skin.XXX の名前をデフォルトの name として登録する
@@ -482,13 +482,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
     else _remove.call(this);
   }
-
   private setFrame(
     behavior: string,
     replace: (number | null)[] | ((this: RPGObject) => (number | null)[])
   ) {
     console.error(
-      'RPGObject::setFrame は非推奨になりました. v0.23 以降で削除されます'
+      'RPGObject::setFrame は非推奨になりました. v0.24 で削除されます'
     );
     const { currentSkin } = this;
     if (!currentSkin) return;
@@ -499,7 +498,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private getFrame(behavior: string = this.behavior) {
     console.error(
-      'RPGObject::getFrame は非推奨になりました. v0.23 以降で削除されます'
+      'RPGObject::getFrame は非推奨になりました. v0.24 で削除されます'
     );
     const frame =
       this.currentSkin &&
@@ -1006,7 +1005,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public turn(dir: Dir.IDir): void {
     if (typeof dir !== 'function') {
-      console.warn('this.turn() は非推奨になりました');
+      console.error('this.turn() の中には Dir.みぎ などを入れてください');
       return this.turn(Dir.rightHand);
     }
     this._forward = dir(this);
@@ -1144,7 +1143,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public set imageUrl(url: string) {
-    console.warn('imageUrl は非推奨になりました');
+    console.error('imageUrl は非推奨になり, v0.24 で削除されます');
     if (typeof url !== 'string') {
       throw new Error(`${this.name}の imageUrl に文字列以外が代入されました`);
     }
@@ -1169,7 +1168,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {Object} params
    */
   public breath(params: any) {
-    console.warn('breath は非推奨になりました');
+    console.error('this.breath() は非推奨になり, v0.24 で削除されます');
     params = {
       // デフォルトのパラメータ
       skin: (DeprecatedSkin as any).バクエン,
@@ -1197,7 +1196,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {RPGObject} object
    */
   public warp(object: RPGObject) {
-    console.warn('warp は非推奨になりました. teleport を使ってください');
+    console.error(
+      'warp は非推奨になり, v0.24 で削除されます. teleport を使ってください'
+    );
     if (!(object instanceof RPGObject)) {
       throw new Error(
         `${this.name} の warp に RPGObject ではなく ${object} が与えられました`
@@ -1229,7 +1230,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {String} mapName
    */
   public warpTo(x: number, y: number, mapName: string) {
-    console.warn('warpTo は非推奨になりました');
+    console.error('warpTo は非推奨になり, v0.24 で削除されます');
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
@@ -1455,18 +1456,20 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public set dir(dir: Dir.IDir) {
-    console.warn('this.dir = ... は非推奨になりました. turn を使ってください');
+    console.error(
+      'this.dir = ... は非推奨になり, v0.24 で削除されます. 代わりに this.turn(Dir.みぎ) を使ってください'
+    );
     this.forward = dir(this);
   }
 
   private _lastAssignedSkin?: Skin.Result; // 参照比較するためのプロパティ
   private _skin: Skin.Result | null = null; // Promise<(object: RPGObject) => void>
   public get skin() {
-    console.warn('this.skin は非推奨になりました');
+    console.error('this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください');
     return this._skin;
   }
   public set skin(value) {
-    console.warn('this.skin は非推奨になりました. costume を使ってください');
+    console.error('this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください');
     if (!value) return;
     const { _skin } = this;
     if (_skin) {
