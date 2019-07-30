@@ -494,6 +494,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (!currentSkin) return;
     const frame = (currentSkin.frame = currentSkin.frame || {});
     replace = typeof replace === 'function' ? replace.call(this) : replace;
+    replace = replace.reduce((p, c) => p.concat(c, 1), [] as (number | null)[]);
     frame[behavior as keyof typeof frame] = replace;
   }
 
