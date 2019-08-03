@@ -327,7 +327,16 @@ class Camera extends enchant.Sprite {
     label._key = key;
     label.onenterframe = () => {
       if (!this.target) return;
-      label.score = this.target[key];
+      if (key in this.target) {
+        const value = this.target[key];
+        if (Number.isNaN(value)) {
+          label.score = label._current = NaN;
+        } else {
+          label.score = this.target[key];
+        }
+      } else {
+        label._current = '?';
+      }
     };
     Hack.menuGroup.addChild(label);
     return label;
