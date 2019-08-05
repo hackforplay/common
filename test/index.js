@@ -3,6 +3,7 @@ import test from 'ava';
 test.cb('Play game with rule base definition', t => {
   t.pass();
   t.end();
+
   // require('../src/register');
   // t.is(global.game, global.enchant.Core.instance);
 
