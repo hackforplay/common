@@ -31,7 +31,7 @@ export default function createCompatibleMap(
   }
   // スクエアが存在しない場合のエラーメッセージ
   const notFound = (table, x, y) =>
-    `${index[y][x]}番のスクエアは存在しません Table[${mapJson.tables.indexOf(
+    `${table[y][x]}番のスクエアは存在しません Table[${mapJson.tables.indexOf(
       table
     )}](${x},${y})`;
 
@@ -44,10 +44,10 @@ export default function createCompatibleMap(
       // 全ての階層を手前から奥に向かって調べる
       for (const table of mapJson.tables) {
         const index = table[y][x];
-        if (index < 0) continue; // nope!
+        if (index < 0 || index === undefined) continue; // nope!
         const square = indexSquareMap[index];
         if (!square) {
-          throw new Error(notFound(index, x, y));
+          throw new Error(notFound(table, x, y));
         }
         // 最も手前の結果が優先される
         const collider = getCollider(square.placement);
@@ -78,7 +78,7 @@ export default function createCompatibleMap(
       // [y][x] のタイルをひとつの配列にする
       const tileIndexes = mapJson.tables.reduce((p, table) => {
         const index = table[y][x];
-        if (index < 0) return p; // nope!
+        if (index < 0 || index === undefined) return p; // nope!
         const square = indexSquareMap[index];
         if (!square) {
           throw new Error(notFound(table, x, y));
