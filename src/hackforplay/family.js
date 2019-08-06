@@ -27,9 +27,6 @@ export function isOpposite(item1, item2) {
   if (item1 === item2 || hasContract(item1, item2)) {
     return false; // どちらかが一方の従者である
   }
-  if (!('hp' in item1 && 'hp' in item2)) {
-    return false; // どちらか一方の体力が設定されていない
-  }
   if (
     item1.family === Family.Independence ||
     item2.family === Family.Independence
