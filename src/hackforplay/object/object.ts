@@ -628,6 +628,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this.map.cmap && this.map.cmap[y][x] === 1) return false; // 障害物
     for (const item of RPGObject.collection) {
       if (
+        item.collisionFlag &&
         this !== item &&
         this.map === item.map &&
         x === item.mapX &&
@@ -1465,11 +1466,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _lastAssignedSkin?: Skin.Result; // 参照比較するためのプロパティ
   private _skin: Skin.Result | null = null; // Promise<(object: RPGObject) => void>
   public get skin() {
-    console.error('this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください');
+    console.error(
+      'this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください'
+    );
     return this._skin;
   }
   public set skin(value) {
-    console.error('this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください');
+    console.error(
+      'this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください'
+    );
     if (!value) return;
     const { _skin } = this;
     if (_skin) {
