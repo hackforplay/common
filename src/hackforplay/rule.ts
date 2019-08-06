@@ -202,7 +202,7 @@ export default class Rule {
     if (!listeners) return false;
     return (
       Boolean(listeners[Anyone]) ||
-      (Boolean(listeners[Enemy]) && isOpposite(self, item)) ||
+      (Boolean(listeners[Enemy]) && item.hp > 0 && isOpposite(self, item)) ||
       item.name in listeners
     );
   }
