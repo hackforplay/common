@@ -325,14 +325,21 @@ export default class Rule {
 
   public registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
     object.name = name;
+    let pendings = [];
     if (this.hasOneObjectLisener('つくられたとき', name)) {
-      this.runOneObjectLisener('つくられたとき', object);
+      let p = this.runOneObjectLisener('つくられたとき', object);
+      pendings.push(p);
     }
     if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
-      this.runTwoObjectListener('しょうかんされたとき', object, summoner);
+      let p = this.runTwoObjectListener(
+        'しょうかんされたとき',
+        object,
+        summoner
+      );
+      pendings.push(p);
     }
     if (this.hasOneObjectLisener('つねに', name)) {
-      this.runつねに(object, name);
+      Promise.all(pendings).then(() => this.runつねに(object, name));
     }
     if (this.hasOneObjectLisener('こうげきするとき', name)) {
       object.on('becomeattack', this.onこうげきするとき);
