@@ -3,6 +3,7 @@ import { hasContract, isOpposite } from './family';
 import { install, throwError } from './feeles';
 import { default as Hack } from './hack';
 import RPGObject from './object/object';
+import talk from './talk';
 
 interface IEvent {
   target: RPGObject;
@@ -381,8 +382,15 @@ export default class Rule {
 
   public installAsset(name: string) {
     if (this._knownThisNames.indexOf(name) < 0) {
-      Hack.log(`${name} というアセットは ないかもしれない`);
-      install && install(name);
+      talk(
+        `${name} というアセットは ないかもしれない`,
+        'インストールする',
+        '今はいい'
+      ).then(answer => {
+        if (answer === 'インストールする') {
+          install && install(name);
+        }
+      });
     }
   }
 
