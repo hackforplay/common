@@ -51,7 +51,7 @@ export default class Rule {
     this._this = value;
   }
   private _this: string | null = null;
-  private readonly _knownThisNames: string[] = [];
+  private readonly _knownThisNames: Set<string> = new Set();
   public item: string | typeof Enemy | typeof Anyone | null = null;
   // listeners
   private readonly _listenersOfNo: {
@@ -381,7 +381,7 @@ export default class Rule {
   }
 
   public installAsset(name: string) {
-    if (this._knownThisNames.indexOf(name) < 0) {
+    if (!this._knownThisNames.has(name)) {
       talk(
         `${name} というアセットは ないかもしれない`,
         'インストールする',
