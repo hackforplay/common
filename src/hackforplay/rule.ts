@@ -42,13 +42,15 @@ export default class Rule {
 
   // public vars
   public get this(): string | null {
-    return this._this;
+    return window.__sandbox_context_name || this._this; // 互換性保持のため
   }
   public set this(value: string | null) {
-    if (value && this._knownThisNames.indexOf(value) < 0) {
-      this._knownThisNames.push(value);
+    this._this = value; // 互換性保持のため
+    if (window.__sandbox_context_name) {
+      console.warn(
+        `rule.this = '${value}'; を削除してください. このコードは v0.24 で削除されます`
+      );
     }
-    this._this = value;
   }
   private _this: string | null = null;
   private readonly _knownThisNames: Set<string> = new Set();
@@ -91,7 +93,7 @@ export default class Rule {
   }
 
   public addOneObjectLisener(type: string, func: OneObjectListener) {
-    const name = this._this;
+    const name = this.this;
     if (!name) {
       throw new Error(`${type} の this がありません`);
     }
@@ -101,6 +103,7 @@ export default class Rule {
       throw new Error(`this="${name}" の ${type} はすでに決まっています`);
     }
     listeners[name] = func;
+    this._knownThisNames.add(name);
   }
 
   public async runOneObjectLisener(type: string, object: RPGObject) {
@@ -114,7 +117,7 @@ export default class Rule {
   }
 
   public addTwoObjectListener(type: string, func: TwoObjectListener) {
-    const name = this._this;
+    const name = this.this;
     if (!name) {
       throw new Error(`${type} の this がありません`);
     }
@@ -131,6 +134,7 @@ export default class Rule {
       );
     }
     listeners[item] = func;
+    this._knownThisNames.add(name);
   }
 
   public async runTwoObjectListener(
