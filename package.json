@@ -38,7 +38,7 @@
       "ts"
     ],
     "require": [
-      "ts-node/register",
+      "ts-node/register/transpile-only",
       "canvas",
       "raf/polyfill",
       "./test/helpers/setup-jsdom.js",
