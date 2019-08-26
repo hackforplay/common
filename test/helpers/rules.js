@@ -47,7 +47,7 @@ rule.ゲームがはじまったとき(async function() {
 // ここまでゲームがはじまったときのルール
 
 // ここからプレイヤーのルール
-rule.this = 'プレイヤー';
+window.__sandbox_context_name = 'プレイヤー';
 rule.つくられたとき(async function() {
   // Player.set(this);
   this.family = ('▼ ファミリー', Family.プレイヤー);
@@ -63,7 +63,7 @@ rule.たおされたとき(async function() {
 // ここまでプレイヤーのルール
 
 // ここからスライムのルール
-rule.this = 'スライム';
+window.__sandbox_context_name = 'スライム';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(function() {
@@ -90,7 +90,7 @@ rule.たおされたとき(async function() {
 // ここまでスライムのルール
 
 // ここからゴールちてんのルール
-rule.this = 'ゴールちてん';
+window.__sandbox_context_name = 'ゴールちてん';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(function() {
@@ -112,7 +112,7 @@ rule.ふまれたとき(async function(item) {
 // ここまでゴールちてんのルール
 
 // ここからイモムシのルール
-rule.this = 'イモムシ';
+window.__sandbox_context_name = 'イモムシ';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
@@ -140,7 +140,7 @@ rule.たおされたとき(async function() {
 // ここまでイモムシのルール
 
 // ここからコウモリ
-rule.this = 'コウモリ';
+window.__sandbox_context_name = 'コウモリ';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
@@ -171,7 +171,7 @@ rule.たおされたとき(async function() {
 // ここまでコウモリ
 
 // ここからウロボロス
-rule.this = 'ウロボロス';
+window.__sandbox_context_name = 'ウロボロス';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
@@ -197,7 +197,7 @@ rule.たおされたとき(async function() {
 // ここまでウロボロス
 
 // ここからドラゴン
-rule.this = 'ドラゴン';
+window.__sandbox_context_name = 'ドラゴン';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
@@ -217,7 +217,7 @@ rule.たおされたとき(async function() {
 // ここまでドラゴン
 
 // ここからミノタウルス
-rule.this = 'ミノタウルス';
+window.__sandbox_context_name = 'ミノタウルス';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
@@ -243,7 +243,7 @@ rule.たおされたとき(async function() {
 // ここまでミノタウルス
 
 // ここからハート
-rule.this = 'ハート';
+window.__sandbox_context_name = 'ハート';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {});
@@ -260,7 +260,7 @@ rule.ふまれたとき(async function(item) {
 // ここまでハート
 
 // ここからコイン
-rule.this = 'コイン';
+window.__sandbox_context_name = 'コイン';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
@@ -280,7 +280,7 @@ rule.ぶつかったとき(async function(item) {
 // ここまでコイン
 
 // ここからスター
-rule.this = 'スター';
+window.__sandbox_context_name = 'スター';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {});
@@ -298,7 +298,7 @@ rule.ふまれたとき(async function(item) {
 // ここまでスター
 
 // ここからふしぎなカギ
-rule.this = 'ふしぎなカギ';
+window.__sandbox_context_name = 'ふしぎなカギ';
 
 // ここからキャラクターがつくられたとき行うルール
 rule.つくられたとき(async function() {
