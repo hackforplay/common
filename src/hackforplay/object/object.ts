@@ -1287,7 +1287,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    */
   public しょうかんする(
     name: string,
-    forward = 0,
+    forward = 1,
     right = 0,
     map?: string,
     dir?: Dir.IDir
