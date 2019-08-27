@@ -1316,23 +1316,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * 「しょうかんする」の足元バージョン
    */
   public おとす(name: string) {
-    const { _ruleInstance } = this;
-    if (!(_ruleInstance instanceof Rule)) {
-      throw new Error(
-        `${this.name} からメッセージを送れません. new RPGObject(Skin.${
-          this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
-      );
-    }
-    const appended = _ruleInstance.つくる(
-      name,
-      this.mapX,
-      this.mapY,
-      this.map ? this.map.name : undefined,
-      () => Vector2.from(this.forward),
-      this
-    );
-    return appended;
+    return this.しょうかんする(name, 0, 0);
   }
 
   private static _initializedReference: RPGObject;
