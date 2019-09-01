@@ -73,7 +73,7 @@ export interface Feeles {
     replace: any
   ) => void;
   // error を IDE に投げる
-  throwError?: (error: Error) => void;
+  throwError?: (error: any) => void;
   // eval する
   eval?: (code: string) => void;
 }

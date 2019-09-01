@@ -21,9 +21,12 @@ function handleError(
 ): Promise<void> {
   if (promiseLike && promiseLike instanceof Promise) {
     return promiseLike.catch(error => {
-      console.error(error);
-      console.error(`above error was occured in "${name}" when "${title}"`);
-      throwError && throwError(error);
+      const internal = {
+        fileName: `"${title}" at "${name}"`,
+        message: error.message,
+        stack: error.stack
+      };
+      throwError && throwError(internal);
     });
   }
   return Promise.resolve();
