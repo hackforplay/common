@@ -14,7 +14,7 @@ import { randomCollection, randomRange } from '../random';
 import RPGMap from '../rpg-map';
 import Rule from '../rule';
 import soundEffect from '../se';
-import * as Skin from '../skin';
+import { getSkin, ISkin, SkinCachedItem, decode } from '../skin';
 import * as synonyms from '../synonyms';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
@@ -96,7 +96,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
   public _mayRotate = false; // 向いている方向に合わせてスプライト自体を回転させるフラグ
   public isInvincible = false; // ダメージを受けなくなるフラグ
-  public currentSkin?: Skin.ISkin; // 適用されているスキン
+  public currentSkin?: ISkin; // 適用されているスキン
 
   private _hp?: number;
   private _atk?: number;
@@ -257,10 +257,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       if (!currentSkin) return 0; // Cannot compute
       const { frame } = currentSkin;
       if (!frame || !(behavior in frame)) return 0; // Cannot compute
-      const key = behavior as keyof NonNullable<Skin.ISkin['frame']>;
+      const key = behavior as keyof NonNullable<ISkin['frame']>;
       const animation = frame[key];
       if (!animation || animation.length < 1) return 0; // No length
-      return Skin.decode(...animation).length; // null と関係なく長さを取得
+      return decode(...animation).length; // null と関係なく長さを取得
     }
     if (!Array.isArray(_frameSequence)) return 0;
     for (let index = 0; index < _frameSequence.length; index++) {
@@ -275,10 +275,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     const { frame, column } = currentSkin;
     if (!frame || !(behavior in frame)) return;
-    const key = behavior as keyof NonNullable<Skin.ISkin['frame']>;
+    const key = behavior as keyof NonNullable<ISkin['frame']>;
     const animation = frame[key];
     if (!animation || animation.length < 1) return; // skip
-    (this as any)._frameSequence = Skin.decode(...animation).map(n =>
+    (this as any)._frameSequence = decode(...animation).map(n =>
       n === null ? null : n + column * direction
     );
   }
@@ -503,9 +503,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const frame =
       this.currentSkin &&
       this.currentSkin.frame &&
-      this.currentSkin.frame[behavior as keyof Skin.ISkin['frame']];
+      this.currentSkin.frame[behavior as keyof ISkin['frame']];
     if (!frame) return [];
-    return Skin.decode(frame);
+    return decode(frame);
   }
 
   private setTimeout(
@@ -713,7 +713,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const walkAnim =
       this.currentSkin && this.currentSkin.frame && this.currentSkin.frame.walk;
     if (walkAnim) {
-      baseSpeed = Skin.decode(...walkAnim).length - 1;
+      baseSpeed = decode(...walkAnim).length - 1;
     }
 
     // 1 マス移動するのにかかるフレーム数
@@ -1447,8 +1447,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.forward = dir(this);
   }
 
-  private _lastAssignedSkin?: Skin.Result; // 参照比較するためのプロパティ
-  private _skin: Skin.Result | null = null; // Promise<(object: RPGObject) => void>
+  private _lastAssignedSkin?: SkinCachedItem; // 参照比較するためのプロパティ
+  private _skin: SkinCachedItem | null = null; // Promise<(object: RPGObject) => void>
   public get skin() {
     console.error(
       'this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください'
@@ -1475,9 +1475,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public async costume(name: string) {
     if (this._costume === name) return; // 同じ見た目なのでスルー
     this._costume = name;
-    const skin: Skin.Result | null = Hack.skin(name);
-    if (!skin) return;
-    const dress = await skin;
+    const currentSkin: SkinCachedItem | null = getSkin(name);
+    if (!currentSkin) return;
+    const dress = await currentSkin;
     if (this._costume !== name) return; // 読み込み中に見た目が変わった
     this.applySkin(dress);
   }

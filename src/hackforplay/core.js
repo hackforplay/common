@@ -16,9 +16,9 @@ import loadMaps from './load-maps';
 import coordinate from '../mod/coordinate';
 import game from './game';
 import createDamageMod from './create-damage-mod';
-import skin, { getBaseUrl, setBaseUrl } from './skin';
 import { getConfig, audioConfigs } from './se-data';
 import { setTimeout } from './feeles';
+import { getBaseUrl, getSkin, setBaseUrl } from './skin';
 
 // Assign synonyms
 Hack.assets = Hack.assets || {};
@@ -97,7 +97,7 @@ Hack.createDamageMod = createDamageMod;
 /**
  * Hack.skin
  */
-Hack.skin = skin;
+Hack.skin = getSkin;
 /**
  * Hack.baseUrl
  */

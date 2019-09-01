@@ -1,6 +1,5 @@
 import { default as enchant } from '../enchantjs/enchant';
 import { default as SAT } from '../lib/sat.min';
-import { default as logFunc } from '../mod/logFunc';
 import { fetchText } from './feeles';
 import RPGObject from './object/object';
 
@@ -30,7 +29,7 @@ export interface ISkin {
     dead?: (number | null)[];
   };
 }
-export type Result = Promise<(object: RPGObject) => void>;
+export type SkinCachedItem = Promise<(object: RPGObject) => void>;
 
 let baseUrl = 'https://storage.googleapis.com/hackforplay-skins/';
 export const getBaseUrl = () => baseUrl;
@@ -38,7 +37,7 @@ export const setBaseUrl = (url: string) => {
   baseUrl = url;
 };
 
-const _cache: { [name: string]: Result } = {};
+const _cache: { [name: string]: SkinCachedItem } = {};
 const _surfaces: { [name: string]: typeof enchant.Surface } = {};
 
 export function decode(...args: (number | null)[]): (number | null)[] {
@@ -105,12 +104,9 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   object.currentSkin = skin;
 };
 
-/**
- * Hack.skin
- */
-export default async function skin(
+export async function getSkin(
   name: string | TemplateStringsArray
-): Result {
+): SkinCachedItem {
   if (name in _cache) return _cache[name + ''];
 
   const _promise = Promise.resolve()
