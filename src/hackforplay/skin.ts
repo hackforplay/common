@@ -2,6 +2,7 @@ import { default as enchant } from '../enchantjs/enchant';
 import { default as SAT } from '../lib/sat.min';
 import { fetchText } from './feeles';
 import RPGObject from './object/object';
+import talk from './talk';
 
 export interface ISkin {
   name: string;
@@ -129,9 +130,8 @@ export async function getSkin(
     )
     .then(_skin => dress(_skin))
     .catch(error => {
-      logFunc(`${name} というスキンは ないみたい`, true);
       console.error(error);
-      return nope;
+      return talk(`${name} というスキンは ないみたい`).then(() => nope);
     });
 
   return (_cache[name + ''] = _promise);
