@@ -98,7 +98,6 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
     frame.dead = frame.dead || [0, 1];
   }
   // 互換性のため. アニメーションの終端を追加する
-  frame.walk.push(null, 1);
   frame.attack.push(null, 1);
   frame.dead.push(null, 1);
   // skin の参照を保持する
