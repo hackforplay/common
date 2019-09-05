@@ -1300,10 +1300,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         }) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
+    const { x, y } = this.forward;
     const appended = _ruleInstance.つくる(
       name,
-      this.mapX + this.forward.x * right,
-      this.mapY + this.forward.y * forward,
+      this.mapX + forward * x - right * y,
+      this.mapY + forward * y + right * x,
       opt(map, this.map ? this.map.name : undefined),
       opt(dir, () => Vector2.from(this.forward)),
       this
