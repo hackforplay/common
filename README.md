@@ -1,4 +1,4 @@
-# common
+# common (beta version)
 
 Common package for building stages in hackforplay
 
@@ -17,8 +17,3 @@ Common package for building stages in hackforplay
 
 - `git push origin`
 - Then start automatic deploying via [semantic-release](https://github.com/semantic-release/semantic-release)
-
-or manual deploy
-
-- `npx np`
-- Then start interactive shell via [np](https://github.com/sindresorhus/np)
