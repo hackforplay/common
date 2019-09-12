@@ -48,9 +48,9 @@ Hack.on('error', function(event) {
 Hack.fun2str = function(func) {
   // 関数の文字列化
   if (func instanceof Function) {
-    let str = func.toString().match(/^function[^\{]*\{\n?(\s*)([\s\S]*)\}$/);
+    const str = func.toString().match(/^function[^\{]*\{\n?(\s*)([\s\S]*)\}$/);
     if (str !== null) {
-      let indent = str[1].match(/(.*)$/)[0];
+      const indent = str[1].match(/(.*)$/)[0];
       return str[2]
         .split('\n' + indent)
         .join('\n')
@@ -120,7 +120,7 @@ Hack.on('gameover', hide); // ゲームオーバー時閉じる
 // 画面に文字を表示する（次の行に追加）
 Hack.log = function() {
   try {
-    let values = [];
+    const values = [];
     for (let i = arguments.length - 1; i >= 0; i--) {
       switch (typeof arguments[i]) {
         case 'object':
@@ -186,7 +186,7 @@ Hack.enchantBook = function() {
           },
           '/'
         );
-        let e = new enchant.Event('hintset');
+        const e = new enchant.Event('hintset');
         e.value = _hint;
         e.rawValue = value;
         Hack.dispatchEvent(e);
@@ -257,7 +257,7 @@ Hack.createLabel = function(text, prop) {
         this[key] = prop[key];
       }, this);
     }
-    let parent = this.defaultParentNode || Hack.defaultParentNode;
+    const parent = this.defaultParentNode || Hack.defaultParentNode;
     if (parent) {
       parent.addChild(this);
     }
@@ -272,7 +272,7 @@ Hack.createSprite = function(width, height, prop) {
         this[key] = prop[key];
       }, this);
     }
-    let parent = this.defaultParentNode || Hack.defaultParentNode;
+    const parent = this.defaultParentNode || Hack.defaultParentNode;
     if (parent) {
       parent.addChild(this);
     }
@@ -287,7 +287,7 @@ Hack.overlay = function() {
 
     this.image = new enchant.Surface(game.width, game.height);
     for (let i = 0; i < args.length; i++) {
-      let fill = args[i];
+      const fill = args[i];
       switch (true) {
         case fill instanceof enchant.Surface:
           this.image.draw(fill, 0, 0, game.width, game.height);
@@ -335,7 +335,7 @@ Hack.overlay = function() {
 
   // 初期値
   Hack.ongameclear = function() {
-    let lay = Hack.overlay(
+    const lay = Hack.overlay(
       'rgba(0,0,0,0.4)',
       'resources/hackforplay/clear.png'
     );
@@ -362,7 +362,7 @@ Hack.overlay = function() {
   };
 
   Hack.ongameover = function() {
-    let lay = Hack.overlay(
+    const lay = Hack.overlay(
       'rgba(0,0,0,0.4)',
       'resources/hackforplay/gameover.png'
     );
@@ -395,7 +395,7 @@ Hack.overlay = function() {
 
   let visible, overlay;
 
-  let GUIParts = [];
+  const GUIParts = [];
 
   // メニュー全体を包括するグループ つねに手前に描画される
   // Hack.menuGroup でアクセスできる
@@ -426,7 +426,7 @@ Hack.overlay = function() {
   });
 
   // Hack.menuOpener Sprite 読み取り専用プロパティ
-  let opener = Hack.createSprite(32, 32, {
+  const opener = Hack.createSprite(32, 32, {
     visible: false,
     x: 438,
     y: 10,
@@ -517,7 +517,7 @@ Hack.overlay = function() {
       function() {
         // GUIParts,overlayを100ミリ秒間非表示にする
         GUIParts.concat(overlay).forEach(function(item) {
-          let visibility = item.visible;
+          const visibility = item.visible;
           item.visible = false;
           setTimeout(function() {
             item.visible = visibility;
@@ -598,7 +598,7 @@ Hack.define = function(obj, prop, condition, predicate) {
       };
     } else {
       // Extend setter
-      let setter = descriptor.set;
+      const setter = descriptor.set;
       descriptor.set = function(value) {
         setter.call(obj, value);
         if (value === condition && predicate instanceof Function) {
@@ -639,7 +639,7 @@ game.addEventListener('load', function() {
  * @return [r, g, b]
  */
 (function() {
-  let ctx = new enchant.Surface(1, 1).context;
+  const ctx = new enchant.Surface(1, 1).context;
   Hack.css2rgb = function(style) {
     if (typeof style === 'string') {
       ctx.fillStyle = style;
@@ -672,7 +672,7 @@ Hack.Vec2Dir = function(vec) {
   if (vec.x === 0 && vec.y === 0) {
     return null;
   }
-  let deg = (Math.atan2(vec.y, vec.x) / Math.PI) * 180;
+  const deg = (Math.atan2(vec.y, vec.x) / Math.PI) * 180;
   if (-135 <= deg && deg <= -45) {
     return 3;
   } // up

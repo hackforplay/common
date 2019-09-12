@@ -93,7 +93,7 @@ export default class RPGMap extends enchant.EventTarget {
   }
 
   public autoSorting() {
-    let ref: RPGMap =
+    const ref: RPGMap =
       this instanceof RPGMap ? this : (this as any).ref || Hack.map;
     if (ref.layerChangeFlag) {
       ref.scene.childNodes.sort((a: RPGObject, b: RPGObject) => {
@@ -108,7 +108,7 @@ export default class RPGMap extends enchant.EventTarget {
 
   public get name() {
     if (!this._name) {
-      let result = Object.keys(Hack.maps).filter(
+      const result = Object.keys(Hack.maps).filter(
         key => Hack.maps[key] === this
       );
       this._name = result.length > 0 ? result[0] : '';
@@ -128,7 +128,7 @@ export default class RPGMap extends enchant.EventTarget {
     if (value !== this._type && dictionary.hasOwnProperty(value)) {
       this._type = value;
       // typeによってbmapを初期化
-      let frame = (dictionary as any)[value];
+      const frame = (dictionary as any)[value];
       this.bmap.loadData(
         new Array(this.height)
           .fill(0)

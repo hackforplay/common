@@ -117,8 +117,8 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
   width = this.width;
   height = this.height;
 
-  let core = enchant.Core.instance;
-  let surface = new enchant.Surface(width, height);
+  const core = enchant.Core.instance;
+  const surface = new enchant.Surface(width, height);
   this._surface = surface;
   const canvas = surface._element;
   canvas.style.position = 'absolute';
@@ -154,27 +154,27 @@ enchant.Map.prototype.redraw = function redraw(x, y, width, height) {
     dx = -this._offsetX;
     dy = -this._offsetY;
   }
-  let row = (image.width / tileWidth) | 0;
-  let col = (image.height / tileHeight) | 0;
-  let left = Math.max(((x + dx) / tileWidth) | 0, 0);
-  let top = Math.max(((y + dy) / tileHeight) | 0, 0);
-  let right = Math.ceil((x + dx + width) / tileWidth);
-  let bottom = Math.ceil((y + dy + height) / tileHeight);
+  const row = (image.width / tileWidth) | 0;
+  const col = (image.height / tileHeight) | 0;
+  const left = Math.max(((x + dx) / tileWidth) | 0, 0);
+  const top = Math.max(((y + dy) / tileHeight) | 0, 0);
+  const right = Math.ceil((x + dx + width) / tileWidth);
+  const bottom = Math.ceil((y + dy + height) / tileHeight);
 
-  let source = image._element;
-  let context = this._context;
+  const source = image._element;
+  const context = this._context;
 
   context.clearRect(x, y, width, height);
   for (let i = 0, len = this._data.length; i < len; i++) {
-    let data = this._data[i];
-    let r = Math.min(right, data[0].length);
-    let b = Math.min(bottom, data.length);
+    const data = this._data[i];
+    const r = Math.min(right, data[0].length);
+    const b = Math.min(bottom, data.length);
     for (y = top; y < b; y++) {
       for (x = left; x < r; x++) {
-        let n = data[y][x];
+        const n = data[y][x];
         if (0 <= n && n < row * col) {
-          let sx = (n % row) * tileWidth;
-          let sy = ((n / row) | 0) * tileHeight;
+          const sx = (n % row) * tileWidth;
+          const sy = ((n / row) | 0) * tileHeight;
           context.drawImage(
             source,
             sx,

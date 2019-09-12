@@ -122,7 +122,7 @@ export default function talk(text: string, ...choices: string[]) {
 }
 
 let answers: TextArea[] = [];
-let cursor = makeCursor();
+const cursor = makeCursor();
 
 // スペースキーでウィンドウを閉じたい
 Key.space.release(() => {

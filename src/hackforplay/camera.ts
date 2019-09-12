@@ -148,15 +148,15 @@ class Camera extends enchant.Sprite {
 
   // 描画範囲を取得する
   public getRenderRect() {
-    let center = this.getCenter();
+    const center = this.getCenter();
 
     let x = center.x;
     let y = center.y;
 
-    let scale = this.getScale();
+    const scale = this.getScale();
 
-    let w = this.width * scale;
-    let h = this.height * scale;
+    const w = this.width * scale;
+    const h = this.height * scale;
 
     x -= w / 2;
     y -= h / 2;
@@ -177,7 +177,7 @@ class Camera extends enchant.Sprite {
   public clampRect(rect: IRect) {
     const { w, h } = this.getVisionSize();
 
-    let over = false;
+    const over = false;
 
     let dx = false;
     let dy = false;
@@ -191,7 +191,7 @@ class Camera extends enchant.Sprite {
       rect.y = (rect.height - h) / 2;
     }
 
-    let b = false;
+    const b = false;
 
     if (w > Hack.map.width) {
       dx = true;
@@ -232,13 +232,13 @@ class Camera extends enchant.Sprite {
 
   // カメラ上の座標を計算する
   public getNodeRect(node: RPGObject) {
-    let renderRect = this.getRenderRect();
-    let scale = this.getScale();
+    const renderRect = this.getRenderRect();
+    const scale = this.getScale();
 
-    let x = node.x - renderRect.x;
-    let y = node.y - renderRect.y;
+    const x = node.x - renderRect.x;
+    const y = node.y - renderRect.y;
 
-    let rect = {
+    const rect = {
       x: x,
       y: y,
       width: node.width,
@@ -277,12 +277,12 @@ class Camera extends enchant.Sprite {
   public render() {
     const context = this.image.context;
 
-    let center = this.getCenter();
+    const center = this.getCenter();
 
     if (!center) return;
 
-    let rect = this.getRenderRect();
-    let r = rect;
+    const rect = this.getRenderRect();
+    const r = rect;
 
     if (this.background) {
       context.fillStyle = this.background;
@@ -373,10 +373,10 @@ class Camera extends enchant.Sprite {
 Camera.arrange = function(
   x: number,
   y: number,
-  border: boolean = true,
+  border = true,
   filter?: (camera: Camera) => boolean
 ) {
-  let for2d = function(
+  const for2d = function(
     x: number,
     y: number,
     callback: (a: number, b: number) => void
@@ -397,7 +397,7 @@ Camera.arrange = function(
 
   // 並べるカメラだけ取得
   let index = 0;
-  let cameras = Camera.collection.filter(
+  const cameras = Camera.collection.filter(
     filter ||
       function(camera) {
         return camera.enabled;
@@ -407,7 +407,7 @@ Camera.arrange = function(
   // 再配置
   for2d(y, x, function(y2, x2) {
     if (index >= cameras.length) return;
-    let camera = cameras[index++];
+    const camera = cameras[index++];
 
     camera.moveTo((game.width / x) * x2, (game.height / y) * y2);
     camera.resize(game.width / x, game.height / y);

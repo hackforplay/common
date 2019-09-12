@@ -4,7 +4,7 @@ import Hack from './hack';
 import RPGMap from './rpg-map';
 
 const _cache: { [key: string]: Promise<RPGMap> } = {};
-let definitions: { [key: string]: Promise<string> } = {}; // File path of map definition
+const definitions: { [key: string]: Promise<string> } = {}; // File path of map definition
 
 export default async function loadMaps(mapJsonFile: string) {
   if (!fetchText) return;

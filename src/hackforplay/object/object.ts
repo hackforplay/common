@@ -85,15 +85,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public attackedDamageTime = 30; // * 1/30sec
   public _debugColor = 'rgba(0, 0, 255, 0.5)';
   public showHpLabel = true; // デフォルトで表示
-  public name: string = ''; // アセットの名前
+  public name = ''; // アセットの名前
   public collider?: any;
   public colliders?: any;
   public isAutoPickUp?: boolean;
   public pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
   public _ruleInstance?: Rule;
-  public skill: string = ''; // 攻撃時にしょうかんするアセットの名前
-  public fieldOfView: number = 1; // 自分を起点に隣何マスまで find 可能か
-  public lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
+  public skill = ''; // 攻撃時にしょうかんするアセットの名前
+  public fieldOfView = 1; // 自分を起点に隣何マスまで find 可能か
+  public lengthOfView = 10; // 自分を起点に何マス先まで find 可能か
   public _mayRotate = false; // 向いている方向に合わせてスプライト自体を回転させるフラグ
   public isInvincible = false; // ダメージを受けなくなるフラグ
   public currentSkin?: ISkin; // 適用されているスキン
@@ -823,11 +823,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { Layer } = RPGMap as any;
 
     // Range of layer
-    let sortingOrder = Object.keys(Layer).map(function(key) {
+    const sortingOrder = Object.keys(Layer).map(function(key) {
       return Layer[key];
     });
-    let max = Math.max.apply(null, sortingOrder);
-    let min = Math.min.apply(null, sortingOrder);
+    const max = Math.max.apply(null, sortingOrder);
+    const min = Math.min.apply(null, sortingOrder);
     this._layer = Math.max(Math.min(value, max), min);
 
     // 他オブジェクトはプレイヤーレイヤーに干渉できないようにする
@@ -850,7 +850,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private bringOver() {
     const { Layer } = RPGMap as any;
     // 現在のレイヤーより大きいレイヤーのうち最も小さいもの
-    let uppers = Object.keys(Layer)
+    const uppers = Object.keys(Layer)
       .map(key => {
         return Layer[key];
       }, this)
@@ -864,7 +864,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private bringUnder() {
     const { Layer } = RPGMap as any;
     // 現在のレイヤーより小さいレイヤーのうち最も大きいもの
-    let unders = Object.keys(Layer)
+    const unders = Object.keys(Layer)
       .map(key => {
         return Layer[key];
       }, this)
@@ -1019,7 +1019,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const events = (synonyms as any).events;
     const synonym: any = (events as any)[event.type];
     if (synonym) {
-      let clone = Object.assign({}, event, {
+      const clone = Object.assign({}, event, {
         type: synonym
       });
       enchant.EventTarget.prototype.dispatchEvent.call(this, clone);
@@ -1029,7 +1029,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private isListening(eventType: string) {
     // eventType のリスナーを持っているか
     const events = (synonyms as any).events;
-    let synonym = events[eventType];
+    const synonym = events[eventType];
     return (
       this['on' + eventType] ||
       this._listeners[eventType] ||

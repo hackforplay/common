@@ -333,13 +333,13 @@ export default class Rule {
 
   public registerRules(object: RPGObject, name: string, summoner?: RPGObject) {
     object.name = name;
-    let pendings = [];
+    const pendings = [];
     if (this.hasOneObjectLisener('つくられたとき', name)) {
-      let p = this.runOneObjectLisener('つくられたとき', object);
+      const p = this.runOneObjectLisener('つくられたとき', object);
       pendings.push(p);
     }
     if (summoner && this.hasTwoObjectListener('しょうかんされたとき', name)) {
-      let p = this.runTwoObjectListener(
+      const p = this.runTwoObjectListener(
         'しょうかんされたとき',
         object,
         summoner
