@@ -85,15 +85,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public attackedDamageTime = 30; // * 1/30sec
   public _debugColor = 'rgba(0, 0, 255, 0.5)';
   public showHpLabel = true; // デフォルトで表示
-  public name: string = ''; // アセットの名前
+  public name = ''; // アセットの名前
   public collider?: any;
   public colliders?: any;
   public isAutoPickUp?: boolean;
   public pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
   public _ruleInstance?: Rule;
-  public skill: string = ''; // 攻撃時にしょうかんするアセットの名前
-  public fieldOfView: number = 1; // 自分を起点に隣何マスまで find 可能か
-  public lengthOfView: number = 10; // 自分を起点に何マス先まで find 可能か
+  public skill = ''; // 攻撃時にしょうかんするアセットの名前
+  public fieldOfView = 1; // 自分を起点に隣何マスまで find 可能か
+  public lengthOfView = 10; // 自分を起点に何マス先まで find 可能か
   public _mayRotate = false; // 向いている方向に合わせてスプライト自体を回転させるフラグ
   public isInvincible = false; // ダメージを受けなくなるフラグ
   public currentSkin?: ISkin; // 適用されているスキン
