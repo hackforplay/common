@@ -12,11 +12,14 @@
   "plugins": ["@typescript-eslint/eslint-plugin"],
   "rules": {
     "no-var": "error",
+    "prefer-const": "off",
+    "prefer-rest-params": "off",
     "@typescript-eslint/no-use-before-define": [
       "error",
       { "functions": false, "classes": false }
     ],
     "@typescript-eslint/interface-name-prefix": 0,
+    "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-this-alias": "off",
     "@typescript-eslint/explicit-function-return-type": "off"
