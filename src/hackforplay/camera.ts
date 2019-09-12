@@ -373,7 +373,7 @@ class Camera extends enchant.Sprite {
 Camera.arrange = function(
   x: number,
   y: number,
-  border: boolean = true,
+  border = true,
   filter?: (camera: Camera) => boolean
 ) {
   const for2d = function(
