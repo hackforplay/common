@@ -297,7 +297,7 @@ Hack.assets.shadowMod = function() {
     this.map.layerChangeFlag = true;
   });
   this.shadow.on('enterframe', function() {
-    let o = this.offset;
+    const o = this.offset;
     this.moveTo(this.ref.x + o.x, this.ref.y + o.y);
   });
 };
@@ -556,7 +556,7 @@ Hack.assets.boy = function() {
     x: -8,
     y: -18
   };
-  let _0 = 0,
+  const _0 = 0,
     _1 = _0 + 1,
     _2 = _0 + 2;
   this.setFrameD9(BehaviorTypes.Idle, [_1]);
@@ -606,7 +606,7 @@ Hack.assets.girl = function() {
     x: -8,
     y: -18
   };
-  let _0 = 6,
+  const _0 = 6,
     _1 = _0 + 1,
     _2 = _0 + 2;
   this.setFrameD9(BehaviorTypes.Idle, [_1]);
@@ -656,7 +656,7 @@ Hack.assets.woman = function() {
     x: -8,
     y: -18
   };
-  let _0 = 3,
+  const _0 = 3,
     _1 = _0 + 1,
     _2 = _0 + 2;
   this.setFrameD9(BehaviorTypes.Idle, [_1]);
@@ -829,10 +829,10 @@ Object.keys(dictionary).forEach(function(name) {
 // Hack.skills
 Hack.skills.stalker = function(target) {
   return function() {
-    let _target = target || Hack.player;
+    const _target = target || Hack.player;
     if (_target && _target instanceof RPGObject) {
-      let moveX = 32 * Math.sign(_target.mapX - this.mapX);
-      let moveY = 32 * Math.sign(_target.mapY - this.mapY);
+      const moveX = 32 * Math.sign(_target.mapX - this.mapX);
+      const moveY = 32 * Math.sign(_target.mapY - this.mapY);
       this.forward = [moveX, moveY];
       this.tl
         .become('walk')
@@ -850,11 +850,11 @@ Hack.skills.storm = function(asset) {
   return function() {
     this.onenterframe = function() {
       if (game.frame % 3 > 0) return;
-      let flame = new RPGObject();
+      const flame = new RPGObject();
       this.shoot(flame, this.forward, 6);
       flame.collisionFlag = false;
 
-      let fx = this.forward.x,
+      const fx = this.forward.x,
         fy = this.forward.y;
       flame.moveBy(fx * random(64, 96), fy * random(64, 96));
       flame.velocityX += random(-0.99, 1);
@@ -862,7 +862,7 @@ Hack.skills.storm = function(asset) {
       flame.scale(random(0.99, 1.5));
       flame.force(-fx * random(0, 0.199), -fy * random(0, 0.199));
       flame.destroy(20);
-      let self = this;
+      const self = this;
       flame.ontriggerenter = function(event) {
         if (event.hit !== self) {
           Hack.Attack.call(this, event.mapX, event.mapY, self.atk);
@@ -877,12 +877,12 @@ Hack.skills.storm = function(asset) {
 Hack.skills.selfdestruct = function(time) {
   return function() {
     this.setTimeout(function() {
-      let flame = new RPGObject();
+      const flame = new RPGObject();
       flame.mod(Hack.assets.explosion);
       this.shoot(flame, [0, -1], 1);
       flame.scale(2);
       flame.collisionFlag = false;
-      let self = this;
+      const self = this;
       flame.ontriggerenter = function(event) {
         Hack.Attack.call(this, event.mapX, event.mapY, self.atk);
       };
@@ -894,10 +894,10 @@ Hack.skills.selfdestruct = function(time) {
 
 Hack.skills.pistol = function(asset) {
   return function() {
-    let bullet = new RPGObject();
+    const bullet = new RPGObject();
     this.shoot(bullet, this.forward, 5);
 
-    let self = this;
+    const self = this;
     bullet.ontriggerenter = function(event) {
       if (event.target !== self) {
         Hack.Attack.call(this, event.mapX, event.mapY, self.atk);
@@ -910,11 +910,11 @@ Hack.skills.pistol = function(asset) {
 
 game.on('enterframe', function() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
-  let frame = game.collisionFrames || 10;
-  let physicsPhantom = RPGObject.collection.filter(function(item) {
+  const frame = game.collisionFrames || 10;
+  const physicsPhantom = RPGObject.collection.filter(function(item) {
     return !item.isKinematic && !item.collisionFlag && !item._stop;
   });
-  let physicsCollision = RPGObject.collection.filter(function(item) {
+  const physicsCollision = RPGObject.collection.filter(function(item) {
     return !item.isKinematic && item.collisionFlag && !item._stop;
   });
 
@@ -943,7 +943,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       self.x += self.velocityX / frame;
       self.y += self.velocityY / frame;
       // Intersects
-      let intersects = self.intersect(RPGObject);
+      const intersects = self.intersect(RPGObject);
       intersects.splice(intersects.indexOf(self), 1); // ignore self
       // Dispatch trigger(stay|exit) event
       (self._preventFrameHits || [])
@@ -964,7 +964,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
           }
         });
       // Intersect on time (enter) or still intersect
-      let entered = intersects.filter(function(item) {
+      const entered = intersects.filter(function(item) {
         return (
           !self._preventFrameHits || self._preventFrameHits.indexOf(item) < 0
         );
@@ -991,10 +991,10 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       return item.self.collisionFlag;
     })
     .filter(function(item) {
-      let self = item.self;
-      let event = (item.event = new enchant.Event('collided'));
-      let hits = (event.hits = item.hits);
-      let calc = (item.calc = {
+      const self = item.self;
+      const event = (item.event = new enchant.Event('collided'));
+      const hits = (event.hits = item.hits);
+      const calc = (item.calc = {
         x: self.x,
         y: self.y,
         vx: self.velocityX,
@@ -1003,7 +1003,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       if (hits.length > 0) {
         // Hit objects
         event.hit = hits[0];
-        let m1 = self.mass,
+        const m1 = self.mass,
           m2 = hits[0].mass;
         calc.vx =
           ((m1 - m2) * self.velocityX + 2 * m2 * hits[0].velocityX) / (m1 + m2);
@@ -1012,7 +1012,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
         event.map = false;
       } else {
         // Hit map
-        let mapHitX =
+        const mapHitX =
             (self.velocityX < 0 && self.x <= 0) ||
             (self.velocityX > 0 && self.x + self.width >= game.width),
           mapHitY =
@@ -1032,8 +1032,8 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       return event.map || hits.length > 0;
     })
     .filter(function(item) {
-      let self = item.self;
-      let calc = item.calc;
+      const self = item.self;
+      const calc = item.calc;
       self.x = calc.x;
       self.y = calc.y;
       self.velocityX = calc.vx;
@@ -1045,7 +1045,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
     });
 
   function dispatchTriggerEvent(type, self, hit) {
-    let event = new enchant.Event('trigger' + type);
+    const event = new enchant.Event('trigger' + type);
     event.hit = hit;
     event.item = hit; // 引数名の統一
     event.mapX = hit.mapX;

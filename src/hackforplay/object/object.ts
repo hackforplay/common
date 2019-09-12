@@ -823,11 +823,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { Layer } = RPGMap as any;
 
     // Range of layer
-    let sortingOrder = Object.keys(Layer).map(function(key) {
+    const sortingOrder = Object.keys(Layer).map(function(key) {
       return Layer[key];
     });
-    let max = Math.max.apply(null, sortingOrder);
-    let min = Math.min.apply(null, sortingOrder);
+    const max = Math.max.apply(null, sortingOrder);
+    const min = Math.min.apply(null, sortingOrder);
     this._layer = Math.max(Math.min(value, max), min);
 
     // 他オブジェクトはプレイヤーレイヤーに干渉できないようにする
@@ -850,7 +850,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private bringOver() {
     const { Layer } = RPGMap as any;
     // 現在のレイヤーより大きいレイヤーのうち最も小さいもの
-    let uppers = Object.keys(Layer)
+    const uppers = Object.keys(Layer)
       .map(key => {
         return Layer[key];
       }, this)
@@ -864,7 +864,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private bringUnder() {
     const { Layer } = RPGMap as any;
     // 現在のレイヤーより小さいレイヤーのうち最も大きいもの
-    let unders = Object.keys(Layer)
+    const unders = Object.keys(Layer)
       .map(key => {
         return Layer[key];
       }, this)
@@ -1019,7 +1019,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const events = (synonyms as any).events;
     const synonym: any = (events as any)[event.type];
     if (synonym) {
-      let clone = Object.assign({}, event, {
+      const clone = Object.assign({}, event, {
         type: synonym
       });
       enchant.EventTarget.prototype.dispatchEvent.call(this, clone);
@@ -1029,7 +1029,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private isListening(eventType: string) {
     // eventType のリスナーを持っているか
     const events = (synonyms as any).events;
-    let synonym = events[eventType];
+    const synonym = events[eventType];
     return (
       this['on' + eventType] ||
       this._listeners[eventType] ||

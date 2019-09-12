@@ -72,8 +72,8 @@ class Player extends RPGObject {
     }
 
     if (this.behavior === BehaviorTypes.Idle) {
-      let hor = this.checkInput('right') - this.checkInput('left');
-      let ver = hor ? 0 : this.checkInput('down') - this.checkInput('up');
+      const hor = this.checkInput('right') - this.checkInput('left');
+      const ver = hor ? 0 : this.checkInput('down') - this.checkInput('up');
       if (hor || ver) {
         // Turn
         this.forward = [hor, ver];
@@ -101,7 +101,7 @@ class Player extends RPGObject {
         item.dispatchEvent(new enchant.Event('playerstay'));
       } else {
         item.dispatchEvent(new enchant.Event('playerexit'));
-        let index = this.enteredStack.indexOf(item);
+        const index = this.enteredStack.indexOf(item);
         this.enteredStack.splice(index, 1);
       }
     }, this);

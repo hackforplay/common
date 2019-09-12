@@ -150,7 +150,7 @@ class Keyboard extends enchant.Sprite {
    */
   move(x, y) {
     let newX = this.cursorX + x;
-    let newY = this.cursorY + y;
+    const newY = this.cursorY + y;
 
     // 範囲外に移動しようとしたらキャンセル
     if (!between(newX, 0, 10) || !between(newY, 0, 7)) {

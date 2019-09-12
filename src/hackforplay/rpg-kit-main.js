@@ -396,7 +396,7 @@ Hack.createMap = function(template) {
   if (zenkaku) {
     Hack.log(`⚠️ 全かくの ${zenkaku[0]} がマップに入っています!`);
   }
-  let source = template
+  const source = template
     .split('\n')
     .map(function(line) {
       return line.match(/\s*\d+[\s\|]?/g);
@@ -404,16 +404,16 @@ Hack.createMap = function(template) {
     .filter(function(line) {
       return Array.isArray(line);
     });
-  let int = function(item) {
+  const int = function(item) {
     return parseInt(item, 10);
   };
-  let bmap = source.map(function(line) {
+  const bmap = source.map(function(line) {
     return line.map(int);
   });
-  let bar = function(item) {
+  const bar = function(item) {
     return item.substr(-1) === '|' ? 1 : 0;
   };
-  let cmap = source.map(function(line) {
+  const cmap = source.map(function(line) {
     return line.map(bar);
   });
 
@@ -486,7 +486,7 @@ Hack.Attack = function(x, y, damage) {
           item.hp -= damage;
         }
       }
-      let e = new enchant.Event('attacked');
+      const e = new enchant.Event('attacked');
       e.attacker = e.item = this;
       e.damage = damage || 0;
       item.dispatchEvent(e);
@@ -519,7 +519,7 @@ enchant.Timeline.prototype.become = function(type, time) {
   this.add(
     new enchant.Action({
       onactionstart: function() {
-        let capital = type[0].toUpperCase() + type.substr(1).toLowerCase();
+        const capital = type[0].toUpperCase() + type.substr(1).toLowerCase();
         if (
           this instanceof RPGObject &&
           BehaviorTypes.hasOwnProperty(capital)

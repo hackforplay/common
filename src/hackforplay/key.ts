@@ -98,7 +98,7 @@ export interface IKeyClass {
 
 let Key: { [P in keyof typeof keyCode]: IKeyClass } = {} as any; // eslint-disable-line
 
-let keyCode = {
+const keyCode = {
   num0: 48,
   num1: 49,
   num2: 50,
@@ -174,7 +174,7 @@ keys(keyCode)
     game.keybind(value, value);
   });
 
-let KeyClass: IKeyClass = enchant.Class.create({
+const KeyClass: IKeyClass = enchant.Class.create({
   initialize: function() {
     this.listeners = [];
   },
@@ -203,8 +203,8 @@ let KeyClass: IKeyClass = enchant.Class.create({
 
   update: function(input: any) {
     // 前フレームの状態を保持する
-    let pressed = this.pressed;
-    let released = this.released;
+    const pressed = this.pressed;
+    const released = this.released;
     // 入力の状態を更新する
     this.count = input ? this.count + 1 : 0;
     // press, release, observe を呼び出す
@@ -223,7 +223,7 @@ let KeyClass: IKeyClass = enchant.Class.create({
         return listener.type === type;
       })
       .forEach(function(this: any, listener: any) {
-        let thisArg = listener.thisArg === undefined ? this : listener.thisArg;
+        const thisArg = listener.thisArg === undefined ? this : listener.thisArg;
         listener.listener.call(thisArg, this);
         if (listener.once) {
           const index = this.listeners.indexOf(listener);

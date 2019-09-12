@@ -75,13 +75,13 @@ Object.keys(dictionary).forEach(function(name) {
 
 function tryFetchMapImage(name) {
   if (game.assets['resources/enchantjs/x2/dotmat.gif']) {
-    let length = 20,
+    const length = 20,
       w = 32,
       h = 32;
-    let frame = MapObject.dictionary[name],
+    const frame = MapObject.dictionary[name],
       x = (frame % length) * w,
       y = ((frame / length) >> 0) * h;
-    let s = new enchant.Surface(w, h);
+    const s = new enchant.Surface(w, h);
     s.draw(
       game.assets['resources/enchantjs/x2/dotmat.gif'],
       x,

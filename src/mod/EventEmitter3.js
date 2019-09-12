@@ -90,7 +90,7 @@ EventEmitter.prototype.eventNames = function eventNames() {
  * @api public
  */
 EventEmitter.prototype.listeners = function listeners(event, exists) {
-  let evt = prefix ? prefix + event : event,
+  const evt = prefix ? prefix + event : event,
     available = this._events[evt];
 
   if (exists) return !!available;
@@ -112,7 +112,7 @@ EventEmitter.prototype.listeners = function listeners(event, exists) {
  * @api public
  */
 EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
-  let evt = prefix ? prefix + event : event;
+  const evt = prefix ? prefix + event : event;
 
   if (!this._events[evt]) return false;
 
@@ -190,7 +190,7 @@ EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
  * @api public
  */
 EventEmitter.prototype.on = function on(event, fn, context) {
-  let listener = new EE(fn, context || this),
+  const listener = new EE(fn, context || this),
     evt = prefix ? prefix + event : event;
 
   if (!this._events[evt]) (this._events[evt] = listener), this._eventsCount++;
@@ -210,7 +210,7 @@ EventEmitter.prototype.on = function on(event, fn, context) {
  * @api public
  */
 EventEmitter.prototype.once = function once(event, fn, context) {
-  let listener = new EE(fn, context || this, true),
+  const listener = new EE(fn, context || this, true),
     evt = prefix ? prefix + event : event;
 
   if (!this._events[evt]) (this._events[evt] = listener), this._eventsCount++;
@@ -236,7 +236,7 @@ EventEmitter.prototype.removeListener = function removeListener(
   context,
   once
 ) {
-  let evt = prefix ? prefix + event : event;
+  const evt = prefix ? prefix + event : event;
 
   if (!this._events[evt]) return this;
   if (!fn) {
@@ -245,7 +245,7 @@ EventEmitter.prototype.removeListener = function removeListener(
     return this;
   }
 
-  let listeners = this._events[evt];
+  const listeners = this._events[evt];
 
   if (listeners.fn) {
     if (
