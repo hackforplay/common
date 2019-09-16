@@ -223,7 +223,8 @@ const KeyClass: IKeyClass = enchant.Class.create({
         return listener.type === type;
       })
       .forEach(function(this: any, listener: any) {
-        const thisArg = listener.thisArg === undefined ? this : listener.thisArg;
+        const thisArg =
+          listener.thisArg === undefined ? this : listener.thisArg;
         listener.listener.call(thisArg, this);
         if (listener.once) {
           const index = this.listeners.indexOf(listener);
@@ -276,7 +277,7 @@ keys(keyCode).forEach(function(key) {
   Key[key].name = key;
 });
 
-const alias = {
+const alias: { [key: string]: string } = {
   space: 'a',
   up: 'up',
   down: 'down',
@@ -289,7 +290,7 @@ game.on('enterframe', function() {
     let input = game.input[keyCode[key]];
 
     // ui.enchant.js などの対策
-    for (const key of keys(alias)) {
+    if (key in alias) {
       input = input || game.input[alias[key]];
     }
 
