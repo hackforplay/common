@@ -1,8 +1,9 @@
 import { IDir } from './dir';
 import { hasContract, isOpposite } from './family';
-import { install, throwError } from './feeles';
+import { install } from './feeles';
 import { default as Hack } from './hack';
 import RPGObject from './object/object';
+import { errorInEvent } from './stdlog';
 import talk from './talk';
 
 interface IEvent {
@@ -20,14 +21,7 @@ function handleError(
   promiseLike?: Promise<void>
 ): Promise<void> {
   if (promiseLike && promiseLike instanceof Promise) {
-    return promiseLike.catch(error => {
-      const internal = {
-        fileName: `"${title}" at "${name}"`,
-        message: error.message,
-        stack: error.stack
-      };
-      throwError && throwError(internal);
-    });
+    return promiseLike.catch(error => errorInEvent(error, { name }, title));
   }
   return Promise.resolve();
 }

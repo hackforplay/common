@@ -1,4 +1,4 @@
-import { throwError } from '../hackforplay/feeles';
+import { errorInEvent } from '../hackforplay/stdlog';
 import enchant, { CanvasRenderer } from './enchant';
 
 if (enchant.Core.instance !== null) {
@@ -310,8 +310,7 @@ enchant.EventTarget.prototype.dispatchEvent = function dispatchEvent(event) {
     }
   } catch (error) {
     // イベントリスナーが同期関数だった場合の例外処理
-    throwError(error);
-    throw error;
+    errorInEvent(error, this, event.type);
   }
 };
 
@@ -321,11 +320,7 @@ enchant.EventTarget.prototype.dispatchEvent = function dispatchEvent(event) {
  */
 function reportAsyncError(maybePromise, event, _this) {
   if (maybePromise instanceof Promise) {
-    maybePromise.catch(error => {
-      console.error(`Runtime error in event '${event.type}'`, error);
-      console.info('Above error was occured to', _this);
-      throwError(error);
-    });
+    maybePromise.catch(error => errorInEvent(error, _this, event.type));
   }
 }
 
