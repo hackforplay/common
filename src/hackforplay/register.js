@@ -1,4 +1,5 @@
 import Hack from './hack';
+import { log } from '@hackforplay/log';
 import Skin from './deprecated-skin';
 import Family from './family';
 import RPGObject from './object/object';
@@ -16,6 +17,8 @@ import random from './random';
 import * as Dir from './dir';
 import Camera from './camera';
 import { logFromUser } from './stdlog';
+
+log('system', '世界は始まりを告げた。ハローワールド！', '@hackforplay/common');
 
 export default function register(_global) {
   // Export to global
