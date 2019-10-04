@@ -15,6 +15,7 @@ import enchant from '../enchantjs/enchant';
 import random from './random';
 import * as Dir from './dir';
 import Camera from './camera';
+import { logFromUser } from './stdlog';
 
 export default function register(_global) {
   // Export to global
@@ -35,4 +36,5 @@ export default function register(_global) {
   _global.random = _global.random || random;
   _global.Dir = _global.Dir || Dir;
   _global.Camera = _global.Camera || Camera;
+  _global.log = logFromUser;
 }
