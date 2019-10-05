@@ -1,5 +1,5 @@
 import enchant from '../enchantjs/enchant';
-import { textArea, hide } from '../mod/logFunc';
+import { hide, textArea } from '../mod/logFunc';
 import Camera from './camera';
 import { code$, emphasizeCode, reload } from './feeles';
 import game from './game';
