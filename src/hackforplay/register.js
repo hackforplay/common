@@ -17,7 +17,6 @@ import Rule from './rule';
 import { logFromUser } from './stdlog';
 import TextArea from './ui/textarea';
 
-console.log('log', log);
 log('system', '世界は始まりを告げた。ハローワールド！', '@hackforplay/common');
 
 export default function register(_global) {

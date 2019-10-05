@@ -1,7 +1,7 @@
 import enchant from '../enchantjs/enchant';
 import './rpg-kit-main';
 import '../enchantjs/ui.enchant';
-import Hack from './hack';
+import { default as _Hack } from './hack';
 import SAT from '../lib/sat.min';
 import RPGObject from './object/object';
 import MapObject from './object/map-object';
@@ -9,6 +9,8 @@ import dictionary from './object/dictionary';
 import BehaviorTypes from './behavior-types';
 import game from './game';
 import random from './random';
+
+let Hack = (self.Hack = _Hack || new enchant.EventTarget()); // 依存解決に失敗した場合
 
 /**
 * RPGObject
@@ -46,7 +48,6 @@ bs.onbecomedead = function () {};
  * Physics ===> Physics			: oncollided	: Need collisionFlag is true, Change velocity
  * Physics ===> Kinematics		: ontriggered	: Ignore collisionFlag, Don't change velocity
  */
-
 Hack.assets = Hack.assets || {};
 Hack.skills = Hack.skills || {};
 
