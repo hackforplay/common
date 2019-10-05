@@ -1,20 +1,24 @@
-import Hack from './hack';
-import Skin from './deprecated-skin';
-import Family from './family';
-import RPGObject from './object/object';
-import MapObject from './object/map-object';
-import Player from './object/player';
-import Effect from './object/effect';
-import BehaviorTypes from './behavior-types';
-import Key from './key';
-import game from './game';
-import RPGMap from './rpg-map';
-import TextArea from './ui/textarea';
-import Rule from './rule';
+import { log } from '@hackforplay/log';
 import enchant from '../enchantjs/enchant';
-import random from './random';
-import * as Dir from './dir';
+import BehaviorTypes from './behavior-types';
 import Camera from './camera';
+import Skin from './deprecated-skin';
+import * as Dir from './dir';
+import Family from './family';
+import game from './game';
+import Hack from './hack';
+import Key from './key';
+import Effect from './object/effect';
+import MapObject from './object/map-object';
+import RPGObject from './object/object';
+import Player from './object/player';
+import random from './random';
+import RPGMap from './rpg-map';
+import Rule from './rule';
+import { logFromUser } from './stdlog';
+import TextArea from './ui/textarea';
+
+log('system', '世界は始まりを告げた。ハローワールド！', '@hackforplay/common');
 
 export default function register(_global) {
   // Export to global
@@ -35,4 +39,5 @@ export default function register(_global) {
   _global.random = _global.random || random;
   _global.Dir = _global.Dir || Dir;
   _global.Camera = _global.Camera || Camera;
+  _global.log = logFromUser;
 }

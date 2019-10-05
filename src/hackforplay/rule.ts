@@ -1,8 +1,9 @@
 import { IDir } from './dir';
 import { hasContract, isOpposite } from './family';
-import { install, throwError } from './feeles';
+import { install } from './feeles';
 import { default as Hack } from './hack';
 import RPGObject from './object/object';
+import { errorInEvent } from './stdlog';
 import talk from './talk';
 
 interface IEvent {
@@ -20,14 +21,7 @@ function handleError(
   promiseLike?: Promise<void>
 ): Promise<void> {
   if (promiseLike && promiseLike instanceof Promise) {
-    return promiseLike.catch(error => {
-      const internal = {
-        fileName: `"${title}" at "${name}"`,
-        message: error.message,
-        stack: error.stack
-      };
-      throwError && throwError(internal);
-    });
+    return promiseLike.catch(error => errorInEvent(error, { name }, title));
   }
   return Promise.resolve();
 }
@@ -84,7 +78,7 @@ export default class Rule {
 
   public addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
-      throw new Error(`${type} はすでに決まっています`);
+      errorInEvent('上書きしてしまう', { name }, type);
     }
     this._listenersOfNo[type] = func;
   }
@@ -98,12 +92,17 @@ export default class Rule {
   public addOneObjectLisener(type: string, func: OneObjectListener) {
     const name = this.this;
     if (!name) {
-      throw new Error(`${type} の this がありません`);
+      errorInEvent(
+        'Context not found',
+        undefined,
+        `addOneObjectListener('${type}')`
+      );
+      return;
     }
     const listeners =
       this._listenersOfOne[type] || (this._listenersOfOne[type] = {});
     if (listeners[name]) {
-      throw new Error(`this="${name}" の ${type} はすでに決まっています`);
+      errorInEvent('上書きしてしまう', { name }, type);
     }
     listeners[name] = func;
     this._knownThisNames.add(name);
@@ -122,22 +121,27 @@ export default class Rule {
   public addTwoObjectListener(type: string, func: TwoObjectListener) {
     const name = this.this;
     if (!name) {
-      throw new Error(`${type} の this がありません`);
+      errorInEvent(
+        'Context not found',
+        undefined,
+        `addTwoObjectListener('${type}')`
+      );
+      return;
     }
-    const item = this.item;
+    let item = this.item;
     if (!item) {
-      throw new Error(`${type} の item がありません`);
+      errorInEvent('rule.item がない', { name }, type);
+      item = Anyone;
     }
     const container =
       this._listenersOfTwo[type] || (this._listenersOfTwo[type] = {});
     const listeners = container[name] || (container[name] = {});
     if (listeners[name]) {
-      throw new Error(
-        `this="${name}" item="${item.toString()}" の ${type} はすでに決まっています`
-      );
+      errorInEvent('上書きしてしまう', { name }, type);
     }
     listeners[item] = func;
     this._knownThisNames.add(name);
+    this.item = null;
   }
 
   public async runTwoObjectListener(

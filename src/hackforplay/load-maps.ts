@@ -1,5 +1,6 @@
+import { log } from '@hackforplay/log';
 import createCompatibleMap from './create-compatible-map';
-import { fetchText, throwError } from './feeles';
+import { fetchText } from './feeles';
 import Hack from './hack';
 import RPGMap from './rpg-map';
 
@@ -21,12 +22,19 @@ export default async function loadMaps(mapJsonFile: string) {
         definitions[key] = fetchText(maps.files[key]);
       }
     } catch (error) {
-      console.error('Error: Invalid maps.json', mapsJson);
-      throwError && throwError(new Error(error));
+      log(
+        'error',
+        'maps.json がおかしいみたい。ためしにマップをかえてみて！',
+        '@hackforplay/common'
+      );
+      console.error(mapsJson);
     }
   } catch (error) {
-    console.error('Error: maps.json がありません');
-    throwError && throwError(new Error(error));
+    log(
+      'error',
+      'maps.json がないみたい。ためしにマップをかえてみて！',
+      '@hackforplay/common'
+    );
   }
 }
 

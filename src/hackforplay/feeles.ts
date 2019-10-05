@@ -72,8 +72,6 @@ export interface Feeles {
     features: any,
     replace: any
   ) => void;
-  // error を IDE に投げる
-  throwError?: (error: any) => void;
   // eval する
   eval?: (code: string) => void;
 }
@@ -120,6 +118,5 @@ export const dispatchOnMessage = feeles.dispatchOnMessage;
 // 親ウィンドウで URL (Same Domain) を window.open する
 export const openWindow = feeles.openWindow;
 // error を IDE に投げる
-export const throwError = feeles.throwError;
 // eval する
 export const eval_ = feeles.eval;

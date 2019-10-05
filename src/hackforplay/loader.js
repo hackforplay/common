@@ -1,7 +1,8 @@
 import enchant from '../enchantjs/enchant';
-import { fetchDataURL, throwError } from './feeles';
+import { fetchDataURL } from './feeles';
 import game from './game';
 import Hack from './hack';
+import { errorInEvent } from './stdlog';
 
 /*
 function blobToDataURL(blob, callback) {
@@ -66,9 +67,7 @@ enchant.Surface.load = function(src, callback, onerror) {
         // 一部の MOD の為に元画像の情報を残す
         image.originalSource = src;
       })
-      .catch(error => {
-        throwError && throwError(error);
-      });
+      .catch(error => errorInEvent(error, { name: src }, 'fetchDataURL'));
 
   return surface;
 };
