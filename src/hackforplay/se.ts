@@ -1,6 +1,7 @@
-import { audioContextReady, fetchArrayBuffer, throwError } from './feeles';
+import { audioContextReady, fetchArrayBuffer } from './feeles';
 import { default as Hack } from './hack';
 import { getConfig } from './se-data';
+import { errorInEvent } from './stdlog';
 
 const data: { [key: string]: AudioBuffer | null | undefined } = {};
 
@@ -30,10 +31,7 @@ export default async function soundEffect(jpName: string) {
         gainNode.connect(audioCtx.destination);
         gainNode.gain.value = 0.3;
       },
-
-      function(e) {
-        throwError && throwError(e);
-      }
+      e => errorInEvent(e, { name: jpName }, 'audioCtx.decodeAudioData')
     );
     source.start();
   } else {

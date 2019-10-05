@@ -1,9 +1,10 @@
 import enchant from '../enchantjs/enchant';
 import { textArea, hide } from '../mod/logFunc';
 import Camera from './camera';
-import { code$, emphasizeCode, reload, throwError } from './feeles';
+import { code$, emphasizeCode, reload } from './feeles';
 import game from './game';
 import requestPostMessage from './request-post-message';
+import { errorInEvent } from './stdlog';
 
 function refocus() {
   window.document.activeElement.blur(); // Blur an enchantBook
@@ -21,12 +22,7 @@ Hack.start = function() {
   // game start
   Hack.maps = Hack.maps || {};
   Hack.dispatchEvent(new enchant.Event('load'));
-  game.start().error(e => {
-    console.error('ERROR', e);
-    if (throwError) {
-      throwError(e);
-    }
-  });
+  game.start().error(e => errorInEvent(e, null, 'Hack.start'));
   window.focus();
 };
 
