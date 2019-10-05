@@ -15,6 +15,14 @@ export function errorInEvent(error: any, self?: Self, eventName?: string) {
   return log('error', message, self ? `modules/${self.name}.js` : 'Unknown');
 }
 
+export function errorRemoved(name: string, self?: Self) {
+  return log(
+    'error',
+    `${name} は削除されました`,
+    self ? `modules/${self.name}.js` : 'Unknown'
+  );
+}
+
 export function getName(error: any) {
   if (typeof error === 'string') return error;
   if (error instanceof Error) return errorJp.get(error.name) || error.name;

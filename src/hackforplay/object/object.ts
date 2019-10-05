@@ -3,19 +3,18 @@ import '../../enchantjs/ui.enchant';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
 import { default as Camera } from '../camera';
-import { default as DeprecatedSkin } from '../deprecated-skin';
 import * as Dir from '../dir';
 import { default as Family, getMaster, registerServant } from '../family';
 import { default as game } from '../game';
 import { default as Hack } from '../hack';
 import { generateMapFromDefinition } from '../load-maps';
 import Vector2, { IVector2 } from '../math/vector2';
-import { randomCollection, randomRange } from '../random';
+import { randomCollection } from '../random';
 import RPGMap from '../rpg-map';
 import Rule from '../rule';
 import soundEffect from '../se';
 import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
-import { errorInEvent } from '../stdlog';
+import { errorInEvent, errorRemoved } from '../stdlog';
 import * as synonyms from '../synonyms';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
@@ -154,16 +153,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         this.hpLabel.opacity = 1;
       }
     });
-
-    // アセット
-    if (typeof mod === 'function') {
-      console.error(
-        'new RPGObject に引数を与える使い方は v0.24 で削除されます. 代わりに costume を使ってください'
-      );
-      this.mod(mod);
-      // Skin.XXX の名前をデフォルトの name として登録する
-      this.name = DeprecatedSkin.__name.get(mod) || this.name;
-    }
 
     // 後方互換性保持
     this.collider =
@@ -483,30 +472,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
     else _remove.call(this);
   }
-  private setFrame(
-    behavior: string,
-    replace: (number | null)[] | ((this: RPGObject) => (number | null)[])
-  ) {
-    console.error(
-      'RPGObject::setFrame は非推奨になりました. v0.24 で削除されます'
-    );
-    const { currentSkin } = this;
-    if (!currentSkin) return;
-    const frame = (currentSkin.frame = currentSkin.frame || {});
-    replace = typeof replace === 'function' ? replace.call(this) : replace;
-    frame[behavior as keyof typeof frame] = replace;
+  private setFrame() {
+    errorRemoved('setFrame', this);
   }
 
-  private getFrame(behavior: string = this.behavior) {
-    console.error(
-      'RPGObject::getFrame は非推奨になりました. v0.24 で削除されます'
-    );
-    const frame =
-      this.currentSkin &&
-      this.currentSkin.frame &&
-      this.currentSkin.frame[behavior as keyof ISkin['frame']];
-    if (!frame) return [];
-    return decode(frame);
+  private getFrame() {
+    errorRemoved('getFrame', this);
   }
 
   private setTimeout(
@@ -998,11 +969,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  public setFrameD9(
-    behavior: string,
-    frame: (number | null)[] | (() => (number | null)[])
-  ) {
-    this.setFrame(behavior, frame);
+  public setFrameD9() {
+    errorRemoved('setFrameD9', this);
   }
 
   public turn(dir: Dir.IDir): void {
@@ -1145,118 +1113,19 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public set imageUrl(url: string) {
-    console.error('imageUrl は非推奨になり, v0.24 で削除されます');
-    if (typeof url !== 'string') {
-      throw new Error(`${this.name}の imageUrl に文字列以外が代入されました`);
-    }
-    if (url.indexOf('http') === 0) {
-      throw new Error(`http から始まる URL は読み込めません`);
-    }
-    const image = enchant.Surface.load(url, () => {
-      this.image = image;
-      this.width = image.width;
-      this.height = image.height;
-      this.offset = {
-        x: (32 - this.width) / 2,
-        y: (32 - this.height) / 2
-      };
-      this.directionType = 'single';
-      this.locate(this.mapX, this.mapY);
-    });
+    errorRemoved('imageUrl', this);
   }
 
-  /**
-   * ドラゴンのブレス. 暫定
-   * @param {Object} params
-   */
-  public breath(params: any) {
-    console.error('this.breath() は非推奨になり, v0.24 で削除されます');
-    params = {
-      // デフォルトのパラメータ
-      skin: (DeprecatedSkin as any).バクエン,
-      speed: 5,
-      scale: 1,
-      ...params
-    };
-    this.endless((self: RPGObject, count: number) => {
-      if (count % 2 === 0) return;
-      const effect = self.summon(params.skin);
-      effect.mod(Hack.createDamageMod(self.atk, self)); // ダメージオブジェクトにする
-      self.shoot(effect, self.forward, params.speed);
-      const fx = self.forward.x;
-      const fy = self.forward.y;
-      effect.moveBy(fx * randomRange(64, 96), fy * randomRange(64, 96));
-      effect.velocityX += randomRange(-0.99, 1);
-      effect.velocityY += randomRange(-0.99, 1);
-      effect.scale(randomRange(params.scale, params.scale * 1.5));
-      effect.destroy(20);
-    });
+  public breath() {
+    errorRemoved('breath', this);
   }
 
-  /**
-   * object の warpTo で設定された位置へ移動する
-   * @param {RPGObject} object
-   */
-  public warp(object: RPGObject) {
-    console.error(
-      'warp は非推奨になり, v0.24 で削除されます. teleport を使ってください'
-    );
-    if (!(object instanceof RPGObject)) {
-      throw new Error(
-        `${this.name} の warp に RPGObject ではなく ${object} が与えられました`
-      );
-    }
-    const { warpTarget } = object;
-    if (!(warpTarget instanceof RPGObject)) {
-      throw new Error(
-        `${
-          object.name
-        } の warpTo が設定されていません. warpTarget が ${warpTarget} です`
-      );
-    }
-    const { map } = warpTarget;
-    if (!map) {
-      throw new Error(
-        `${warpTarget.name} の ワープ先のオブジェクトが削除されています. ${
-          this.name
-        } はワープできませんでした`
-      );
-    }
-    this.locate(warpTarget.mapX, warpTarget.mapY, map.name);
+  public warp() {
+    errorRemoved('warp', this);
   }
 
-  /**
-   * warp の飛び先を決める
-   * @param {Number} x
-   * @param {Number} y
-   * @param {String} mapName
-   */
-  public warpTo(x: number, y: number, mapName: string) {
-    console.error('warpTo は非推奨になり, v0.24 で削除されます');
-    const { _ruleInstance } = this;
-    if (!(_ruleInstance instanceof Rule)) {
-      throw new Error(
-        `warpTo を設定できません. new RPGObject(Skin.${
-          this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
-      );
-    }
-    const warpTarget = _ruleInstance.つくる(this.name); // 同じアセットを作る
-    warpTarget.locate(x, y, mapName);
-    warpTarget.warpTarget = this; // 飛び先の飛び先は自分
-    this.warpTarget = warpTarget;
-    return warpTarget;
-  }
-
-  public teleport(portal: RPGObject) {
-    const { pairedObject } = portal;
-    if (!pairedObject || !pairedObject.map) return;
-    this.locate(
-      pairedObject.mapX,
-      pairedObject.mapY,
-      pairedObject.map.name,
-      true
-    );
+  public warpTo() {
+    errorRemoved('warpTo', this);
   }
 
   public teleportRandom() {
@@ -1442,37 +1311,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  public set dir(dir: Dir.IDir) {
-    console.error(
-      'this.dir = ... は非推奨になり, v0.24 で削除されます. 代わりに this.turn(Dir.みぎ) を使ってください'
-    );
-    this.forward = dir(this);
-  }
-
-  private _lastAssignedSkin?: SkinCachedItem; // 参照比較するためのプロパティ
-  private _skin: SkinCachedItem | null = null; // Promise<(object: RPGObject) => void>
-  public get skin() {
-    console.error(
-      'this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください'
-    );
-    return this._skin;
-  }
-  public set skin(value) {
-    console.error(
-      'this.skin は非推奨になり, v0.24 で削除されます. 代わりに this.costume を使ってください'
-    );
-    if (!value) return;
-    const { _skin } = this;
-    if (_skin) {
-      if (this._lastAssignedSkin === value) return; // 同じスキンなのでスルー
-      this._lastAssignedSkin = value;
-      // 前回に与えられた skin が resolve(reject) するまで待つ
-      this._skin = _skin.then(() => value).then(this.applySkin);
-    } else {
-      this._skin = value.then(this.applySkin);
-    }
-  }
-
   private _costume = '';
   public async costume(name: string) {
     if (this._costume === name) return; // 同じ見た目なのでスルー
@@ -1484,11 +1322,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       if (this._costume !== name) return; // 読み込み中に見た目が変わった
       this.applySkin(dress);
     } catch (error) {
-      errorInEvent(
-        'スキンがない',
-        this,
-        `見た目を '${name}' にするとき`
-      );
+      errorInEvent('スキンがない', this, `見た目を '${name}' にするとき`);
     }
   }
 

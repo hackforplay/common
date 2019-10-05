@@ -1,34 +1,22 @@
-import './rpg-kit-main';
-import './camera';
-import './loader';
-import './rpg-kit-rpgobjects';
-import './trodden';
-import Hack from './hack';
-import * as synonyms from './synonyms';
-import Skin from './deprecated-skin';
 import { log } from '@hackforplay/log';
 import '../mod/collider-debugger';
+import coordinate from '../mod/coordinate';
 import * as logFunc from '../mod/logFunc';
-import find from './find';
-import deprecated from './deprecated';
+import './camera';
 import createCompatibleMap from './create-compatible-map';
+import deprecated from './deprecated';
+import { setTimeout } from './feeles';
+import find from './find';
+import game from './game';
+import Hack from './hack';
 import loadMap from './load-map';
 import loadMaps from './load-maps';
-import coordinate from '../mod/coordinate';
-import game from './game';
-import { getConfig, audioConfigs } from './se-data';
-import { setTimeout } from './feeles';
+import './loader';
+import './rpg-kit-main';
+import './rpg-kit-rpgobjects';
+import { audioConfigs, getConfig } from './se-data';
 import { getBaseUrl, getSkin, setBaseUrl } from './skin';
-
-// Assign synonyms
-Hack.assets = Hack.assets || {};
-for (const [from, _global, _skin] of synonyms.assets) {
-  const mod = Hack.assets[from];
-  if (typeof mod === 'function') {
-    self[_global] = Skin[_skin] = mod; // synonym
-    Skin.__name.set(mod, _skin); // Skin.__name.get(mod) === 'mod name'
-  }
-}
+import './trodden';
 
 // Notice to deprecated event
 function checkDeprecated() {

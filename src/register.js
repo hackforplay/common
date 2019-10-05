@@ -1,5 +1,4 @@
 import { register, Rule, Hack } from '.';
-import './tmp-skins';
 
 const _global = global || window;
 register(_global);

@@ -1,18 +1,19 @@
-import '../mod/stop';
-import Hack from './hack';
-import './rpg-kit-rpgobjects';
-import './rpg-kit-color';
 import enchant from '../enchantjs/enchant';
-import Camera from './camera';
-import { KeyClass } from './key';
-import { isOpposite } from './family';
+import '../mod/stop';
 import BehaviorTypes from './behavior-types';
-import Keyboard from './keyboard';
-import { stringToArray, dakuten, handakuten } from './utils/string-utils';
-import RPGMap from './rpg-map';
-import game from './game';
-import { generateMapFromDefinition } from './load-maps';
+import Camera from './camera';
+import { isOpposite } from './family';
 import { connected, setAlias } from './feeles';
+import game from './game';
+import Hack from './hack';
+import { KeyClass } from './key';
+import Keyboard from './keyboard';
+import { generateMapFromDefinition } from './load-maps';
+import './rpg-kit-color';
+import './rpg-kit-rpgobjects';
+import RPGMap from './rpg-map';
+import { errorRemoved } from './stdlog';
+import { dakuten, handakuten, stringToArray } from './utils/string-utils';
 
 game.preload(
   'resources/enchantjs/monster1.gif',
@@ -356,25 +357,13 @@ game.onawake = () => {
   // Life label (後方互換性 ~0.11)
   Object.defineProperty(Hack, 'lifeLabel', {
     get() {
-      console.error(
-        `Hack.lifeLabel は非推奨になり, v0.24 で削除されます. 代わりに Camera.numberLabels を使ってください`
-      );
-      return (
-        Camera.main &&
-        Camera.main._numberLabels.find(label => label._key === 'hp')
-      );
+      errorRemoved('Hack.lifeLabel');
     }
   });
 
   Object.defineProperty(Hack, 'scoreLabel', {
     get() {
-      console.error(
-        `Hack.scoreLabel は非推奨になり, v0.24 で削除されます. 代わりに Camera.numberLabels を使ってください`
-      );
-      return (
-        Camera.main &&
-        Camera.main._numberLabels.find(label => label._key === 'money')
-      );
+      errorRemoved('Hack.scoreLabel');
     }
   });
 
@@ -493,21 +482,13 @@ Hack.Attack = function(x, y, damage) {
     }, this);
 };
 
-const scoreIsDeprecated =
-  'Hack.score は非推奨になり, v0.24 で削除されます. 代わりにプレイヤーの「おかね」を使ってください';
 Object.defineProperty(Hack, 'score', {
   get() {
-    console.error(scoreIsDeprecated);
-    if (Camera.main && Camera.main.target) {
-      return Camera.main.target.money;
-    }
+    errorRemoved('Hack.score');
     return 0;
   },
-  set(value) {
-    console.error(scoreIsDeprecated);
-    if (Camera.main && Camera.main.target) {
-      Camera.main.target.money = value;
-    }
+  set() {
+    errorRemoved('Hack.score');
   }
 });
 

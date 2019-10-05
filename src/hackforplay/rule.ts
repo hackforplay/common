@@ -3,7 +3,7 @@ import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { default as Hack } from './hack';
 import RPGObject from './object/object';
-import { errorInEvent } from './stdlog';
+import { errorInEvent, errorRemoved } from './stdlog';
 import talk from './talk';
 
 interface IEvent {
@@ -42,12 +42,7 @@ export default class Rule {
     return window.__sandbox_context_name || this._this; // 互換性保持のため
   }
   public set this(value: string | null) {
-    this._this = value; // 互換性保持のため
-    if (window.__sandbox_context_name) {
-      console.warn(
-        `rule.this = '${value}'; を削除してください. このコードは v0.24 で削除されます`
-      );
-    }
+    errorRemoved('rule.this');
   }
   private _this: string | null = null;
   private readonly _knownThisNames: Set<string> = new Set();

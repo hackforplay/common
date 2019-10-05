@@ -2,7 +2,6 @@ import { log } from '@hackforplay/log';
 import enchant from '../enchantjs/enchant';
 import BehaviorTypes from './behavior-types';
 import Camera from './camera';
-import Skin from './deprecated-skin';
 import * as Dir from './dir';
 import Family from './family';
 import game from './game';
@@ -18,12 +17,12 @@ import Rule from './rule';
 import { logFromUser } from './stdlog';
 import TextArea from './ui/textarea';
 
+console.log('log', log);
 log('system', '世界は始まりを告げた。ハローワールド！', '@hackforplay/common');
 
 export default function register(_global) {
   // Export to global
   _global.Hack = _global.Hack || Hack;
-  _global.Skin = _global.Skin || Skin;
   _global.Family = _global.Family || Family;
   _global.RPGObject = _global.RPGObject || RPGObject;
   _global.BehaviorTypes = _global.BehaviorTypes || BehaviorTypes;
