@@ -2,7 +2,6 @@ import { default as enchant } from '../enchantjs/enchant';
 import { default as SAT } from '../lib/sat.min';
 import { fetchText } from './feeles';
 import RPGObject from './object/object';
-import talk from './talk';
 
 export interface ISkin {
   name: string;
@@ -53,8 +52,6 @@ export function decode(...args: (number | null)[]): (number | null)[] {
   }
   return array;
 }
-
-const nope = () => {};
 
 /**
  * 与えられたスキンを任意の RPGObject に適用するための関数を返す
@@ -127,11 +124,7 @@ export async function getSkin(
           _surfaces[name + ''] = surface;
         })
     )
-    .then(_skin => dress(_skin))
-    .catch(error => {
-      console.error(error);
-      return talk(`${name} というスキンは ないみたい`).then(() => nope);
-    });
+    .then(_skin => dress(_skin));
 
   return (_cache[name + ''] = _promise);
 }

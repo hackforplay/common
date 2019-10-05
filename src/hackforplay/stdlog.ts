@@ -3,14 +3,24 @@ import { log } from '@hackforplay/log';
 type Self = { name: string };
 
 export function errorInEvent(error: any, self?: Self, eventName?: string) {
+  const errorName = getName(error);
   const message =
     [
       self ? `${self.name} が` : '',
       eventName ? `${eventName} に` : '',
-      error ? `「${error.name}」` : ''
+      errorName ? `「${errorName}」` : ''
     ].join(' ') + 'エラーをおこしたみたい';
   error && console.error(error);
   return log('error', message, self ? `modules/${self.name}.js` : 'Unknown');
+}
+
+export function getName(error: any) {
+  if (typeof error === 'string') return error;
+  if (error instanceof Error) return error.name;
+  if (typeof error === 'undefined') return '';
+  if (error === null) return '';
+  if ('name' in error) return error['name'];
+  return '';
 }
 
 export function logFromUser(...line: any[]) {

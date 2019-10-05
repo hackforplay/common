@@ -14,7 +14,8 @@ import { randomCollection, randomRange } from '../random';
 import RPGMap from '../rpg-map';
 import Rule from '../rule';
 import soundEffect from '../se';
-import { getSkin, ISkin, SkinCachedItem, decode } from '../skin';
+import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
+import { errorInEvent } from '../stdlog';
 import * as synonyms from '../synonyms';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
@@ -1476,11 +1477,19 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public async costume(name: string) {
     if (this._costume === name) return; // 同じ見た目なのでスルー
     this._costume = name;
-    const currentSkin: SkinCachedItem | null = getSkin(name);
-    if (!currentSkin) return;
-    const dress = await currentSkin;
-    if (this._costume !== name) return; // 読み込み中に見た目が変わった
-    this.applySkin(dress);
+    try {
+      const currentSkin: SkinCachedItem | null = getSkin(name);
+      if (!currentSkin) return;
+      const dress = await currentSkin;
+      if (this._costume !== name) return; // 読み込み中に見た目が変わった
+      this.applySkin(dress);
+    } catch (error) {
+      errorInEvent(
+        'スキンがない',
+        this,
+        `見た目を '${name}' にするとき`
+      );
+    }
   }
 
   private applySkin = ((f: (object: RPGObject) => void) => {
