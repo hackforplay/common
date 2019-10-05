@@ -1,4 +1,5 @@
 import { log } from '@hackforplay/log';
+import { errorJp } from './error-jp';
 
 type Self = { name: string };
 
@@ -9,14 +10,14 @@ export function errorInEvent(error: any, self?: Self, eventName?: string) {
       self ? `${self.name} が` : '',
       eventName ? `${eventName} に` : '',
       errorName ? `「${errorName}」` : ''
-    ].join(' ') + 'エラーをおこしたみたい';
+    ].join(' ') + 'みたい';
   error && console.error(error);
   return log('error', message, self ? `modules/${self.name}.js` : 'Unknown');
 }
 
 export function getName(error: any) {
   if (typeof error === 'string') return error;
-  if (error instanceof Error) return error.name;
+  if (error instanceof Error) return errorJp.get(error.name) || error.name;
   if (typeof error === 'undefined') return '';
   if (error === null) return '';
   if ('name' in error) return error['name'];
