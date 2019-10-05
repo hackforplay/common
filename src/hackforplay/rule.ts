@@ -141,6 +141,7 @@ export default class Rule {
     }
     listeners[item] = func;
     this._knownThisNames.add(name);
+    this.item = null;
   }
 
   public async runTwoObjectListener(
