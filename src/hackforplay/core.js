@@ -6,6 +6,7 @@ import './trodden';
 import Hack from './hack';
 import * as synonyms from './synonyms';
 import Skin from './deprecated-skin';
+import { log } from '@hackforplay/log';
 import '../mod/collider-debugger';
 import * as logFunc from '../mod/logFunc';
 import find from './find';
@@ -15,7 +16,6 @@ import loadMap from './load-map';
 import loadMaps from './load-maps';
 import coordinate from '../mod/coordinate';
 import game from './game';
-import createDamageMod from './create-damage-mod';
 import { getConfig, audioConfigs } from './se-data';
 import { setTimeout } from './feeles';
 import { getBaseUrl, getSkin, setBaseUrl } from './skin';
@@ -92,7 +92,8 @@ window.onkeydown = event => !(event.key === ' ');
 /**
  * Hack.createDamageMod
  */
-Hack.createDamageMod = createDamageMod;
+Hack.createDamageMod = () =>
+  log('error', 'Hack.createDamageMod is removed.', '@hackforplay/common');
 
 /**
  * Hack.skin
