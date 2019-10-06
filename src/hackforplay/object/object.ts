@@ -1302,12 +1302,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         return;
       }
     }
-    for (const forward of movements) {
-      const unit = unit8 ? forward.unit8() : forward.unit();
-      if (!Vector2.equal(this.forward, unit)) {
-        this.forward = unit; // 向きだけ変える
-        return;
-      }
+    // 歩こうとする（ぶつかる） 0.24~ 仕様変更
+    const [first] = movements;
+    if (first) {
+      this.forward = first;
+      await this.walk();
     }
   }
 
