@@ -31,8 +31,7 @@ export default function trodden() {
         dispatch('addtrodden', target, item);
         const itemSet = targetItemSetMap.get(target);
         if (!itemSet) {
-          const itemSet = new Set();
-          itemSet.add(item);
+          const itemSet = new Set([item]);
           targetItemSetMap.set(target, itemSet);
         } else {
           itemSet.add(item);
