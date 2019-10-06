@@ -3,7 +3,7 @@ import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { default as Hack } from './hack';
 import RPGObject from './object/object';
-import { errorInEvent, errorRemoved } from './stdlog';
+import { errorInEvent, errorRemoved, logFromAsset } from './stdlog';
 import talk from './talk';
 
 interface IEvent {
@@ -422,6 +422,12 @@ export default class Rule {
 
     this.registerRules(object, name, summoner);
     this.tryPairing(object);
+
+    logFromAsset(
+      object,
+      `${name} が (${object.mapX}, ${object.mapY}, '${object.map &&
+        object.map.name}') にあらわれた`
+    );
 
     return object;
   }

@@ -48,3 +48,7 @@ export function logFromUser(...line: any[]) {
       return log(...line);
   }
 }
+
+export function logFromAsset(self: Self, message: string) {
+  return log('asset', message, `modules/${self.name}.js`);
+}
