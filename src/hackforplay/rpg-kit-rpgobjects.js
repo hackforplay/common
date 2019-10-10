@@ -5,7 +5,6 @@ import BehaviorTypes from './behavior-types';
 import game from './game';
 import { getHack } from './get-hack';
 import dictionary from './object/dictionary';
-import MapObject from './object/map-object';
 import RPGObject from './object/object';
 import random from './random';
 import './rpg-kit-main';
@@ -811,21 +810,6 @@ Hack.assets.ouroboros = function() {
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 60, 36).toPolygon();
   this.collider.setOffset(new SAT.V(10, 38));
 };
-
-Object.keys(dictionary).forEach(function(name) {
-  Hack.assets[name] = function() {
-    this.image = MapObject.surfaces[name];
-    this.width = 32;
-    this.height = 32;
-    this.offset = {
-      x: 0,
-      y: 0
-    };
-    // 衝突判定用のポリゴン
-    this.collider = new SAT.Box(new SAT.V(this.x, this.y), 32, 32).toPolygon();
-    this.directionType = 'single';
-  };
-});
 
 // Hack.skills
 Hack.skills.stalker = function(target) {

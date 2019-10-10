@@ -8,7 +8,6 @@ import game from './game';
 import { getHack } from './get-hack';
 import Key from './key';
 import Effect from './object/effect';
-import MapObject from './object/map-object';
 import RPGObject from './object/object';
 import Player from './object/player';
 import random from './random';
@@ -25,7 +24,6 @@ export default function register(_global) {
   _global.Family = _global.Family || Family;
   _global.RPGObject = _global.RPGObject || RPGObject;
   _global.BehaviorTypes = _global.BehaviorTypes || BehaviorTypes;
-  _global.MapObject = _global.MapObject || MapObject;
   _global.Player = _global.Player || Player;
   _global.Effect = _global.Effect || Effect;
   _global.Key = _global.Key || Key;
