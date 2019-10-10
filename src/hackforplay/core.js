@@ -4,6 +4,7 @@ import coordinate from '../mod/coordinate';
 import * as logFunc from '../mod/logFunc';
 import './camera';
 import createCompatibleMap from './create-compatible-map';
+import { damageUpdate } from './damage-update';
 import deprecated from './deprecated';
 import { setTimeout } from './feeles';
 import find from './find';
@@ -107,3 +108,5 @@ Hack.audioConfigs = audioConfigs;
  * Hack.getAudioConfig
  */
 Hack.getAudioConfig = getConfig;
+
+game.on('enterframe', damageUpdate);
