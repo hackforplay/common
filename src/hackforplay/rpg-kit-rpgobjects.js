@@ -4,7 +4,6 @@ import SAT from '../lib/sat.min';
 import BehaviorTypes from './behavior-types';
 import game from './game';
 import { getHack } from './get-hack';
-import dictionary from './object/dictionary';
 import RPGObject from './object/object';
 import random from './random';
 import './rpg-kit-main';
