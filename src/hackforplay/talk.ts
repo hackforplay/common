@@ -1,7 +1,7 @@
 import { default as enchant } from '../enchantjs/enchant';
 import TextArea from '../hackforplay/ui/textarea';
-import Key from './key';
 import { getHack } from './get-hack';
+import Key from './key';
 
 export interface IConfig {
   text: Partial<TextArea>;
