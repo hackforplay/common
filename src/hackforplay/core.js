@@ -95,7 +95,7 @@ Hack.skin = getSkin;
  */
 Object.defineProperty(Hack, 'baseUrl', {
   enumerable: true,
-  configurable: false,
+  configurable: true,
   get: getBaseUrl,
   set: setBaseUrl
 });

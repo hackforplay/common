@@ -358,12 +358,14 @@ game.onawake = () => {
 
   // Life label (後方互換性 ~0.11)
   Object.defineProperty(Hack, 'lifeLabel', {
+    configurable: true,
     get() {
       errorRemoved('Hack.lifeLabel');
     }
   });
 
   Object.defineProperty(Hack, 'scoreLabel', {
+    configurable: true,
     get() {
       errorRemoved('Hack.scoreLabel');
     }
@@ -487,6 +489,7 @@ Hack.Attack = function(x, y, damage) {
 };
 
 Object.defineProperty(Hack, 'score', {
+  configurable: true,
   get() {
     errorRemoved('Hack.score');
     return 0;

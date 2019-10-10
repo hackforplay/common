@@ -689,6 +689,7 @@ Hack.Vec2Dir = function(vec) {
 let _statusLabel = null;
 Object.defineProperty(Hack, 'statusLabel', {
   enumerable: true,
+  configurable: true,
   get() {
     return _statusLabel;
   },
@@ -702,6 +703,7 @@ Object.defineProperty(Hack, 'statusLabel', {
 let _time = 0;
 Object.defineProperty(Hack, 'time', {
   enumerable: true,
+  configurable: true,
   get() {
     return _time;
   },
@@ -728,6 +730,8 @@ Hack.hideLabel = key => {
 Hack.seBaseUrl = 'https://storage.googleapis.com/hackforplay-sounds/';
 
 Object.defineProperty(Hack, 'code', {
+  enumerable: true,
+  configurable: true,
   set(code) {
     code$ && code$.next(code);
   },
