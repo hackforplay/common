@@ -8,6 +8,7 @@ import dictionary from './object/dictionary';
 import RPGObject from './object/object';
 import random from './random';
 import './rpg-kit-main';
+import { logToDeprecated } from './stdlog';
 
 const Hack = getHack();
 
@@ -47,8 +48,24 @@ bs.onbecomedead = function () {};
  * Physics ===> Physics			: oncollided	: Need collisionFlag is true, Change velocity
  * Physics ===> Kinematics		: ontriggered	: Ignore collisionFlag, Don't change velocity
  */
-Hack.assets = Hack.assets || {};
-Hack.skills = Hack.skills || {};
+Hack.assets = new Proxy(
+  {},
+  {
+    get(target, name) {
+      logToDeprecated(`Hack.assets.${name}`);
+      return target[name];
+    }
+  }
+);
+Hack.skills = new Proxy(
+  {},
+  {
+    get(target, name) {
+      logToDeprecated(`Hack.skills.${name}`);
+      return target[name];
+    }
+  }
+);
 
 Hack.assets.knight = function() {
   this.image = game.assets['resources/enchantjs/x1.5/chara5.png'];
