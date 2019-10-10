@@ -410,6 +410,7 @@ Hack.overlay = function() {
   });
 
   Object.defineProperty(Hack, 'menuGroup', {
+    configurable: true,
     get: function() {
       return menuGroup;
     }
@@ -417,6 +418,7 @@ Hack.overlay = function() {
 
   // Hack.menuOpenedFlag 読み取り専用プロパティ
   Object.defineProperty(Hack, 'menuOpenedFlag', {
+    configurable: true,
     get: function() {
       return visible;
     }
@@ -430,6 +432,7 @@ Hack.overlay = function() {
     defaultParentNode: menuGroup
   });
   Object.defineProperty(Hack, 'menuOpener', {
+    configurable: true,
     get: function() {
       return opener;
     }
