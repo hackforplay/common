@@ -121,7 +121,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
 
-  public constructor(mod?: (this: RPGObject) => void) {
+  public constructor() {
     super(0, 0);
 
     this.moveTo(game.width, game.height);
