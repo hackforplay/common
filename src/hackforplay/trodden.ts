@@ -2,8 +2,10 @@ import { default as enchant } from '../enchantjs/enchant';
 import SAT from '../lib/sat.min';
 import BehaviorTypes from './behavior-types';
 import game from './game';
-import Hack from './hack';
+import { getHack } from './get-hack';
 import RPGObject from './object/object';
+
+const Hack = getHack();
 
 game.on('enterframe', trodden);
 

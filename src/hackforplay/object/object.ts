@@ -6,7 +6,7 @@ import { default as Camera } from '../camera';
 import * as Dir from '../dir';
 import { default as Family, getMaster, registerServant } from '../family';
 import { default as game } from '../game';
-import { default as Hack } from '../hack';
+import { getHack } from '../get-hack';
 import { generateMapFromDefinition } from '../load-maps';
 import Vector2, { IVector2 } from '../math/vector2';
 import { randomCollection } from '../random';
@@ -19,6 +19,8 @@ import * as synonyms from '../synonyms';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import * as N from './numbers';
+
+const Hack = getHack();
 
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様

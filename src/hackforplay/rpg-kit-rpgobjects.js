@@ -1,16 +1,16 @@
 import enchant from '../enchantjs/enchant';
-import './rpg-kit-main';
 import '../enchantjs/ui.enchant';
-import { default as _Hack } from './hack';
 import SAT from '../lib/sat.min';
-import RPGObject from './object/object';
-import MapObject from './object/map-object';
-import dictionary from './object/dictionary';
 import BehaviorTypes from './behavior-types';
 import game from './game';
+import { getHack } from './get-hack';
+import dictionary from './object/dictionary';
+import MapObject from './object/map-object';
+import RPGObject from './object/object';
 import random from './random';
+import './rpg-kit-main';
 
-let Hack = (self.Hack = _Hack || new enchant.EventTarget()); // 依存解決に失敗した場合
+const Hack = getHack();
 
 /**
 * RPGObject

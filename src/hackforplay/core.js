@@ -8,7 +8,7 @@ import deprecated from './deprecated';
 import { setTimeout } from './feeles';
 import find from './find';
 import game from './game';
-import Hack from './hack';
+import { getHack } from './get-hack';
 import loadMap from './load-map';
 import loadMaps from './load-maps';
 import './loader';
@@ -17,6 +17,8 @@ import './rpg-kit-rpgobjects';
 import { audioConfigs, getConfig } from './se-data';
 import { getBaseUrl, getSkin, setBaseUrl } from './skin';
 import './trodden';
+
+const Hack = getHack();
 
 // Notice to deprecated event
 function checkDeprecated() {

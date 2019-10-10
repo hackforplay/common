@@ -5,7 +5,7 @@ import Camera from './camera';
 import { isOpposite } from './family';
 import { connected, setAlias } from './feeles';
 import game from './game';
-import { default as _Hack } from './hack';
+import { getHack } from './get-hack';
 import { KeyClass } from './key';
 import Keyboard from './keyboard';
 import { generateMapFromDefinition } from './load-maps';
@@ -15,7 +15,7 @@ import RPGMap from './rpg-map';
 import { errorRemoved } from './stdlog';
 import { dakuten, handakuten, stringToArray } from './utils/string-utils';
 
-let Hack = (self.Hack = _Hack || new enchant.EventTarget()); // 依存解決に失敗した場合
+const Hack = getHack();
 
 game.preload(
   'resources/enchantjs/monster1.gif',

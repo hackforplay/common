@@ -1,8 +1,10 @@
 import { log } from '@hackforplay/log';
 import createCompatibleMap from './create-compatible-map';
 import { fetchText } from './feeles';
-import Hack from './hack';
+import { getHack } from './get-hack';
 import RPGMap from './rpg-map';
+
+const Hack = getHack();
 
 const _cache: { [key: string]: Promise<RPGMap> } = {};
 const definitions: { [key: string]: Promise<string> } = {}; // File path of map definition

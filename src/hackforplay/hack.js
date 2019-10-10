@@ -3,6 +3,7 @@ import { hide, textArea } from '../mod/logFunc';
 import Camera from './camera';
 import { code$, emphasizeCode, reload } from './feeles';
 import game from './game';
+import { getHack } from './get-hack';
 import requestPostMessage from './request-post-message';
 import { errorInEvent } from './stdlog';
 
@@ -12,7 +13,7 @@ function refocus() {
   window.focus(); // focus game
 }
 
-const Hack = self.Hack || new enchant.EventTarget();
+const Hack = getHack();
 
 // Surface.load される時の基底パス
 Hack.basePath = 'https://storage.googleapis.com/hackforplay-common/';

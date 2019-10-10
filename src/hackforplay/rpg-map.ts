@@ -1,11 +1,13 @@
 import { default as enchant } from '../enchantjs/enchant';
-import { default as Hack } from './hack';
-import './rpg-kit-color';
-import Vector2, { IVector2 } from './math/vector2';
-import { default as Line } from './shapes/line';
-import { default as dictionary } from './object/dictionary';
 import { default as game } from './game';
+import { getHack } from './get-hack';
+import Vector2, { IVector2 } from './math/vector2';
+import { default as dictionary } from './object/dictionary';
 import RPGObject from './object/object';
+import './rpg-kit-color';
+import { default as Line } from './shapes/line';
+
+const Hack = getHack();
 
 /*
  * RPGMap

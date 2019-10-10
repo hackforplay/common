@@ -1,7 +1,7 @@
 import { default as enchant } from '../enchantjs/enchant';
 import TextArea from '../hackforplay/ui/textarea';
-import { default as Hack } from './hack';
 import Key from './key';
+import { getHack } from './get-hack';
 
 export interface IConfig {
   text: Partial<TextArea>;
@@ -13,6 +13,8 @@ export interface IConfig {
     fillColor: string;
   };
 }
+
+const Hack = getHack();
 
 export const config: IConfig = {
   text: {

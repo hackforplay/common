@@ -1,7 +1,9 @@
 import { audioContextReady, fetchArrayBuffer } from './feeles';
-import { default as Hack } from './hack';
+import { getHack } from './get-hack';
 import { getConfig } from './se-data';
 import { errorInEvent } from './stdlog';
+
+const Hack = getHack();
 
 const data: { [key: string]: AudioBuffer | null | undefined } = {};
 

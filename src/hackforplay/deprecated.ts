@@ -1,7 +1,9 @@
+import { default as Family } from './family';
+import { getHack } from './get-hack';
 import RPGObject from './object/object';
 import * as synonyms from './synonyms';
-import { default as Family } from './family';
-import { default as Hack } from './hack';
+
+const Hack = getHack();
 
 const checked = new WeakSet();
 

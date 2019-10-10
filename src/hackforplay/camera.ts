@@ -1,13 +1,13 @@
 import { default as enchant } from '../enchantjs/enchant';
-import '../enchantjs/ui.enchant';
 import '../enchantjs/fix';
-import './rpg-kit-main';
-import { default as Hack } from './hack';
+import '../enchantjs/ui.enchant';
 import { default as game } from './game';
-import RPGObject from './object/object';
-import { clamp } from './utils/math-utils';
-import * as N from './object/numbers';
+import { getHack } from './get-hack';
 import Vector2 from './math/vector2';
+import * as N from './object/numbers';
+import RPGObject from './object/object';
+import './rpg-kit-main';
+import { clamp } from './utils/math-utils';
 
 interface IRect {
   x: number;
@@ -15,6 +15,8 @@ interface IRect {
   width: number;
   height: number;
 }
+
+const Hack = getHack();
 
 class Camera extends enchant.Sprite {
   public static collection: Camera[] = [];

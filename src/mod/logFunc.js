@@ -1,6 +1,8 @@
 import game from '../hackforplay/game';
-import Hack from '../hackforplay/hack';
+import { getHack } from '../hackforplay/get-hack';
 import TextArea from '../hackforplay/ui/textarea';
+
+const Hack = getHack();
 
 const messages = []; // 一旦メッセージを貯めておくキュー
 

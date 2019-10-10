@@ -1,6 +1,8 @@
 import createCompatibleMap from './create-compatible-map';
 import { fetch } from './feeles';
-import Hack from './hack';
+import { getHack } from './get-hack';
+
+const Hack = getHack();
 
 /**
  * マップJSONをインターネットから取得してマップにセットする

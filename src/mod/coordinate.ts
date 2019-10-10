@@ -1,9 +1,11 @@
 // マウスで指した場所の座標がつねに表示される
 import enchant from '../enchantjs/enchant';
-import Hack from '../hackforplay/hack';
+import Camera from '../hackforplay/camera';
 import '../hackforplay/core';
 import game from '../hackforplay/game';
-import Camera from '../hackforplay/camera';
+import { getHack } from '../hackforplay/get-hack';
+
+const Hack = getHack();
 
 const MutableText = (enchant as any).ui.MutableText;
 

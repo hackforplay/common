@@ -1,7 +1,7 @@
 import { IDir } from './dir';
 import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
-import { default as Hack } from './hack';
+import { getHack } from './get-hack';
 import RPGObject from './object/object';
 import { errorInEvent, errorRemoved, logFromAsset } from './stdlog';
 import talk from './talk';
@@ -14,6 +14,8 @@ interface ICollidedEvent extends IEvent {
   map: boolean;
   hits: RPGObject[];
 }
+
+const Hack = getHack();
 
 function handleError(
   title: string,

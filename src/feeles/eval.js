@@ -1,5 +1,5 @@
 import enchant from '../enchantjs/enchant';
-import Hack from '../hackforplay/hack';
+import { getHack } from '../hackforplay/get-hack';
 
 export default function(code) {
   // 魔道書の実行をフック
@@ -9,8 +9,8 @@ export default function(code) {
   } catch (error) {
     // Hack.onerror を発火
     const errorEvent = new enchant.Event('error');
-    errorEvent.target = Hack;
+    errorEvent.target = getHack();
     errorEvent.error = error;
-    Hack.dispatchEvent(errorEvent);
+    getHack().dispatchEvent(errorEvent);
   }
 }

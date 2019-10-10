@@ -1,6 +1,8 @@
-import Hack from '../hackforplay/hack';
-import RPGObject from '../hackforplay/object/object';
 import game from '../hackforplay/game';
+import { getHack } from '../hackforplay/get-hack';
+import RPGObject from '../hackforplay/object/object';
+
+const Hack = getHack();
 
 game.on('awake', () => {
   Hack.world.on('postrender', render);

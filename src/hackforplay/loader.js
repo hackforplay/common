@@ -1,7 +1,7 @@
 import enchant from '../enchantjs/enchant';
 import { fetchDataURL } from './feeles';
 import game from './game';
-import Hack from './hack';
+import { getHack } from './get-hack';
 import { errorInEvent } from './stdlog';
 
 /*
@@ -11,6 +11,8 @@ function blobToDataURL(blob, callback) {
 	a.readAsDataURL(blob);
 }
 */
+
+const Hack = getHack();
 
 enchant.Surface.load = function(src, callback, onerror) {
   // console.log(src);

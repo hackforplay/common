@@ -5,7 +5,7 @@ import Camera from './camera';
 import * as Dir from './dir';
 import Family from './family';
 import game from './game';
-import Hack from './hack';
+import { getHack } from './get-hack';
 import Key from './key';
 import Effect from './object/effect';
 import MapObject from './object/map-object';
@@ -21,7 +21,7 @@ log('system', '世界は始まりを告げた。ハローワールド！', '@hac
 
 export default function register(_global) {
   // Export to global
-  _global.Hack = _global.Hack || Hack;
+  _global.Hack = _global.Hack || getHack();
   _global.Family = _global.Family || Family;
   _global.RPGObject = _global.RPGObject || RPGObject;
   _global.BehaviorTypes = _global.BehaviorTypes || BehaviorTypes;
