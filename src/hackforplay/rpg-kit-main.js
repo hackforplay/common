@@ -12,7 +12,7 @@ import { generateMapFromDefinition } from './load-maps';
 import './rpg-kit-color';
 import './rpg-kit-rpgobjects';
 import RPGMap from './rpg-map';
-import { errorRemoved } from './stdlog';
+import { errorRemoved, logToDeprecated } from './stdlog';
 import { dakuten, handakuten, stringToArray } from './utils/string-utils';
 
 const Hack = getHack();
@@ -382,6 +382,7 @@ RPGMap.Layer = {
 };
 
 Hack.createMap = function(template) {
+  logToDeprecated('Hack.createMap');
   // テンプレートリテラルからマップを生成するラッパー
   const zenkaku = /[０１２３４５６７８９]/g.exec(template);
   if (zenkaku) {
@@ -461,6 +462,7 @@ Hack.Dir2Vec = function(dir) {
 };
 
 Hack.Attack = function(x, y, damage) {
+  logToDeprecated('Hack.Attack');
   RPGObject.collection
     .filter(function(item) {
       return item.mapX === x && item.mapY === y && item !== this;

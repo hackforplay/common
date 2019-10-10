@@ -52,3 +52,11 @@ export function logFromUser(...line: any[]) {
 export function logFromAsset(self: Self, message: string) {
   return log('asset', message, `modules/${self.name}.js`);
 }
+
+export function logToDeprecated(name: string) {
+  return log(
+    'error',
+    `${name} is deprecated. It will remove v0.25`,
+    '@hackforplay/common'
+  );
+}
