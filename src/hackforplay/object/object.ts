@@ -1130,6 +1130,17 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     errorRemoved('warpTo', this);
   }
 
+  public teleport(portal: RPGObject) {
+    const { pairedObject } = portal;
+    if (!pairedObject || !pairedObject.map) return;
+    this.locate(
+      pairedObject.mapX,
+      pairedObject.mapY,
+      pairedObject.map.name,
+      true
+    );
+  }
+
   public teleportRandom() {
     const { map } = this;
     if (!map) return;
