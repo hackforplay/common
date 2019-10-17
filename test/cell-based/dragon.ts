@@ -5,7 +5,7 @@
  */
 
 import { create, init, setThis, loop, bump } from '../../src/index'; // このコードは全てのセルの実行直前に自動挿入される。表にはかかれない
-setThis('id@dragon/red'); // このコードは全てのセルの実行直前に自動挿入される。表にはかかれない
+setThis('.dragon/red'); // このコードは全てのセルの実行直前に自動挿入される。表にはかかれない
 
 /**
  * # これはドラゴンについて書かれたコードです
@@ -44,15 +44,15 @@ loop(async function() {
  * ## ドラゴンとキャラクターとぶつかったときは、どうなる？
  *
  * ```
- * if (item.id === 'id@player/1') {
+ * if (item.is('.player/_1')) {
  *
  * }
  * ```
  * を使うと、特定のキャラクターとぶつかった時に何をするかが書けるよ
  */
 
-bump(async function(item) {
-  if (item.id === 'id@player/1') {
+bump(async function(item: any) {
+  if (item.is('.player/_1')) {
     await this.attack();
   }
 });

@@ -5,7 +5,7 @@ Jupytor Notebook 的な書き方。セル単位でコードを書く
 ###
 
 import { create, init, setThis, loop, bump } from '../../src/index'; # このコードは全てのセルの実行直前に自動挿入される。表にはかかれない
-setThis('id@dragon/red'); # このコードは全てのセルの実行直前に自動挿入される。表にはかかれない
+setThis('.dragon/red'); # このコードは全てのセルの実行直前に自動挿入される。表にはかかれない
 
 ###
 これは赤色のドラゴンについて書かれたコードです
@@ -41,21 +41,21 @@ updated ->
 ###
 赤色のドラゴンとキャラクターとぶつかったときは、どうなる？
 
-if _id == 'id@player/1'
+if _id == '.player/_1'
 
 を使うと、特定のキャラクターとぶつかった時に何をするかが書けるよ
 ###
 bumped ->
-  if _id == 'id@player/1'
+  if _id == '.player/_1'
     await @attack 1
 
 ###
 赤色のドラゴンと赤色のドラゴンぶつかったときは、どうなる？
 
-if _id == 'id@dragon/red'
+if _id == '.dragon/red'
 
 を使うと、特定のキャラクターとぶつかった時に何をするかが書けるよ
 ###
 bumped ->
-  if _id == 'id@dragon/red'
+  if _id == '.dragon/red'
     await @talk 'よう、相棒！'
