@@ -14,7 +14,7 @@ import RPGMap from '../rpg-map';
 import Rule from '../rule';
 import soundEffect from '../se';
 import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
-import { errorInEvent, errorRemoved } from '../stdlog';
+import { errorInEvent, errorRemoved, logToDeprecated } from '../stdlog';
 import * as synonyms from '../synonyms';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
@@ -1438,6 +1438,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       });
       speechSynthesis.speak(utterThis);
     });
+  }
+
+  /**
+   * 互換性保持のため
+   */
+  public set dir(dir: Dir.IDir) {
+    logToDeprecated('this.dir = Dir.(...)');
+    this.forward = dir(this);
   }
 }
 
