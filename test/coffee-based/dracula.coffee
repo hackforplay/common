@@ -32,10 +32,10 @@ updated ->
 ###
 bumped ->
   if _is '.player/_1'
-    await wait 0.5
+    await @wait 0.5
     @invinsible = false
-    await attack 1
-    await wait 1
+    await @attack 1
+    await @wait 1
 
 ###
 やられたとき銀色の宝石を落とす
