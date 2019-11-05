@@ -56,8 +56,8 @@ function costume(state: InternalState) {
 }
 
 function create(state: InternalState) {
-  return ({ x = 0, y = 0, f = 0, d = 0 }) => {
-    const chara = new Charactor();
+  return ({ x = 0, y = 0, m = 0, d = 0 }) => {
+    const chara = new Charactor(state.world);
     if (state.defaultCostume) {
       chara.costume(state.defaultCostume);
     }

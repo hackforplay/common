@@ -1,8 +1,16 @@
 import { Loader, Sprite } from 'pixi.js';
 import * as settings from './settings';
 import { skinLoader, SkinResource } from './skin-loader';
+import { World } from './World';
 
 export class Charactor extends Sprite {
+  readonly world: World;
+
+  constructor(world: World) {
+    super();
+    this.world = world;
+  }
+
   async costume(name: string) {
     return new Promise<void>((resolve, reject) => {
       // TODO: preload
@@ -17,6 +25,17 @@ export class Charactor extends Sprite {
       loader.load();
     });
   }
+
+  private _p = 0; // 0 is not player
+  get p() {
+    return this._p;
+  }
+  set p(p) {
+    if (p) {
+      this.world.players[p] = this;
+    }
+  }
+
   get x() {
     return super.x / settings.tileSize;
   }

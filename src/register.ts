@@ -25,6 +25,8 @@ const cameraBase = new PIXI.BaseRenderTexture({
 const camera = new PIXI.RenderTexture(cameraBase);
 const cameraSprite = new PIXI.Sprite(camera);
 
+const world = getDefaultWorld();
+
 // main--
 const player = createAsset('player');
 
@@ -44,6 +46,7 @@ player(({ create }) => {
 player(({ created }) => {
   created(function() {
     this.x += 1;
+    this.p = 1;
   });
 });
 
@@ -52,7 +55,7 @@ player(({ created }) => {
 app.stage.addChild(cameraSprite);
 
 app.ticker.add(() => {
-  app.renderer.render(getDefaultWorld(), camera, false);
+  app.renderer.render(world, camera);
 });
 
 preloader.load();
@@ -70,3 +73,18 @@ function resize() {
   cameraSprite.height = height;
 }
 resize();
+
+window.addEventListener('keydown', event => {
+  if (event.key === 'ArrowLeft') {
+    world.players[1].x -= 1;
+  }
+  if (event.key === 'ArrowRight') {
+    world.players[1].x += 1;
+  }
+  if (event.key === 'ArrowUp') {
+    world.players[1].y -= 1;
+  }
+  if (event.key === 'ArrowDown') {
+    world.players[1].y += 1;
+  }
+});
