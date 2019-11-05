@@ -8,16 +8,58 @@
     <style>
       body {
         margin: 0;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: stretch;
       }
       #hackforplay-common-container {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+        flex: 1 1 50%;
+      }
+      #code {
+        flex: 1 1 50%;
+        border: none;
       }
     </style>
   </head>
   <body>
     <div id="hackforplay-common-container"></div>
+    <textarea id="code">
+###
+Jupytor Notebook 的な書き方。セル単位でコードを書く
+セルごとに編集、実行、複製、削除が出来る
+ドキュメント単位でキャラクターを切り替えられる
+###
+
+import { create, init, setThis } from '../../src/index' # このコードは全てのセルの実行直前に自動挿入される。表にはかかれない
+setThis '.player/_1' # このコードは全てのセルの実行直前に自動挿入される。表にはかかれない
+
+###
+これはプレイヤーについて書かれたコードです
+###
+costume '//skin/knight/male'
+
+###
+まずはプレイヤーをマップに配置しましょう
+
+x は 左 から何マス目か,
+y は 上 から何マス目か,
+m は どのマップか,
+f は 顔の向きが 0:右, 1:上, 2: 左, 3: 下 を表します
+###
+create x: 0, y: 0, m: 1, f: 0
+
+###
+プレイヤーのつよさを決めましょう
+###
+created ->
+  @player = 1 # プレイヤー1 に設定
+  @hp = 3
+  @atk = 1
+    </textarea>
     <script src="./src/register.ts"></script>
   </body>
 </html>

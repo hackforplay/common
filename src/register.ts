@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { Charactor } from './core/Charactor';
+import { createAsset, getDefaultWorld } from './core/createAsset';
 import * as settings from './core/settings';
-import { skinLoader } from './core/skin-loader';
+import { preloader } from './core/singleton';
 
 let type = 'WebGL';
 if (!PIXI.utils.isWebGLSupported()) {
@@ -16,8 +16,6 @@ if (!container) {
 }
 container.appendChild(app.view);
 
-const map = new PIXI.Container();
-
 const cameraBase = new PIXI.BaseRenderTexture({
   width: settings.tileSize * settings.column,
   height: settings.tileSize * settings.row,
@@ -27,45 +25,37 @@ const cameraBase = new PIXI.BaseRenderTexture({
 const camera = new PIXI.RenderTexture(cameraBase);
 const cameraSprite = new PIXI.Sprite(camera);
 
-let handlers: ((this: Charactor) => void)[] = [];
-function created(handler: (this: Charactor) => void) {
-  handlers.push(handler);
-}
-
-const preloader = new PIXI.Loader(settings.baseUrl);
-preloader.use(skinLoader);
-
-let defaultCostume = '';
-function costume(name: string) {
-  defaultCostume = name;
-  preloader.add(name, name);
-}
-
 // main--
-costume('apple');
+const player = createAsset('player');
 
-create({ x: 0, y: 0 });
-create({ x: 0, y: 1 });
-create({ x: 0, y: 2 });
-create({ x: 0, y: 3 });
-create({ x: 0, y: 4 });
-create({ x: 0, y: 9 });
+player(({ costume }) => {
+  costume('apple');
+});
 
-created(function() {
-  this.x += 1;
+player(({ create }) => {
+  create({ x: 0, y: 0 });
+  create({ x: 0, y: 1 });
+  create({ x: 0, y: 2 });
+  create({ x: 0, y: 3 });
+  create({ x: 0, y: 4 });
+  create({ x: 0, y: 9 });
+});
+
+player(({ created }) => {
+  created(function() {
+    this.x += 1;
+  });
 });
 
 // --main
 
 app.stage.addChild(cameraSprite);
 
-preloader.load();
-
 app.ticker.add(() => {
-  app.renderer.render(map, camera, false);
+  app.renderer.render(getDefaultWorld(), camera, false);
 });
 
-// app.stage.addChild(map);
+preloader.load();
 
 window.addEventListener('resize', resize, { passive: true });
 function resize() {
@@ -78,23 +68,5 @@ function resize() {
   app.renderer.resize(width, height);
   cameraSprite.width = width;
   cameraSprite.height = height;
-  console.log(width, height);
 }
 resize();
-
-function create({ x = 0, y = 0, m = 0, f = 0 }) {
-  const chara = new Charactor();
-  if (defaultCostume) {
-    chara.costume(defaultCostume);
-  }
-  chara.x = x;
-  chara.y = y;
-  chara.on('added', () => {
-    for (const handler of handlers) {
-      handler.call(chara);
-    }
-  });
-  preloader.on('load', () => {
-    map.addChild(chara);
-  });
-}
