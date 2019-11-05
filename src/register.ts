@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { createAsset, getDefaultWorld } from './core/createAsset';
 import * as settings from './core/settings';
 import { preloader } from './core/singleton';
+import { Dir } from './core/UnitVector';
 
 let type = 'WebGL';
 if (!PIXI.utils.isWebGLSupported()) {
@@ -47,6 +48,7 @@ player(({ created }) => {
   created(function() {
     this.x += 1;
     this.p = 1;
+    this.hp = 1;
   });
 });
 
@@ -55,6 +57,7 @@ player(({ created }) => {
 app.stage.addChild(cameraSprite);
 
 app.ticker.add(() => {
+  world.run();
   app.renderer.render(world, camera);
 });
 
@@ -75,16 +78,24 @@ function resize() {
 resize();
 
 window.addEventListener('keydown', event => {
+  const player = world.players[1];
   if (event.key === 'ArrowLeft') {
-    world.players[1].x -= 1;
+    player.x -= 1;
+    player.d = Dir.Left;
   }
   if (event.key === 'ArrowRight') {
-    world.players[1].x += 1;
+    player.x += 1;
+    player.d = Dir.Right;
   }
   if (event.key === 'ArrowUp') {
-    world.players[1].y -= 1;
+    player.y -= 1;
+    player.d = Dir.Up;
   }
   if (event.key === 'ArrowDown') {
-    world.players[1].y += 1;
+    player.y += 1;
+    player.d = Dir.Down;
+  }
+  if (event.key === ' ') {
+    player.attack();
   }
 });
