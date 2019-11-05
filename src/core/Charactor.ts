@@ -6,9 +6,7 @@ export class Charactor extends Sprite {
   async costume(name: string) {
     return new Promise<void>((resolve, reject) => {
       // TODO: preload
-      const loader = new Loader(
-        'https://storage.googleapis.com/hackforplay-skins/'
-      );
+      const loader = new Loader(settings.baseUrl);
       loader.use(skinLoader);
       loader.add(name, name, undefined, (resource: SkinResource) => {
         super.texture = resource.texture;
