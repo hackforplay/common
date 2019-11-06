@@ -31,6 +31,10 @@ export class World {
     return this.assetSystem.charactors;
   }
 
+  createAsset(name: string) {
+    return this.assetSystem.createAsset(name);
+  }
+
   createCharactor(name?: string) {
     const chara = new Charactor(this);
     this.cameraSystem.container.addChild(chara.sprite);
