@@ -1,7 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { createAsset, getDefaultWorld } from './core/createAsset';
-import * as settings from './core/settings';
-import { preloader } from './core/singleton';
+import { getDefaultWorld } from './core/createAsset';
 import { Dir } from './core/UnitVector';
 
 let type = 'WebGL';
@@ -10,26 +8,11 @@ if (!PIXI.utils.isWebGLSupported()) {
 }
 
 PIXI.utils.sayHello(type);
-const app = new PIXI.Application({});
-const container = document.getElementById('hackforplay-common-container');
-if (!container) {
-  throw new Error('#hackforplay-common-container not found');
-}
-container.appendChild(app.view);
-
-const cameraBase = new PIXI.BaseRenderTexture({
-  width: settings.tileSize * settings.column,
-  height: settings.tileSize * settings.row,
-  scaleMode: PIXI.SCALE_MODES.NEAREST,
-  resolution: 1
-});
-const camera = new PIXI.RenderTexture(cameraBase);
-const cameraSprite = new PIXI.Sprite(camera);
 
 const world = getDefaultWorld();
 
 // main--
-const player = createAsset('player');
+const player = world.assetSystem.createAsset('player');
 
 player(({ costume }) => {
   costume('apple');
@@ -54,28 +37,7 @@ player(({ created }) => {
 
 // --main
 
-app.stage.addChild(cameraSprite);
-
-app.ticker.add(() => {
-  world.run();
-  app.renderer.render(world, camera);
-});
-
-preloader.load();
-
-window.addEventListener('resize', resize, { passive: true });
-function resize() {
-  if (!app.view.parentElement) return;
-  const rect = app.view.parentElement.getBoundingClientRect();
-  const { width, height } =
-    rect.width * settings.ratio > rect.height
-      ? { width: rect.height / settings.ratio, height: rect.height } // 横長
-      : { width: rect.width, height: rect.width * settings.ratio }; // 縦長
-  app.renderer.resize(width, height);
-  cameraSprite.width = width;
-  cameraSprite.height = height;
-}
-resize();
+world.start();
 
 window.addEventListener('keydown', event => {
   const player = world.players[1];

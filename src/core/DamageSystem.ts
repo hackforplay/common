@@ -1,5 +1,5 @@
-import { World } from './World';
 import { Charactor } from './Charactor';
+import { World } from './World';
 
 export class DamageSystem {
   readonly world: World;
@@ -9,12 +9,11 @@ export class DamageSystem {
   }
 
   run() {
-    const all = this.world.children as Charactor[];
-    for (const damager of all) {
+    for (const damager of this.world.charactors) {
       const { damage } = damager;
       if (damage === undefined) continue;
 
-      for (const target of all) {
+      for (const target of this.world.charactors) {
         if (target.hp === undefined) continue;
         if (isHit(target, damager)) {
           target.hp -= damage;
@@ -35,8 +34,8 @@ export class DamageSystem {
  * @param param1
  */
 export function isHit(
-  { position: { x: l0, y: t0 }, width: w0, height: h0 }: Charactor,
-  { position: { x: l1, y: t1 }, width: w1, height: h1 }: Charactor
+  { x: l0, y: t0, width: w0, height: h0 }: Charactor,
+  { x: l1, y: t1, width: w1, height: h1 }: Charactor
 ) {
   const r0 = l0 + w0,
     b0 = t0 + h0,

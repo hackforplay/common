@@ -1,5 +1,4 @@
 import { Charactor } from './Charactor';
-import { preloader } from './singleton';
 import { World } from './World';
 
 type H1 = (this: Charactor) => void;
@@ -51,7 +50,7 @@ export function createAsset(id: string, world?: World) {
 function costume(state: InternalState) {
   return (name: string) => {
     state.defaultCostume = name;
-    preloader.add(name, name);
+    state.world.preloader.add(name, name);
   };
 }
 
@@ -63,15 +62,15 @@ export function create(state: InternalState) {
     }
     chara.x = x;
     chara.y = y;
-    chara.on('added', () => {
-      if (state.created) {
-        for (const handler of state.created) {
-          handler.call(chara);
-        }
+    state.world.cameraSystem.container.addChild(chara.sprite);
+    // TODO: call by AssetSystem
+    if (state.created) {
+      for (const handler of state.created) {
+        handler.call(chara);
       }
-    });
-    preloader.on('load', () => {
-      state.world.addChild(chara);
+    }
+    state.world.preloader.on('load', () => {
+      state.world.cameraSystem.container.addChild(chara.sprite);
     });
   };
 }

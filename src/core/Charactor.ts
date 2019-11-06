@@ -1,22 +1,36 @@
-import { Loader, Sprite } from 'pixi.js';
+import * as PIXI from 'pixi.js';
 import { create } from './createAsset';
 import * as settings from './settings';
-import { skinLoader, SkinResource } from './skin-loader';
+import { ISkin, skinLoader, SkinResource } from './skin-loader';
 import { Dir, UnitVector } from './UnitVector';
 import { World } from './World';
 
-export class Charactor extends Sprite {
+export class Charactor {
   atk = 1;
   damage?: number; // undefined means no damage
   forward = UnitVector.Down;
   hp?: number; // undefined means no life charactor
+  sprite: PIXI.Sprite = new PIXI.Sprite();
   weapons: string[] = []; // undefined item means empty damager
   readonly world: World;
 
   constructor(world: World) {
-    super();
     this.world = world;
-    this.world.addChild(this);
+  }
+
+  async animate(animationName: string) {
+    if (!this._spritessheet) return;
+    const frames = this._spritessheet.animations[animationName];
+    if (!frames) return;
+    const animatedSprite = new PIXI.AnimatedSprite(
+      frames
+        .map(
+          (i: number) => this._spritessheet && this._spritessheet.textures[i]
+        )
+        .filter((t: any) => t)
+    );
+    this.sprite = animatedSprite;
+    animatedSprite.play();
   }
 
   async attack(weaponNumber = 0) {
@@ -29,15 +43,24 @@ export class Charactor extends Sprite {
     }
   }
 
+  private _skin?: ISkin;
+  private _spritessheet?: PIXI.Spritesheet;
   async costume(name: string) {
     return new Promise<void>((resolve, reject) => {
       // TODO: preload
-      const loader = new Loader(settings.baseUrl);
+      const loader = new PIXI.Loader(settings.baseUrl);
       loader.use(skinLoader);
       loader.add(name, name, undefined, (resource: SkinResource) => {
-        super.texture = resource.texture;
-        super.width = resource.data.sprite.width / 2;
-        super.height = resource.data.sprite.height / 2;
+        if (resource.spritesheet) {
+          this._spritessheet = resource.spritesheet;
+          this.sprite.width = resource.data.sprite.width / 2;
+          this.sprite.height = resource.data.sprite.height / 2;
+        } else {
+          this.sprite.texture = resource.texture;
+          this.sprite.width = resource.data.sprite.width / 2;
+          this.sprite.height = resource.data.sprite.height / 2;
+        }
+        this._skin = resource.data;
         resolve();
       });
       loader.load();
@@ -49,6 +72,18 @@ export class Charactor extends Sprite {
   }
   set d(value: Dir) {
     this.forward = UnitVector.fromDir(value);
+  }
+
+  destroy() {
+    // TODO: wait for end of frame
+    this.sprite.destroy();
+  }
+
+  get height() {
+    return this.sprite.height / settings.tileSize;
+  }
+  set height(value) {
+    this.sprite.height * settings.tileSize;
   }
 
   private _p = 0; // 0 is not player
@@ -68,16 +103,24 @@ export class Charactor extends Sprite {
     return damager;
   }
 
+  get width() {
+    return this.sprite.width / settings.tileSize;
+  }
+  set width(value) {
+    this.sprite.width = value * settings.tileSize;
+  }
+
   get x() {
-    return super.x / settings.tileSize;
+    return this.sprite.x / settings.tileSize;
   }
   set x(value) {
-    super.x = value * settings.tileSize;
+    this.sprite.x = value * settings.tileSize;
   }
+
   get y() {
-    return super.y / settings.tileSize;
+    return this.sprite.y / settings.tileSize;
   }
   set y(value) {
-    super.y = value * settings.tileSize;
+    this.sprite.y = value * settings.tileSize;
   }
 }
