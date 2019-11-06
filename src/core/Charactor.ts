@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import * as settings from './settings';
-import { ISkin, skinLoader, SkinResource } from './skin-loader';
+import { ISkin, skinLoader, SkinResource } from './skinLoader';
 import { Dir, UnitVector } from './UnitVector';
 import { World } from './World';
 
