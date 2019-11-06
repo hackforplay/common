@@ -22,18 +22,13 @@ export class Charactor {
   }
 
   async animate(animationName: string) {
-    if (!this._spritessheet) return;
-    const frames = this._spritessheet.animations[animationName];
-    if (!frames) return;
-    const animatedSprite = new PIXI.AnimatedSprite(
-      frames
-        .map(
-          (i: number) => this._spritessheet && this._spritessheet.textures[i]
-        )
-        .filter((t: any) => t)
-    );
-    this.sprite = animatedSprite;
-    animatedSprite.play();
+    if (this._spritessheet) {
+      const frames = this._spritessheet.animations[animationName];
+      if (!frames) return;
+      const animatedSprite = new PIXI.AnimatedSprite(frames);
+      this.sprite = animatedSprite;
+      animatedSprite.play();
+    }
   }
 
   async attack(weaponNumber = 0) {
@@ -53,16 +48,11 @@ export class Charactor {
       const loader = new PIXI.Loader(settings.baseUrl);
       loader.use(skinLoader);
       loader.add(name, name, undefined, (resource: SkinResource) => {
-        if (resource.spritesheet) {
-          this._spritessheet = resource.spritesheet;
-          this.sprite.width = resource.data.sprite.width / 2;
-          this.sprite.height = resource.data.sprite.height / 2;
-        } else {
-          this.sprite.texture = resource.texture;
-          this.sprite.width = resource.data.sprite.width / 2;
-          this.sprite.height = resource.data.sprite.height / 2;
-        }
         this._skin = resource.data;
+        this._spritessheet = resource.spritesheet;
+        this.sprite.texture = resource.texture;
+        this.sprite.width = resource.data.sprite.width / 2;
+        this.sprite.height = resource.data.sprite.height / 2;
         resolve();
       });
       loader.load();
