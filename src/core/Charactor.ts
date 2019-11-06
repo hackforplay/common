@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import * as settings from './settings';
-import { ISkin, skinLoader, SkinResource } from './skinLoader';
+import { Animation, ISkin, skinLoader, SkinResource } from './skinLoader';
 import { Dir, UnitVector } from './UnitVector';
 import { World } from './World';
 
@@ -21,12 +21,15 @@ export class Charactor {
     this.world = world;
   }
 
-  async animate(animationName: string) {
+  async animate(animationName: Animation) {
     if (this._spritessheet) {
       const frames = this._spritessheet.animations[animationName];
       if (!frames) return;
       const animatedSprite = new PIXI.AnimatedSprite(frames);
       this.sprite = animatedSprite;
+      if (this._isLoop) {
+        animatedSprite.loop = Boolean(this._isLoop[animationName]);
+      }
       animatedSprite.play();
     }
   }
@@ -40,8 +43,12 @@ export class Charactor {
     }
   }
 
+  /**
+   * TODO: better structure for frames, animations and colliders
+   */
   private _skin?: ISkin;
   private _spritessheet?: PIXI.Spritesheet;
+  private _isLoop?: SkinResource['isLoop'];
   async costume(name: string) {
     return new Promise<void>((resolve, reject) => {
       // TODO: preload
@@ -50,6 +57,7 @@ export class Charactor {
       loader.add(name, name, undefined, (resource: SkinResource) => {
         this._skin = resource.data;
         this._spritessheet = resource.spritesheet;
+        this._isLoop = resource.isLoop;
         this.sprite.texture = resource.texture;
         this.sprite.width = resource.data.sprite.width / 2;
         this.sprite.height = resource.data.sprite.height / 2;
