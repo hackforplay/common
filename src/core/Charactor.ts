@@ -1,17 +1,20 @@
 import * as PIXI from 'pixi.js';
-import { create } from './createAsset';
 import * as settings from './settings';
 import { ISkin, skinLoader, SkinResource } from './skin-loader';
 import { Dir, UnitVector } from './UnitVector';
 import { World } from './World';
 
 export class Charactor {
+  age = 0; // how long is it living
   atk = 1;
   damage?: number; // undefined means no damage
   forward = UnitVector.Down;
   hp?: number; // undefined means no life charactor
+  lifetime = -1; // -1 means live infinite, otherwise it survives until age == lifetime
+  penetrate = 0; // 0 means won't penetrate, -1 means infinite penetration
+  penetratedCount = 0; // times it penetrated
   sprite: PIXI.Sprite = new PIXI.Sprite();
-  weapons: string[] = []; // undefined item means empty damager
+  weapons: (string | undefined)[] = []; // undefined item means empty damager
   readonly world: World;
 
   constructor(world: World) {
@@ -34,12 +37,11 @@ export class Charactor {
   }
 
   async attack(weaponNumber = 0) {
-    const id = this.weapons[weaponNumber];
-    if (id) {
-      create({ id, world: this.world });
-    } else {
-      const damager = this.summon({});
+    const name = this.weapons[weaponNumber];
+    const damager = this.summon({ name, f: 1 });
+    if (name === undefined) {
       damager.damage = this.atk;
+      damager.lifetime = 1;
     }
   }
 
@@ -75,7 +77,6 @@ export class Charactor {
   }
 
   destroy() {
-    // TODO: wait for end of frame
     this.sprite.destroy();
   }
 
@@ -83,7 +84,7 @@ export class Charactor {
     return this.sprite.height / settings.tileSize;
   }
   set height(value) {
-    this.sprite.height * settings.tileSize;
+    this.sprite.height = value * settings.tileSize;
   }
 
   private _p = 0; // 0 is not player
@@ -96,11 +97,12 @@ export class Charactor {
     }
   }
 
-  summon({ name = '', f = 1, r = 0, x = 0, y = 0 }) {
-    const damager = new Charactor(this.world);
-    damager.x = this.x + x + f * this.forward.x - r * this.forward.y;
-    damager.y = this.y + y + f * this.forward.y + r * this.forward.x;
-    return damager;
+  summon({ name = '', f = 0, r = 0, x = 0, y = 0, d = this.d }) {
+    const newborn = this.world.createCharactor(name);
+    newborn.x = this.x + x + f * this.forward.x - r * this.forward.y;
+    newborn.y = this.y + y + f * this.forward.y + r * this.forward.x;
+    newborn.d = d;
+    return newborn;
   }
 
   get width() {

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { getDefaultWorld } from './core/createAsset';
 import { Dir } from './core/UnitVector';
+import { World } from './core/World';
 
 let type = 'WebGL';
 if (!PIXI.utils.isWebGLSupported()) {
@@ -9,7 +9,7 @@ if (!PIXI.utils.isWebGLSupported()) {
 
 PIXI.utils.sayHello(type);
 
-const world = getDefaultWorld();
+const world = World.getDefault();
 
 // main--
 const player = world.assetSystem.createAsset('player');

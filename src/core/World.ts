@@ -11,10 +11,9 @@ export interface IDisposable {
 
 export class World {
   app = new PIXI.Application({});
-  assetSystem = new AssetSystem(this);
-  cameraSystem = new CameraSystem(this);
-  charactors: Charactor[] = [];
-  damageSystem = new DamageSystem(this);
+  assetSystem = new AssetSystem(this); // TODO: private
+  cameraSystem = new CameraSystem(this); // TODO: private
+  damageSystem = new DamageSystem(this); // TODO: private
   players: Charactor[] = [];
   preloader = new PIXI.Loader(settings.baseUrl);
 
@@ -28,11 +27,30 @@ export class World {
     this._disposers.push(beFlexible(this));
   }
 
+  get charactors() {
+    return this.assetSystem.charactors;
+  }
+
+  createCharactor(name?: string) {
+    const chara = new Charactor(this);
+    this.cameraSystem.container.addChild(chara.sprite);
+    this.preloader.on('load', () => {
+      this.cameraSystem.container.addChild(chara.sprite);
+    });
+    this.assetSystem.applyAsset(chara, name || '');
+    return chara;
+  }
+
   private _disposers: IDisposable[] = [];
   dispose() {
     for (const disposer of this._disposers) {
       disposer.dispose();
     }
+  }
+
+  static _defaultInstance?: World;
+  static getDefault(): World {
+    return World._defaultInstance || (World._defaultInstance = new World());
   }
 
   start() {
@@ -43,8 +61,11 @@ export class World {
   }
 
   update() {
-    this.damageSystem.run();
+    this.damageSystem.update();
+    this.assetSystem.update();
     this.cameraSystem.update();
+
+    this.assetSystem.lateUpdate();
   }
 }
 

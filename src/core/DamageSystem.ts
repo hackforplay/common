@@ -8,20 +8,20 @@ export class DamageSystem {
     this.world = world;
   }
 
-  run() {
+  update() {
     for (const damager of this.world.charactors) {
-      const { damage } = damager;
+      const { damage, penetrate } = damager;
       if (damage === undefined) continue;
+      if (damager.penetratedCount > penetrate) continue;
 
       for (const target of this.world.charactors) {
         if (target.hp === undefined) continue;
         if (isHit(target, damager)) {
           target.hp -= damage;
-          if (target.hp <= 0) {
-            target.destroy();
+          damager.penetratedCount++;
+          if (damager.penetratedCount > penetrate) {
+            break;
           }
-          damager.destroy();
-          break;
         }
       }
     }
