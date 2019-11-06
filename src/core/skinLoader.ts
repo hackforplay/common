@@ -101,14 +101,14 @@ const defaultSkinAnimationFrames: {
   1: {
     idle: [1, 1],
     walk: [0, 10],
-    attack: [0, 12, null, 1],
-    dead: [0, 1, null, 1]
+    attack: [0, 12],
+    dead: [0, 1]
   },
   4: {
     idle: [1, 1],
     walk: [0, 3, 1, 3, 2, 3, 1, 1],
-    attack: [3, 4, 4, 4, 5, 4, null, 1],
-    dead: [1, 1, null, 1]
+    attack: [3, 4, 4, 4, 5, 4],
+    dead: [1, 1]
   }
 };
 
@@ -131,8 +131,8 @@ function convert(skin: ISkin): [ISpritessheet, SkinResource['isLoop']] {
 
   const idle = anims.idle && decode(anims.idle);
   const walk = anims.walk && decode(anims.walk);
-  const attack = anims.attack && decode(anims.attack);
-  const dead = anims.dead && decode(anims.dead);
+  const attack = anims.attack && decode(anims.attack.concat(null, 1));
+  const dead = anims.dead && decode(anims.dead.concat(null, 1));
 
   return [
     {

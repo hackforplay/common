@@ -15,7 +15,7 @@ const world = World.getDefault();
 const player = world.assetSystem.createAsset('player');
 
 player(({ costume }) => {
-  costume('apple');
+  costume('black_vampire');
 });
 
 player(({ create }) => {

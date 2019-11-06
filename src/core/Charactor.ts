@@ -13,7 +13,6 @@ export class Charactor {
   lifetime = -1; // -1 means live infinite, otherwise it survives until age == lifetime
   penetrate = 0; // 0 means won't penetrate, -1 means infinite penetration
   penetratedCount = 0; // times it penetrated
-  sprite: PIXI.Sprite = new PIXI.Sprite();
   weapons: (string | undefined)[] = []; // undefined item means empty damager
   readonly world: World;
 
@@ -41,6 +40,7 @@ export class Charactor {
       damager.damage = this.atk;
       damager.lifetime = 1;
     }
+    await this.animate(Animation.Attack);
   }
 
   /**
@@ -93,6 +93,24 @@ export class Charactor {
     if (p) {
       this.world.players[p] = this;
     }
+  }
+
+  private _sprite?: PIXI.Sprite;
+  get sprite() {
+    if (!this._sprite) {
+      this._sprite = new PIXI.Sprite();
+      this.world.cameraSystem.container.addChild(this._sprite);
+    }
+    return this._sprite;
+  }
+  set sprite(value) {
+    if (this._sprite) {
+      value.position = this._sprite.position;
+      this._sprite.destroy();
+      this.world.cameraSystem.container.removeChild(this._sprite);
+    }
+    this._sprite = value;
+    this.world.cameraSystem.container.addChild(this._sprite);
   }
 
   summon({ name = '', f = 0, r = 0, x = 0, y = 0, d = this.d }) {
