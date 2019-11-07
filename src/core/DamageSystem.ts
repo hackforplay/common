@@ -42,8 +42,8 @@ export function isHit(
     r1 = l1 + w1,
     b1 = t1 + h1;
   const horizontal =
-    (l0 < l1 && l1 < r0) || (l0 < r1 && r1 < r0) || (l1 < l0 && r0 < r1);
+    (l0 < l1 && l1 < r0) || (l0 < r1 && r1 < r0) || (l1 <= l0 && r0 <= r1); // intersect left || intersect right || included
   const vertical =
-    (t0 < t1 && t1 < b0) || (t0 < b1 && b1 < b0) || (t1 < t0 && b0 < b1);
+    (t0 < t1 && t1 < b0) || (t0 < b1 && b1 < b0) || (t1 <= t0 && b0 <= b1); // intersect top || intersect bottom || included
   return horizontal && vertical;
 }
