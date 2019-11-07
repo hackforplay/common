@@ -8,7 +8,7 @@ export class Charactor {
   age = 0; // how long is it living
   atk = 1;
   currentAnimation = Animation.Idle;
-  currentAnimationFrame = 0;
+  currentAnimationIndex = -1; // -1 means never animate
   currentAnimationSince = -1; // -1 means never animate
   currentAnimationWillStop = false; // true means stop animation next frame
   damage?: number; // undefined means no damage

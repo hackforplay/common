@@ -19,7 +19,7 @@ export class AnimationSystem {
       if (chara.currentAnimationWillStop) {
         // アニメーション終了 => Idle へ
         chara.currentAnimation = Animation.Idle;
-        chara.currentAnimationFrame = 0;
+        chara.currentAnimationIndex = 0;
         chara.currentAnimationSince = chara.age;
         chara.currentAnimationWillStop = false;
       }
@@ -32,10 +32,10 @@ export class AnimationSystem {
       const animations = frames && decode(frames); // TODO: cache
       if (!animations || animations.length < 1) {
         // アニメーションが全くない場合、ずっと frame=1 にする
-        if (chara.currentAnimationFrame === 1) return;
-        const textures = slice(chara.skin);
-        chara.currentAnimationFrame = 1;
         const index = getIndex(chara.d, chara.skin.column, 1);
+        if (chara.currentAnimationIndex === index) return;
+        const textures = slice(chara.skin);
+        chara.currentAnimationIndex = index;
         chara.sprite = new PIXI.Sprite(textures[index]);
         return;
       }
@@ -47,11 +47,10 @@ export class AnimationSystem {
         frame = animations.length - 1;
         chara.currentAnimationWillStop = true;
       }
-      const animationFrame = animations[frame];
-      if (chara.currentAnimationFrame === animationFrame) return; // 向きが変わった場合を考慮していない！！！！！！！！
-      chara.currentAnimationFrame = animationFrame;
+      const index = getIndex(chara.d, chara.skin.column, animations[frame]);
+      if (chara.currentAnimationIndex === index) return;
+      chara.currentAnimationIndex = index;
       const textures = slice(chara.skin);
-      const index = getIndex(chara.d, chara.skin.column, animationFrame);
       chara.sprite = new PIXI.Sprite(textures[index]);
     });
   }
