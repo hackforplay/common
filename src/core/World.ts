@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { AnimationSystem } from './AnimationSystem';
 import { AssetSystem } from './AssetSystem';
 import { CameraSystem } from './CameraSystem';
 import { Charactor } from './Charactor';
@@ -11,6 +12,7 @@ export interface IDisposable {
 
 export class World {
   app = new PIXI.Application({});
+  animationSystem = new AnimationSystem(this); // TODO: private
   assetSystem = new AssetSystem(this); // TODO: private
   cameraSystem = new CameraSystem(this); // TODO: private
   damageSystem = new DamageSystem(this); // TODO: private
@@ -67,6 +69,7 @@ export class World {
   update() {
     this.damageSystem.update();
     this.assetSystem.update();
+    this.animationSystem.update();
     this.cameraSystem.update();
 
     this.assetSystem.lateUpdate();

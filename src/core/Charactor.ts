@@ -7,12 +7,17 @@ import { World } from './World';
 export class Charactor {
   age = 0; // how long is it living
   atk = 1;
+  currentAnimation = Animation.Idle;
+  currentAnimationFrame = 0;
+  currentAnimationSince = -1; // -1 means never animate
+  currentAnimationWillStop = false; // true means stop animation next frame
   damage?: number; // undefined means no damage
   forward = UnitVector.Down;
   hp?: number; // undefined means no life charactor
   lifetime = -1; // -1 means live infinite, otherwise it survives until age == lifetime
   penetrate = 0; // 0 means won't penetrate, -1 means infinite penetration
   penetratedCount = 0; // times it penetrated
+  skin?: ISkin;
   weapons: (string | undefined)[] = []; // undefined item means empty damager
   readonly world: World;
 
@@ -20,17 +25,9 @@ export class Charactor {
     this.world = world;
   }
 
-  async animate(animationName: Animation) {
-    if (this._spritessheet) {
-      const frames = this._spritessheet.animations[animationName];
-      if (!frames) return;
-      const animatedSprite = new PIXI.AnimatedSprite(frames);
-      this.sprite = animatedSprite;
-      if (this._isLoop) {
-        animatedSprite.loop = Boolean(this._isLoop[animationName]);
-      }
-      animatedSprite.play();
-    }
+  animate(animationName: Animation) {
+    this.currentAnimation = animationName;
+    this.currentAnimationSince = this.age;
   }
 
   async attack(weaponNumber = 0) {
@@ -40,25 +37,16 @@ export class Charactor {
       damager.damage = this.atk;
       damager.lifetime = 1;
     }
-    await this.animate(Animation.Attack);
+    this.animate(Animation.Attack);
   }
 
-  /**
-   * TODO: better structure for frames, animations and colliders
-   */
-  private _skin?: ISkin;
-  private _spritessheet?: PIXI.Spritesheet;
-  private _isLoop?: SkinResource['isLoop'];
   async costume(name: string) {
     return new Promise<void>((resolve, reject) => {
       // TODO: preload
       const loader = new PIXI.Loader(settings.baseUrl);
       loader.use(skinLoader);
       loader.add(name, name, undefined, (resource: SkinResource) => {
-        this._skin = resource.data;
-        this._spritessheet = resource.spritesheet;
-        this._isLoop = resource.isLoop;
-        this.sprite.texture = resource.texture;
+        this.skin = resource.data;
         this.sprite.width = resource.data.sprite.width / 2;
         this.sprite.height = resource.data.sprite.height / 2;
         resolve();
