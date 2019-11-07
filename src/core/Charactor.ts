@@ -64,11 +64,16 @@ export class Charactor {
     this.sprite.destroy();
   }
 
+  private _height = 1;
   get height() {
-    return this.sprite.height / settings.tileSize;
+    return this._height;
   }
   set height(value) {
-    this.sprite.height = value * settings.tileSize;
+    this._height = value;
+    const origin = this.skin
+      ? this.skin.sprite.height / settings.skinResolution
+      : 0;
+    this.sprite.height = value * origin;
   }
 
   private _p = 0; // 0 is not player
@@ -97,6 +102,11 @@ export class Charactor {
     }
     this._sprite = value;
     this.world.cameraSystem.container.addChild(this._sprite);
+    // call setter
+    this.x = this.x;
+    this.y = this.y;
+    this.width = this.width;
+    this.height = this.height;
   }
 
   summon({ name = '', f = 0, r = 0, x = 0, y = 0, d = this.d }) {
@@ -107,24 +117,35 @@ export class Charactor {
     return newborn;
   }
 
+  private _width = 1;
   get width() {
-    return this.sprite.width / settings.tileSize;
+    return this._width;
   }
   set width(value) {
-    this.sprite.width = value * settings.tileSize;
+    this._width = value;
+    const origin = this.skin
+      ? this.skin.sprite.width / settings.skinResolution
+      : 0;
+    this.sprite.width = value * origin;
   }
 
+  private _x = 0;
   get x() {
-    return this.sprite.x / settings.tileSize;
+    return this._x;
   }
   set x(value) {
-    this.sprite.x = value * settings.tileSize;
+    this._x = value;
+    const offset = this.skin ? this.skin.sprite.x / settings.skinResolution : 0;
+    this.sprite.x = value * settings.tileSize + offset;
   }
 
+  private _y = 0;
   get y() {
-    return this.sprite.y / settings.tileSize;
+    return this._y;
   }
   set y(value) {
-    this.sprite.y = value * settings.tileSize;
+    this._y = value;
+    const offset = this.skin ? this.skin.sprite.y / settings.skinResolution : 0;
+    this.sprite.y = value * settings.tileSize + offset;
   }
 }
