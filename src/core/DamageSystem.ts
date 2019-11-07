@@ -28,14 +28,21 @@ export class DamageSystem {
   }
 }
 
+export interface IRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 /**
  * TODO: position between previous position
  * @param param0
  * @param param1
  */
 export function isHit(
-  { x: l0, y: t0, width: w0, height: h0 }: Charactor,
-  { x: l1, y: t1, width: w1, height: h1 }: Charactor
+  { x: l0, y: t0, width: w0, height: h0 }: IRect,
+  { x: l1, y: t1, width: w1, height: h1 }: IRect
 ) {
   // Normarize
   if (w0 < 0) {
