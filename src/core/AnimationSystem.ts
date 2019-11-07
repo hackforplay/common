@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { skinResolution as res } from './settings';
 import { Animation, ISkin } from './skinLoader';
 import { Dir } from './UnitVector';
 import { World } from './World';
@@ -54,10 +55,7 @@ export class AnimationSystem {
       chara.currentAnimationFrame = animationFrame;
       const textures = slice(chara.skin);
       const index = getIndex(chara.d, chara.skin.column, animationFrame);
-      const sprite = new PIXI.Sprite(textures[index]);
-      sprite.width = chara.skin.sprite.width / 2;
-      sprite.height = chara.skin.sprite.height / 2;
-      chara.sprite = sprite;
+      chara.sprite = new PIXI.Sprite(textures[index]);
     });
   }
 }
@@ -75,14 +73,21 @@ function getIndex(d: Dir, column: number, animationFrame: number) {
 }
 
 function slice(skin: ISkin) {
-  const base = PIXI.BaseTexture.from(skin.image);
+  const base = PIXI.BaseTexture.from(skin.image, {
+    resolution: res
+  });
   let textures = cache.get(base);
   if (!textures) {
     textures = [];
     const { width, height } = skin.sprite;
     for (let y = 0; y < skin.row; y++) {
       for (let x = 0; x < skin.column; x++) {
-        const frame = new PIXI.Rectangle(width * x, height * y, width, height);
+        const frame = new PIXI.Rectangle(
+          (width * x) / res,
+          (height * y) / res,
+          width / res,
+          height / res
+        );
         const texture = new PIXI.Texture(base, frame);
         textures.push(texture);
       }

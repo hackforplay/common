@@ -47,8 +47,6 @@ export class Charactor {
       loader.use(skinLoader);
       loader.add(name, name, undefined, (resource: SkinResource) => {
         this.skin = resource.data;
-        this.sprite.width = resource.data.sprite.width / 2;
-        this.sprite.height = resource.data.sprite.height / 2;
         resolve();
       });
       loader.load();
