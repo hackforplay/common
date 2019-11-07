@@ -37,6 +37,24 @@ export function isHit(
   { x: l0, y: t0, width: w0, height: h0 }: Charactor,
   { x: l1, y: t1, width: w1, height: h1 }: Charactor
 ) {
+  // Normarize
+  if (w0 < 0) {
+    l0 += w0;
+    w0 = -w0;
+  }
+  if (h0 < 0) {
+    t0 += h0;
+    h0 = -h0;
+  }
+  if (w1 < 0) {
+    l1 += w1;
+    w1 = -w1;
+  }
+  if (h1 < 0) {
+    t1 += h1;
+    h1 = -h1;
+  }
+  // XYWH to TRBL
   const r0 = l0 + w0,
     b0 = t0 + h0,
     r1 = l1 + w1,
