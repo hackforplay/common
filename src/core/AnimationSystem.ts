@@ -37,8 +37,6 @@ export class AnimationSystem {
         chara.currentAnimationFrame = 1;
         const index = getIndex(chara.d, chara.skin.column, 1);
         const sprite = new PIXI.Sprite(textures[index]);
-        sprite.width = chara.skin.sprite.width / 2;
-        sprite.height = chara.skin.sprite.height / 2;
         chara.sprite = sprite;
         return;
       }
