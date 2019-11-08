@@ -49,6 +49,7 @@ export class Charactor {
         this.skin = resource.data;
         resolve();
       });
+      loader.onError = reject;
       loader.load();
     });
   }
