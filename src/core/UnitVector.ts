@@ -9,13 +9,19 @@ export class UnitVector {
   readonly x: number;
   readonly y: number;
 
-  static Down = new UnitVector(0, 1);
-  static Left = new UnitVector(-1, 0);
   static Up = new UnitVector(0, -1);
   static Right = new UnitVector(1, 0);
+  static Down = new UnitVector(0, 1);
+  static Left = new UnitVector(-1, 0);
+  static Units: [UnitVector, UnitVector, UnitVector, UnitVector] = [
+    UnitVector.Up,
+    UnitVector.Right,
+    UnitVector.Down,
+    UnitVector.Left
+  ];
 
   static fromDir(dir: Dir) {
-    return units[dir];
+    return UnitVector.Units[dir];
   }
 
   constructor(x: number, y: number) {
@@ -30,10 +36,3 @@ export class UnitVector {
     return Dir.Right;
   }
 }
-
-const units: [UnitVector, UnitVector, UnitVector, UnitVector] = [
-  UnitVector.Up,
-  UnitVector.Right,
-  UnitVector.Down,
-  UnitVector.Left
-];
