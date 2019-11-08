@@ -1,4 +1,3 @@
-import { Charactor } from './Charactor';
 import { World } from './World';
 
 export class DamageSystem {
