@@ -420,8 +420,7 @@ Hack.createMap = function(template) {
 
 Hack.changeMap = async function(mapName) {
   const current = Hack.map;
-  const next =
-    Hack.maps[mapName] || (await generateMapFromDefinition(mapName, true)); // マップが定義されていない => 定義ファイルから生成
+  const next = await generateMapFromDefinition(mapName, true);
 
   if (current && current.parentNode) {
     current.parentNode.removeChild(current.bmap);
