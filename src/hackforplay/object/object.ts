@@ -415,7 +415,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  public locate(
+  public async locate(
     fromLeft: number,
     fromTop: number,
     mapName?: string,
@@ -447,7 +447,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       if (map instanceof RPGMap && this.map !== map) {
         if (this.isPlayer) {
           // プレイヤーがワープする場合は, 先にマップを変更する
-          Hack.changeMap(mapName);
+          await Hack.changeMap(mapName);
           // つき従えているキャラクターをワープさせる
           for (const item of [...RPGObject.collection]) {
             if (followingPlayerObjects.has(item)) {
