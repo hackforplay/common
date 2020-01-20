@@ -65,7 +65,7 @@
     "canvas": "^2.2.0",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.3.0",
-    "jsdom": "^15.0.0",
+    "jsdom": "^16.0.1",
     "np": "^5.0.0",
     "prettier": "^1.14.2",
     "raf": "^3.4.1",
