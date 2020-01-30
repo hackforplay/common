@@ -54,7 +54,7 @@
     "@babel/core": "^7.8.4",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",
-    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.1.0",
     "@babel/register": "^7.0.0",
     "@types/jsdom": "^12.2.1",
