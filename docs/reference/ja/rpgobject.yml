@@ -1,0 +1,378 @@
+atk:
+  name: こうげきりょく
+  type: number
+  init: 0
+  desc: |
+    キャラクターのこうげきりょく
+    [こうげきする] ときに相手にあたえるダメージの量
+    もし[おや]がいるなら、[おや]のこうげきりょくを引きつぐ
+  code: |
+    this.こうげきりょく = 1;
+
+mapName: # map.name の getter と、locate のラッパーとしての setter を作る
+  name: マップ
+  type: string
+  init: ''
+  desc: |
+    キャラクターがいるマップのなまえ
+    かえるには[いちをかえる]を使う
+
+mapX:
+  name: ひだりから
+  type: number
+  init: 15
+  desc: |
+    キャラクターがひだりから何マス目にいるか
+    かえるには[いちをかえる]を使う
+
+mapY:
+  name: うえから
+  type: number
+  init: 10
+  desc: |
+    キャラクターがうえから何マス目にいるか
+    かえるには[いちをかえる]を使う
+
+money:
+  name: おかね
+  type: number
+  init: 0
+  desc: |
+    このキャラクターが持っているおかねの量
+  code: |
+    this.money = 1;
+
+opacity:
+  name: みえやすさ
+  type: number
+  init: 1
+  desc: |
+    このキャラクターの不透明度
+    0 にするとキャラクターが見えなくなる
+  code: |
+    this.opacty = 0;
+
+collisionFlag:
+  name: ぶつかるか
+  type: boolean
+  init: false
+  desc: |
+    このキャラクターが他のキャラクターとぶつかるかどうか
+    true にするとぶつかる
+    何も設定しなかった場合、[ふまれたとき]がなければ true になる
+
+penetrate:
+  name: かんつうするかいすう
+  type: number
+  init: 0
+  desc: |
+    このキャラクターが他のキャラクターに[ダメージ]を与えたとき、消えずにのこる（貫通する）回数
+    かんつうするかいすうが 0 だと、ぶつかったときに消えてしまう
+
+hp:
+  name: たいりょく
+  type: number
+  init: 0
+  desc: |
+    キャラクターのたいりょく
+    たいりょくが 0 になると、キャラクターは消えてしまう
+    たいりょくを設定しなかったら、キャラクターは無敵になる
+  code: |
+    this.たいりょく = 1;
+
+behavior:
+  name: なにをしているか
+  type: string
+  init: 'idle'
+  desc: |
+    このキャラクターが今何をしているか
+    'idle' なら、今は何もしていない
+    'walk' なら、今は[あるく]している
+    'attack' なら、今は[こうげきする]している
+    'dead' なら、[たいりょく]が 0 になってしまった
+
+forward:
+  name: まえ
+  type: Vector2
+  desc: |
+    このキャラクターが向いている方向のベクトル
+    つねに単位ベクトルである
+
+direction:
+  name: むき
+  type: number
+  init: 0
+  desc: |
+    このキャラクターの向きを数値で表したもの
+    0 なら、下を向いている
+    1 なら、左を向いている
+    2 なら、右を向いている
+    3 なら、上を向いている
+
+family:
+  name: なかま
+  type: string
+  init: '__Independence'
+  desc: |
+    このキャラクターが何の[global/なかま]なのか
+    'Player' なら、プレイヤーの仲間
+    'Map' なら、マップの仲間
+    'Player2' なら、プレイヤー２の仲間
+    'Monster' なら、モンスターの仲間
+    何も設定しなければ、誰の仲間でもない
+
+damage:
+  name: ダメージ
+  type: number
+  init: 0
+  desc: |
+    このキャラクターがぶつかったときに、相手に与えるダメージ
+    何も設定しなければ、ダメージをあたえない
+
+speed:
+  name: あるくはやさ
+  type: number
+  init: 1
+  desc: |
+    このキャラクターが[あるく]ときのはやさ
+
+collideMapBoader:
+  name: マップのはしにぶつかるか
+  type: boolean
+  init: true
+  desc: |
+    このキャラクターがマップの端にぶつかるかどうか
+    true ならぶつかる
+
+showHpLabel:
+  name: たいりょくがみえるか
+  type: boolean
+  init: true
+  desc: |
+    このキャラクターの[たいりょく]がみえるかどうか
+    true なら見える
+
+name:
+  name: なまえ
+  type: string
+  desc: |
+    このキャラクターのアセット名
+    たとえばプレイヤーの[なまえ]は 'プレイヤー' になっている
+
+skill:
+  name: スキル
+  type: string
+  init: ''
+  desc: |
+    このキャラクターが[こうげきする]ときに出てくるキャラクターの名前
+  code: |
+    this.スキル = 'ビーム';
+
+fieldOfView:
+  name: みえるはんい
+  type: number
+  init: 1
+  desc: |
+    このキャラクターが[みつける]ときに、何マスとなりまで見つけられるか
+
+lengthOfView:
+  name: みえるきょり
+  type: number
+  init: 10
+  desc: |
+    このキャラクターが[みつける]ときに、何マス前まで見つけられるか
+
+isInvincible:
+  name: むてきか
+  type: boolean
+  init: false
+  desc: |
+    このキャラクターが無敵かどうか
+    true にすると、[ダメージ]を受けなくなる
+
+attack:
+  name: こうげきする
+  type: function
+  desc: |
+    キャラクターにこうげきさせる
+  code: |
+    await this.こうげきする()
+
+walk:
+  name: あるく
+  type: function
+  desc: |
+    キャラクターを一歩歩かせる
+  code: |
+    await this.あるく();
+
+walkRight:
+  name: みぎにあるく
+  type: function
+  desc: |
+    このキャラクターの[むき]を変えずに右に一歩歩かせる
+  code: |
+    await this.みぎにあるく();
+
+walkLeft:
+  name: ひだりにあるく
+  type: function
+  desc: |
+    このキャラクターの[むき]を変えずに左に一歩歩かせる
+  code: |
+    await this.ひだりにあるく();
+
+locate:
+  name: いちをかえる
+  type: function
+  desc: |
+    このキャラクターのいちをかえる
+  args:
+    - name: ひだりから
+      type: number
+      desc: ひだりから何マス目にいどうするか
+    - name: うえから
+      type: number
+      desc: うえから何マス目にいどうするか
+    - name: マップ
+      type: string
+      desc: どのマップにいどうするか
+  code: |
+    await this.いちをかえる(7, 5, 'map2');
+
+wait:
+  name: まつ
+  type: function
+  desc: |
+    次の行のコードを実行するまで何秒か待つ
+    このキャラクターが動けなくなるのではない
+  args:
+    - name: 秒数
+      type: number
+      desc: 何秒待つか
+  code: |
+    await this.まつ(1);
+    await this.あるく();
+
+summon: # 同名のメソッドが存在するが、使われていないので意味を変えるか？
+  name: しょうかんする
+  type: function
+  desc: |
+    このキャラクターに別のキャラクターをしょうかんさせる
+    とくに設定しなければ、しょうかんされたキャラクターは同じ[なかま]になる
+  args:
+    - name: なまえ
+      type: string
+      desc: しょうかんしたいキャラクターの名前
+    - name: まえに
+      type: number
+      init: 1
+      desc: 自分から見て何マス前にしょうかんするか
+    - name: みぎに
+      type: number
+      init: 0
+      desc: 自分から見て何マス前にしょうかんするか
+    - name: マップ
+      type: string
+      desc: どのマップにしょうかんするか
+    - name: 向き
+      type: IDir
+      desc: どの向きにしょうかんするか
+
+transform: # この名前のメソッドはないが、、
+  name: へんしんする
+  type: function
+  desc: |
+    このキャラクターを別のキャラクターに変身させる
+    変身後は[たいりょく]以外のパラメータが元に戻る
+  args:
+    - name: なまえ
+      type: string
+      desc: 変身後のキャラクターの名前
+
+find:
+  name: みつける
+  type: function
+  desc: |
+    まわりをみわたして、別のキャラクターのことをみつけようとする
+    何かをみつけたら、[みつけたとき]が呼ばれる
+
+flyToward:
+  name: とんでいく
+  type: function
+  desc: |
+    このキャラクターが今向いている方向に向かって、このキャラクターをとばす
+    もくひょうに別のキャラクターを入れると、そのキャラクターに向かってとんでいく
+  args:
+    - name: もくひょう
+      type: string
+      desc: |
+        もくひょうにするキャラクターの名前
+        このキャラクターから一番近いキャラクターがひとつえらばれて、そこへ向かってとんでいく
+
+se:
+  name: おとをならす
+  type: function
+  desc: |
+    音を一度ならす
+  args:
+    - name: 名前
+      type: string
+      desc: 鳴らしたい音の名前 # TODO: 音の名前の表を作る
+
+talk:
+  name: はなす
+  type: function
+  desc: |
+    キャラクターに言葉をしゃべらせる
+    せんたくし①を設定すると、といかけ（質問）になり、答えるボタンが表示される
+    せんたくし②を設定すると、答えるボタンが２つから選べるようになる
+  args:
+    - name: ことば
+      type: string
+      desc: しゃべらせたい言葉
+    - name: せんたくし①
+      type: string
+      desc: １つ目のせんたくし
+    - name: せんたくし②
+      type: string
+      desc: ２つ目のせんたくし。他にいくつでも設定できる
+  return:
+    name: かいとう
+    type: string
+    desc: せんたくしの中からえらばれたもの
+  code: |
+    こたえ = await this.はなす('１＋１は？', '１', '２');
+    if (こたえ === '１') {
+      await this.はなす('はずれだよ')
+    }
+    if (こたえ === '２') {
+      await this.はなす('せいかい！')
+    }
+
+costume:
+  name: みためをかえる
+  type: function
+  desc: |
+    このキャラクターの見た目を、別の見た目にかえる
+  args:
+    - name: なまえ
+      type: string
+      desc: どの見た目にするか # TODO: 音の名前の表を作る
+
+message:
+  name: メッセージする
+  type: function
+  desc: |
+    このキャラクターから別のアセットのキャラクターたちに対してメッセージをおくる
+    メッセージを受け取ったキャラクターはすべて[メッセージされたとき]が呼ばれる
+  args:
+    - name: なまえ
+      type: string
+      desc: メッセージを送りたいキャラクターの名前
+
+destroy:
+  name: しょうきょする
+  type: function
+  desc: |
+    このキャラクターをただちに消去する
