@@ -396,3 +396,16 @@ faceTo: # 0.25 で新しく追加する
       type: RPGObject
       desc: |
         相手キャラクターの変数
+
+turn:
+  name: むきをかえる
+  type: function
+  desc: |
+    このキャラクターの[むき]をかえる
+  code: |
+    this.むきをかえる(むき.うえ); // 上を向く
+  args:
+    - name: むき
+      type: string
+      desc: |
+        このキャラクターをどの[むき enum/Direction]にするか
