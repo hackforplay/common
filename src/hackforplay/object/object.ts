@@ -1075,17 +1075,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._family = family;
   }
 
-  public summon(skin: (this: RPGObject) => void, _class = RPGObject) {
-    // 自分と同じ Family を持つ従者とする
-    const appended = new _class(skin);
-    registerServant(this, appended);
-    if (this.map) {
-      // 同じ場所に配置する
-      appended.locate(this.mapX, this.mapY, this.map.name);
-    }
-    return appended;
-  }
-
   public get image() {
     return this._image || null;
   }
@@ -1166,9 +1155,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   /**
-   * summon の rule.つくる バージョン
+   * このキャラクターに別のキャラクターをしょうかんさせる
+   * とくに設定しなければ、しょうかんされたキャラクターは同じ[なかま]になる
    */
-  public しょうかんする(
+  public summon(
     name: string,
     forward = 1,
     right = 0,
@@ -1195,6 +1185,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
     return appended;
   }
+  public しょうかんする = this.summon;
 
   /**
    * 「しょうかんする」の足元バージョン

@@ -254,7 +254,7 @@ wait:
     await this.まつ(1);
     await this.あるく();
 
-summon: # 同名のメソッドが存在するが、使われていないので意味を変えるか？
+summon:
   name: しょうかんする
   type: function
   desc: |
