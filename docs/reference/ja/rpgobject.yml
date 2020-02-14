@@ -21,7 +21,7 @@ mapName: # map.name の getter と、locate のラッパーとしての setter �
   init: ''
   desc: |
     キャラクターがいるマップのなまえ
-    かえるには[いちをかえる]を使う
+    マップをかえるには[いく]を使う
 
 mapX:
   name: ひだりから
@@ -29,7 +29,7 @@ mapX:
   init: 15
   desc: |
     キャラクターがひだりから何マス目にいるか
-    かえるには[いちをかえる]を使う
+    ばしょをかえるには[いく]を使う
 
 mapY:
   name: うえから
@@ -37,7 +37,7 @@ mapY:
   init: 10
   desc: |
     キャラクターがうえから何マス目にいるか
-    かえるには[いちをかえる]を使う
+    ばしょをかえるには[いく]を使う
 
 money:
   name: おかね
@@ -221,7 +221,7 @@ walkLeft:
     await this.ひだりにあるく();
 
 locate:
-  name: いちをかえる
+  name: いく
   type: function
   desc: |
     このキャラクターのいちをかえる
@@ -236,7 +236,7 @@ locate:
       type: string
       desc: どのマップにいどうするか
   code: |
-    await this.いちをかえる(7, 5, 'map2');
+    await this.いく(7, 5, 'map2');
 
 wait:
   name: まつ
