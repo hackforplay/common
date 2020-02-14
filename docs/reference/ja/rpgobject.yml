@@ -100,25 +100,17 @@ forward:
 
 direction:
   name: むき
-  type: number
-  init: 0
+  type: string # number から enum Direction に仕様変更する
+  init: むき.した
   desc: |
-    このキャラクターの向きを数値で表したもの
-    0 なら、下を向いている
-    1 なら、左を向いている
-    2 なら、右を向いている
-    3 なら、上を向いている
+    このキャラクターの今の[むき enum/Direction]
 
 family:
   name: なかま
   type: string
   init: '__Independence'
   desc: |
-    このキャラクターが何の[global/なかま]なのか
-    'Player' なら、プレイヤーの仲間
-    'Map' なら、マップの仲間
-    'Player2' なら、プレイヤー２の仲間
-    'Monster' なら、モンスターの仲間
+    このキャラクターが何の[なかま enum/Family]なのか
     何も設定しなければ、誰の仲間でもない
 
 damage:
