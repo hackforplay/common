@@ -101,8 +101,8 @@ forward:
   name: ベクトル
   type: Vector2
   desc: |
-    このキャラクターが向いている方向のベクトル
-    つねに単位ベクトルである
+    このキャラクターが向いている方向の[ベクトル vector/Vector2]
+    つねに大きさが１の単位ベクトルである
 
 direction:
   name: むき
