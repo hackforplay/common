@@ -98,7 +98,7 @@ behavior:
     'dead' なら、[たいりょく]が 0 になってしまった
 
 forward:
-  name: まえ
+  name: ベクトル
   type: Vector2
   desc: |
     このキャラクターが向いている方向のベクトル
