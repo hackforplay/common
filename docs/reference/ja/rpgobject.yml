@@ -376,3 +376,31 @@ destroy:
   type: function
   desc: |
     このキャラクターをただちに消去する
+
+chase:
+  name: おいかける
+  type: function
+  desc: |
+    相手のキャラクターのことを追いかけるように一歩[あるく]
+  args:
+    - name: あいて
+      type: string | RPGObject
+      desc: |
+        相手のアセット名、または相手キャラクターの変数
+        アセット名を入れた場合は、一番近いキャラクターを追いかける
+    - name: ななめにも進むか
+      type: boolean
+      init: false
+      desc: |
+        ふつうは４方向にしか進まないが、ここに true を入れると８方向に進む
+
+faceTo: # 0.25 で新しく追加する
+  name: ふりむく
+  type: function
+  desc: |
+    相手のキャラクターの方を振り向く
+  args:
+    - name: あいて
+      type: RPGObject
+      desc: |
+        相手キャラクターの変数
