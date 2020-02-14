@@ -8,8 +8,9 @@
     "dist"
   ],
   "scripts": {
+    "docs": "node docs/build.js",
     "start": "webpack-dev-server",
-    "prepublish": "webpack && npm run babel",
+    "prepublish": "webpack && npm run babel && npm run docs",
     "babel": "babel -d lib -D src --extensions '.js,.ts'",
     "format": "prettier --write '**/*.[j|t]s'",
     "lint": "npx eslint src --ext .js,.ts",
@@ -65,7 +66,10 @@
     "canvas": "^2.2.0",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.3.0",
+    "glob": "^7.1.6",
+    "js-yaml": "^3.13.1",
     "jsdom": "^15.0.0",
+    "mkdirp": "^1.0.3",
     "np": "^5.0.0",
     "prettier": "^1.14.2",
     "raf": "^3.4.1",
