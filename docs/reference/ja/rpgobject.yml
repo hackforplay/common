@@ -9,6 +9,12 @@ atk:
   code: |
     this.こうげきりょく = 1;
 
+location:
+  name: ばしょ
+  type: Location
+  desc: |
+    キャラクターの今いる[ばしょ location/Location]をあらわす
+
 mapName: # map.name の getter と、locate のラッパーとしての setter を作る
   name: マップ
   type: string
