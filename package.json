@@ -58,7 +58,7 @@
     "@babel/preset-typescript": "^7.1.0",
     "@babel/register": "^7.0.0",
     "@types/jsdom": "^12.2.1",
-    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.18.0",
     "ava": "^2.3.0",
     "babel-loader": "^8.0.2",
