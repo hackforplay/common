@@ -99,6 +99,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public _mayRotate = false; // 向いている方向に合わせてスプライト自体を回転させるフラグ
   public isInvincible = false; // ダメージを受けなくなるフラグ
   public currentSkin?: ISkin; // 適用されているスキン
+  public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
 
   private _hp?: number;
   private _atk?: number;
