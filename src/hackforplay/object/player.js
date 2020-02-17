@@ -15,11 +15,15 @@ class Player extends RPGObject {
     this.enteredStack = [];
     this.on('enterframe', Player.prototype.stayCheck);
     this.on('walkend', Player.prototype.enterCheck);
-    this.checkInput = this.checkInput || Player.prototype.checkInput.bind(this);
-    this.onenterframe =
-      this.onenterframe || Player.prototype.onenterframe.bind(this);
-    this.enterCheck = this.enterCheck || Player.prototype.enterCheck.bind(this);
-    this.stayCheck = this.stayCheck || Player.prototype.stayCheck.bind(this);
+    const set = key => {
+      if (!(key in this)) {
+        this[key] = Player.prototype[key].bind(this);
+      }
+    };
+    set('checkInput');
+    set('onenterframe');
+    set('enterCheck');
+    set('stayCheck');
     this._layer = RPGMap.Layer.Player;
 
     this.hp = 3;
