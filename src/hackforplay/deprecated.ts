@@ -58,6 +58,6 @@ function checkFamily(item: RPGObject) {
   return '';
 }
 
-function isListening(item: RPGObject, type: string) {
-  return item['on' + type] || item._listeners[type];
+function isListening(item: RPGObject, typeName: string) {
+  return 'on' + typeName in item || typeName in item._listeners;
 }
