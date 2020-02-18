@@ -48,6 +48,7 @@ export function synonymizeClass<T extends typeof Class>(
       const instance = new target(...argArray);
       const callback = instance[PropertyMissing].bind(instance);
       const proxied = synonymize(instance, synonyms, callback);
+
       // enchant.js の collection に介入する #68
       if (Array.isArray(target.collection)) {
         const index = target.collection.indexOf(instance);
@@ -57,6 +58,18 @@ export function synonymizeClass<T extends typeof Class>(
           throw new Error('synonymizeClass: instance is not in collection');
         }
       }
+
+      // enchant.js の parentNode を付け替える
+      const p = (instance as any).parentNode;
+      if (p) {
+        const index = p.childNodes.indexOf(instance);
+        if (index > -1) {
+          p.childNodes.splice(index, 1, proxied);
+        } else {
+          p.childNodes.push(proxied);
+        }
+      }
+
       return proxied;
     }
   });
