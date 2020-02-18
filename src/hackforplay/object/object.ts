@@ -165,7 +165,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       new SAT.Box(new SAT.V(0, 0), this.width, this.height).toPolygon();
 
     // ツリーに追加
-    Hack.defaultParentNode.addChild(this);
+    Hack.defaultParentNode && Hack.defaultParentNode.addChild(this);
   }
 
   private n(type: string, operator: string, amount: number) {
