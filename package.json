@@ -35,7 +35,8 @@
   "homepage": "https://github.com/hackforplay/common#readme",
   "ava": {
     "files": [
-      "test/*.js"
+      "test/*.js",
+      "**/*.test.ts"
     ],
     "compileEnhancements": false,
     "extensions": [
