@@ -1004,9 +1004,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const events = (synonyms as any).events;
     const synonym = events[eventType];
     return (
-      this['on' + eventType] ||
-      this._listeners[eventType] ||
-      (synonym && (this['on' + synonym] || this._listeners[synonym]))
+      'on' + eventType in this ||
+      eventType in this._listeners ||
+      (synonym && ('on' + synonym in this || synonym in this._listeners))
     );
   }
 
