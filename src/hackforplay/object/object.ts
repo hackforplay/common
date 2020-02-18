@@ -103,6 +103,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private _hp?: number;
   private _atk?: number;
+  private _family?: string;
   private _money?: number; // 持っているお金
   private _isDamageObject = false;
   private _penetrate?: number; // ものに触れた時に貫通できる回数
