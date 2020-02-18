@@ -54,8 +54,6 @@ export function synonymizeClass<T extends typeof Class>(
         const index = target.collection.indexOf(instance);
         if (index > -1) {
           target.collection.splice(index, 1, proxied);
-        } else {
-          throw new Error('synonymizeClass: instance is not in collection');
         }
       }
 
