@@ -37,6 +37,7 @@
       "test/*.js"
     ],
     "extensions": [
+      "js",
       "ts"
     ],
     "require": [
