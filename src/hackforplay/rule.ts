@@ -378,7 +378,6 @@ export default class Rule {
   }
 
   public unregisterRules(object: RPGObject) {
-    object.name = ''; // つねに() を終了させる
     object.removeEventListener('becomeattack', this.onこうげきするとき);
     object.removeEventListener('becomedead', this.onたおされたとき);
     object.removeEventListener('addtrodden', this.onふまれたとき);
@@ -386,6 +385,7 @@ export default class Rule {
     object.removeEventListener('collided', this.onすすめなかったとき);
     object.removeEventListener('attacked', this.onこうげきされたとき);
     this.removeFromCollection(object);
+    object.name = ''; // つねに() を終了させる
   }
 
   public installAsset(name: string) {
