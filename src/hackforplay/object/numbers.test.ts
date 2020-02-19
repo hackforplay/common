@@ -9,7 +9,7 @@ test('operating numbers', t => {
   t.is(helper('わる', 9, 3), 9 / 3);
   t.is(helper('以上にする', 4, 6), Math.max(4, 6));
   t.is(helper('以下にする', 9, 3), Math.min(9, 3));
-  t.throws(() => helper('存在しない演算子', 0, 0), TypeError);
+  t.throws(() => helper('存在しない演算子', 0, 0), { instanceOf: TypeError });
 });
 
 function helper(operator: string, previous: number, amount: number) {
