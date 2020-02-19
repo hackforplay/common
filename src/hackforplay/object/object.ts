@@ -1190,7 +1190,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
     return appended;
   }
-  public しょうかんする = this.summon;
 
   /**
    * 「しょうかんする」の足元バージョン
