@@ -1,6 +1,9 @@
 import Vector2 from './math/vector2';
 import RPGObject from './object/object';
 
+/**
+ * @deprecated enum Direction を使う
+ */
 export interface IDir {
   (self: RPGObject): Vector2;
 }
