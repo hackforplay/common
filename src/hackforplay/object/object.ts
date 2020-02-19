@@ -1199,7 +1199,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   private static _initializedReference: RPGObject;
-  public へんしんする(name: string) {
+  public transform(name: string) {
     const { _ruleInstance, _hp } = this;
     if (!_ruleInstance) return;
 
