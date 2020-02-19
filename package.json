@@ -36,7 +36,6 @@
     "files": [
       "test/*.js"
     ],
-    "compileEnhancements": false,
     "extensions": [
       "ts"
     ],
