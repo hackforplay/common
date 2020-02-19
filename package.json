@@ -36,6 +36,7 @@
   "ava": {
     "files": [
       "test/*.js",
+      "test/*.ts",
       "**/*.test.ts"
     ],
     "compileEnhancements": false,
