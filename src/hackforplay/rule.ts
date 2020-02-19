@@ -2,7 +2,7 @@ import { IDir } from './dir';
 import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
-import RPGObject from './object/object';
+import RPGObject, { RPGObjectWithSynonym } from './object/object';
 import { errorInEvent, errorRemoved, logFromAsset } from './stdlog';
 import talk from './talk';
 
@@ -413,7 +413,7 @@ export default class Rule {
   ) {
     this.installAsset(name);
 
-    const object = new RPGObject();
+    const object = new RPGObjectWithSynonym();
     object._ruleInstance = this;
     if (dir) {
       object.forward = dir(object);

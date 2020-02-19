@@ -1,3 +1,4 @@
+import { log } from '@hackforplay/log';
 import { default as enchant } from '../../enchantjs/enchant';
 import '../../enchantjs/ui.enchant';
 import { default as SAT } from '../../lib/sat.min';
@@ -16,6 +17,8 @@ import soundEffect from '../se';
 import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
 import { errorInEvent, errorRemoved, logToDeprecated } from '../stdlog';
 import * as _synonyms from '../synonyms';
+import { synonyms } from '../synonyms/rpgobject';
+import { PropertyMissing, synonymizeClass } from '../synonyms/synonymize';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import * as N from './numbers';
@@ -1440,7 +1443,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     logToDeprecated('this.dir = Dir.(...)');
     this.forward = dir(this);
   }
+
+  public [PropertyMissing](chainedName: string) {
+    const message = `${this.name} の「${chainedName}」はないみたい`;
+    log('error', message, '@hackforplay/common');
+  }
 }
+
+export const RPGObjectWithSynonym = synonymizeClass(RPGObject, synonyms);
 
 function makeHpLabel(self: RPGObject) {
   const label = new (enchant as any).ui.ScoreLabel();
