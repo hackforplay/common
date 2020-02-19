@@ -15,7 +15,7 @@ import Rule from '../rule';
 import soundEffect from '../se';
 import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
 import { errorInEvent, errorRemoved, logToDeprecated } from '../stdlog';
-import * as synonyms from '../synonyms';
+import * as _synonyms from '../synonyms';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import * as N from './numbers';
@@ -989,7 +989,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public dispatchEvent(event: any) {
     enchant.EventTarget.prototype.dispatchEvent.call(this, event);
     // Synonym Event を発火
-    const events = (synonyms as any).events;
+    const events = (_synonyms as any).events;
     const synonym: any = (events as any)[event.type];
     if (synonym) {
       const clone = Object.assign({}, event, {
@@ -1001,7 +1001,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private isListening(eventType: string) {
     // eventType のリスナーを持っているか
-    const events = (synonyms as any).events;
+    const events = (_synonyms as any).events;
     const synonym = events[eventType];
     return (
       'on' + eventType in this ||
