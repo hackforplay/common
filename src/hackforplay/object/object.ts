@@ -1237,6 +1237,20 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return nearestObject;
   }
 
+  /**
+   * 相手のキャラクターの方を振り向く
+   * @param item 相手キャラクターの変数
+   */
+  public faceTo(item: RPGObject) {
+    if (this.map !== item.map) return; // 違うマップなら振り向かない
+    const dx = Math.abs(item.mapX - this.mapX);
+    const dy = Math.abs(item.mapY - this.mapY);
+    this.forward =
+      dx >= dy
+        ? new Vector2(Math.sign(item.mapX - this.mapX), 0)
+        : new Vector2(Math.sign(item.mapY - this.mapY));
+  }
+
   private chaseSameMap(item: RPGObject, unit8: boolean) {
     if (this.map !== item.map) return; // 違うマップなら追わない
     const dx = item.mapX - this.mapX;

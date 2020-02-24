@@ -397,7 +397,7 @@ RPGObject:
           desc: |
             ふつうは４方向にしか進まないが、ここに true を入れると８方向に進む
 
-    faceTo: # 0.25 で新しく追加する
+    faceTo:
       name: ふりむく
       type: function
       desc: |
