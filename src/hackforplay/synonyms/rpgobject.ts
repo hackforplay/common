@@ -2,7 +2,7 @@ import { ISynonyms } from './synonymize';
 
 export const synonyms: ISynonyms = {
   こうげきりょく: 'atk',
-  ばしょ: 'location',
+  // ばしょ: 'location',
   マップ: 'mapName',
   ひだりから: 'mapX',
   うえから: 'mapY',
