@@ -12,7 +12,7 @@ test('RPGObject instance has synonyms', t => {
         instance[key],
         `${synonym} should be same to ${key} at RPGObject`
       );
-      t.not(instance[key], undefined, `${synonym} should define but undefined`);
+      t.truthy(key in instance, `${synonym} should define but undefined`);
     }
   }
 });
