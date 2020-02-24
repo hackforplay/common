@@ -6,11 +6,13 @@ test('RPGObject instance has synonyms', t => {
   const instance: any = new RPGObjectWithSynonym();
   for (const synonym of Object.keys(synonyms)) {
     const key = synonyms[synonym];
-    key &&
+    if (key) {
       t.deepEqual(
         instance[synonym],
         instance[key],
         `${synonym} should be same to ${key} at RPGObject`
       );
+      t.not(instance[key], undefined, `${synonym} should define but undefined`);
+    }
   }
 });
