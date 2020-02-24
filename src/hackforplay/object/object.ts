@@ -216,6 +216,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return Math.floor((this.y - this.offset.y + 16) / 32);
   }
 
+  public get mapName() {
+    return this.map ? this.map.name : undefined;
+  }
+
+  public set mapName(mapName) {
+    if (mapName && mapName !== this.mapName) {
+      this.locate(this.mapX, this.mapY, mapName);
+    }
+  }
+
   public get center() {
     return {
       x: this.x - this.offset.x + 16,
