@@ -1255,7 +1255,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this.map !== item.map) return; // 違うマップなら追わない
     const dx = item.mapX - this.mapX;
     const dy = item.mapY - this.mapY;
-    const farXthanY = dx - dy;
+    const farXthanY = Math.abs(dx) - Math.abs(dy);
     const prioritizeX =
       farXthanY > 0
         ? true // X の方が Y より遠いなら X 優先
@@ -1314,7 +1314,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     prioritizeX = false
   ) {
     movements = movements.filter(vec => vec.x !== 0 || vec.y !== 0);
-    movements.sort((a, b) => (prioritizeX ? b.x - a.x : b.y - a.y)); // 優先されている方の差が大きい順
+    // 優先されている方の差が大きい順
+    movements.sort((a, b) =>
+      prioritizeX
+        ? Math.abs(b.x) - Math.abs(a.x)
+        : Math.abs(b.y) - Math.abs(a.y)
+    );
     // ちゃんと歩けるところ探す
     for (const forward of movements) {
       const unit = unit8 ? forward.unit8() : forward.unit();
