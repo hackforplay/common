@@ -15,7 +15,7 @@
     "format": "prettier --write '**/*.[j|t]s'",
     "lint": "npx eslint src --ext .js,.ts",
     "test": "npm run lint && ava",
-    "watch": "ava \"test/index.js\" --watch",
+    "watch": "ava --watch",
     "resources": "gsutil -m -h \"Cache-Control:public, max-age=3600\" cp -r src/resources gs://hackforplay-common",
     "cors": "gsutil cors set cors.json gs://hackforplay-common",
     "semantic-release": "semantic-release"
