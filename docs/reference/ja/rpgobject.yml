@@ -282,7 +282,7 @@ RPGObject:
           type: IDir
           desc: どの向きにしょうかんするか
 
-    transform: # この名前のメソッドはないが、、
+    transform:
       name: へんしんする
       type: function
       desc: |
