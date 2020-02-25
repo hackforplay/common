@@ -23,6 +23,7 @@ export default function register(_global) {
   // Export to global
   _global.Hack = _global.Hack || getHack();
   _global.Family = _global.Family || Family;
+  _global.なかま = Family;
   _global.RPGObject = _global.RPGObject || RPGObject;
   _global.BehaviorTypes = _global.BehaviorTypes || BehaviorTypes;
   _global.Player = _global.Player || Player;
@@ -37,5 +38,6 @@ export default function register(_global) {
   _global.Dir = _global.Dir || Dir;
   _global.Camera = _global.Camera || Camera;
   _global.log = logFromUser;
-  _global.Direction = _global.むき = _global.Direction || DirectionWithSynonym;
+  _global.Direction = _global.Direction || DirectionWithSynonym;
+  _global.むき = DirectionWithSynonym;
 }
