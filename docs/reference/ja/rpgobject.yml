@@ -112,7 +112,7 @@ RPGObject:
 
     direction:
       name: むき
-      type: string # number から enum Direction に仕様変更する
+      type: string
       init: むき.した
       desc: |
         このキャラクターの今の[むき enum/Direction]
