@@ -124,8 +124,10 @@ export default class Vector2 implements IVector2 {
     return new Vector2(Math.sign(this.x), Math.sign(this.y));
   }
 
-  public static from(vec: IVector2) {
-    return new Vector2(vec.x, vec.y);
+  public static from(vec: IVector2 | [number, number]) {
+    return Array.isArray(vec)
+      ? new Vector2(vec[0], vec[1])
+      : new Vector2(vec.x, vec.y);
   }
 
   public static equal(a: IVector2, b: IVector2) {
