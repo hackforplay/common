@@ -126,6 +126,8 @@ RPGObject:
       desc: |
         このキャラクターが何の[なかま enum/Family]なのか
         何も設定しなければ、誰の仲間でもない
+      code: |
+        this.なかま = なかま.プレイヤー;
 
     damage:
       name: ダメージ
