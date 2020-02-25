@@ -28,6 +28,16 @@ export default function register(_global) {
     const message = `ハック に「${chainedName}」はないみたい`;
     log('error', message, '@hackforplay/common');
   });
+  const rule = new Rule();
+  _global.rule = _global.rule || rule;
+  _global.トリガー = _global.トリガー || rule;
+  // rule.startTimer を Hack.startTimer にコピーする
+  hack.startTimer = () => {
+    rule.startTimer();
+  };
+  hack.stopTimer = () => {
+    rule.stopTimer();
+  };
   _global.ハック = _global.Hack;
   _global.Family = _global.Family || Family;
   _global.なかま = Family;
