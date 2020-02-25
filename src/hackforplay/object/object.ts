@@ -5,6 +5,7 @@ import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
 import { default as Camera } from '../camera';
 import * as Dir from '../dir';
+import { Direction, turn } from '../direction';
 import { default as Family, getMaster, registerServant } from '../family';
 import { default as game } from '../game';
 import { getHack } from '../get-hack';
@@ -111,8 +112,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _isDamageObject = false;
   private _penetrate?: number; // ものに触れた時に貫通できる回数
   private _penetratedCount = 0; // すでに貫通した回数
-  private _forward?: Vector2; // direction
-  private _directionType?: 'single' | 'double' | 'quadruple';
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
   private _collisionFlag?: boolean;
   private _isKinematic?: boolean; // this.isKinematic (Default: true)
@@ -286,8 +285,18 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const key = behavior as keyof NonNullable<ISkin['frame']>;
     const animation = frame[key];
     if (!animation || animation.length < 1) return; // skip
+    const row =
+      direction === Direction.Down
+        ? 0
+        : direction === Direction.Left
+        ? 1
+        : direction === Direction.Right
+        ? 2
+        : direction === Direction.Up
+        ? 3
+        : 0;
     (this as any)._frameSequence = decode(...animation).map(n =>
-      n === null ? null : n + column * direction
+      n === null ? null : n + column * row
     );
   }
 
@@ -311,23 +320,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public set mayRotate(value: boolean) {
     this._mayRotate = value;
     this.rotateIfNeeded();
-  }
-
-  public get directionType() {
-    return this._directionType || 'single'; // デフォルトは single
-  }
-
-  public set directionType(value) {
-    switch (value) {
-      case 'single':
-      case 'double':
-      case 'quadruple':
-        this._directionType = value;
-        break;
-      default:
-        throw new Error(`${value} は正しい directionType ではありません`);
-        break;
-    }
   }
 
   public get collisionFlag() {
@@ -929,73 +921,54 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public get forward() {
-    if (this._forward) return this._forward;
-    switch (this.directionType) {
-      case 'single':
-        return new Vector2(0, -1);
-      case 'double':
-        return new Vector2(-1, 0);
-      default:
-        return new Vector2(0, 1);
-    }
+    return this.direction === Direction.Down
+      ? Vector2.Down
+      : this.direction === Direction.Left
+      ? Vector2.Left
+      : this.direction === Direction.Right
+      ? Vector2.Right
+      : this.direction === Direction.Up
+      ? Vector2.Up
+      : Vector2.Down; // default
   }
-  public set forward(value) {
-    let vec: Vector2;
-    if (Array.isArray(value)) {
-      vec = new Vector2(value[0], value[1]);
-    } else if (typeof value.x === 'number' && typeof value.y === 'number') {
-      vec = Vector2.from(value);
-    } else {
-      throw new TypeError(
-        `${value} は forward に代入できません (${this.name})`
-      );
-    }
-    this._forward = vec.unit();
+  public set forward(value: any) {
+    const unit = Vector2.from(value).unit();
+    this.direction =
+      unit.y > 0
+        ? Direction.Down
+        : unit.x < 0
+        ? Direction.Left
+        : unit.x > 0
+        ? Direction.Right
+        : unit.y < 0
+        ? Direction.Up
+        : Direction.Down; // default
+
     this.computeFrame();
     this.rotateIfNeeded();
-    // 互換性保持
-    if (this._directionType === 'double') {
-      // 画像は左向きと想定する
-      if (this._forward.x !== 0) {
-        this.scaleX = -Math.sign(this._forward.x) * Math.abs(this.scaleX);
-      }
-    }
   }
+
+  private _direction = Direction.Down;
 
   public get direction() {
-    switch (this.directionType) {
-      case 'single':
-        return 0;
-      case 'double':
-        return this.forward.x;
-      case 'quadruple':
-        return Hack.Vec2Dir(this.forward);
-    }
+    return this._direction;
   }
-
-  public set direction(value: number) {
-    switch (this.directionType) {
-      case 'single':
-      case 'quadruple':
-        this._forward = Hack.Dir2Vec(value);
-        this.computeFrame(value);
-        break;
-      case 'double':
-        this._forward = new Vector2(Math.sign(value) || -1, 0);
-        break;
-    }
+  public set direction(value) {
+    this._direction = value;
+    this.computeFrame();
   }
 
   public setFrameD9() {
     errorRemoved('setFrameD9', this);
   }
 
-  public turn(dir: Dir.IDir): void {
-    if (typeof dir !== 'function') {
-      console.error('this.turn() の中には Dir.みぎ などを入れてください');
-      return this.turn(Dir.rightHand);
+  public turn(dir: Dir.IDir | Direction): void {
+    if (typeof dir === 'function') {
+      // 後方互換性のため
+      this.forward = dir(this);
+    } else {
+      this.direction = turn(this.direction, dir);
     }
-    this._forward = dir(this);
     this.computeFrame();
   }
 

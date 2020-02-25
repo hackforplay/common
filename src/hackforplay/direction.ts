@@ -1,4 +1,7 @@
+import { log } from '@hackforplay/log';
 import Vector2 from './math/vector2';
+import { synonyms } from './synonyms/direction';
+import { synonymize } from './synonyms/synonymize';
 
 export enum Direction {
   Up = 'up',
@@ -15,24 +18,60 @@ export enum Direction {
 /**
  * 日本語のシノニム
  */
-export enum Direction {
-  うえ = 'up',
-  みぎ = 'right',
-  した = 'down',
-  ひだり = 'left',
-  みぎて = 'right hand',
-  ひだりて = 'left hand',
-  うしろ = 'behind',
-  ランダム = 'random',
-  ななめありランダム = 'random diagonal'
-}
+export const DirectionWithSynonym = synonymize(
+  Direction,
+  synonyms,
+  chainedName => {
+    const message = `むき に「${chainedName}」はないみたい`;
+    log('error', message, '@hackforplay/common');
+  }
+);
+
+const absolutes = [
+  Direction.Up,
+  Direction.Right,
+  Direction.Down,
+  Direction.Left
+];
+
+const dirToNumber = (direction: Direction) => {
+  for (let index = 0; index < absolutes.length; index++) {
+    if (direction === absolutes[index]) {
+      return index;
+    }
+  }
+  return 0;
+};
 
 /**
- *
- * @param current 現在の向き（ベクトル）
- * @param dir
+ * RPGObject::turn の実装
+ * @param current 現在の向き
+ * @param target 与えられた向き
  */
-export function getDirection() {}
+export function turn(current: Direction, target: Direction) {
+  switch (target) {
+    case Direction.Up:
+    case Direction.Right:
+    case Direction.Down:
+    case Direction.Left:
+      return target;
+    case Direction.RightHand:
+      const right = dirToNumber(current) + 1;
+      return absolutes[right % 4];
+    case Direction.Behind:
+      const behind = dirToNumber(current) + 2;
+      return absolutes[behind % 4];
+    case Direction.LeftHand:
+      const left = dirToNumber(current) + 3;
+      return absolutes[left % 4];
+    case Direction.Random:
+    case Direction.RandomDiagonal: // 未実装
+    default:
+      // 予期せぬ引数が与えられた場合はランダム
+      const rand = Math.floor(Math.random() * 4);
+      return absolutes[rand];
+  }
+}
 
 const m = -1;
 
