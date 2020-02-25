@@ -125,6 +125,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
   private childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
+  private detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
 
   public constructor() {
     super(0, 0);
