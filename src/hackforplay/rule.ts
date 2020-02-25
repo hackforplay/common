@@ -1,9 +1,12 @@
+import { log } from '@hackforplay/log';
 import { IDir } from './dir';
 import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
 import RPGObject, { RPGObjectWithSynonym } from './object/object';
 import { errorInEvent, errorRemoved, logFromAsset } from './stdlog';
+import { synonyms } from './synonyms/rule';
+import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
 import talk from './talk';
 
 interface IEvent {
@@ -35,7 +38,7 @@ type NoObjectListener = (this: void) => Promise<void>;
 type OneObjectListener = (this: RPGObject) => Promise<void>;
 type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
 
-export default class Rule {
+export class Rule {
   public static readonly Anyone = Anyone;
   public static readonly Enemy = Enemy;
 
@@ -403,7 +406,7 @@ export default class Rule {
   }
 
   // 実際にコールする関数
-  public つくる(
+  public create(
     name: string,
     x?: number,
     y?: number,
@@ -468,49 +471,56 @@ export default class Rule {
     this.runTwoObjectListener('こうげきされたとき', e.target, e.item);
   }).bind(this);
 
-  public ゲームがはじまったとき(func: NoObjectListener) {
+  public gameStarted(func: NoObjectListener) {
     this.addNoObjectListener('ゲームがはじまったとき', func);
   }
-  public つくられたとき(func: OneObjectListener) {
+  public created(func: OneObjectListener) {
     this.addOneObjectLisener('つくられたとき', func);
   }
-  public つねに(func: OneObjectListener) {
+  public updated(func: OneObjectListener) {
     this.addOneObjectLisener('つねに', func);
   }
-  public こうげきするとき(func: OneObjectListener) {
+  public attacked(func: OneObjectListener) {
     this.addOneObjectLisener('こうげきするとき', func);
   }
-  public たおされたとき(func: OneObjectListener) {
+  public defeated(func: OneObjectListener) {
     this.addOneObjectLisener('たおされたとき', func);
   }
-  public すすめなかったとき(func: OneObjectListener) {
+  public canNotWalk(func: OneObjectListener) {
     this.addOneObjectLisener('すすめなかったとき', func);
   }
-  public おかねがかわったとき(func: OneObjectListener) {
+  public moneyChanged(func: OneObjectListener) {
     this.addOneObjectLisener('おかねがかわったとき', func);
   }
-  public じかんがすすんだとき(func: OneObjectListener) {
+  public timePassed(func: OneObjectListener) {
     this.addOneObjectLisener('じかんがすすんだとき', func);
   }
-  public タップされたとき(func: OneObjectListener) {
+  public tapped(func: OneObjectListener) {
     this.addOneObjectLisener('タップされたとき', func);
   }
-  public ふまれたとき(func: TwoObjectListener) {
+  public trodden(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
   }
-  public ぶつかったとき(func: TwoObjectListener) {
+  public collided(func: TwoObjectListener) {
     this.addTwoObjectListener('ぶつかったとき', func);
   }
-  public こうげきされたとき(func: TwoObjectListener) {
+  public beAttacked(func: TwoObjectListener) {
     this.addTwoObjectListener('こうげきされたとき', func);
   }
-  public メッセージされたとき(func: TwoObjectListener) {
+  public messaged(func: TwoObjectListener) {
     this.addTwoObjectListener('メッセージされたとき', func);
   }
-  public しょうかんされたとき(func: TwoObjectListener) {
+  public summoned(func: TwoObjectListener) {
     this.addTwoObjectListener('しょうかんされたとき', func);
   }
-  public みつけたとき(func: TwoObjectListener) {
+  public found(func: TwoObjectListener) {
     this.addTwoObjectListener('みつけたとき', func);
   }
+
+  public [PropertyMissing](chainedName: string) {
+    const message = `トリガーに「${chainedName}」はないみたい`;
+    log('error', message, '@hackforplay/common');
+  }
 }
+
+export default synonymizeClass(Rule, synonyms);
