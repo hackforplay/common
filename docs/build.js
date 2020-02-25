@@ -14,7 +14,8 @@ glob(input, async (err, matches) => {
   }
   let hasError = false;
   const contents = {
-    __lang: 'ja'
+    __lang: 'ja',
+    __version: '1'
   };
   for (const filePath of matches) {
     const fileName = path.basename(filePath, '.yml');
