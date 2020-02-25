@@ -6,9 +6,9 @@ Hack.gameclear:
     Hack.gameclear();
 
 Hack.gameover:
-  name: ハック.ゲームクリア
+  name: ハック.ゲームオーバー
   type: function
-  desc: ゲームクリアにする
+  desc: ゲームオーバーにする
   code: |
     Hack.gameover();
 
