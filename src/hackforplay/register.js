@@ -3,6 +3,7 @@ import enchant from '../enchantjs/enchant';
 import BehaviorTypes from './behavior-types';
 import Camera from './camera';
 import * as Dir from './dir';
+import { DirectionWithSynonym } from './direction';
 import Family from './family';
 import game from './game';
 import { getHack } from './get-hack';
@@ -36,4 +37,5 @@ export default function register(_global) {
   _global.Dir = _global.Dir || Dir;
   _global.Camera = _global.Camera || Camera;
   _global.log = logFromUser;
+  _global.Direction = _global.むき = _global.Direction || DirectionWithSynonym;
 }
