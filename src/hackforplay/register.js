@@ -15,13 +15,20 @@ import random from './random';
 import RPGMap from './rpg-map';
 import Rule from './rule';
 import { logFromUser } from './stdlog';
+import { synonyms } from './synonyms/hack';
+import { synonymize } from './synonyms/synonymize';
 import TextArea from './ui/textarea';
 
 log('system', '世界は始まりを告げた。ハローワールド！', '@hackforplay/common');
 
 export default function register(_global) {
   // Export to global
-  _global.Hack = _global.Hack || getHack();
+  const hack = _global.Hack || getHack();
+  _global.Hack = synonymize(hack, synonyms, chainedName => {
+    const message = `ハック に「${chainedName}」はないみたい`;
+    log('error', message, '@hackforplay/common');
+  });
+  _global.ハック = _global.Hack;
   _global.Family = _global.Family || Family;
   _global.なかま = Family;
   _global.RPGObject = _global.RPGObject || RPGObject;
