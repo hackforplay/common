@@ -116,6 +116,8 @@ RPGObject:
       init: むき.した
       desc: |
         このキャラクターの今の[むき enum/Direction]
+      code: |
+        this.むき = むき.した;
 
     family:
       name: なかま
