@@ -6,6 +6,11 @@ export interface IVector2 {
 }
 
 export default class Vector2 implements IVector2 {
+  static Up = new Vector2(0, -1);
+  static Right = new Vector2(1, 0);
+  static Down = new Vector2(0, 1);
+  static Left = new Vector2(-1, 0);
+
   public x = 0;
   public y = 0;
 
