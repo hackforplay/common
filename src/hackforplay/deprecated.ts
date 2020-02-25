@@ -1,4 +1,3 @@
-import { default as Family } from './family';
 import { getHack } from './get-hack';
 import RPGObject from './object/object';
 import * as synonyms from './synonyms';
@@ -12,7 +11,6 @@ export default function deprecated() {
   for (const item of [...RPGObject.collection]) {
     if (checked.has(item)) continue;
     message += checkEvents(item);
-    message += checkFamily(item);
     checked.add(item);
   }
   if (isListening(Hack, 'scorechange')) {
@@ -44,16 +42,6 @@ function checkEvents(item: RPGObject) {
     if (isListening(item, type)) {
       return `Deprecated: '${type}' is deprecated. Please use 'addtrodden' or 'removetrodden' instead.\n`;
     }
-  }
-  return '';
-}
-
-/**
- * Family.エネミー は廃止して Family.モンスターを代わりに使う
- */
-function checkFamily(item: RPGObject) {
-  if (item.family === Family.エネミー) {
-    return 'Family.エネミー ではなく Family.モンスター を使ってください\n';
   }
   return '';
 }
