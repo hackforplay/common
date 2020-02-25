@@ -109,6 +109,20 @@ function createProxy<T extends object>(
         Reflect.has(target, p) ||
         (p in synonyms && Reflect.has(target, (synonyms as any)[p]))
       );
+    },
+    set(target: any, p, value, receiver) {
+      if (p in target) {
+        Reflect.set(target, p, value, receiver); // ユーザーが作った setter の中でもシノニムが使えるようにするため
+        return true;
+      }
+      if (typeof p === 'string') {
+        const s = synonyms[p];
+        if (s && s in target) {
+          target[s] = value;
+        }
+      }
+      Reflect.set(target, p, value, receiver);
+      return true;
     }
   });
 }
