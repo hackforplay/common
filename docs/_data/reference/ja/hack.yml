@@ -1,42 +1,48 @@
-Hack.gameclear:
-  name: ハック.ゲームクリア
-  type: function
-  desc: ゲームクリアにする
-  code: |
-    Hack.gameclear();
-
-Hack.gameover:
-  name: ハック.ゲームオーバー
-  type: function
-  desc: ゲームオーバーにする
-  code: |
-    Hack.gameover();
-
-Hack.time:
-  name: ハック.じかん
-  type: number
+Hack:
+  name: ハック
+  type: object
   desc: |
-    ゲームがはじまってからの時間を設定できる
-    あるいは、時間によってキャラクターのふるまいを変えられる
-  code: |
-    Hack.time = 0; // じかんをゼロに戻す
+    ゲームの状態を変える関数を集めたオブジェクト
+  fields:
+    gameclear:
+      name: ゲームクリア
+      type: function
+      desc: ゲームクリアにする
+      code: |
+        Hack.gameclear();
 
-Hack.stopTimer:
-  name: ハック.じかんをとめる
-  type: function
-  desc: |
-    ゲームのじかんを進まないようにする
-    ただし、キャラクターは動き続ける
-    [ハック.じかんをうごかす]をすると、また動き始める
-  code: |
-    Hack.stopTimer(); // じかんをとめる
+    gameover:
+      name: ゲームオーバー
+      type: function
+      desc: ゲームオーバーにする
+      code: |
+        Hack.gameover();
 
-Hack.startTimer:
-  name: ハック.じかんをうごかす
-  type: function
-  desc: |
-    [ハック.じかんをとめる]で止めたじかんを、また動かし始める
-  code: |
-    Hack.stopTimer(); // じかんをとめる
-    await this.まつ(2); // ２秒まつ
-    Hack.startTimer(); // じかんをうごかしはじめる
+    time:
+      name: じかん
+      type: number
+      desc: |
+        ゲームがはじまってからの時間を設定できる
+        あるいは、時間によってキャラクターのふるまいを変えられる
+      code: |
+        Hack.time = 0; // じかんをゼロに戻す
+
+    stopTimer:
+      name: じかんをとめる
+      type: function
+      desc: |
+        ゲームのじかんを進まないようにする
+        ただし、キャラクターは動き続ける
+        [じかんをうごかす](#じかんをうごかす)をすると、また動き始める
+      code: |
+        Hack.stopTimer(); // じかんをとめる
+
+    startTimer:
+      name: じかんをうごかす
+      type: function
+      desc: |
+        [じかんをとめる](#じかんをとめる)で止めたじかんを、また動かし始める
+      code: |
+        Hack.stopTimer(); // じかんをとめる
+        await this.まつ(2); // ２秒まつ
+        Hack.startTimer(); // じかんをうごかしはじめる
