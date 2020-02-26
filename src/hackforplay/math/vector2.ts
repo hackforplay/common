@@ -6,6 +6,11 @@ export interface IVector2 {
 }
 
 export default class Vector2 implements IVector2 {
+  static Up = new Vector2(0, -1);
+  static Right = new Vector2(1, 0);
+  static Down = new Vector2(0, 1);
+  static Left = new Vector2(-1, 0);
+
   public x = 0;
   public y = 0;
 
@@ -124,8 +129,10 @@ export default class Vector2 implements IVector2 {
     return new Vector2(Math.sign(this.x), Math.sign(this.y));
   }
 
-  public static from(vec: IVector2) {
-    return new Vector2(vec.x, vec.y);
+  public static from(vec: IVector2 | [number, number]) {
+    return Array.isArray(vec)
+      ? new Vector2(vec[0], vec[1])
+      : new Vector2(vec.x, vec.y);
   }
 
   public static equal(a: IVector2, b: IVector2) {

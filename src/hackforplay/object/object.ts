@@ -1,9 +1,11 @@
+import { log } from '@hackforplay/log';
 import { default as enchant } from '../../enchantjs/enchant';
 import '../../enchantjs/ui.enchant';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
 import { default as Camera } from '../camera';
 import * as Dir from '../dir';
+import { Direction, turn } from '../direction';
 import { default as Family, getMaster, registerServant } from '../family';
 import { default as game } from '../game';
 import { getHack } from '../get-hack';
@@ -15,7 +17,9 @@ import Rule from '../rule';
 import soundEffect from '../se';
 import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
 import { errorInEvent, errorRemoved, logToDeprecated } from '../stdlog';
-import * as synonyms from '../synonyms';
+import * as _synonyms from '../synonyms';
+import { synonyms } from '../synonyms/rpgobject';
+import { PropertyMissing, synonymizeClass } from '../synonyms/synonymize';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import * as N from './numbers';
@@ -99,15 +103,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public _mayRotate = false; // 向いている方向に合わせてスプライト自体を回転させるフラグ
   public isInvincible = false; // ダメージを受けなくなるフラグ
   public currentSkin?: ISkin; // 適用されているスキン
+  public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
 
   private _hp?: number;
   private _atk?: number;
+  private _family?: string;
   private _money?: number; // 持っているお金
   private _isDamageObject = false;
   private _penetrate?: number; // ものに触れた時に貫通できる回数
   private _penetratedCount = 0; // すでに貫通した回数
-  private _forward?: Vector2; // direction
-  private _directionType?: 'single' | 'double' | 'quadruple';
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
   private _collisionFlag?: boolean;
   private _isKinematic?: boolean; // this.isKinematic (Default: true)
@@ -120,6 +124,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _image?: typeof enchant.Surface;
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
+  private childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
+  private detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
 
   public constructor() {
     super(0, 0);
@@ -162,7 +168,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       new SAT.Box(new SAT.V(0, 0), this.width, this.height).toPolygon();
 
     // ツリーに追加
-    Hack.defaultParentNode.addChild(this);
+    Hack.defaultParentNode && Hack.defaultParentNode.addChild(this);
   }
 
   private n(type: string, operator: string, amount: number) {
@@ -208,6 +214,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public get mapY() {
     return Math.floor((this.y - this.offset.y + 16) / 32);
+  }
+
+  public get mapName() {
+    return this.map ? this.map.name : undefined;
+  }
+
+  public set mapName(mapName) {
+    if (mapName && mapName !== this.mapName) {
+      this.locate(this.mapX, this.mapY, mapName);
+    }
   }
 
   public get center() {
@@ -270,8 +286,18 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const key = behavior as keyof NonNullable<ISkin['frame']>;
     const animation = frame[key];
     if (!animation || animation.length < 1) return; // skip
+    const row =
+      direction === Direction.Down
+        ? 0
+        : direction === Direction.Left
+        ? 1
+        : direction === Direction.Right
+        ? 2
+        : direction === Direction.Up
+        ? 3
+        : 0;
     (this as any)._frameSequence = decode(...animation).map(n =>
-      n === null ? null : n + column * direction
+      n === null ? null : n + column * row
     );
   }
 
@@ -295,23 +321,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public set mayRotate(value: boolean) {
     this._mayRotate = value;
     this.rotateIfNeeded();
-  }
-
-  public get directionType() {
-    return this._directionType || 'single'; // デフォルトは single
-  }
-
-  public set directionType(value) {
-    switch (value) {
-      case 'single':
-      case 'double':
-      case 'quadruple':
-        this._directionType = value;
-        break;
-      default:
-        throw new Error(`${value} は正しい directionType ではありません`);
-        break;
-    }
   }
 
   public get collisionFlag() {
@@ -468,7 +477,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const _remove = () => {
       this.dispatchEvent(new enchant.Event('destroy')); // ondestroy event を発火
       this.remove();
-      if (this.shadow) this.shadow.remove();
       if (this.hpLabel) this.hpLabel.remove();
     };
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
@@ -914,80 +922,61 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public get forward() {
-    if (this._forward) return this._forward;
-    switch (this.directionType) {
-      case 'single':
-        return new Vector2(0, -1);
-      case 'double':
-        return new Vector2(-1, 0);
-      default:
-        return new Vector2(0, 1);
-    }
+    return this.direction === Direction.Down
+      ? Vector2.Down
+      : this.direction === Direction.Left
+      ? Vector2.Left
+      : this.direction === Direction.Right
+      ? Vector2.Right
+      : this.direction === Direction.Up
+      ? Vector2.Up
+      : Vector2.Down; // default
   }
-  public set forward(value) {
-    let vec: Vector2;
-    if (Array.isArray(value)) {
-      vec = new Vector2(value[0], value[1]);
-    } else if (typeof value.x === 'number' && typeof value.y === 'number') {
-      vec = Vector2.from(value);
-    } else {
-      throw new TypeError(
-        `${value} は forward に代入できません (${this.name})`
-      );
-    }
-    this._forward = vec.unit();
+  public set forward(value: any) {
+    const unit = Vector2.from(value).unit();
+    this.direction =
+      unit.y > 0
+        ? Direction.Down
+        : unit.x < 0
+        ? Direction.Left
+        : unit.x > 0
+        ? Direction.Right
+        : unit.y < 0
+        ? Direction.Up
+        : Direction.Down; // default
+
     this.computeFrame();
     this.rotateIfNeeded();
-    // 互換性保持
-    if (this._directionType === 'double') {
-      // 画像は左向きと想定する
-      if (this._forward.x !== 0) {
-        this.scaleX = -Math.sign(this._forward.x) * Math.abs(this.scaleX);
-      }
-    }
   }
+
+  private _direction = Direction.Down;
 
   public get direction() {
-    switch (this.directionType) {
-      case 'single':
-        return 0;
-      case 'double':
-        return this.forward.x;
-      case 'quadruple':
-        return Hack.Vec2Dir(this.forward);
-    }
+    return this._direction;
   }
-
-  public set direction(value: number) {
-    switch (this.directionType) {
-      case 'single':
-      case 'quadruple':
-        this._forward = Hack.Dir2Vec(value);
-        this.computeFrame(value);
-        break;
-      case 'double':
-        this._forward = new Vector2(Math.sign(value) || -1, 0);
-        break;
-    }
+  public set direction(value) {
+    this._direction = value;
+    this.computeFrame();
   }
 
   public setFrameD9() {
     errorRemoved('setFrameD9', this);
   }
 
-  public turn(dir: Dir.IDir): void {
-    if (typeof dir !== 'function') {
-      console.error('this.turn() の中には Dir.みぎ などを入れてください');
-      return this.turn(Dir.rightHand);
+  public turn(dir: Dir.IDir | Direction): void {
+    if (typeof dir === 'function') {
+      // 後方互換性のため
+      this.forward = dir(this);
+    } else {
+      this.direction = turn(this.direction, dir);
     }
-    this._forward = dir(this);
     this.computeFrame();
   }
 
   public dispatchEvent(event: any) {
     enchant.EventTarget.prototype.dispatchEvent.call(this, event);
     // Synonym Event を発火
-    const events = (synonyms as any).events;
+    const events = (_synonyms as any).events;
     const synonym: any = (events as any)[event.type];
     if (synonym) {
       const clone = Object.assign({}, event, {
@@ -999,12 +988,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private isListening(eventType: string) {
     // eventType のリスナーを持っているか
-    const events = (synonyms as any).events;
+    const events = (_synonyms as any).events;
     const synonym = events[eventType];
     return (
-      this['on' + eventType] ||
-      this._listeners[eventType] ||
-      (synonym && (this['on' + synonym] || this._listeners[synonym]))
+      'on' + eventType in this ||
+      eventType in this._listeners ||
+      (synonym && ('on' + synonym in this || synonym in this._listeners))
     );
   }
 
@@ -1185,7 +1174,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
     return appended;
   }
-  public しょうかんする = this.summon;
 
   /**
    * 「しょうかんする」の足元バージョン
@@ -1195,7 +1183,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   private static _initializedReference: RPGObject;
-  public へんしんする(name: string) {
+  public transform(name: string) {
     const { _ruleInstance, _hp } = this;
     if (!_ruleInstance) return;
 
@@ -1233,11 +1221,25 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return nearestObject;
   }
 
+  /**
+   * 相手のキャラクターの方を振り向く
+   * @param item 相手キャラクターの変数
+   */
+  public faceTo(item: RPGObject) {
+    if (this.map !== item.map) return; // 違うマップなら振り向かない
+    const dx = Math.abs(item.mapX - this.mapX);
+    const dy = Math.abs(item.mapY - this.mapY);
+    this.forward =
+      dx >= dy
+        ? new Vector2(Math.sign(item.mapX - this.mapX), 0)
+        : new Vector2(Math.sign(item.mapY - this.mapY));
+  }
+
   private chaseSameMap(item: RPGObject, unit8: boolean) {
     if (this.map !== item.map) return; // 違うマップなら追わない
     const dx = item.mapX - this.mapX;
     const dy = item.mapY - this.mapY;
-    const farXthanY = dx - dy;
+    const farXthanY = Math.abs(dx) - Math.abs(dy);
     const prioritizeX =
       farXthanY > 0
         ? true // X の方が Y より遠いなら X 優先
@@ -1296,7 +1298,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     prioritizeX = false
   ) {
     movements = movements.filter(vec => vec.x !== 0 || vec.y !== 0);
-    movements.sort((a, b) => (prioritizeX ? b.x - a.x : b.y - a.y)); // 優先されている方の差が大きい順
+    // 優先されている方の差が大きい順
+    movements.sort((a, b) =>
+      prioritizeX
+        ? Math.abs(b.x) - Math.abs(a.x)
+        : Math.abs(b.y) - Math.abs(a.y)
+    );
     // ちゃんと歩けるところ探す
     for (const forward of movements) {
       const unit = unit8 ? forward.unit8() : forward.unit();
@@ -1438,7 +1445,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     logToDeprecated('this.dir = Dir.(...)');
     this.forward = dir(this);
   }
+
+  public [PropertyMissing](chainedName: string) {
+    const message = `${this.name} の「${chainedName}」はないみたい`;
+    log('error', message, '@hackforplay/common');
+  }
 }
+
+export const RPGObjectWithSynonym = synonymizeClass(RPGObject, synonyms);
 
 function makeHpLabel(self: RPGObject) {
   const label = new (enchant as any).ui.ScoreLabel();

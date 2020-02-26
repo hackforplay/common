@@ -1,18 +1,23 @@
 import { log } from '@hackforplay/log';
-import { errorJp } from './error-jp';
 
 type Self = { name: string };
 
 export function errorInEvent(error: any, self?: Self, eventName?: string) {
-  const errorName = getName(error);
-  const message =
-    [
+  console.error(error);
+  const fileName = self ? `modules/${self.name}.js` : 'Unknown';
+
+  // ReferenceError
+  if (error instanceof Error && error.name === 'ReferenceError') {
+    const varName = error.message.split(' ')[0];
+    const message = [
       self ? `${self.name} が` : '',
       eventName ? `${eventName} に` : '',
-      errorName ? `「${errorName}」` : ''
-    ].join(' ') + 'みたい';
-  error && console.error(error);
-  return log('error', message, self ? `modules/${self.name}.js` : 'Unknown');
+      `「${varName}」と書いてしまったみたい`
+    ].join(' ');
+    log('error', message, fileName);
+  }
+
+  return log('error', `原因不明のエラーです。コンソールを見て下さい`, fileName);
 }
 
 export function errorRemoved(name: string, self?: Self) {
@@ -21,15 +26,6 @@ export function errorRemoved(name: string, self?: Self) {
     `${name} は削除されました`,
     self ? `modules/${self.name}.js` : 'Unknown'
   );
-}
-
-export function getName(error: any) {
-  if (typeof error === 'string') return error;
-  if (error instanceof Error) return errorJp.get(error.name) || error.name;
-  if (typeof error === 'undefined') return '';
-  if (error === null) return '';
-  if ('name' in error) return error['name'];
-  return '';
 }
 
 export function logFromUser(...line: any[]) {

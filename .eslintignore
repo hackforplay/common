@@ -4,3 +4,5 @@ src/enchantjs/enchant.js
 src/enchantjs/ui.enchant.js
 
 test
+
+*.js

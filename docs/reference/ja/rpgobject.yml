@@ -14,11 +14,12 @@ RPGObject:
       code: |
         this.こうげきりょく = 1;
 
-    location:
-      name: ばしょ
-      type: Location
-      desc: |
-        キャラクターの今いる[ばしょ location/Location]をあらわす
+    # 仕様が固まるまで保留
+    # location:
+    #   name: ばしょ
+    #   type: Location
+    #   desc: |
+    #     キャラクターの今いる[ばしょ location/Location]をあらわす
 
     mapName: # map.name の getter と、locate のラッパーとしての setter を作る
       name: マップ
@@ -111,10 +112,12 @@ RPGObject:
 
     direction:
       name: むき
-      type: string # number から enum Direction に仕様変更する
+      type: string
       init: むき.した
       desc: |
         このキャラクターの今の[むき enum/Direction]
+      code: |
+        this.むき = むき.した;
 
     family:
       name: なかま
@@ -123,6 +126,8 @@ RPGObject:
       desc: |
         このキャラクターが何の[なかま enum/Family]なのか
         何も設定しなければ、誰の仲間でもない
+      code: |
+        this.なかま = なかま.プレイヤー;
 
     damage:
       name: ダメージ
@@ -282,7 +287,7 @@ RPGObject:
           type: IDir
           desc: どの向きにしょうかんするか
 
-    transform: # この名前のメソッドはないが、、
+    transform:
       name: へんしんする
       type: function
       desc: |
@@ -397,7 +402,7 @@ RPGObject:
           desc: |
             ふつうは４方向にしか進まないが、ここに true を入れると８方向に進む
 
-    faceTo: # 0.25 で新しく追加する
+    faceTo:
       name: ふりむく
       type: function
       desc: |

@@ -296,7 +296,10 @@ enchant.EventTarget.prototype.dispatchEvent = function dispatchEvent(event) {
     event.target = this;
     event.localX = event.x - this._offsetX;
     event.localY = event.y - this._offsetY;
-    if (this['on' + event.type] != null) {
+    if (
+      'on' + event.type in this &&
+      typeof this['on' + event.type] === 'function'
+    ) {
       const res = this['on' + event.type](event);
       reportAsyncError(res, event, this);
     }
