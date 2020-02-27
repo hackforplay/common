@@ -13,7 +13,7 @@ import { generateMapFromDefinition } from '../load-maps';
 import Vector2, { IVector2 } from '../math/vector2';
 import { randomCollection } from '../random';
 import RPGMap from '../rpg-map';
-import Rule from '../rule';
+import { Rule } from '../rule';
 import soundEffect from '../se';
 import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
 import { errorInEvent, errorRemoved, logToDeprecated } from '../stdlog';
