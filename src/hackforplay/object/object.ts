@@ -105,6 +105,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public currentSkin?: ISkin; // 適用されているスキン
   public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
   public _preventFrameHits: RPGObject[] = []; // rpg-kit-rpgobjects.js で参照されるプロパティ
+  public childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
+  public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
 
   private _hp?: number;
   private _atk?: number;
@@ -125,8 +127,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _image?: typeof enchant.Surface;
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
-  private childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
-  private detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
 
   public constructor() {
     super(0, 0);
