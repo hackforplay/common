@@ -8,3 +8,7 @@ task :test do
   }
   HTMLProofer.check_directory("./_site", options).run
 end
+
+task :serve do
+  sh "bundle exec jekyll serve -s docs"
+end
