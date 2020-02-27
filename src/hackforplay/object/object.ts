@@ -186,7 +186,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return (this[key] = operate(this[key], amount));
   }
 
-  public get atk() {
+  public get atk(): number {
     if (typeof this._atk === 'number') return this._atk;
     const master = getMaster(this);
     if (master) return master.atk;
