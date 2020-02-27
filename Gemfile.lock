@@ -224,6 +224,7 @@ GEM
       forwardable-extended (~> 2.6)
     public_suffix (3.1.1)
     rainbow (3.0.0)
+    rake (13.0.1)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
@@ -258,6 +259,7 @@ DEPENDENCIES
   github-pages
   html-proofer
   jekyll (>= 3.3)
+  rake
 
 BUNDLED WITH
    2.1.2
