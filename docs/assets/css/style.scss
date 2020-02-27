@@ -3,6 +3,10 @@
 
 @import '{{ site.theme }}';
 
+#a-title {
+  text-decoration: none;
+}
+
 .highlight .err {
   color: inherit;
   background-color: inherit;
