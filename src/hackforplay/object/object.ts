@@ -1163,7 +1163,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       );
     }
     const { x, y } = this.forward;
-    const appended = _ruleInstance.つくる(
+    const appended = _ruleInstance.create(
       name,
       this.mapX + forward * x - right * y,
       this.mapY + forward * y + right * x,
