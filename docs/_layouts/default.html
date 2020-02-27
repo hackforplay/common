@@ -38,7 +38,10 @@
 
     <div id="footer" class="container">
       <h1>ハックフォープレイの開発に貢献する</h1>
-      <a href="{{ site.github.repository_url }}/blob/master/docs/reference/ja/{{ page.file_name }}.yml">このドキュメントを修正する</a>
+      <a href="{{ site.github.repository_url }}" class="btn btn-github"><span class="icon"></span>GitHub をひらく</a>
+      {% if page.file_name %}
+        <a href="{{ site.github.repository_url }}/blob/master/docs/reference/ja/{{ page.file_name }}.yml">このドキュメントを修正する</a>
+      {% endif %}
       {% if page.source %}
           <a href="{{ site.github.repository_url }}/blob/master{{ page.source }}">ライブラリを修正する</a>
       {% endif %}
