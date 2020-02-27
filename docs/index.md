@@ -1,5 +1,5 @@
 ---
-title: Home
+title: ドキュメント トップ
 ---
 
 - [グローバル関数](/global)
