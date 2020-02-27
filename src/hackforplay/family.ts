@@ -17,7 +17,7 @@ export default synonymize(Family, synonyms, chainedName => {
   log('error', message, '@hackforplay/common');
 });
 
-const servantMasterMap = new WeakMap(); // 従者関係の参照を保持するマップ
+const servantMasterMap = new WeakMap<RPGObject, RPGObject>(); // 従者関係の参照を保持するマップ
 
 /**
  * item1 と item2 が対立関係にあるかどうか
@@ -58,7 +58,8 @@ export function isMaster(master: RPGObject, servant: RPGObject): boolean {
   const actualMaster = servantMasterMap.get(servant); // 直属のマスター
   // master が直属のマスターであるか, あるいは直属のマスターと契約関係にあるか
   return (
-    actualMaster && (actualMaster === master || isMaster(master, actualMaster))
+    actualMaster !== undefined &&
+    (actualMaster === master || isMaster(master, actualMaster))
   );
 }
 

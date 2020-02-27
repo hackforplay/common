@@ -198,6 +198,13 @@ RPGObject:
         このキャラクターが無敵かどうか
         true にすると、[ダメージ](#ダメージ)を受けなくなる
 
+    parent:
+      name: おや
+      type: RPGObject
+      init: undefined
+      desc: |
+        このキャラクターを[しょうかんする](#しょうかんする)によって作ったキャラクター
+
     attack:
       name: こうげきする
       type: function

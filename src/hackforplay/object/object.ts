@@ -1092,6 +1092,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     context.drawImage(_element, 0, 0);
   }
 
+  public get parent() {
+    return getMaster(this);
+  }
+
   public set imageUrl(url: string) {
     errorRemoved('imageUrl', this);
   }
