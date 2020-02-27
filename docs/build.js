@@ -6,7 +6,7 @@ const fs = require('fs').promises;
 
 const DIST = path.resolve(__dirname, '../dist/docs');
 
-const input = path.resolve(__dirname, './reference/ja/*.yml');
+const input = path.resolve(__dirname, './_data/reference/ja/*.yml');
 glob(input, async (err, matches) => {
   if (err) {
     console.log(err);

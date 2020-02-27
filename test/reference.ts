@@ -6,7 +6,7 @@ import * as rpgobject from '../src/hackforplay/synonyms/rpgobject';
 
 const cases = [
   {
-    filePath: '../docs/reference/ja/rpgobject.yml',
+    filePath: '../docs/_data/reference/ja/rpgobject.yml',
     key: 'RPGObject',
     name: 'RPGObject',
     type: 'class',

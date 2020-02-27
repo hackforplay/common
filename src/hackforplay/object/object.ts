@@ -13,7 +13,7 @@ import { generateMapFromDefinition } from '../load-maps';
 import Vector2, { IVector2 } from '../math/vector2';
 import { randomCollection } from '../random';
 import RPGMap from '../rpg-map';
-import Rule from '../rule';
+import { Rule } from '../rule';
 import soundEffect from '../se';
 import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
 import { errorInEvent, errorRemoved, logToDeprecated } from '../stdlog';
@@ -104,6 +104,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public isInvincible = false; // ダメージを受けなくなるフラグ
   public currentSkin?: ISkin; // 適用されているスキン
   public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
+  public _preventFrameHits: RPGObject[] = []; // rpg-kit-rpgobjects.js で参照されるプロパティ
+  public childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
+  public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
 
   private _hp?: number;
   private _atk?: number;
@@ -124,8 +127,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _image?: typeof enchant.Surface;
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
-  private childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
-  private detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
 
   public constructor() {
     super(0, 0);
@@ -185,7 +186,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return (this[key] = operate(this[key], amount));
   }
 
-  public get atk() {
+  public get atk(): number {
     if (typeof this._atk === 'number') return this._atk;
     const master = getMaster(this);
     if (master) return master.atk;
@@ -1092,6 +1093,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     context.drawImage(_element, 0, 0);
   }
 
+  public get parent() {
+    return getMaster(this);
+  }
+
   public set imageUrl(url: string) {
     errorRemoved('imageUrl', this);
   }
@@ -1163,7 +1168,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       );
     }
     const { x, y } = this.forward;
-    const appended = _ruleInstance.つくる(
+    const appended = _ruleInstance.create(
       name,
       this.mapX + forward * x - right * y,
       this.mapY + forward * y + right * x,

@@ -1,5 +1,5 @@
 Vector2:
-  name: ベクトル
+  name: Vector2
   type: class
   desc: |
     座標や向きなどを、`x` と `y` の二つの数値を使って表すもの

@@ -22,3 +22,7 @@ or manual deploy
 
 - `npx np`
 - Then start interactive shell via [np](https://github.com/sindresorhus/np)
+
+# Docs
+
+- `bundle exec jekyll serve -s docs`

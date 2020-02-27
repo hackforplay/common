@@ -24,6 +24,7 @@ export const synonyms: ISynonyms = {
   みえるはんい: 'fieldOfView',
   みえるきょり: 'lengthOfView',
   むてきか: 'isInvincible',
+  おや: 'parent',
   こうげきする: 'attack',
   あるく: 'walk',
   みぎにあるく: 'walkRight',

@@ -3,7 +3,7 @@ create:
   type: function
   desc: |
     あたらしくキャラクターをつくる
-    いずれかのキャラクターを[おや]にしたい場合は[しょうかんする]を使う
+    いずれかのキャラクターを[おや](rpgobject#おや)にしたい場合は[しょうかんする](rpgobject#しょうかんする)を使う
   code: |
     つくる('プレイヤー', 7, 5, 'map1', Dir.した);
   args:
@@ -21,7 +21,7 @@ create:
       desc: どのマップに出てくるか
     - name: むき
       type: number
-      desc: キャラクターがどの[むき]で出てくるか
+      desc: キャラクターがどの[むき](rpgobject#むき)で出てくるか
 
 log:
   name: みる
