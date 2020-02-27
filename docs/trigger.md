@@ -1,6 +1,7 @@
 ---
 title: Trigger
 file_name: trigger
+source: /src/hackforplay/rule.ts
 ---
 
 {% for entry in site.data.reference.ja[page.file_name] %}

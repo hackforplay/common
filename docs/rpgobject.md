@@ -1,6 +1,7 @@
 ---
 title: RPGObject
 file_name: rpgobject
+source: /src/hackforplay/object/object.ts
 ---
 
 {% for entry in site.data.reference.ja[page.file_name] %}
