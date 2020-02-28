@@ -31,6 +31,8 @@ export default function register(_global) {
   const rule = new Rule();
   _global.rule = _global.rule || rule;
   _global.トリガー = _global.トリガー || rule;
+  _global.create = rule.create.bind(rule);
+  _global.つくる = _global.create;
   // rule.startTimer を Hack.startTimer にコピーする
   hack.startTimer = () => {
     rule.startTimer();
