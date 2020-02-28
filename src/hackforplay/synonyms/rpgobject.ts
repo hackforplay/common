@@ -39,7 +39,7 @@ export const synonyms: ISynonyms = {
   はなす: 'talk',
   みためをかえる: 'costume',
   メッセージする: 'message',
-  しょうきょする: 'destroy',
+  きえる: 'destroy',
   おいかける: 'chase',
   ふりむく: 'faceTo',
   むきをかえる: 'turn'

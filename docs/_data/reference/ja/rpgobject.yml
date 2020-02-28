@@ -387,7 +387,7 @@ RPGObject:
           desc: メッセージを送りたいキャラクターの名前
 
     destroy:
-      name: しょうきょする
+      name: きえる
       type: function
       desc: |
         このキャラクターをただちに消去する
