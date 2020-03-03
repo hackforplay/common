@@ -7,6 +7,7 @@ import Vector2 from './math/vector2';
 import * as N from './object/numbers';
 import RPGObject from './object/object';
 import './rpg-kit-main';
+import { synonyms } from './synonyms/rpgobject';
 import { clamp } from './utils/math-utils';
 
 interface IRect {
@@ -325,7 +326,8 @@ class Camera extends enchant.Sprite {
       ui: { ScoreLabel }
     } = enchant as any;
     const label = new ScoreLabel(this.w, this.h); // 見えない位置で初期化
-    label.label = key.toUpperCase() + ':';
+    const propertyName = synonyms[key] || key;
+    label.label = propertyName.toUpperCase() + ':';
     label._key = key;
     label.onenterframe = () => {
       if (!this.target) return;
