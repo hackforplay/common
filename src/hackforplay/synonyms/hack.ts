@@ -5,5 +5,7 @@ export const synonyms: ISynonyms = {
   ゲームオーバー: 'gameover',
   じかん: 'time',
   じかんをとめる: 'stopTimer',
-  じかんをうごかす: 'startTimer'
+  じかんをうごかす: 'startTimer',
+  がめんにだす: 'showLabel',
+  がめんからけす: 'hideLabel'
 };
