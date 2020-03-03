@@ -42,5 +42,6 @@ export const synonyms: ISynonyms = {
   きえる: 'destroy',
   おいかける: 'chase',
   ふりむく: 'faceTo',
+  テレポートランダム: 'teleportRandom',
   むきをかえる: 'turn'
 };

@@ -420,6 +420,12 @@ RPGObject:
           desc: |
             相手キャラクターの変数
 
+    teleportRandom:
+      name: テレポートランダム
+      type: function
+      desc: |
+        ランダムな位置にテレポートする
+
     turn:
       name: むきをかえる
       type: function
