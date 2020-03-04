@@ -1234,10 +1234,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this.map !== item.map) return; // 違うマップなら振り向かない
     const dx = Math.abs(item.mapX - this.mapX);
     const dy = Math.abs(item.mapY - this.mapY);
-    this.forward =
+    this.direction =
       dx >= dy
-        ? new Vector2(Math.sign(item.mapX - this.mapX), 0)
-        : new Vector2(Math.sign(item.mapY - this.mapY));
+        ? item.mapX > this.mapX
+          ? Direction.Right
+          : Direction.Left
+        : item.mapY > this.mapY
+        ? Direction.Down
+        : Direction.Up;
   }
 
   private chaseSameMap(item: RPGObject, unit8: boolean) {
