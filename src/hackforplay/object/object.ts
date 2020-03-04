@@ -1209,6 +1209,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
+  private getNearestByName(name: string) {
+    const { _ruleInstance } = this;
+    if (!_ruleInstance) return null;
+    return this.getNearest(_ruleInstance.getCollection(name));
+  }
+
   private getNearest(collection: RPGObject[]): RPGObject | null {
     let nearestObject: RPGObject | null = null;
     let nearestDistance = Infinity;
@@ -1228,10 +1234,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   /**
    * 相手のキャラクターの方を振り向く
-   * @param item 相手キャラクターの変数
+   * @param target 相手キャラクターの変数または名前
    */
-  public faceTo(item: RPGObject) {
-    if (this.map !== item.map) return; // 違うマップなら振り向かない
+  public faceTo(target: RPGObject | string) {
+    const item =
+      typeof target === 'string' ? this.getNearestByName(target) : target;
+
+    if (!item || this.map !== item.map) return; // 違うマップなら振り向かない
     const dx = Math.abs(item.mapX - this.mapX);
     const dy = Math.abs(item.mapY - this.mapY);
     this.direction =
@@ -1269,11 +1278,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {String} nameOrTarget
    */
   public async chase(nameOrTarget: string | RPGObject, unit8 = false) {
-    const { _ruleInstance } = this;
-    if (!_ruleInstance) return;
     const item =
       typeof nameOrTarget === 'string'
-        ? this.getNearest(_ruleInstance.getCollection(nameOrTarget))
+        ? this.getNearestByName(nameOrTarget)
         : nameOrTarget;
     if (!item || !item.parentNode) return;
 
