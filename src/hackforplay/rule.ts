@@ -8,6 +8,7 @@ import { errorInEvent, errorRemoved, logFromAsset } from './stdlog';
 import { synonyms } from './synonyms/rule';
 import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
 import talk from './talk';
+import { Direction } from './direction';
 
 interface IEvent {
   target: RPGObject;
@@ -411,15 +412,17 @@ export class Rule {
     x?: number,
     y?: number,
     map?: string,
-    dir?: IDir,
+    dir?: IDir | Direction,
     summoner?: RPGObject
   ) {
     this.installAsset(name);
 
     const object = new RPGObjectWithSynonym();
     object._ruleInstance = this;
-    if (dir) {
+    if (typeof dir === 'function') {
       object.forward = dir(object);
+    } else if (dir) {
+      object.direction = dir;
     }
     if (x !== undefined && y !== undefined) {
       object.locate(x, y, map);
