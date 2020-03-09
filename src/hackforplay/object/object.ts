@@ -548,7 +548,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     if (this.skill) {
       // アセットをしょうかんする
-      this.しょうかんする(this.skill);
+      this.summon(this.skill);
     } else {
       // ダメージを与えるオブジェクトを生成する
       damageObject = new RPGObject();
