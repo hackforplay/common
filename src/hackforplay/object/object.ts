@@ -85,7 +85,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   };
   public damage = 0; // 0 以外のとき, ふれたときに与えるダメージ
   public speed = 1.0;
-  public collideMapBoader = true; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
   public velocityX = 0;
   public velocityY = 0;
   public accelerationX = 0;
@@ -131,6 +130,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _image?: typeof enchant.Surface;
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
+  private _collideMapBoader?: boolean; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
 
   public constructor() {
     super(0, 0);
@@ -258,6 +258,19 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public set opacity(value: number) {
     (this as any)._opacity = Math.max(0, Math.min(1, value));
+  }
+
+  /**
+   * マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
+   * デフォルトは isKinematic と同じ
+   */
+  public get collideMapBoader() {
+    return this._collideMapBoader !== undefined
+      ? this._collideMapBoader
+      : this.isKinematic;
+  }
+  public set collideMapBoader(value) {
+    this._collideMapBoader = value;
   }
 
   public get isPlayer() {
