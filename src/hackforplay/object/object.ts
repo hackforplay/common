@@ -19,7 +19,11 @@ import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
 import { errorInEvent, errorRemoved, logToDeprecated } from '../stdlog';
 import * as _synonyms from '../synonyms';
 import { synonyms } from '../synonyms/rpgobject';
-import { PropertyMissing, synonymizeClass } from '../synonyms/synonymize';
+import {
+  PropertyMissing,
+  proxyMap,
+  synonymizeClass
+} from '../synonyms/synonymize';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import * as N from './numbers';
@@ -477,7 +481,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public destroy(delay = 0) {
     const _remove = () => {
       this.dispatchEvent(new enchant.Event('destroy')); // ondestroy event を発火
-      this.remove();
+      this.remove.call(this.proxy);
       if (this.hpLabel) this.hpLabel.remove();
     };
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
@@ -1460,6 +1464,21 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public set dir(dir: Dir.IDir) {
     logToDeprecated('this.dir = Dir.(...)');
     this.forward = dir(this);
+  }
+
+  /**
+   * https://github.com/hackforplay/common/issues/84
+   * enchant.js のイベントハンドラはコール時に this を bind してしまうため
+   * this が Proxy ではなく RPGObject になってしまう。
+   * それではコレクション配列に保持されているオブジェクトの参照と一致しないため
+   * 例えば remove() などのメソッドが動かなくなる。
+   * そこで、 Proxy を bind すべきメソッドをさらに bind するために、
+   * 元の参照から Proxy オブジェクトの参照を得る（WeakMap を使う）。
+   * ただし Proxy オブジェクトかどうかを判定する術はないので、
+   * 取得できなかったとしても、それを知ることは出来ない
+   */
+  private get proxy(): RPGObject {
+    return proxyMap.get(this) || this;
   }
 
   public [PropertyMissing](chainedName: string) {

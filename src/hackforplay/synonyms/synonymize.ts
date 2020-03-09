@@ -39,6 +39,8 @@ class Class {
   [PropertyMissing]: (chainedName: string) => void;
 }
 
+export const proxyMap = new Map<any, any>();
+
 export function synonymizeClass<T extends typeof Class>(
   targetClass: T,
   synonyms: ISynonyms
@@ -67,6 +69,9 @@ export function synonymizeClass<T extends typeof Class>(
           p.childNodes.push(proxied);
         }
       }
+
+      // 元のオブジェクトから Proxy の参照を得るための苦肉の策
+      proxyMap.set(instance, proxied);
 
       return proxied;
     }
