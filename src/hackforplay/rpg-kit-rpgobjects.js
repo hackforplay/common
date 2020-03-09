@@ -1011,8 +1011,8 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
         calc.vy =
           ((m1 - m2) * self.velocityY + 2 * m2 * hits[0].velocityY) / (m1 + m2);
         event.map = false;
-      } else {
-        // Hit map
+      } else if (self.collideMapBoader) {
+        // マップの端にぶつかる処理
         const mapHitX =
             (self.velocityX < 0 && self.x <= 0) ||
             (self.velocityX > 0 && self.x + self.width >= game.width),
@@ -1025,8 +1025,8 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
         calc.y = mapHitX
           ? Math.max(0, Math.min(game.height - self.height, self.y))
           : self.y;
-        calc.vx = (mapHitX ? -1 : 1) * self.velocityX;
-        calc.vy = (mapHitY ? -1 : 1) * self.velocityY;
+        // calc.vx = (mapHitX ? -1 : 1) * self.velocityX;
+        // calc.vy = (mapHitY ? -1 : 1) * self.velocityY;
         event.map = mapHitX || mapHitY;
       }
       event.item = event.hit; // イベント引数の統一
