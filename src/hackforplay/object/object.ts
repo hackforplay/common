@@ -305,7 +305,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const animation = frame[key];
     if (!animation || animation.length < 1) return; // skip
     const row =
-      direction === Direction.Down
+      currentSkin.direction === 1 // 向きが１方向分しかないスキンの場合
+        ? 0
+        : direction === Direction.Down
         ? 0
         : direction === Direction.Left
         ? 1
