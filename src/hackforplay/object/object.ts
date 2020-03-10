@@ -1221,8 +1221,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
 
     _ruleInstance.installAsset(name);
-    _ruleInstance.unregisterRules(this);
-    _ruleInstance.registerRules(this, name);
+    _ruleInstance.unregisterRules(this.proxy);
+    _ruleInstance.registerRules(this.proxy, name);
     if (_hp !== undefined) {
       this.hp = _hp; // https://bit.ly/2P37rph
     }
