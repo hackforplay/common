@@ -124,6 +124,7 @@ function createProxy<T extends object>(
         const s = synonyms[p];
         if (s && s in target) {
           target[s] = value;
+          return true;
         }
       }
       Reflect.set(target, p, value, receiver);
