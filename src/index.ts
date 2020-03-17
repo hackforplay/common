@@ -8,3 +8,5 @@ import Rule from './hackforplay/rule';
 const Hack = getHack();
 
 export { Hack, enchant, register, Rule };
+
+export { Definition } from './definition';
