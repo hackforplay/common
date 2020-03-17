@@ -9,8 +9,9 @@
   ],
   "scripts": {
     "docs": "node docs/build.js",
+    "definition": "ts-node src/make-definition.ts",
     "start": "webpack-dev-server",
-    "prepublish": "webpack && npm run babel && npm run docs",
+    "prepublish": "webpack && npm run babel && npm run docs && npm run definition",
     "babel": "babel -d lib -D src --extensions '.js,.ts'",
     "format": "prettier --write '**/*.[j|t]s'",
     "lint": "npx eslint src --ext .js,.ts",
