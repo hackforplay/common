@@ -54,6 +54,7 @@ export default function register(_global) {
   _global.Rule = _global.Rule || Rule;
   _global.enchant = _global.enchant || enchant;
   _global.random = _global.random || random;
+  _global.らんすう = _global.random;
   _global.Dir = _global.Dir || Dir;
   _global.Camera = _global.Camera || Camera;
   _global.log = logFromUser;
