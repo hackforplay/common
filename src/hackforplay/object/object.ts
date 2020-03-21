@@ -110,6 +110,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public _preventFrameHits: RPGObject[] = []; // rpg-kit-rpgobjects.js で参照されるプロパティ
   public childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
+  public then: undefined; // await されたときに then が参照される
 
   private _hp?: number;
   private _atk?: number;
