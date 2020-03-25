@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "unpkg": "dist/main.min.js",
   "files": [
+    "src",
     "dist"
   ],
   "scripts": {
