@@ -1,7 +1,9 @@
+import { FunctionValue, PrimitiveValue } from '../../definition';
+
 type Key = string | number | symbol;
 
 export interface ISynonyms {
-  [synonym: string]: string | undefined; // TODO: ISynonym は階層構造を持つ
+  [synonym: string]: PrimitiveValue | FunctionValue | undefined; // TODO: ISynonym は階層構造を持つ
 }
 
 export const PropertyMissing = Symbol('PropertyMissing');
@@ -101,8 +103,8 @@ function createProxy<T extends object>(
       }
       if (typeof p === 'string') {
         const s = synonyms[p];
-        if (s && s in target) {
-          const value = target[s];
+        if (s && s.name in target) {
+          const value = target[s.name];
           return value; // TODO: ISynonym は階層構造を持つ
         }
       }
@@ -122,8 +124,8 @@ function createProxy<T extends object>(
       }
       if (typeof p === 'string') {
         const s = synonyms[p];
-        if (s && s in target) {
-          target[s] = value;
+        if (s && s.name in target) {
+          target[s.name] = value;
           return true;
         }
       }

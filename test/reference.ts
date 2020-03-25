@@ -28,10 +28,10 @@ test('Reference should be same to synonyms', async t => {
     const { fields } = config;
     // 全てのシノニムがリファレンスに書かれていることをテストする
     for (const synonym of Object.keys(synonyms)) {
-      const key = synonyms[synonym];
-      const field = key && fields[key];
-      t.truthy(field, `${key} is missing. a.k.a "${synonym}"`);
-      t.is(field.name, synonym, `${key} should be "${synonym}"`);
+      const obj = synonyms[synonym];
+      const field = obj && fields[obj.name];
+      t.truthy(field, `${obj.name} is missing. a.k.a "${synonym}"`);
+      t.is(field.name, synonym, `${obj.name} should be "${synonym}"`);
     }
   }
 });

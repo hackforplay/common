@@ -9,7 +9,10 @@ test('synonymize', t => {
       key: 'value'
     },
     {
-      synonym: 'key'
+      synonym: {
+        type: 'primitive',
+        name: 'key'
+      }
     },
     name => {
       isPropertyMissing = true;
@@ -37,7 +40,9 @@ test('synonymizeClass', t => {
       t.is(chainedName, 'missingProperty');
     }
   }
-  const SampleWithSynonym = synonymizeClass(Sample, { synonym: 'key' });
+  const SampleWithSynonym = synonymizeClass(Sample, {
+    synonym: { type: 'primitive', name: 'key' }
+  });
 
   const obj = new SampleWithSynonym() as any;
 

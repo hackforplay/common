@@ -4,9 +4,9 @@ import { DirectionWithSynonym } from '../direction';
 
 test('Direction enum has synonyms', t => {
   for (const synonym of Object.keys(synonyms)) {
-    const key = synonyms[synonym];
-    if (!key) throw new Error('Typehint');
-    const expect = (DirectionWithSynonym as any)[key];
+    const obj = synonyms[synonym];
+    if (!obj) throw new Error('Typehint');
+    const expect = (DirectionWithSynonym as any)[obj.name];
     const actual = (DirectionWithSynonym as any)[synonym];
 
     t.truthy(actual, `Direction.${synonym} should be truthy`);

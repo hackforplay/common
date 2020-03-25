@@ -24,24 +24,20 @@ async function make() {
 
   const definition: Definition = {
     __lang: 'ja',
-    __version: '2',
+    __version: '3',
     classes: {
-      RPGObject: makeClass(_rpgobject)
+      RPGObject: makeClass(_rpgobject, 'RPGObject')
     },
     globals: {
-      Hack: makeGlobal(_hack, true),
-      ハック: makeGlobal(_hack, false),
-      rule: makeGlobal(_rule, true),
-      トリガー: makeGlobal(_rule, false),
-      create: { type: 'primitive' },
-      つくる: { type: 'primitive' },
-      Family: makeGlobal(_family, true),
-      なかま: makeGlobal(_family, false),
-      Direction: makeGlobal(_direction, true),
-      むき: makeGlobal(_direction, false)
+      Hack: makeGlobal(_hack, 'ハック'),
+      rule: makeGlobal(_rule, 'トリガー'),
+      create: { type: 'function', name: 'つくる' },
+      Family: makeGlobal(_family, 'なかま'),
+      Direction: makeGlobal(_direction, 'むき')
     },
     this: {
       type: 'instance',
+      name: 'this',
       class: 'RPGObject'
     }
   };
@@ -54,17 +50,20 @@ async function make() {
 /**
  *
  * @param synonyms 各プロパティのシノニム
- * @param useNativeLang false なら key (シノニム) を、true なら value (元の名前) を使う
+ * @param globalName グローバルで使えるシノニム名
  */
-export function makeGlobal(synonyms: ISynonyms, useNativeLang: boolean) {
+export function makeGlobal(synonyms: ISynonyms, globalName: string) {
   const def: ObjectValue = {
     type: 'object',
+    name: globalName,
     properties: {}
   };
-  Object.keys(synonyms).forEach(key => {
-    const property = useNativeLang ? synonyms[key] || key : key;
-    def.properties[property] = {
-      type: 'primitive'
+  Object.keys(synonyms).forEach(name => {
+    const obj = synonyms[name];
+    if (!obj) throw new Error('typehint');
+    def.properties[obj.name] = {
+      ...obj,
+      name // キーは英語、値(name)は多言語
     };
   });
   return def;
@@ -73,15 +72,20 @@ export function makeGlobal(synonyms: ISynonyms, useNativeLang: boolean) {
 /**
  *
  * @param synonyms
+ * @param globalName グローバルで使えるシノニム名
  */
-export function makeClass(synonyms: ISynonyms) {
+export function makeClass(synonyms: ISynonyms, globalName: string) {
   const def: ObjectValue = {
     type: 'object',
+    name: globalName,
     properties: {}
   };
-  Object.keys(synonyms).forEach(key => {
-    def.properties[key] = {
-      type: 'primitive'
+  Object.keys(synonyms).forEach(name => {
+    const obj = synonyms[name];
+    if (!obj) throw new Error('typehint');
+    def.properties[obj.name] = {
+      ...obj,
+      name // キーは英語、値(name)は多言語
     };
   });
   return def;

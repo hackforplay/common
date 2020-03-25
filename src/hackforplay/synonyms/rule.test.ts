@@ -5,14 +5,19 @@ import { synonyms } from './rule';
 test('Rule instance has synonyms', t => {
   const instance: any = new RuleWithSynonym();
   for (const synonym of Object.keys(synonyms)) {
-    const key = synonyms[synonym];
-    if (key) {
+    const obj = synonyms[synonym];
+    if (obj) {
       t.deepEqual(
         instance[synonym],
-        instance[key],
-        `${synonym} should be same to ${key} at Rule`
+        instance[obj.name],
+        `${synonym} should be same to ${obj.name} at Rule`
       );
-      t.truthy(key in instance, `${synonym} should define but undefined`);
+      t.truthy(obj.name in instance, `${synonym} should define but undefined`);
+      t.is(
+        obj.type === 'function',
+        typeof instance[synonym] === 'function',
+        `synonym types should be same`
+      );
     }
   }
 });

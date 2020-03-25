@@ -1,20 +1,20 @@
 import { ISynonyms } from './synonymize';
 
 export const synonyms: ISynonyms = {
-  つくる: 'create',
-  ゲームがはじまったとき: 'gameStarted',
-  つくられたとき: 'created',
-  つねに: 'updated',
-  こうげきするとき: 'attacked',
-  たおされたとき: 'defeated',
-  すすめなかったとき: 'canNotWalk',
-  おかねがかわったとき: 'moneyChanged',
-  じかんがすすんだとき: 'timePassed',
-  タップされたとき: 'tapped',
-  ふまれたとき: 'trodden',
-  ぶつかったとき: 'collided',
-  こうげきされたとき: 'beAttacked',
-  メッセージされたとき: 'messaged',
-  しょうかんされたとき: 'summoned',
-  みつけたとき: 'found'
+  つくる: { type: 'function', name: 'create' },
+  ゲームがはじまったとき: { type: 'function', name: 'gameStarted' },
+  つくられたとき: { type: 'function', name: 'created' },
+  つねに: { type: 'function', name: 'updated' },
+  こうげきするとき: { type: 'function', name: 'attacked' },
+  たおされたとき: { type: 'function', name: 'defeated' },
+  すすめなかったとき: { type: 'function', name: 'canNotWalk' },
+  おかねがかわったとき: { type: 'function', name: 'moneyChanged' },
+  じかんがすすんだとき: { type: 'function', name: 'timePassed' },
+  タップされたとき: { type: 'function', name: 'tapped' },
+  ふまれたとき: { type: 'function', name: 'trodden' },
+  ぶつかったとき: { type: 'function', name: 'collided' },
+  こうげきされたとき: { type: 'function', name: 'beAttacked' },
+  メッセージされたとき: { type: 'function', name: 'messaged' },
+  しょうかんされたとき: { type: 'function', name: 'summoned' },
+  みつけたとき: { type: 'function', name: 'found' }
 };

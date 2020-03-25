@@ -10,20 +10,32 @@ export interface Definition {
   };
 }
 
-export type AnyValue = PrimitiveValue | ObjectValue | InstanceValue;
+export type AnyValue =
+  | PrimitiveValue
+  | FunctionValue
+  | ObjectValue
+  | InstanceValue;
 
 export interface PrimitiveValue {
   type: 'primitive';
+  name: string;
+}
+
+export interface FunctionValue {
+  type: 'function';
+  name: string;
 }
 
 export interface ObjectValue {
   type: 'object';
+  name: string;
   properties: {
-    [property: string]: AnyValue;
+    [property: string]: PrimitiveValue | FunctionValue; // TODO: InstanceValue を含める
   };
 }
 
 export interface InstanceValue {
   type: 'instance';
   class: string;
+  name: string;
 }
