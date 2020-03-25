@@ -1,5 +1,7 @@
-export interface Definition {
-  __version: string;
+export type Definition = DefinitionV3;
+
+export interface DefinitionV3 {
+  __version: '3';
   __lang: 'ja';
   this: AnyValue;
   classes: {
