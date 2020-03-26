@@ -3,7 +3,7 @@ export type Definition = DefinitionV3;
 export interface DefinitionV3 {
   __version: '3';
   __lang: 'ja';
-  this: AnyValue;
+  this?: InstanceValue;
   classes: {
     [name: string]: ObjectValue;
   };
