@@ -26,6 +26,10 @@ export interface PrimitiveValue {
 export interface FunctionValue {
   type: 'function';
   name: string;
+  /**
+   * 入力補完時に await キーワードを付けるべきか
+   */
+  await?: boolean;
 }
 
 export interface ObjectValue {
