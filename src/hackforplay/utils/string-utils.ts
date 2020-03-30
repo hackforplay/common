@@ -11,7 +11,7 @@ const [kana, dakuon, handakuon] = `
  * @param {string} char 変換する文字
  * @return {string} 変換された文字
  */
-export function dakuten(char) {
+export function dakuten(char: any): any {
   if (char.match(/[ァ-ン]/))
     return String.fromCharCode(
       dakuten(String.fromCharCode(char.charCodeAt() - 96)).charCodeAt() + 96
@@ -28,7 +28,7 @@ export function dakuten(char) {
  * @param {string} char 変換する文字
  * @return {string} 変換された文字
  */
-export function handakuten(char) {
+export function handakuten(char: any): any {
   if (char.match(/[ァ-ン]/))
     return String.fromCharCode(
       handakuten(String.fromCharCode(char.charCodeAt() - 96)).charCodeAt() + 96
@@ -45,7 +45,7 @@ export function handakuten(char) {
  * @param {string} char 判定する文字
  * @return {boolean} 結果
  */
-export function isStandardKana(char) {
+export function isStandardKana(char: any): any {
   // 複雑なカナが含まれている
   if (/[ゕヵゖヶゎヮゐヰゑヱ]/.test(char)) return false;
   return char.match(/[ぁ-んァ-ン]/);
@@ -56,7 +56,7 @@ export function isStandardKana(char) {
  * @param {string} string 変換する文字列
  * @return {string} 結果
  */
-export function toLowerCamelCase(string) {
+export function toLowerCamelCase(string: any) {
   return string.at(0).toLowerCase() + string.substr(1);
 }
 
@@ -65,7 +65,7 @@ export function toLowerCamelCase(string) {
  * @param {string} string 変換する文字列
  * @return {string} 結果
  */
-export function toUpperCamelCase(string) {
+export function toUpperCamelCase(string: any) {
   return string.at(0).toUpperCase() + string.substr(1);
 }
 
@@ -74,6 +74,6 @@ export function toUpperCamelCase(string) {
  * @param {string} str 分割する文字列
  * @return {array} 文字列を分割した結果
  */
-export function stringToArray(string) {
+export function stringToArray(string: string) {
   return string.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\uD800-\uDFFF]/g) || [];
 }

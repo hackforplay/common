@@ -2,9 +2,37 @@ import enchant from '../../enchantjs/enchant';
 import { roundRect } from '../utils/canvas2d-utils';
 import { stringToArray } from '../utils/string-utils';
 
+interface IConvertedDocument {
+  nodeName: string;
+  /**
+   * nullable な場合があり不定
+   */
+  value: any;
+  values: IConvertedDocument[];
+  /**
+   * size の型が不定なので any にする
+   */
+  style: any;
+}
+
+/**
+ * 初期値がない変数宣言が多いため型を定義できない
+ */
+interface IChar {
+  value: string;
+  x?: any;
+  y?: any;
+  w?: any;
+  h?: any;
+  charIndex?: any;
+  isAlphabet?: any;
+  lineIndex?: any;
+  style: IConvertedDocument['style'];
+}
+
 const parser = new DOMParser();
 
-function parse(xml, retry = false) {
+function parse(xml: string, retry = false): Document {
   let document = parser.parseFromString(
     `<root>${xml}</root>`,
     'application/xml'
@@ -23,7 +51,11 @@ function parse(xml, retry = false) {
 }
 
 class TextArea extends enchant.Sprite {
-  constructor(w, h) {
+  private context: CanvasRenderingContext2D;
+  private document: IConvertedDocument | null;
+  private values: IChar[];
+
+  constructor(w: number, h: number) {
     super(w, h);
 
     this.source = '';
@@ -99,7 +131,7 @@ class TextArea extends enchant.Sprite {
     return this.h - this.margin * 2 - this.padding * 2;
   }
 
-  resize(w, h) {
+  resize(w: number, h: number) {
     if (this.w === w && this.h === h) return;
 
     this._width = w;
@@ -132,7 +164,7 @@ class TextArea extends enchant.Sprite {
     this.document = null;
   }
 
-  push(text) {
+  push(text: string) {
     const lineFeed = this.source.length ? '\n' : '';
     this.source += `${lineFeed}<group>${text}</group>`;
     this.updateDocument();
@@ -151,16 +183,16 @@ class TextArea extends enchant.Sprite {
   updateDocument() {
     let styleId = 0;
 
-    function convertDocument(node) {
+    function convertDocument(node: Node): IConvertedDocument {
       const nodes = [...node.childNodes].map(convertDocument);
 
-      const style = {
+      const style: { [key: string]: string | number | null } = {
         id: ++styleId
       };
 
       const nodeName = node.nodeName;
 
-      if (node.getAttribute) {
+      if (node instanceof Element) {
         style[nodeName] = node.getAttribute('value');
       }
 
@@ -192,7 +224,7 @@ class TextArea extends enchant.Sprite {
 
     const W = this.width - this.margin * 2 - this.padding * 2;
 
-    function textObjectToStyle(textObject) {
+    function textObjectToStyle<T>(textObject: T) {
       const style = Object.assign({}, textObject);
       return style;
     }
@@ -200,13 +232,13 @@ class TextArea extends enchant.Sprite {
     let currentX = 0;
     let currentY = 0;
 
-    const styles = [];
+    const styles: IConvertedDocument['style'][] = [];
 
     let charIndex = -1;
-    const chars = [];
+    const chars: IChar[] = [];
     let currentLineIndex = 0;
 
-    function createChars(source) {
+    function createChars(source: IConvertedDocument) {
       styles.push(source.style);
 
       const style = textObjectToStyle(
@@ -228,6 +260,7 @@ class TextArea extends enchant.Sprite {
             // 文字の横幅を取得する
             context.font = `${style.weight} ${style.size}px ${style.family}`;
             const textWidth = context.measureText(char).width + style.space;
+            console.log('textWidth', char, textWidth);
 
             chars.push({
               value: char,
@@ -248,7 +281,7 @@ class TextArea extends enchant.Sprite {
     }
     createChars(source);
 
-    const lines = [[]];
+    const lines: IChar[][] = [[]];
 
     let addLine = 0;
     let previousLineIndex = -1;
@@ -386,7 +419,7 @@ class TextArea extends enchant.Sprite {
     }
 
     // ルビを生成する
-    const rubyGroup = this.values.reduce((object, value) => {
+    const rubyGroup = this.values.reduce((object: any, value) => {
       if (!value.style.ruby) return object;
       if (!object[value.style.rubyId]) object[value.style.rubyId] = [];
       object[value.style.rubyId].push(value);
@@ -438,13 +471,13 @@ class TextArea extends enchant.Sprite {
     }
   }
 
-  renderBackground(context) {} // eslint-disable-line @typescript-eslint/no-unused-vars
-  renderBorder(context) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  renderBackground(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  renderBorder(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
   render() {
     const context = this.context;
 
-    function applyRenderStyles(textObject) {
+    function applyRenderStyles(textObject: any) {
       context.fillStyle = textObject.color;
       context.font = `${textObject.weight} ${textObject.size}px ${
         textObject.family
