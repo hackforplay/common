@@ -259,8 +259,9 @@ class TextArea extends enchant.Sprite {
 
             // 文字の横幅を取得する
             context.font = `${style.weight} ${style.size}px ${style.family}`;
-            const textWidth = context.measureText(char).width + style.space;
-            console.log('textWidth', char, textWidth);
+            let textWidth = context.measureText(char).width + style.space;
+            // For blocking of canvas fingerprinting https://bit.ly/2X5sAp5
+            textWidth = textWidth === 0 && char !== '' ? 18 : textWidth;
 
             chars.push({
               value: char,
