@@ -9,7 +9,6 @@
     "dist"
   ],
   "scripts": {
-    "docs": "node docs/build.js",
     "definition": "ts-node src/make-definition.ts",
     "start": "webpack-dev-server",
     "prepublish": "webpack && npm run babel && npm run docs && npm run definition",
@@ -70,10 +69,8 @@
     "canvas": "^2.2.0",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.3.0",
-    "glob": "^7.1.6",
     "js-yaml": "^3.13.1",
     "jsdom": "^16.2.0",
-    "mkdirp": "^1.0.3",
     "np": "^6.0.0",
     "prettier": "^1.14.2",
     "raf": "^3.4.1",
