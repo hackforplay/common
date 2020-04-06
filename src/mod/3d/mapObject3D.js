@@ -11,7 +11,7 @@ import {
 } from 'mod/3d/primitive';
 // MapObject3D
 {
-  var decode62 = function(code) {
+  var decode62 = function (code) {
     code = code.charCodeAt();
 
     code -= 48;
@@ -23,17 +23,17 @@ import {
   };
 
   var MapObject3D = enchant.Class.create({
-    initialize: function(id, source) {
+    initialize: function (id, source) {
       var a = source.split('/');
 
       var vertices = a[0];
       var uv = a[1];
 
-      vertices = vertices.split('').map(function(vertex) {
+      vertices = vertices.split('').map(function (vertex) {
         return decode62(vertex) * (1 / 61);
       });
 
-      uv = uv.split('').map(function(index, i) {
+      uv = uv.split('').map(function (index, i) {
         var value = decode62(index) * (1 / 61);
 
         // UV を左右反転する
@@ -45,13 +45,13 @@ import {
       // UV の最小単位
       var unit = 1 / 64;
 
-      uv = uv.map(function(value) {
+      uv = uv.map(function (value) {
         var a = Math.ceil(value / unit);
 
         return a * unit;
       });
 
-      vertices = vertices.map(function(vertex, index) {
+      vertices = vertices.map(function (vertex, index) {
         if (vertex < 0.03) vertex = 0;
         if (vertex > 1 - 0.03) vertex = 1;
 
@@ -63,7 +63,7 @@ import {
       });
 
       var Model = enchant.Class.create(Primitive, {
-        initialize: function() {
+        initialize: function () {
           var vertex = vertices;
 
           var indices = [];
@@ -82,11 +82,11 @@ import {
 
   MapObject3D.models = {};
 
-  MapObject3D.get = function(id) {
+  MapObject3D.get = function (id) {
     return MapObject3D.models[id];
   };
 
-  MapObject3D.model = function(id, source) {
+  MapObject3D.model = function (id, source) {
     new MapObject3D(id, source);
   };
 

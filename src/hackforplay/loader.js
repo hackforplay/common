@@ -14,7 +14,7 @@ function blobToDataURL(blob, callback) {
 
 const Hack = getHack();
 
-enchant.Surface.load = function(src, callback, onerror) {
+enchant.Surface.load = function (src, callback, onerror) {
   // console.log(src);
   if (!src.startsWith('data:')) {
     // 基底パスからの相対パスで指定できる
@@ -35,20 +35,20 @@ enchant.Surface.load = function(src, callback, onerror) {
     }
   });
   enchant.EventTarget.call(surface);
-  onerror = onerror || function() {};
+  onerror = onerror || function () {};
   if (callback) {
     surface.addEventListener('load', callback);
   }
   if (onerror) {
     surface.addEventListener('error', onerror);
   }
-  image.onerror = function() {
+  image.onerror = function () {
     const e = new enchant.Event(enchant.Event.ERROR);
     e.message = 'Cannot load an asset: ' + image.src;
     game.dispatchEvent(e);
     surface.dispatchEvent(e);
   };
-  image.onload = function() {
+  image.onload = function () {
     surface.width = image.width;
     surface.height = image.height;
     surface.dispatchEvent(new enchant.Event('load'));
@@ -64,7 +64,7 @@ enchant.Surface.load = function(src, callback, onerror) {
 
   fetchDataURL &&
     fetchDataURL(src)
-      .then(function(dataURL) {
+      .then(function (dataURL) {
         image.src = dataURL;
         // 一部の MOD の為に元画像の情報を残す
         image.originalSource = src;

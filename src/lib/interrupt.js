@@ -78,7 +78,7 @@ function interruptSetter(constructor, attr, delegate) {
   const proto = constructor.prototype;
   const desc = Object.getOwnPropertyDescriptor(proto, attr);
   Object.defineProperty(proto, attr, {
-    set: function(value) {
+    set: function (value) {
       delegate(this, value, desc.set.bind(this));
     }
   });
@@ -116,7 +116,7 @@ function interruptXHR(constructor) {
       open.call(this, _method, _url, _async, _user, _password);
       return;
     }
-    this.send = function(...sendArgs) {
+    this.send = function (...sendArgs) {
       feeles
         .fetch(getFeelesName(_url))
         .then(response => response.blob())

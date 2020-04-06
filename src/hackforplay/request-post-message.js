@@ -15,8 +15,8 @@ export default function requestPostMessage(query, value, reply, continuous) {
     query,
     value
   };
-  return connected.then(function(_ref) {
-    return new Promise(function(resolve, reject) {
+  return connected.then(function (_ref) {
+    return new Promise(function (resolve, reject) {
       if (reply) {
         _ref.port.addEventListener('message', function task(event) {
           if (event.data.id !== message.id) return;

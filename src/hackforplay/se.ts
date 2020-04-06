@@ -26,7 +26,7 @@ export default async function soundEffect(jpName: string) {
     // array buffer を audio buffer に変換
     audioCtx.decodeAudioData(
       audioData,
-      function(buffer) {
+      function (buffer) {
         data[jpName] = buffer;
         source.buffer = buffer; // buffer をセット
         source.connect(gainNode);

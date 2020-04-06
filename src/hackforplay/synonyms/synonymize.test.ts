@@ -4,21 +4,22 @@ import { synonymize, synonymizeClass, PropertyMissing } from './synonymize';
 test('synonymize', t => {
   let isPropertyMissing = false;
 
-  const obj = synonymize(
-    {
-      key: 'value'
-    },
-    {
-      synonym: {
-        type: 'primitive',
-        name: 'key'
+  const obj =
+    synonymize(
+      {
+        key: 'value'
+      },
+      {
+        synonym: {
+          type: 'primitive',
+          name: 'key'
+        }
+      },
+      name => {
+        isPropertyMissing = true;
+        t.is(name, 'missingProperty');
       }
-    },
-    name => {
-      isPropertyMissing = true;
-      t.is(name, 'missingProperty');
-    }
-  ) as any;
+    ) as any;
 
   t.is(obj.key, obj.synonym, 'synonym is defined');
   t.false(isPropertyMissing);

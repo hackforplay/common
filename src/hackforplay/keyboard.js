@@ -206,9 +206,7 @@ class Keyboard extends enchant.Sprite {
     }
 
     // 最大文字数を超えないように調整
-    this.value = stringToArray(this.value)
-      .slice(0, this.maxLength)
-      .join('');
+    this.value = stringToArray(this.value).slice(0, this.maxLength).join('');
   }
 
   /**
@@ -412,12 +410,12 @@ class Keyboard extends enchant.Sprite {
     // 決定かキャンセルが押されるまで待つ
     const value = await Promise.race([
       new Promise(resolve => {
-        this.once('enter', function() {
+        this.once('enter', function () {
           resolve(this.value);
         });
       }),
       new Promise(resolve => {
-        this.once('cancel', function() {
+        this.once('cancel', function () {
           resolve(cancelValue);
         });
       })

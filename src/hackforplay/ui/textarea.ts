@@ -436,9 +436,7 @@ class TextArea extends enchant.Sprite {
       const ruby = rubyChars[0].style.ruby;
 
       // 文字の横幅を取得する
-      context.font = `${rubyStyle.weight} ${rubyStyle.size}px ${
-        rubyStyle.family
-      }`;
+      context.font = `${rubyStyle.weight} ${rubyStyle.size}px ${rubyStyle.family}`;
 
       const rubysWidth = stringToArray(ruby).map(char => {
         return context.measureText(char).width + rubyStyle.space;
@@ -480,9 +478,7 @@ class TextArea extends enchant.Sprite {
 
     function applyRenderStyles(textObject: any) {
       context.fillStyle = textObject.color;
-      context.font = `${textObject.weight} ${textObject.size}px ${
-        textObject.family
-      }`;
+      context.font = `${textObject.weight} ${textObject.size}px ${textObject.family}`;
     }
 
     context.clearRect(0, 0, this.w, this.h);

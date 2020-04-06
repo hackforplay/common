@@ -81,20 +81,20 @@ const MapObjectConfig = {
 function initializeMapObjectConfig() {
   var values = {};
 
-  Object.keys(MapObjectConfig).forEach(function(key) {
+  Object.keys(MapObjectConfig).forEach(function (key) {
     var keys = key.split(',');
     var value = MapObjectConfig[key];
 
-    keys.forEach(function(key) {
+    keys.forEach(function (key) {
       var range = key.split('-');
 
       var begin = range[0];
       var end = range[1] || range[0];
 
-      var assign = function(key1) {
+      var assign = function (key1) {
         if (!values[key1]) values[key1] = {};
 
-        Object.keys(value).forEach(function(key2) {
+        Object.keys(value).forEach(function (key2) {
           values[key1][key2] = value[key2];
         });
       };
@@ -112,16 +112,16 @@ function initializeMapObjectConfig() {
   });
 
   MapObjectConfig.values = values;
-  MapObjectConfig.get = function(id) {
+  MapObjectConfig.get = function (id) {
     if (!this.values[id]) this.values[id] = {};
 
     return this.values[id];
   };
 
-  MapObjectConfig.assign = function(node, id) {
+  MapObjectConfig.assign = function (node, id) {
     var config = this.get(id);
 
-    Object.keys(config).forEach(function(key) {
+    Object.keys(config).forEach(function (key) {
       node[key] = config[key];
     });
   };
@@ -129,7 +129,7 @@ function initializeMapObjectConfig() {
   window.MapObjectConfig = MapObjectConfig;
 
   var initialize = MapObject.prototype.initialize;
-  MapObject.prototype.initialize = function() {
+  MapObject.prototype.initialize = function () {
     initialize.apply(this, arguments);
 
     MapObjectConfig.assign(this, 'default');

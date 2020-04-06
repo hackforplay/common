@@ -30,7 +30,7 @@ var Camera3D = enchant.Class.create({
   matrix: null,
   matrixVP: null,
 
-  update: function() {
+  update: function () {
     this.matrix = Matrix.lookAt(
       this.position.toArray(),
       this.target.toArray(),
@@ -41,7 +41,7 @@ var Camera3D = enchant.Class.create({
   },
 
   // ビュー行列 * プロジェクション行列を取得する
-  getMatrixVP: function() {
+  getMatrixVP: function () {
     return this.matrixVP;
   }
 });
@@ -50,11 +50,11 @@ Camera3D.collection = {};
 
 Camera3D.active = null;
 
-Camera3D.get = function(name) {
+Camera3D.get = function (name) {
   return Camera3D.collection[name] || null;
 };
 
-Camera3D.set = function(name) {
+Camera3D.set = function (name) {
   return (Camera3D.active = Camera3D.get(name));
 };
 

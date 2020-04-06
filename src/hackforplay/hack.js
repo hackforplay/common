@@ -19,7 +19,7 @@ const Hack = getHack();
 Hack.basePath = 'https://storage.googleapis.com/hackforplay-common/';
 
 // Hack.start
-Hack.start = function() {
+Hack.start = function () {
   // game start
   Hack.maps = Hack.maps || {};
   Hack.dispatchEvent(new enchant.Event('load'));
@@ -29,7 +29,7 @@ Hack.start = function() {
 
 // クリック時に再度フォーカス
 Hack.focusOnClick = true;
-window.addEventListener('click', function() {
+window.addEventListener('click', function () {
   if (Hack.focusOnClick) {
     window.document.activeElement.blur(); // Blur an enchantBook
     window.parent.focus(); // Blur an input in parent window
@@ -37,12 +37,12 @@ window.addEventListener('click', function() {
   }
 });
 
-Hack.on('error', function(event) {
+Hack.on('error', function (event) {
   Hack.log('It was slient. // うまく うごかなかった');
   console.error(event.error);
 });
 
-Hack.fun2str = function(func) {
+Hack.fun2str = function (func) {
   // 関数の文字列化
   if (func instanceof Function) {
     const str = func.toString().match(/^function[^\{]*\{\n?(\s*)([\s\S]*)\}$/);
@@ -64,7 +64,7 @@ Hack.fun2str = function(func) {
 
 // 【旧ログ機能】
 // textarea : 画面全体をおおう半透明のテキストエリア(DOM)
-Hack.textarea = function() {
+Hack.textarea = function () {
   // scope: new Entity
 
   this.name = 'HackTextarea';
@@ -87,20 +87,20 @@ Hack.textarea = function() {
   Object.defineProperty(this, 'text', {
     configurable: true,
     enumerable: true,
-    get: function() {
+    get: function () {
       return this._element.value;
     },
-    set: function(text) {
+    set: function (text) {
       this._element.value = text;
     }
   });
-  this.show = function(text) {
+  this.show = function (text) {
     if (text !== undefined) {
       this.text = String(text);
     }
     this.visible = true;
   };
-  this.hide = function() {
+  this.hide = function () {
     this.visible = false;
   };
 
@@ -115,7 +115,7 @@ Hack.on('gameclear', hide); // ゲームクリア時閉じる
 Hack.on('gameover', hide); // ゲームオーバー時閉じる
 
 // 画面に文字を表示する（次の行に追加）
-Hack.log = function() {
+Hack.log = function () {
   try {
     const values = [];
     for (let i = arguments.length - 1; i >= 0; i--) {
@@ -141,22 +141,22 @@ Hack.log = function() {
 };
 
 // 画面に文字を表示する（上書き）
-Hack.show = function() {
+Hack.show = function () {
   Hack.textArea.clear();
   Hack.log.apply(this, arguments);
 };
 
-Hack.clearLog = function() {
+Hack.clearLog = function () {
   Hack.textarea.text = '';
   Hack.textArea.clear();
   Hack.textArea.hide();
 };
 
 // enchantBook
-Hack.enchantBook = function() {
+Hack.enchantBook = function () {
   // scope: new Entity
   let isEditorReady = false;
-  Hack.on('editorready', function() {
+  Hack.on('editorready', function () {
     isEditorReady = true;
   });
 
@@ -164,10 +164,10 @@ Hack.enchantBook = function() {
   Object.defineProperty(Hack, 'hint', {
     configurable: true,
     enumerable: true,
-    get: function() {
+    get: function () {
       return _hint;
     },
-    set: function(code) {
+    set: function (code) {
       if (isEditorReady) {
         task(code);
       } else {
@@ -191,12 +191,12 @@ Hack.enchantBook = function() {
     }
   });
 
-  Hack.on('editend', function() {
+  Hack.on('editend', function () {
     Hack.enchantBook.tl.scaleTo(0, 1, 3, enchant.Easing.LINEAR);
     refocus();
   });
 
-  Hack.on('editcancel', function() {
+  Hack.on('editcancel', function () {
     Hack.enchantBook.tl.scaleTo(0, 1, 7, enchant.Easing.BACK_EASEIN);
     refocus();
   });
@@ -217,7 +217,7 @@ Hack.enchantBook = function() {
   return this;
 }.call(new enchant.Entity());
 
-Hack.openEditor = function() {
+Hack.openEditor = function () {
   if (!this.enchantBook) return;
   this.enchantBook.scale(1, 0);
   this.enchantBook.tl.scaleTo(1, 1, 7, enchant.Easing.BACK_EASEOUT); // うごきあり
@@ -225,18 +225,18 @@ Hack.openEditor = function() {
   this.dispatchEvent(new enchant.Event('editstart'));
 };
 
-Hack.closeEditor = function() {
+Hack.closeEditor = function () {
   if (!this.enchantBook) return;
   this.enchantBook.scale(1, 1);
   this.enchantBook.tl
     .scaleTo(0, 1, 7, enchant.Easing.BACK_EASEIN)
-    .then(function() {
+    .then(function () {
       this.visible = false;
     });
   this.dispatchEvent(new enchant.Event('editcancel'));
 };
 
-Hack.clearHistory = function() {
+Hack.clearHistory = function () {
   if (!this.enchantBook) return;
   this.enchantBook._element.contentWindow.postMessage(
     {
@@ -246,11 +246,11 @@ Hack.clearHistory = function() {
   );
 };
 
-Hack.createLabel = function(text, prop) {
-  return function() {
+Hack.createLabel = function (text, prop) {
+  return function () {
     this.text = text;
     if (prop) {
-      Object.keys(prop).forEach(function(key) {
+      Object.keys(prop).forEach(function (key) {
         this[key] = prop[key];
       }, this);
     }
@@ -262,10 +262,10 @@ Hack.createLabel = function(text, prop) {
   }.call(new enchant.Label());
 };
 
-Hack.createSprite = function(width, height, prop) {
-  return function() {
+Hack.createSprite = function (width, height, prop) {
+  return function () {
     if (prop) {
-      Object.keys(prop).forEach(function(key) {
+      Object.keys(prop).forEach(function (key) {
         this[key] = prop[key];
       }, this);
     }
@@ -278,8 +278,8 @@ Hack.createSprite = function(width, height, prop) {
 };
 
 // overlay
-Hack.overlay = function() {
-  return function(args) {
+Hack.overlay = function () {
+  return function (args) {
     // scope: createSprite()
 
     this.image = new enchant.Surface(game.width, game.height);
@@ -308,44 +308,44 @@ Hack.overlay = function() {
   );
 };
 
-(function() {
+(function () {
   let playing = true;
 
   Object.defineProperty(Hack, 'isPlaying', {
     configurable: true,
     enumerable: true,
-    get: function() {
+    get: function () {
       return playing;
     }
   });
   // Trigger
-  Hack.gameclear = function() {
+  Hack.gameclear = function () {
     if (!playing) return;
     playing = false;
     Hack.dispatchEvent(new enchant.Event('gameclear'));
   };
-  Hack.gameover = function() {
+  Hack.gameover = function () {
     if (!playing) return;
     playing = false;
     Hack.dispatchEvent(new enchant.Event('gameover'));
   };
 
   // 初期値
-  Hack.ongameclear = function() {
+  Hack.ongameclear = function () {
     const lay = Hack.overlay(
       'rgba(0,0,0,0.4)',
       'resources/hackforplay/clear.png'
     );
     lay.opacity = 0;
     lay.moveTo(-game.rootScene.x, -game.rootScene.y);
-    lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function() {
+    lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function () {
       // [RETRY]
       Hack.createSprite(165, 69, {
         x: 314 - game.rootScene.x,
         y: 320 - game.rootScene.y,
         image: game.assets['resources/hackforplay/new_button_retry.png'],
         defaultParentNode: Hack.overlayGroup,
-        ontouchend: function() {
+        ontouchend: function () {
           // [RETRY] がクリックされたとき
           reload(false);
         }
@@ -358,21 +358,21 @@ Hack.overlay = function() {
     });
   };
 
-  Hack.ongameover = function() {
+  Hack.ongameover = function () {
     const lay = Hack.overlay(
       'rgba(0,0,0,0.4)',
       'resources/hackforplay/gameover.png'
     );
     lay.opacity = 0;
     lay.moveTo(-game.rootScene.x, -game.rootScene.y);
-    lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function() {
+    lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function () {
       // [RETRY]
       Hack.createSprite(165, 69, {
         x: 157 - game.rootScene.x,
         y: 320 - game.rootScene.y,
         image: game.assets['resources/hackforplay/new_button_retry.png'],
         defaultParentNode: Hack.overlayGroup,
-        ontouchend: function() {
+        ontouchend: function () {
           // [RETRY] がクリックされたとき
           reload(false);
         }
@@ -387,7 +387,7 @@ Hack.overlay = function() {
 })();
 
 // ゲームメニュー
-(function() {
+(function () {
   game.rootScene.name = 'RootScene';
 
   let visible, overlay;
@@ -400,7 +400,7 @@ Hack.overlay = function() {
   menuGroup.name = 'MenuGroup';
   menuGroup.order = 200;
 
-  menuGroup.on('enterframe', function() {
+  menuGroup.on('enterframe', function () {
     /*
 		if (game.rootScene.lastChild !== menuGroup) {
 			game.rootScene.addChild(menuGroup);
@@ -411,7 +411,7 @@ Hack.overlay = function() {
 
   Object.defineProperty(Hack, 'menuGroup', {
     configurable: true,
-    get: function() {
+    get: function () {
       return menuGroup;
     }
   });
@@ -419,7 +419,7 @@ Hack.overlay = function() {
   // Hack.menuOpenedFlag 読み取り専用プロパティ
   Object.defineProperty(Hack, 'menuOpenedFlag', {
     configurable: true,
-    get: function() {
+    get: function () {
       return visible;
     }
   });
@@ -433,7 +433,7 @@ Hack.overlay = function() {
   });
   Object.defineProperty(Hack, 'menuOpener', {
     configurable: true,
-    get: function() {
+    get: function () {
       return opener;
     }
   });
@@ -441,7 +441,7 @@ Hack.overlay = function() {
   game.rootScene.addChild(menuGroup);
 
   // イベント Hack.onmenuopend が dispatch される
-  Hack.openMenu = function() {
+  Hack.openMenu = function () {
     if (visible) return;
     visible = true;
     Hack.dispatchEvent(new enchant.Event('menuopened'));
@@ -449,10 +449,10 @@ Hack.overlay = function() {
     // アニメーション
     overlay.tl.fadeIn(6);
 
-    GUIParts.filter(function(item, index) {
+    GUIParts.filter(function (item, index) {
       GUIParts[index].visible = GUIParts[index].condition();
       return GUIParts[index].visible;
-    }).forEach(function(item, index) {
+    }).forEach(function (item, index) {
       item.moveTo(opener.x, opener.y);
       item.tl
         .hide()
@@ -464,14 +464,14 @@ Hack.overlay = function() {
   };
 
   // イベント Hack.onmenuclosed が dispatch される
-  Hack.closeMenu = function() {
+  Hack.closeMenu = function () {
     if (!visible) return;
     visible = false;
     Hack.dispatchEvent(new enchant.Event('menuclosed'));
 
     overlay.tl.fadeOut(6);
 
-    GUIParts.forEach(function(item) {
+    GUIParts.forEach(function (item) {
       item.tl
         .fadeOut(8, enchant.Easing.BACK_EASEIN)
         .and()
@@ -481,7 +481,7 @@ Hack.overlay = function() {
   };
 
   // スプライトの初期化
-  game.on('load', function() {
+  game.on('load', function () {
     // 暗めのオーバーレイ
     overlay = new enchant.Sprite(game.width, game.height);
     overlay.image = new enchant.Surface(overlay.width, overlay.height);
@@ -501,7 +501,7 @@ Hack.overlay = function() {
 		};
 		*/
 
-    opener.ontouchend = function() {
+    opener.ontouchend = function () {
       if (visible) Hack.closeMenu();
       else Hack.openMenu();
     };
@@ -509,22 +509,22 @@ Hack.overlay = function() {
     // コメント入力画面を表示するボタン
     addGUIParts(
       game.assets['resources/hackforplay/menu-button-comment.png'],
-      function() {
+      function () {
         return !{
-          getItem: function() {}
+          getItem: function () {}
         }.getItem('stage_param_comment'); // 存在しない場合は !'' === true
       },
-      function() {
+      function () {
         // GUIParts,overlayを100ミリ秒間非表示にする
-        GUIParts.concat(overlay).forEach(function(item) {
+        GUIParts.concat(overlay).forEach(function (item) {
           const visibility = item.visible;
           item.visible = false;
-          setTimeout(function() {
+          setTimeout(function () {
             item.visible = visibility;
           }, 100);
         });
         window.parent.postMessage('show_comment', '*');
-        setTimeout(function() {
+        setTimeout(function () {
           Hack.closeMenu();
         }, 500);
       }
@@ -532,10 +532,10 @@ Hack.overlay = function() {
     // ゲームを再スタートするボタン
     addGUIParts(
       game.assets['resources/hackforplay/menu-button-retry.png'],
-      function() {
+      function () {
         return true;
       },
-      function() {
+      function () {
         location.reload(false);
       }
     );
@@ -549,11 +549,11 @@ Hack.overlay = function() {
           visible: _condition(),
           condition: _condition,
           touchEnabled: false,
-          ontouchend: function() {
+          ontouchend: function () {
             this.tl
               .scaleTo(1.1, 1.1, 3)
               .scaleTo(1, 1, 3)
-              .then(function() {
+              .then(function () {
                 _touchEvent();
               });
           }
@@ -569,7 +569,7 @@ Hack.overlay = function() {
  * prop: property name (obj.----)
  * condition: if (obj.---- === condition) { predicate(); }
  */
-Hack.define = function(obj, prop, condition, predicate) {
+Hack.define = function (obj, prop, condition, predicate) {
   let _value = null,
     descriptor = Object.getOwnPropertyDescriptor(obj, prop);
   if (arguments.length < 4)
@@ -587,10 +587,10 @@ Hack.define = function(obj, prop, condition, predicate) {
       descriptor = {
         configurable: descriptor.configurable,
         enumerable: descriptor.enumerable,
-        get: function() {
+        get: function () {
           return _value;
         },
-        set: function(value) {
+        set: function (value) {
           if ((_value = value) === condition && predicate instanceof Function) {
             predicate();
           }
@@ -599,7 +599,7 @@ Hack.define = function(obj, prop, condition, predicate) {
     } else {
       // Extend setter
       const setter = descriptor.set;
-      descriptor.set = function(value) {
+      descriptor.set = function (value) {
         setter.call(obj, value);
         if (value === condition && predicate instanceof Function) {
           predicate();
@@ -610,10 +610,10 @@ Hack.define = function(obj, prop, condition, predicate) {
     descriptor = {
       configurable: true,
       enumerable: true,
-      get: function() {
+      get: function () {
         return _value;
       },
-      set: function(value) {
+      set: function (value) {
         if ((_value = value) === condition && predicate instanceof Function) {
           predicate();
         }
@@ -638,9 +638,9 @@ game.addEventListener('load', function() {
  * style: CSS Color style / Array
  * @return [r, g, b]
  */
-(function() {
+(function () {
   const ctx = new enchant.Surface(1, 1).context;
-  Hack.css2rgb = function(style) {
+  Hack.css2rgb = function (style) {
     if (typeof style === 'string') {
       ctx.fillStyle = style;
       ctx.fillRect(0, 0, 1, 1);
@@ -650,7 +650,7 @@ game.addEventListener('load', function() {
         3
       );
     } else if (style instanceof Array && style.length !== 3) {
-      return [0, 0, 0].map(function(elem, index) {
+      return [0, 0, 0].map(function (elem, index) {
         return Math.min(255, Math.max(0, style[index] || elem)) >> 0;
       });
     } else if (style instanceof Array) {
@@ -665,7 +665,7 @@ game.addEventListener('load', function() {
 /*  Vec2Dir
 forwardをdirectionに変換する。およそのベクトルをまるめて近い向きに直す
 */
-Hack.Vec2Dir = function(vec) {
+Hack.Vec2Dir = function (vec) {
   if (vec.x === undefined || vec.y === undefined) {
     return null;
   }

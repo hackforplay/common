@@ -4,7 +4,7 @@ import gl from 'mod/3d/gl';
 
 import Program from 'mod/3d/program';
 
-RPGObject.prototype.getSource = function() {
+RPGObject.prototype.getSource = function () {
   // 3D の拡張に対応している
   if (this.staticSource) {
     return this.staticSource;
@@ -26,12 +26,12 @@ RPGObject.prototype.getSource = function() {
 };
 
 // x を 2 以上かつ x 以上の 2 の冪に変換する
-var pow2 = function(x) {
+var pow2 = function (x) {
   if (x < 2) return 2;
   return Math.pow(2, (1 + Math.log2(x - 1)) | 0);
 };
 
-var for2d = function(x, y, callback) {
+var for2d = function (x, y, callback) {
   for (var a = 0; a < x; ++a) {
     for (var b = 0; b < y; ++b) {
       callback(a, b);
@@ -102,7 +102,7 @@ Texture.constSize = {};
 Texture.lastResult = null;
 
 Object.defineProperty(Texture, 'bindError', {
-  get: function() {
+  get: function () {
     return !Texture.lastResult;
   }
 });
@@ -113,11 +113,11 @@ const noneCanvas = document.createElement('canvas').toDataURL();
 
 Texture.list = {};
 
-const resize2 = (function() {
+const resize2 = (function () {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
 
-  return function(source, _w, _h, node) {
+  return function (source, _w, _h, node) {
     const src = source;
 
     if (!source) return;
@@ -153,7 +153,7 @@ const resize2 = (function() {
 
     const url = canvas.toDataURL();
 
-    enchant.Core.instance.load(url, '', function() {
+    enchant.Core.instance.load(url, '', function () {
       const texture = new N_Texture(this);
 
       texture.src = src;
@@ -170,7 +170,7 @@ const resize2 = (function() {
 Texture.collection = {};
 
 // rpg object からテクスチャを取得
-Texture.fromNode = function(node) {
+Texture.fromNode = function (node) {
   var source = node.getSource();
 
   if (!source) {
@@ -228,7 +228,7 @@ Texture.fromNode = function(node) {
   return texture;
 };
 
-Texture.from = function(source) {
+Texture.from = function (source) {
   return new Texture(source);
 };
 

@@ -1,6 +1,6 @@
 // シェーダ定義
 
-export default async function(FragmentShader, VertexShader) {
+export default async function (FragmentShader, VertexShader) {
   FragmentShader.new(
     'sky',
     `

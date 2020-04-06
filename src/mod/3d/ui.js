@@ -21,7 +21,7 @@ game.on('awake', () => {
   };
 
   let count = 0;
-  button.ontouchstart = function() {
+  button.ontouchstart = function () {
     const x = ++count % 2 ? 180 : 455;
     sprite.tl.moveTo(x, 0, 30, 'QUAD_EASEINOUT');
   };

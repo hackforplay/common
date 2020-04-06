@@ -1,14 +1,14 @@
 import enchant from '../enchantjs/enchant';
 
-enchant.Node.prototype.stop = function() {
+enchant.Node.prototype.stop = function () {
   this._stop = true;
 };
 
-enchant.Node.prototype.resume = function() {
+enchant.Node.prototype.resume = function () {
   this._stop = false;
 };
 
-enchant.Core.prototype._tick = function() {
+enchant.Core.prototype._tick = function () {
   const e = new enchant.Event('enterframe');
   let now = window.getTime();
   const elapsed = (e.elapsed = now - this.currentTime);

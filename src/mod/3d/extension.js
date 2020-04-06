@@ -7,16 +7,16 @@ import { initializeMapObjectConfig } from 'mod/3d/mapObjectConfig';
 import BehaviorTypes from '../../hackforplay/behavior-types';
 
 // MapObject が RPGObject になったアプデの対策
-(function() {
+(function () {
   var rpg = RPGObject.prototype;
   var map = MapObject.prototype;
 
-  var mapProto = Object.keys(map).map(function(key) {
+  var mapProto = Object.keys(map).map(function (key) {
     return !(key in rpg);
   });
 
-  Object.keys(MapObject.dictionary).forEach(function(name) {
-    Hack.assets[name] = function() {
+  Object.keys(MapObject.dictionary).forEach(function (name) {
+    Hack.assets[name] = function () {
       this.image = game.assets['resources/enchantjs/x2/dotmat.gif'];
       this.width = 32;
       this.height = 32;
@@ -37,11 +37,11 @@ import BehaviorTypes from '../../hackforplay/behavior-types';
 })();
 
 // Insect 等が RPGObject になった対策
-(function() {
-  var extendOffset = function(name, z) {
+(function () {
+  var extendOffset = function (name, z) {
     var base = Hack.assets[name];
 
-    Hack.assets[name] = function() {
+    Hack.assets[name] = function () {
       base.apply(this, arguments);
 
       this.assetName = name;
@@ -69,7 +69,7 @@ RPGObject.prototype.relocate = function relocate() {
 };
 
 // locate3D
-(function() {
+(function () {
   Object.defineProperties(RPGObject.prototype, {
     mapX: {
       configurable: true,
@@ -94,10 +94,10 @@ RPGObject.prototype.relocate = function relocate() {
     }
   });
 
-  RPGMap.prototype.getItem3D = function(x, y, z) {
+  RPGMap.prototype.getItem3D = function (x, y, z) {
     var nodes = this.scene.childNodes;
 
-    var items = nodes.filter(function(node) {
+    var items = nodes.filter(function (node) {
       return node.mapX === x && node.mapY === y && node.mapZ === z;
     });
 
@@ -106,7 +106,7 @@ RPGObject.prototype.relocate = function relocate() {
     return null;
   };
 
-  RPGMap.prototype.removeItem = function(x, y, z, remover) {
+  RPGMap.prototype.removeItem = function (x, y, z, remover) {
     if (remover.removedItems) {
       remover.removedItems.forEach(node => {
         node.visible = true;
@@ -118,10 +118,10 @@ RPGObject.prototype.relocate = function relocate() {
     var nodes = this.scene.childNodes;
 
     nodes
-      .filter(function(node) {
+      .filter(function (node) {
         return node.mapX === x && node.mapY === y && node.mapZ === z;
       })
-      .forEach(function(node) {
+      .forEach(function (node) {
         // node.remove();
         node.visible = false;
 
@@ -129,7 +129,7 @@ RPGObject.prototype.relocate = function relocate() {
       });
   };
 
-  RPGObject.prototype.locate3D = function(x, y, z, mapName) {
+  RPGObject.prototype.locate3D = function (x, y, z, mapName) {
     if (
       mapName in Hack.maps &&
       Hack.maps[mapName] instanceof RPGMap &&
@@ -147,7 +147,7 @@ RPGObject.prototype.relocate = function relocate() {
     }
   };
 
-  RPGObject.prototype.locate = function(x, y, mapName) {
+  RPGObject.prototype.locate = function (x, y, mapName) {
     this.locate3D(x, y, 0, mapName);
   };
 })();
@@ -196,11 +196,11 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
 })();
 
 // walk の条件に高さを追加
-(function() {
+(function () {
   // TODO: 新仕様の walk に対応する
   return;
 
-  RPGObject.prototype.walk = function(distance, continuous) {
+  RPGObject.prototype.walk = function (distance, continuous) {
     if (
       !this.isKinematic ||
       (!continuous && this.behavior !== BehaviorTypes.Idle) ||
@@ -229,7 +229,7 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
     // z
     var mapY = Math.floor((this.position.y - this.offset.z) / 32);
 
-    var hits = RPGObject.collection.filter(function(item) {
+    var hits = RPGObject.collection.filter(function (item) {
       return (
         item.isKinematic &&
         item.collisionFlag &&
@@ -238,7 +238,7 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
       );
     });
 
-    hits = hits.filter(function(node) {
+    hits = hits.filter(function (node) {
       return 'hp' in node && mapY === node.mapZ;
     });
 
@@ -248,7 +248,7 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
       this.mapZ - 1
     );
 
-    i2 = (i2 || []).filter(function(item) {
+    i2 = (i2 || []).filter(function (item) {
       return (
         item.isKinematic &&
         item.collisionFlag &&
@@ -272,12 +272,12 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
         y: this.y + move.y
       };
       var frame = this.getFrame().length;
-      var stopInterval = this.setInterval(function() {
+      var stopInterval = this.setInterval(function () {
         this.moveBy(move.x / frame, move.y / frame);
         this.moveTo(Math.round(this.x), Math.round(this.y));
         this.dispatchEvent(new Event('walkmove'));
       }, 1);
-      this.setTimeout(function() {
+      this.setTimeout(function () {
         this.moveTo(target.x, target.y);
         stopInterval();
         this.dispatchEvent(new Event('walkend'));
@@ -289,7 +289,7 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
       // 直前のフレームで collided していたオブジェクトを除外
       var e = new Event('collided');
       e.map = mapHit;
-      e.hits = hits.filter(function(item) {
+      e.hits = hits.filter(function (item) {
         return (
           !this._preventFrameHits || this._preventFrameHits.indexOf(item) < 0
         );
@@ -302,7 +302,7 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
         e2.hits = [(e2.hit = this)];
         e.item = e.hit; // イベント引数の統一
         this.dispatchEvent(e);
-        e.hits.forEach(function(item) {
+        e.hits.forEach(function (item) {
           item.dispatchEvent(e2);
         });
       }
@@ -313,7 +313,7 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
 })();
 
 // z
-(function() {
+(function () {
   RPGObject.prototype._z = 0;
 
   Object.defineProperty(RPGObject.prototype, 'z', {
@@ -367,22 +367,22 @@ Object.defineProperty(RPGObject.prototype, 'opacity', {
 })();
 
 // map
-(function() {
+(function () {
   Object.defineProperties(RPGMap.prototype, {
     mapWidth: {
-      get: function() {
+      get: function () {
         return this._mapWidth;
       }
     },
     mapHeight: {
-      get: function() {
+      get: function () {
         return this._mapHeight;
       }
     }
   });
 
   var load = RPGMap.prototype.load;
-  RPGMap.prototype.load = function() {
+  RPGMap.prototype.load = function () {
     var loaded = this.isLoaded;
 
     load.apply(this, arguments);

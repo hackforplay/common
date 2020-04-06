@@ -2,7 +2,7 @@ import game from './game';
 
 // リサイズ時にゲームの scale を調節
 document.documentElement.style.overflow = 'hidden';
-window.addEventListener('resize', function() {
+window.addEventListener('resize', function () {
   const fWidth = parseInt(window.innerWidth, 10),
     fHeight = parseInt(window.innerHeight, 10);
   if (fWidth && fHeight) {
@@ -13,7 +13,7 @@ window.addEventListener('resize', function() {
 });
 
 // 'capture' メッセージを受けてcanvasの画像を返す
-window.addEventListener('message', function(event) {
+window.addEventListener('message', function (event) {
   if (typeof event.data === 'object' && event.data.query === 'capture') {
     const getCanvas = () => {
       try {

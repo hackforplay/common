@@ -9,7 +9,7 @@ import Program from 'mod/3d/program';
 
 import { plane2, plane, model2d } from 'mod/3d/definePrimitive';
 
-enchant.Class.createStatic = function() {
+enchant.Class.createStatic = function () {
   return new (enchant.Class.create.apply(this, arguments))();
 };
 
@@ -41,7 +41,7 @@ const ObjectRenderer = enchant.Class.createStatic({
   },
 
   update() {
-    Object.keys(this.nodes).forEach(function(key) {
+    Object.keys(this.nodes).forEach(function (key) {
       this.nodes[key] = [];
     }, this);
 
@@ -82,7 +82,7 @@ const ObjectRenderer = enchant.Class.createStatic({
 ObjectRenderer.pass = RenderPass.DEPTH;
 
 // 全てのオブジェクトで共通の行列処理を行う
-ObjectRenderer.mainPassUniformMatrix = function(node, matrixM) {
+ObjectRenderer.mainPassUniformMatrix = function (node, matrixM) {
   var matrixVP = Camera3D.active.matrixVP;
   var matrixMVP = Matrix.mulRow(matrixM, matrixVP);
 
@@ -98,7 +98,7 @@ ObjectRenderer.mainPassUniformMatrix = function(node, matrixM) {
   }
 };
 
-ObjectRenderer.render[ObjectType.BLOCK] = function(node) {
+ObjectRenderer.render[ObjectType.BLOCK] = function (node) {
   // テクスチャをバインド
   Texture.fromNode(node).bind();
   if (Texture.bindError) return;
@@ -129,7 +129,7 @@ ObjectRenderer.render[ObjectType.BLOCK] = function(node) {
   MapObject3D.get('block').draw();
 };
 
-ObjectRenderer.render[ObjectType.GROUND] = function(node) {
+ObjectRenderer.render[ObjectType.GROUND] = function (node) {
   // テクスチャをバインド
   Texture.fromNode(node).bind();
   if (Texture.bindError) return;
@@ -150,7 +150,7 @@ ObjectRenderer.render[ObjectType.GROUND] = function(node) {
   plane.draw();
 };
 
-ObjectRenderer.render[ObjectType.MODEL] = function(node) {
+ObjectRenderer.render[ObjectType.MODEL] = function (node) {
   // テクスチャをバインド
   Texture.fromNode(node).bind();
   if (Texture.bindError) return;
@@ -180,7 +180,7 @@ ObjectRenderer.render[ObjectType.MODEL] = function(node) {
   gl.enable(gl.DEPTH_TEST);
 };
 
-ObjectRenderer.render[ObjectType.OBJ_MODEL] = function(node) {
+ObjectRenderer.render[ObjectType.OBJ_MODEL] = function (node) {
   // テクスチャをバインド
   Texture.fromNode(node).bind();
   if (Texture.bindError) return;

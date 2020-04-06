@@ -1,7 +1,7 @@
 // Math
 Math.hypot =
   Math.hypot ||
-  function() {
+  function () {
     var y = 0;
     var length = arguments.length;
 
@@ -16,7 +16,7 @@ Math.hypot =
 
 Math.log2 =
   Math.log2 ||
-  function(x) {
+  function (x) {
     return Math.log(x) / Math.LN2;
   };
 
@@ -207,11 +207,11 @@ var Matrix = {
   }
 };
 
-Matrix.identity = function() {
+Matrix.identity = function () {
   return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 };
 
-Matrix.scale = function(vec) {
+Matrix.scale = function (vec) {
   return new Float32Array([
     vec[0],
     0,
@@ -232,7 +232,7 @@ Matrix.scale = function(vec) {
   ]);
 };
 
-Matrix.translate = function(vec) {
+Matrix.translate = function (vec) {
   return new Float32Array([
     1,
     0,
@@ -253,7 +253,7 @@ Matrix.translate = function(vec) {
   ]);
 };
 
-Matrix.multiply = function(mat1, mat2) {
+Matrix.multiply = function (mat1, mat2) {
   var m1 = mat1;
   var m2 = mat2;
 
@@ -278,37 +278,37 @@ Matrix.multiply = function(mat1, mat2) {
 };
 
 // 列オーダーで行列を乗算する
-Matrix.mulCol = function() {
+Matrix.mulCol = function () {
   return Array.prototype.reduce.call(arguments, Matrix.multiply);
 };
 
 // 行オーダーで行列を乗算する
-Matrix.mulRow = function() {
+Matrix.mulRow = function () {
   return Array.prototype.reduceRight.call(arguments, Matrix.multiply);
 };
 
 // ベクトル（仮）
 
 var Vec3 = enchant.Class.create({
-  initialize: function(x, y, z) {
+  initialize: function (x, y, z) {
     this.set(x, y, z);
   },
 
-  set: function(x, y, z) {
+  set: function (x, y, z) {
     this.x = x || 0;
     this.y = y || 0;
     this.z = z || 0;
   },
 
-  toArray: function() {
+  toArray: function () {
     return [this.x, this.y, this.z];
   },
 
-  clone: function() {
+  clone: function () {
     return new Vec3(this.x, this.y, this.z);
   },
 
-  length: function() {
+  length: function () {
     return Math.hypot(this.x, this.y, this.z);
   },
 
@@ -340,15 +340,15 @@ var Vec3 = enchant.Class.create({
   }
 });
 
-Vec3.sub = function(a, b) {
+Vec3.sub = function (a, b) {
   return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z);
 };
 
-Vec3.add = function(v1, v2) {
+Vec3.add = function (v1, v2) {
   return [v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]];
 };
 
-Vec3.transform = function(a, m) {
+Vec3.transform = function (a, m) {
   var x = a[0],
     y = a[1],
     z = a[2],
@@ -360,7 +360,7 @@ Vec3.transform = function(a, m) {
   return [x, y, z];
 };
 
-Vec3.distance = function(v1, v2) {
+Vec3.distance = function (v1, v2) {
   return (
     Math.pow(v2[0] - v1[0], 2) +
     Math.pow(v2[1] - v1[1], 2) +
@@ -368,7 +368,7 @@ Vec3.distance = function(v1, v2) {
   );
 };
 
-Vec3.distance = function(v1, v2) {
+Vec3.distance = function (v1, v2) {
   return (
     Math.abs(v2[0] - v1[0]) + Math.abs(v2[1] - v1[1]) + Math.abs(v2[2] - v1[2])
   );
@@ -376,7 +376,7 @@ Vec3.distance = function(v1, v2) {
 
 var Vec2 = {};
 
-Vec2.rotate = function(vec, rad) {
+Vec2.rotate = function (vec, rad) {
   var x = vec[0],
     y = vec[1];
   var sin = Math.sin(rad),

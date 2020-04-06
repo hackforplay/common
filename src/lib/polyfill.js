@@ -1,5 +1,5 @@
 if (!Math.sign) {
-  Math.sign = function(x) {
+  Math.sign = function (x) {
     x = +x; // convert to a number
     if (x === 0 || isNaN(x)) {
       return x;
@@ -9,7 +9,7 @@ if (!Math.sign) {
 }
 
 if (!Array.prototype.fill) {
-  Array.prototype.fill = function(value) {
+  Array.prototype.fill = function (value) {
     // Steps 1-2.
     if (this == null) {
       throw new TypeError('this is null or not defined');
@@ -57,11 +57,11 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
       CanvasRenderingContext2D.prototype,
       'currentTransform',
       {
-        get: function() {
+        get: function () {
           var m = this.mozCurrentTransform;
           return { a: m[0], b: m[1], c: m[2], d: m[3], e: m[4], f: m[5] };
         },
-        set: function(x) {
+        set: function (x) {
           this.mozCurrentTransform = [x.a, x.b, x.c, x.d, x.e, x.f];
         },
         enumerable: true,
@@ -73,10 +73,10 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
       CanvasRenderingContext2D.prototype,
       'currentTransform',
       {
-        get: function() {
+        get: function () {
           return this.webkitCurrentTransform;
         },
-        set: function(x) {
+        set: function (x) {
           this.webkitCurrentTransform = x;
         },
         enumerable: true,
@@ -88,7 +88,7 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
       CanvasRenderingContext2D.prototype,
       'currentTransform',
       {
-        get: function() {
+        get: function () {
           return (
             (this._t2stack && this._t2stack[this._t2stack.length - 1]) || {
               a: 1,
@@ -100,7 +100,7 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
             }
           );
         },
-        set: function(x) {
+        set: function (x) {
           if (!this._t2stack) this._t2stack = [{}];
           this._t2stack[this._t2stack.length - 1] = {
             a: x.a,
@@ -115,9 +115,9 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
         configurable: false
       }
     );
-    CanvasRenderingContext2D.prototype.save = (function() {
+    CanvasRenderingContext2D.prototype.save = (function () {
       var save = CanvasRenderingContext2D.prototype.save;
-      return function() {
+      return function () {
         if (!this._t2stack)
           this._t2stack = [{ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }];
         var t = this._t2stack[this._t2stack.length - 1];
@@ -127,16 +127,16 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
         save.call(this);
       };
     })();
-    CanvasRenderingContext2D.prototype.restore = (function() {
+    CanvasRenderingContext2D.prototype.restore = (function () {
       var restore = CanvasRenderingContext2D.prototype.restore;
-      return function() {
+      return function () {
         if (this._t2stack) this._t2stack.pop();
         restore.call(this);
       };
     })();
-    CanvasRenderingContext2D.prototype.transform = (function() {
+    CanvasRenderingContext2D.prototype.transform = (function () {
       var transform = CanvasRenderingContext2D.prototype.transform;
-      return function(a, b, c, d, e, f) {
+      return function (a, b, c, d, e, f) {
         if (!this._t2stack)
           this._t2stack = [{ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }];
         var t = this._t2stack[this._t2stack.length - 1],
@@ -156,9 +156,9 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
         transform.call(this, a, b, c, d, e, f);
       };
     })();
-    CanvasRenderingContext2D.prototype.setTransform = (function() {
+    CanvasRenderingContext2D.prototype.setTransform = (function () {
       var setTransform = CanvasRenderingContext2D.prototype.setTransform;
-      return function(a, b, c, d, e, f) {
+      return function (a, b, c, d, e, f) {
         if (!this._t2stack) this._t2stack = [{}];
         this._t2stack[this._t2stack.length - 1] = {
           a: a,
@@ -171,9 +171,9 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
         setTransform.call(this, a, b, c, d, e, f);
       };
     })();
-    CanvasRenderingContext2D.prototype.resetTransform = (function() {
+    CanvasRenderingContext2D.prototype.resetTransform = (function () {
       var resetTransform = CanvasRenderingContext2D.prototype.resetTransform;
-      return function() {
+      return function () {
         if (!this._t2stack) this._t2stack = [{}];
         this._t2stack[this._t2stack.length - 1] = {
           a: 1,
@@ -186,9 +186,9 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
         resetTransform && resetTransform.call(this);
       };
     })();
-    CanvasRenderingContext2D.prototype.scale = (function() {
+    CanvasRenderingContext2D.prototype.scale = (function () {
       var scale = CanvasRenderingContext2D.prototype.scale;
-      return function(sx, sy) {
+      return function (sx, sy) {
         if (!this._t2stack)
           this._t2stack = [{ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }];
         var t = this._t2stack[this._t2stack.length - 1];
@@ -201,9 +201,9 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
         scale.call(this, sx, sy);
       };
     })();
-    CanvasRenderingContext2D.prototype.rotate = (function() {
+    CanvasRenderingContext2D.prototype.rotate = (function () {
       var rotate = CanvasRenderingContext2D.prototype.rotate;
-      return function(w) {
+      return function (w) {
         if (!this._t2stack)
           this._t2stack = [{ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }];
         var t = this._t2stack[this._t2stack.length - 1];
@@ -224,9 +224,9 @@ if (!('currentTransform' in CanvasRenderingContext2D.prototype)) {
         return rotate.call(this, w);
       };
     })();
-    CanvasRenderingContext2D.prototype.translate = (function() {
+    CanvasRenderingContext2D.prototype.translate = (function () {
       var translate = CanvasRenderingContext2D.prototype.translate;
-      return function(x, y) {
+      return function (x, y) {
         if (!this._t2stack)
           this._t2stack = [{ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }];
         var t = this._t2stack[this._t2stack.length - 1];

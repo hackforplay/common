@@ -433,8 +433,9 @@ export class Rule {
 
     logFromAsset(
       object,
-      `${name} が (${object.mapX}, ${object.mapY}, '${object.map &&
-        object.map.name}') にあらわれた`
+      `${name} が (${object.mapX}, ${object.mapY}, '${
+        object.map && object.map.name
+      }') にあらわれた`
     );
 
     return object;

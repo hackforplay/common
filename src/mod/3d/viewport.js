@@ -12,7 +12,7 @@ const Viewport = enchant.Class.create({
     this.matrix = Matrix.perspective(fov, aspect, near, far);
   },
 
-  getMatrix: function() {
+  getMatrix: function () {
     return this.matrix;
   }
 });

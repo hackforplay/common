@@ -378,13 +378,13 @@ class Camera extends enchant.Sprite {
 }
 
 // カメラを並べる
-Camera.arrange = function(
+Camera.arrange = function (
   x: number,
   y: number,
   border = true,
   filter?: (camera: Camera) => boolean
 ) {
-  const for2d = function(
+  const for2d = function (
     x: number,
     y: number,
     callback: (a: number, b: number) => void
@@ -398,7 +398,7 @@ Camera.arrange = function(
 
   // 枠を表示する
   if (border) {
-    Camera.collection.forEach(function(camera) {
+    Camera.collection.forEach(function (camera) {
       camera.border = true;
     });
   }
@@ -407,13 +407,13 @@ Camera.arrange = function(
   let index = 0;
   const cameras = Camera.collection.filter(
     filter ||
-      function(camera) {
+      function (camera) {
         return camera.enabled;
       }
   );
 
   // 再配置
-  for2d(y, x, function(y2, x2) {
+  for2d(y, x, function (y2, x2) {
     if (index >= cameras.length) return;
     const camera = cameras[index++];
 

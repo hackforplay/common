@@ -66,7 +66,7 @@ Hack.skills = new Proxy(
   }
 );
 
-Hack.assets.knight = function() {
+Hack.assets.knight = function () {
   this.image = game.assets['resources/enchantjs/x1.5/chara5.png'];
   this.width = 48;
   this.height = 48;
@@ -98,7 +98,7 @@ Hack.assets.knight = function() {
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 28, 38).toPolygon();
   this.collider.setOffset(new SAT.V(10, 6));
 };
-Hack.assets.darkKnight = function() {
+Hack.assets.darkKnight = function () {
   this.mod(Hack.assets.knight);
   this.image = game.assets['resources/enchantjs/x1.5/chara7.png'];
   // ダメージ判定用のポリゴン
@@ -106,7 +106,7 @@ Hack.assets.darkKnight = function() {
   this.collider.setOffset(new SAT.V(10, 6));
 };
 
-Hack.assets.magician = function() {
+Hack.assets.magician = function () {
   this.image = game.assets['resources/hackforplay/magician_girl.png'];
   this.width = 48;
   this.height = 48;
@@ -139,7 +139,7 @@ Hack.assets.magician = function() {
   this.collider.setOffset(new SAT.V(10, 6));
 };
 
-Hack.assets.slime = function() {
+Hack.assets.slime = function () {
   this.image = game.assets['resources/enchantjs/monster4.gif'];
   this.width = 48;
   this.height = 48;
@@ -176,7 +176,7 @@ Hack.assets.slime = function() {
   this.collider.setOffset(new SAT.V(10, 10));
 };
 
-Hack.assets.insect = function() {
+Hack.assets.insect = function () {
   this.image = game.assets['resources/enchantjs/monster1.gif'];
   this.width = 48;
   this.height = 48;
@@ -213,7 +213,7 @@ Hack.assets.insect = function() {
   this.collider.setOffset(new SAT.V(6, 18));
 };
 
-Hack.assets.spider = function() {
+Hack.assets.spider = function () {
   this.image = game.assets['resources/enchantjs/monster2.gif'];
   this.width = 64;
   this.height = 64;
@@ -250,7 +250,7 @@ Hack.assets.spider = function() {
   this.collider.setOffset(new SAT.V(4, 18));
 };
 
-Hack.assets.bat = function() {
+Hack.assets.bat = function () {
   this.image = game.assets['resources/enchantjs/monster3.gif'];
   this.width = 48;
   this.height = 48;
@@ -291,7 +291,7 @@ Hack.assets.bat = function() {
   this.collider = new SAT.Box(new SAT.V(this.x, this.y), 40, 28).toPolygon();
   this.collider.setOffset(new SAT.V(4, 4));
 };
-Hack.assets.shadowMod = function() {
+Hack.assets.shadowMod = function () {
   // shadow
   this.shadow = this.shadow || new enchant.Sprite(32, 32);
   this.shadow.ref = this;
@@ -308,17 +308,17 @@ Hack.assets.shadowMod = function() {
   if (this.map) {
     this.map.layerChangeFlag = true;
   }
-  this.on('added', function() {
+  this.on('added', function () {
     this.parentNode.addChild(this.shadow);
     this.map.layerChangeFlag = true;
   });
-  this.shadow.on('enterframe', function() {
+  this.shadow.on('enterframe', function () {
     const o = this.offset;
     this.moveTo(this.ref.x + o.x, this.ref.y + o.y);
   });
 };
 
-Hack.assets.dragon = function() {
+Hack.assets.dragon = function () {
   this.image = game.assets['resources/enchantjs/bigmonster1.gif'];
   this.width = 80;
   this.height = 80;
@@ -437,7 +437,7 @@ Hack.assets.dragon = function() {
   this.collider.setOffset(new SAT.V(16, 16));
 };
 
-Hack.assets.minotaur = function() {
+Hack.assets.minotaur = function () {
   this.image = game.assets['resources/enchantjs/bigmonster2.gif'];
   this.width = 80;
   this.height = 80;
@@ -564,7 +564,7 @@ Hack.assets.minotaur = function() {
   this.collider.setOffset(new SAT.V(16, 16));
 };
 
-Hack.assets.boy = function() {
+Hack.assets.boy = function () {
   this.image = game.assets['resources/enchantjs/x1.5/chara0.png'];
   this.width = 48;
   this.height = 48;
@@ -614,7 +614,7 @@ Hack.assets.boy = function() {
   this.collider.setOffset(new SAT.V(12, 14));
 };
 
-Hack.assets.girl = function() {
+Hack.assets.girl = function () {
   this.image = game.assets['resources/enchantjs/x1.5/chara0.png'];
   this.width = 48;
   this.height = 48;
@@ -664,7 +664,7 @@ Hack.assets.girl = function() {
   this.collider.setOffset(new SAT.V(12, 14));
 };
 
-Hack.assets.woman = function() {
+Hack.assets.woman = function () {
   this.image = game.assets['resources/enchantjs/x1.5/chara0.png'];
   this.width = 48;
   this.height = 48;
@@ -714,7 +714,7 @@ Hack.assets.woman = function() {
   this.collider.setOffset(new SAT.V(12, 14));
 };
 
-Hack.assets.enchantBookItem = function() {
+Hack.assets.enchantBookItem = function () {
   this.image = game.assets['resources/hackforplay/madosyo_small.png'];
   this.width = 32;
   this.height = 32;
@@ -728,7 +728,7 @@ Hack.assets.enchantBookItem = function() {
   this.collider.setOffset(new SAT.V(2, 2));
 };
 
-Hack.assets.explosion = function() {
+Hack.assets.explosion = function () {
   this.image = game.assets['resources/enchantjs/x2/effect0.png'];
   this.width = this.height = 32;
   this.offset = {
@@ -768,7 +768,7 @@ Hack.assets.explosion = function() {
   this.collider.setOffset(new SAT.V(-4, -4));
 };
 
-Hack.assets.ouroboros = function() {
+Hack.assets.ouroboros = function () {
   this.image = game.assets['resources/enchantjs/monster5.gif'];
   this.width = 80;
   this.height = 80;
@@ -828,8 +828,8 @@ Hack.assets.ouroboros = function() {
 };
 
 // Hack.skills
-Hack.skills.stalker = function(target) {
-  return function() {
+Hack.skills.stalker = function (target) {
+  return function () {
     const _target = target || Hack.player;
     if (_target && _target instanceof RPGObject) {
       const moveX = 32 * Math.sign(_target.mapX - this.mapX);
@@ -838,7 +838,7 @@ Hack.skills.stalker = function(target) {
       this.tl
         .become('walk')
         .moveBy(moveX, moveY, 30)
-        .then(function() {
+        .then(function () {
           Hack.Attack.call(this, this.mapX, this.mapY, this.atk);
         })
         .become('attack', 20)
@@ -847,9 +847,9 @@ Hack.skills.stalker = function(target) {
   };
 };
 
-Hack.skills.storm = function(asset) {
-  return function() {
-    this.onenterframe = function() {
+Hack.skills.storm = function (asset) {
+  return function () {
+    this.onenterframe = function () {
       if (game.frame % 3 > 0) return;
       const flame = new RPGObject();
       this.shoot(flame, this.forward, 6);
@@ -864,7 +864,7 @@ Hack.skills.storm = function(asset) {
       flame.force(-fx * random(0, 0.199), -fy * random(0, 0.199));
       flame.destroy(20);
       const self = this;
-      flame.ontriggerenter = function(event) {
+      flame.ontriggerenter = function (event) {
         if (event.hit !== self) {
           Hack.Attack.call(this, event.mapX, event.mapY, self.atk);
         }
@@ -875,16 +875,16 @@ Hack.skills.storm = function(asset) {
   };
 };
 
-Hack.skills.selfdestruct = function(time) {
-  return function() {
-    this.setTimeout(function() {
+Hack.skills.selfdestruct = function (time) {
+  return function () {
+    this.setTimeout(function () {
       const flame = new RPGObject();
       flame.mod(Hack.assets.explosion);
       this.shoot(flame, [0, -1], 1);
       flame.scale(2);
       flame.collisionFlag = false;
       const self = this;
-      flame.ontriggerenter = function(event) {
+      flame.ontriggerenter = function (event) {
         Hack.Attack.call(this, event.mapX, event.mapY, self.atk);
       };
       flame.destroy(20);
@@ -893,13 +893,13 @@ Hack.skills.selfdestruct = function(time) {
   };
 };
 
-Hack.skills.pistol = function(asset) {
-  return function() {
+Hack.skills.pistol = function (asset) {
+  return function () {
     const bullet = new RPGObject();
     this.shoot(bullet, this.forward, 5);
 
     const self = this;
-    bullet.ontriggerenter = function(event) {
+    bullet.ontriggerenter = function (event) {
       if (event.target !== self) {
         Hack.Attack.call(this, event.mapX, event.mapY, self.atk);
       }
@@ -909,13 +909,13 @@ Hack.skills.pistol = function(asset) {
   };
 };
 
-game.on('enterframe', function() {
+game.on('enterframe', function () {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
   const frame = game.collisionFrames || 10;
-  const physicsPhantom = RPGObject.collection.filter(function(item) {
+  const physicsPhantom = RPGObject.collection.filter(function (item) {
     return !item.isKinematic && !item.collisionFlag && !item._stop;
   });
-  const physicsCollision = RPGObject.collection.filter(function(item) {
+  const physicsCollision = RPGObject.collection.filter(function (item) {
     return !item.isKinematic && item.collisionFlag && !item._stop;
   });
 
@@ -930,7 +930,7 @@ game.on('enterframe', function() {
 
 function __physicsUpdateOnFrame(tick, frame, physics) {
   physics
-    .map(function(self) {
+    .map(function (self) {
       if (self._flyToward) {
         // flyToward() を使った Physics Update (暫定処理)
         const correction = 3.3; // 移動速度を walk と合わせるための係数
@@ -948,10 +948,10 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       intersects.splice(intersects.indexOf(self), 1); // ignore self
       // Dispatch trigger(stay|exit) event
       (self._preventFrameHits || [])
-        .filter(function(item) {
+        .filter(function (item) {
           return item.isKinematic;
         })
-        .forEach(function(item) {
+        .forEach(function (item) {
           if (intersects.indexOf(item) < 0) {
             dispatchTriggerEvent('exit', self, item);
             dispatchTriggerEvent('exit', item, self);
@@ -965,7 +965,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
           }
         });
       // Intersect on time (enter) or still intersect
-      const entered = intersects.filter(function(item) {
+      const entered = intersects.filter(function (item) {
         return (
           !self._preventFrameHits || self._preventFrameHits.indexOf(item) < 0
         );
@@ -973,25 +973,25 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       self._preventFrameHits = intersects; // Update cache
       // Dispatch triggerenter event
       entered
-        .filter(function(item) {
+        .filter(function (item) {
           return item.isKinematic;
         })
-        .forEach(function(item) {
+        .forEach(function (item) {
           dispatchTriggerEvent('enter', self, item);
           dispatchTriggerEvent('enter', item, self);
         });
       return {
         self: self,
-        hits: entered.filter(function(item) {
+        hits: entered.filter(function (item) {
           return !item.isKinematic && item.collisionFlag;
         })
       };
     })
-    .filter(function(item) {
+    .filter(function (item) {
       // ===> Physics collision
       return item.self.collisionFlag;
     })
-    .filter(function(item) {
+    .filter(function (item) {
       const self = item.self;
       const event = (item.event = new enchant.Event('collided'));
       const hits = (event.hits = item.hits);
@@ -1032,7 +1032,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       event.item = event.hit; // イベント引数の統一
       return event.map || hits.length > 0;
     })
-    .filter(function(item) {
+    .filter(function (item) {
       const self = item.self;
       const calc = item.calc;
       self.x = calc.x;
@@ -1041,7 +1041,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       self.velocityY = calc.vy;
       return true;
     })
-    .forEach(function(obj) {
+    .forEach(function (obj) {
       obj.self.dispatchEvent(obj.event);
     });
 

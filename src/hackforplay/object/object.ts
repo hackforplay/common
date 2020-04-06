@@ -449,9 +449,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         const hasZenkaku = /[０-９]/.exec(mapName); // 全角数字が含まれている場合は警告する
         if (hasZenkaku) {
           Hack.log(
-            `locate(${fromLeft}, ${fromTop}, ${mapName}) には全角の${
-              hasZenkaku[0]
-            }が入っています！全角/半角を押して半角文字にしましょう`
+            `locate(${fromLeft}, ${fromTop}, ${mapName}) には全角の${hasZenkaku[0]}が入っています！全角/半角を押して半角文字にしましょう`
           );
           return;
         }
@@ -826,7 +824,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { Layer } = RPGMap as any;
 
     // Range of layer
-    const sortingOrder = Object.keys(Layer).map(function(key) {
+    const sortingOrder = Object.keys(Layer).map(function (key) {
       return Layer[key];
     });
     const max = Math.max.apply(null, sortingOrder);
@@ -1160,9 +1158,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
-        `${this.name} からメッセージを送れません. new RPGObject(Skin.${
-          this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
+        `${this.name} からメッセージを送れません. new RPGObject(Skin.${this.name}) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
     _ruleInstance.message(this, name);
@@ -1182,9 +1178,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
-        `${this.name} からメッセージを送れません. new RPGObject(Skin.${
-          this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
+        `${this.name} からメッセージを送れません. new RPGObject(Skin.${this.name}) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
     const { x, y } = this.forward;
@@ -1406,13 +1400,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this._isJustBeingFound) return; // 同フレーム内でみつけたときがコールされたばかり
     const { _ruleInstance } = this;
     if (!_ruleInstance) return;
-    const sight = Vector2.from(this.forward)
-      .unit()
-      .scale(this.lengthOfView); // 視線に対して平行な単位ベクトル
-    const right = sight
-      .rotateDegree(90)
-      .unit()
-      .scale(this.fieldOfView); // 視線に対して右手方向 (X軸とは限らない) の単位ベクトル
+    const sight = Vector2.from(this.forward).unit().scale(this.lengthOfView); // 視線に対して平行な単位ベクトル
+    const right = sight.rotateDegree(90).unit().scale(this.fieldOfView); // 視線に対して右手方向 (X軸とは限らない) の単位ベクトル
     // this の (x, y) を原点として, ~ +sight までと, -right ~ +right までの矩形が視界の範囲
     const x1 = this.mapX - right.x;
     const x2 = this.mapX + sight.x + right.x;

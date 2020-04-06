@@ -1,7 +1,7 @@
 import enchant from '../enchantjs/enchant';
 import { getHack } from '../hackforplay/get-hack';
 
-export default function(code) {
+export default function (code) {
   // 魔道書の実行をフック
   try {
     // eval

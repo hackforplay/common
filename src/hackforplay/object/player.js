@@ -58,10 +58,10 @@ class Player extends RPGObject {
       ? this.input[type]
       : [this.input[type]];
     return input
-      .map(function(name) {
+      .map(function (name) {
         return Key[name].pressed;
       })
-      .reduce(function(a, b) {
+      .reduce(function (a, b) {
         return a + b;
       });
   }
@@ -89,10 +89,10 @@ class Player extends RPGObject {
   enterCheck() {
     // Dispatch playerenter Event
     RPGObject.collection
-      .filter(function(item) {
+      .filter(function (item) {
         return item.mapX === this.mapX && item.mapY === this.mapY;
       }, this)
-      .forEach(function(item) {
+      .forEach(function (item) {
         item.dispatchEvent(new enchant.Event('playerenter'));
         this.enteredStack.push(item);
       }, this);
@@ -100,7 +100,7 @@ class Player extends RPGObject {
 
   stayCheck() {
     // Dispatch playerstay/playerexit Event
-    this.enteredStack.forEach(function(item) {
+    this.enteredStack.forEach(function (item) {
       if (item.mapX === this.mapX && item.mapY === this.mapY) {
         item.dispatchEvent(new enchant.Event('playerstay'));
       } else {

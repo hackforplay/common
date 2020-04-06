@@ -4,7 +4,7 @@ import { VertexShader, FragmentShader } from 'mod/3d/shader';
 // Program
 {
   var Program = enchant.Class.create({
-    initialize: function(vs, fs) {
+    initialize: function (vs, fs) {
       var program = (this.program = gl.createProgram());
 
       vs = VertexShader.get(vs);
@@ -23,20 +23,20 @@ import { VertexShader, FragmentShader } from 'mod/3d/shader';
       return;
     },
 
-    use: function() {
+    use: function () {
       // 有効にする
       gl.useProgram(this.program);
     },
 
-    attribute: function(name) {
+    attribute: function (name) {
       return gl.getAttribLocation(this.program, name);
     },
 
-    uniform: function(name) {
+    uniform: function (name) {
       return gl.getUniformLocation(this.program, name);
     },
 
-    bind: function(name, buffer, stride) {
+    bind: function (name, buffer, stride) {
       var attribute = this.attribute(name);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -51,7 +51,7 @@ import { VertexShader, FragmentShader } from 'mod/3d/shader';
 
   Program.collection = {};
   Program.active = null;
-  Program.get = function(name) {
+  Program.get = function (name) {
     return this.collection[name];
   };
 
@@ -69,7 +69,7 @@ import { VertexShader, FragmentShader } from 'mod/3d/shader';
     mat4: 'Matrix4fv'
   };
 
-  Program.uniform = function(type, name, $REST) {
+  Program.uniform = function (type, name, $REST) {
     var program = this.active;
 
     if (program === null) return error('');
@@ -87,11 +87,11 @@ import { VertexShader, FragmentShader } from 'mod/3d/shader';
     gl[methodName].apply(gl, args);
   };
 
-  Program.new = function(name, vs, fs) {
+  Program.new = function (name, vs, fs) {
     var program = (this.collection[name] = new Program(vs, fs));
   };
 
-  Program.use = function(name) {
+  Program.use = function (name) {
     var program = this.get(name);
 
     program.use();

@@ -92,7 +92,7 @@ function createProxy<T extends object>(
   proxyTarget: T,
   synonyms: ISynonyms,
   propertyMissing: Class[typeof PropertyMissing],
-  props: (Key)[] = []
+  props: Key[] = []
 ): T {
   return new Proxy(proxyTarget, {
     get(target: any, p, receiver) {

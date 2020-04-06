@@ -5,7 +5,7 @@ import BehaviorTypes from '../../hackforplay/behavior-types';
 
 import { Vec2 } from 'mod/3d/math';
 
-Player.prototype.onenterframe = function() {
+Player.prototype.onenterframe = function () {
   if (!Hack.isPlaying) return;
 
   if (this.behavior === BehaviorTypes.Idle) {

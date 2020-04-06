@@ -4,7 +4,7 @@ import Program from 'mod/3d/program';
 
 // プリミティブ定義
 
-var VBO = function(data) {
+var VBO = function (data) {
   var vbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
@@ -12,7 +12,7 @@ var VBO = function(data) {
   return vbo;
 };
 
-var IBO = function(data) {
+var IBO = function (data) {
   var ibo = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
@@ -21,7 +21,7 @@ var IBO = function(data) {
 };
 
 var Primitive = enchant.Class.create({
-  use: function() {
+  use: function () {
     var program = Program.active;
 
     if (Program.active === null) return console.error('');
@@ -32,7 +32,7 @@ var Primitive = enchant.Class.create({
     Renderer.activePrimitive = this;
   },
 
-  create: function(vertex, index, uv) {
+  create: function (vertex, index, uv) {
     this._vertex = vertex;
     this._index = index;
     this._uv = uv;
@@ -44,7 +44,7 @@ var Primitive = enchant.Class.create({
     this.length = index.length;
   },
 
-  bindProgram: function(program) {
+  bindProgram: function (program) {
     program.bind('position', this.vertex, 3);
     program.bind('uv', this.uv, 2);
 
@@ -55,7 +55,7 @@ var Primitive = enchant.Class.create({
     return this;
   },
 
-  bindBuffer: function() {
+  bindBuffer: function () {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.index);
 
     return this;
@@ -63,7 +63,7 @@ var Primitive = enchant.Class.create({
 
   mode: gl.TRIANGLES,
 
-  draw: function() {
+  draw: function () {
     //
     if (Renderer.activePrimitive !== this) {
       this.use();
@@ -73,17 +73,17 @@ var Primitive = enchant.Class.create({
   }
 });
 
-var createPrimitive = function(_class, check) {
+var createPrimitive = function (_class, check) {
   var Class = enchant.Class.create(Primitive, _class);
 
   if (!check) return Class;
 
   Class.backup = [];
 
-  Class.from = function() {
+  Class.from = function () {
     var args = Array.prototype.slice.call(arguments);
 
-    var backup = Class.backup.filter(function(backup) {
+    var backup = Class.backup.filter(function (backup) {
       return check(backup, args);
     });
 
@@ -107,7 +107,7 @@ var createPrimitive = function(_class, check) {
 
 var Line = createPrimitive(
   {
-    initialize: function(v1, v2) {
+    initialize: function (v1, v2) {
       var vertex = v1.concat(v2);
 
       var uv = [0, 0, 1, 1];
@@ -120,19 +120,19 @@ var Line = createPrimitive(
       this._argumentsText = vertex.toString();
     },
 
-    bindProgram: function(program) {
+    bindProgram: function (program) {
       program.bind('position', this.vertex, 3);
 
       return this;
     }
   },
-  function(backup, newArgs) {
+  function (backup, newArgs) {
     return backup._argumentsText === newArgs[0].concat(newArgs[1]).toString();
   }
 );
 
 var Plane2D = enchant.Class.create(Primitive, {
-  initialize: function() {
+  initialize: function () {
     var vertex = [0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1];
 
     var uv = [0, 0, 1, 0, 0, 1, 1, 1];
@@ -142,7 +142,7 @@ var Plane2D = enchant.Class.create(Primitive, {
 });
 
 var Model2D = enchant.Class.create(Primitive, {
-  initialize: function() {
+  initialize: function () {
     var vertex = [-0.5, 1, 0, 0.5, 1, 0, -0.5, 0, 0, 0.5, 0, 0];
 
     var uv = [0, 0, 1, 0, 0, 1, 1, 1];
@@ -152,7 +152,7 @@ var Model2D = enchant.Class.create(Primitive, {
 });
 
 var Ground = enchant.Class.create(Primitive, {
-  initialize: function(x, y) {
+  initialize: function (x, y) {
     var vertex = [0, 0, 0, x, 0, 0, 0, 0, y, x, 0, y];
 
     var uv = [0, 0, x, 0, 0, y, x, y];
@@ -163,7 +163,7 @@ var Ground = enchant.Class.create(Primitive, {
 });
 
 var Ground2 = enchant.Class.create(Primitive, {
-  initialize: function(x, y, m) {
+  initialize: function (x, y, m) {
     var vertex = [
       // 上
       -m,
@@ -221,7 +221,7 @@ var Ground2 = enchant.Class.create(Primitive, {
 
     var uv = [];
 
-    vertex.forEach(function(v, i) {
+    vertex.forEach(function (v, i) {
       if (i % 3 === 1) return;
 
       uv.push(v);
@@ -328,7 +328,7 @@ const SkyShpere = enchant.Class.create(Shpere, {
 });
 
 var Plane2DD = enchant.Class.create(Primitive, {
-  initialize: function(width, height) {
+  initialize: function (width, height) {
     var vertex = [0, 0, 0, width, 0, 0, 0, height, 0, width, height, 0];
     var uv = [0, 1, 1, 1, 0, 0, 1, 0];
     var index = [0, 1, 2, 1, 2, 3];

@@ -189,7 +189,7 @@ function showNextIfExist() {
       button.clear(); // 前の文章をクリア
       button.show();
       button.push(choice); // 選択肢のテキスト表示
-      button.on('touchend', function() {
+      button.on('touchend', function () {
         current.resolve(choice);
       });
       answers.push(button);

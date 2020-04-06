@@ -167,15 +167,15 @@ const keyCode = {
 };
 
 keys(keyCode)
-  .map(function(key) {
+  .map(function (key) {
     return keyCode[key];
   })
-  .forEach(function(value) {
+  .forEach(function (value) {
     game.keybind(value, value);
   });
 
 const KeyClass: IKeyClass = enchant.Class.create({
-  initialize: function() {
+  initialize: function () {
     this.listeners = [];
   },
 
@@ -184,24 +184,24 @@ const KeyClass: IKeyClass = enchant.Class.create({
   count: 0,
 
   clicked: {
-    get: function(this: IKeyClass) {
+    get: function (this: IKeyClass) {
       return this.count === 1;
     }
   },
 
   pressed: {
-    get: function(this: IKeyClass) {
+    get: function (this: IKeyClass) {
       return this.count > 0;
     }
   },
 
   released: {
-    get: function(this: IKeyClass) {
+    get: function (this: IKeyClass) {
       return this.count <= 0;
     }
   },
 
-  update: function(input: any) {
+  update: function (input: any) {
     // 前フレームの状態を保持する
     const pressed = this.pressed;
     const released = this.released;
@@ -217,12 +217,12 @@ const KeyClass: IKeyClass = enchant.Class.create({
     this.dispatch('observe');
   },
 
-  dispatch: function(type: any) {
+  dispatch: function (type: any) {
     this.listeners
-      .filter(function(listener: any) {
+      .filter(function (listener: any) {
         return listener.type === type;
       })
-      .forEach(function(this: any, listener: any) {
+      .forEach(function (this: any, listener: any) {
         const thisArg =
           listener.thisArg === undefined ? this : listener.thisArg;
         listener.listener.call(thisArg, this);
@@ -233,7 +233,7 @@ const KeyClass: IKeyClass = enchant.Class.create({
       }, this);
   },
 
-  on: function(type: any, event: any, thisArg: any) {
+  on: function (type: any, event: any, thisArg: any) {
     this.listeners.push({
       type: type,
       listener: event,
@@ -242,7 +242,7 @@ const KeyClass: IKeyClass = enchant.Class.create({
     });
   },
 
-  once: function(type: any, event: any, thisArg: any) {
+  once: function (type: any, event: any, thisArg: any) {
     this.listeners.push({
       type: type,
       listener: event,
@@ -251,28 +251,28 @@ const KeyClass: IKeyClass = enchant.Class.create({
     });
   },
 
-  press: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+  press: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('press', listener, thisArg);
   },
 
-  release: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+  release: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('release', listener, thisArg);
   },
 
-  observe: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+  observe: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('observe', listener, thisArg);
   },
 
-  pressOnce: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+  pressOnce: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('press', listener, thisArg);
   },
 
-  releaseOnce: function<T>(listener: IKeyClassListener<T>, thisArg: any) {
+  releaseOnce: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('release', listener, thisArg);
   }
 } as any);
 
-keys(keyCode).forEach(function(key) {
+keys(keyCode).forEach(function (key) {
   Key[key] = new KeyClass();
   Key[key].name = key;
 });
@@ -285,8 +285,8 @@ const alias: { [key: string]: string } = {
   right: 'right'
 };
 
-game.on('enterframe', function() {
-  keys(keyCode).forEach(function(key) {
+game.on('enterframe', function () {
+  keys(keyCode).forEach(function (key) {
     let input = game.input[keyCode[key]];
 
     // ui.enchant.js などの対策

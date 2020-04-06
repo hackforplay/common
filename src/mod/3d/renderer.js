@@ -7,13 +7,13 @@ var Renderer = {};
 
 Renderer.activePrimitive = null;
 
-Renderer.clear = function(r, g, b, a) {
+Renderer.clear = function (r, g, b, a) {
   gl.clearColor(r, g, b, a);
   gl.clearDepth(1.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 };
 
-Renderer.setFrameBuffer = function(frameBuffer) {
+Renderer.setFrameBuffer = function (frameBuffer) {
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
 };
 

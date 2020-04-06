@@ -11,10 +11,10 @@ Object.defineProperties(enchant.Sprite.prototype, {
   color: {
     configurable: true,
     enumerable: true,
-    get: function() {
+    get: function () {
       return this._color || this.originalColor;
     },
-    set: function(color) {
+    set: function (color) {
       if (!this.originalTexture) {
         this.originalTexture = this.image;
       }
@@ -32,7 +32,7 @@ Object.defineProperties(enchant.Sprite.prototype, {
   originalColor: {
     configurable: true,
     enumerable: true,
-    get: function() {
+    get: function () {
       if (!this.image) return null;
       if (
         !this._originalColor &&
@@ -49,7 +49,7 @@ Object.defineProperties(enchant.Sprite.prototype, {
       }
       return this._originalColor;
     },
-    set: function(color) {
+    set: function (color) {
       this._originalColor = Hack.css2rgb(color);
     }
   }
@@ -71,7 +71,7 @@ function getRepresentativeColor(data) {
   if (black !== -1) space[black] = 0; // 黒は輪郭線として代表色にはさせない
   const max = Math.max.apply(null, space);
   return space.length > 0
-    ? palette[space.indexOf(max)].split(' ').map(function(s) {
+    ? palette[space.indexOf(max)].split(' ').map(function (s) {
         return s >> 0;
       })
     : null;
@@ -81,7 +81,7 @@ function getRepresentativeColor(data) {
  * @scope Sprite
  * before, after: CSS color or [r, g, b]
  */
-enchant.Sprite.prototype.moveColor = function(before, after) {
+enchant.Sprite.prototype.moveColor = function (before, after) {
   // Color convert
   before = Hack.css2rgb(before);
   after = Hack.css2rgb(after);
@@ -95,10 +95,10 @@ enchant.Sprite.prototype.moveColor = function(before, after) {
       this.image.height
     ),
     data = imageData.data;
-  const filter = [0, 0, 0].map(function(_, c) {
+  const filter = [0, 0, 0].map(function (_, c) {
     const scaleL = after[c] / before[c];
     const scaleR = (255 - after[c]) / (255 - before[c]);
-    return new Array(256).fill(0).map(function(e, i) {
+    return new Array(256).fill(0).map(function (e, i) {
       return i < before[c] ? i * scaleL : 255 - (255 - i) * scaleR;
     });
   });

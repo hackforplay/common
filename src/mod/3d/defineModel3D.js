@@ -1,4 +1,4 @@
-export default function(MapObject3D) {
+export default function (MapObject3D) {
   {
     // flower
     MapObject3D.model(

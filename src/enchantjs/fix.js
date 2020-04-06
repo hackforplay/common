@@ -204,7 +204,7 @@ const canvasRenderer = CanvasRenderer.instance;
 
 canvasRenderer.targetSurface = null;
 
-canvasRenderer.render = function(context, node, event) {
+canvasRenderer.render = function (context, node, event) {
   if (this.targetSurface) context = this.targetSurface.context;
 
   node.dispatchEvent(
@@ -252,13 +252,13 @@ CanvasRenderer.instance.listener.on('renderStart', (node) => {
 
 function extend(base, func) {
   const init = base.prototype.initialize;
-  base.prototype.initialize = function() {
+  base.prototype.initialize = function () {
     init.apply(this, arguments);
     func.call(this);
   };
 }
 
-extend(enchant.Group, function() {
+extend(enchant.Group, function () {
   // 自動で子要素をソートするか
   // 重いのでデフォルトは false
   this.autoSorting = false;
@@ -270,7 +270,7 @@ extend(enchant.Group, function() {
   });
 });
 
-extend(enchant.Scene, function() {
+extend(enchant.Scene, function () {
   // シーンは自動で子要素をソートする
   this.autoSorting = true;
 });

@@ -53,7 +53,7 @@ import { resize2 } from 'mod/3d/texture';
 
 game.preload('resources/enchantjs/avatarBg2.png');
 
-const main = async function() {
+const main = async function () {
   game.fps = 30;
 
   resize2('resources/enchantjs/avatarBg2.png', 320, 50);
@@ -245,7 +245,7 @@ const main = async function() {
 
   // 2D のレンダリングを停止する
   const renderCamera2D = Camera2D.prototype.render;
-  Camera2D.prototype.render = function() {
+  Camera2D.prototype.render = function () {
     if (this.dimension !== 2) return;
     renderCamera2D.call(this);
   };
@@ -283,7 +283,7 @@ const main = async function() {
   let cameraPlayerBind = true;
 
   // G キーで移動方法を変更する
-  Key.g.observe(function() {
+  Key.g.observe(function () {
     if (!this.clicked) return;
 
     cameraPlayerBind = !cameraPlayerBind;
@@ -379,9 +379,9 @@ const main = async function() {
   }
 };
 
-Hack.on('load', function() {
+Hack.on('load', function () {
   var start = game.onload;
-  game.onload = function() {
+  game.onload = function () {
     main();
 
     start.apply(this, arguments);

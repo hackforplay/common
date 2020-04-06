@@ -54,13 +54,13 @@ game.preload(
 
 game.keybind(' '.charCodeAt(0), 'a');
 
-Hack.on('load', function() {
+Hack.on('load', function () {
   // Appending to Hack.maps
   if (Hack.maps && !Hack.maps['next']) {
     Object.defineProperty(Hack.maps, 'next', {
-      get: function() {
+      get: function () {
         let next = null;
-        Object.keys(Hack.maps).reduce(function(previousKey, currentKey) {
+        Object.keys(Hack.maps).reduce(function (previousKey, currentKey) {
           next = Hack.map === Hack.maps[previousKey] ? currentKey : next;
         });
         return next;
@@ -69,9 +69,9 @@ Hack.on('load', function() {
   }
   if (Hack.maps && !Hack.maps['current']) {
     Object.defineProperty(Hack.maps, 'current', {
-      get: function() {
+      get: function () {
         let current = null;
-        Object.keys(Hack.maps).forEach(function(key) {
+        Object.keys(Hack.maps).forEach(function (key) {
           current = Hack.map === Hack.maps[key] ? key : current;
         });
         return current;
@@ -80,9 +80,9 @@ Hack.on('load', function() {
   }
   if (Hack.maps && !Hack.maps['previous']) {
     Object.defineProperty(Hack.maps, 'previous', {
-      get: function() {
+      get: function () {
         let previous = null;
-        Object.keys(Hack.maps).reduceRight(function(previousKey, currentKey) {
+        Object.keys(Hack.maps).reduceRight(function (previousKey, currentKey) {
           previous =
             Hack.map === Hack.maps[previousKey] ? currentKey : previous;
         });
@@ -212,7 +212,7 @@ game.onawake = () => {
   let normalizedMouseX = null;
   let normalizedMouseY = null;
 
-  game._element.onmousemove = function({ x, y }) {
+  game._element.onmousemove = function ({ x, y }) {
     const rect = this.getBoundingClientRect();
     mouseX = x;
     mouseY = y;
@@ -342,12 +342,12 @@ game.onawake = () => {
     image: game.assets['resources/hackforplay/enchantbook.png'],
     defaultParentNode: Hack.menuGroup,
     visible: !!Hack.hint,
-    ontouchend: function() {
+    ontouchend: function () {
       Hack.textarea.hide();
       Hack.openEditor();
     }
   });
-  Hack.onhintset = function() {
+  Hack.onhintset = function () {
     Hack.enchantBookIcon.visible = true;
   };
 
@@ -383,7 +383,7 @@ RPGMap.Layer = {
   Under: 0
 };
 
-Hack.createMap = function(template) {
+Hack.createMap = function (template) {
   logToDeprecated('Hack.createMap');
   // テンプレートリテラルからマップを生成するラッパー
   const zenkaku = /[０１２３４５６７８９]/g.exec(template);
@@ -392,22 +392,22 @@ Hack.createMap = function(template) {
   }
   const source = template
     .split('\n')
-    .map(function(line) {
+    .map(function (line) {
       return line.match(/\s*\d+[\s\|]?/g);
     })
-    .filter(function(line) {
+    .filter(function (line) {
       return Array.isArray(line);
     });
-  const int = function(item) {
+  const int = function (item) {
     return parseInt(item, 10);
   };
-  const bmap = source.map(function(line) {
+  const bmap = source.map(function (line) {
     return line.map(int);
   });
-  const bar = function(item) {
+  const bar = function (item) {
     return item.substr(-1) === '|' ? 1 : 0;
   };
-  const cmap = source.map(function(line) {
+  const cmap = source.map(function (line) {
     return line.map(bar);
   });
 
@@ -418,7 +418,7 @@ Hack.createMap = function(template) {
   return map;
 };
 
-Hack.changeMap = async function(mapName) {
+Hack.changeMap = async function (mapName) {
   const current = Hack.map;
   const next = await generateMapFromDefinition(mapName, true);
 
@@ -435,7 +435,7 @@ Hack.changeMap = async function(mapName) {
 /*  Dir2Vec
 directionをforwardに変換する。 0/down, 1/left, 2/right, 3/up
 */
-Hack.Dir2Vec = function(dir) {
+Hack.Dir2Vec = function (dir) {
   switch (dir) {
     case 0:
       return {
@@ -462,13 +462,13 @@ Hack.Dir2Vec = function(dir) {
   }
 };
 
-Hack.Attack = function(x, y, damage) {
+Hack.Attack = function (x, y, damage) {
   logToDeprecated('Hack.Attack');
   RPGObject.collection
-    .filter(function(item) {
+    .filter(function (item) {
       return item.mapX === x && item.mapY === y && item !== this;
     }, this)
-    .forEach(function(item) {
+    .forEach(function (item) {
       // ダメージ処理
       //   従来は onattacked イベントハンドラを使っていたが,
       //   処理を上書きされないようここに移した
@@ -502,10 +502,10 @@ Object.defineProperty(Hack, 'score', {
  * become(type[, time])
  * time フレームが経過した時、behavior typeを指定する
  */
-enchant.Timeline.prototype.become = function(type, time) {
+enchant.Timeline.prototype.become = function (type, time) {
   this.add(
     new enchant.Action({
-      onactionstart: function() {
+      onactionstart: function () {
         const capital = type[0].toUpperCase() + type.substr(1).toLowerCase();
         if (
           this instanceof RPGObject &&

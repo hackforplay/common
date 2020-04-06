@@ -45,7 +45,7 @@ export default class RPGMap extends enchant.EventTarget {
     this.scene = new enchant.Group(); // マップ上に存在するオブジェクトをまとめるグループ
     (this as any).scene.ref = this;
     this.scene.on('enterframe', this.autoSorting);
-    this.scene.on('childadded', function(this: any) {
+    this.scene.on('childadded', function (this: any) {
       const { ref } = this as any;
       ref && (ref.layerChangeFlag = true);
     });
