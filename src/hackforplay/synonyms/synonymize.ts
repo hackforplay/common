@@ -113,8 +113,8 @@ function createProxy<T extends object>(
     },
     has(target: any, p) {
       if (Reflect.has(target, p)) return true;
-      const property = typeof p === 'string' && synonyms[p]?.name;
-      return property ? Reflect.has(target, property) : false;
+      const property = typeof p === 'string' && synonyms[p];
+      return property ? Reflect.has(target, property.name) : false;
     },
     set(target: any, p, value, receiver) {
       if (p in target) {
