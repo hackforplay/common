@@ -327,7 +327,11 @@ class Camera extends enchant.Sprite {
     } = enchant as any;
     const label = new ScoreLabel(this.w, this.h); // 見えない位置で初期化
     const propertyName = synonyms[key] || key;
-    label.label = propertyName.toUpperCase() + ':';
+    label.label =
+      (typeof propertyName === 'string'
+        ? propertyName
+        : propertyName.name
+      ).toUpperCase() + ':';
     label._key = key;
     label.onenterframe = () => {
       if (!this.target) return;
