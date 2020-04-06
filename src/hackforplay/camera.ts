@@ -340,10 +340,10 @@ class Camera extends enchant.Sprite {
         if (Number.isNaN(value)) {
           label.score = label._current = NaN;
         } else {
-          label.score = this.target[key];
+          label.score = label._current = value;
         }
       } else {
-        label._current = '?';
+        label._current = '?'; // LABEL: ? と描画される
       }
     };
     Hack.menuGroup.addChild(label);
