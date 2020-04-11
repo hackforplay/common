@@ -31,7 +31,7 @@ export interface ISkin {
 }
 export type SkinCachedItem = Promise<(object: RPGObject) => void>;
 
-let baseUrl = 'https://storage.googleapis.com/hackforplay-skins/';
+let baseUrl = 'https://skins.hackforplay.xyz/';
 export const getBaseUrl = () => baseUrl;
 export const setBaseUrl = (url: string) => {
   baseUrl = url;
@@ -67,7 +67,7 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   object.height = skin.sprite.height;
   object.offset = {
     x: skin.sprite.x,
-    y: skin.sprite.y
+    y: skin.sprite.y,
   };
   object._mayRotate = skin.mayRotate;
   // ダメージ判定用のポリゴン
@@ -114,7 +114,7 @@ export async function getSkin(
       return fetchText(baseUrl + name);
     })
     .then(
-      json =>
+      (json) =>
         new Promise((resolve: (_skin: ISkin) => void, reject) => {
           // スキンのダウンロード完了
           const _skin: ISkin = JSON.parse(json);
@@ -124,7 +124,7 @@ export async function getSkin(
           _surfaces[name + ''] = surface;
         })
     )
-    .then(_skin => dress(_skin));
+    .then((_skin) => dress(_skin));
 
   return (_cache[name + ''] = _promise);
 }
