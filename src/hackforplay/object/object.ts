@@ -15,8 +15,8 @@ import { randomCollection } from '../random';
 import RPGMap from '../rpg-map';
 import { Rule } from '../rule';
 import soundEffect from '../se';
-import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
-import { errorInEvent, errorRemoved, logToDeprecated } from '../stdlog';
+import { decode, getSkin, initSurface, ISkin, SkinCachedItem } from '../skin';
+import { errorRemoved, logToDeprecated } from '../stdlog';
 import * as _synonyms from '../synonyms';
 import { synonyms } from '../synonyms/rpgobject';
 import {
@@ -1362,7 +1362,19 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       if (this._costume !== name) return; // 読み込み中に見た目が変わった
       this.applySkin(dress);
     } catch (error) {
-      errorInEvent('スキンがない', this, `見た目を '${name}' にするとき`);
+      const message = [
+        this ? `${this.name} の` : '',
+        `みためを '${name}' という なまえにしてしまったみたい`
+      ].join(' ');
+      log('error', message, this.name ? `modules/${this.name}.js` : 'Unknown');
+
+      // スキンの名前を間違えたことが分かるようにする
+      this.image = initSurface(32, 32, undefined, '#fff');
+      const context: CanvasRenderingContext2D = this.image.context;
+      context.fillStyle = '#000';
+      context.fillText(name, 0, 16, 32);
+      this.width = 32;
+      this.height = 32;
     }
   }
 

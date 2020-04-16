@@ -1,34 +1,21 @@
+import { load, OutputV1 } from '@hackforplay/skins';
 import { default as enchant } from '../enchantjs/enchant';
 import { default as SAT } from '../lib/sat.min';
-import { fetchText } from './feeles';
 import RPGObject from './object/object';
+import { fetchDataURL } from './feeles';
 
-export interface ISkin {
+const preload = load();
+
+type Surface = ReturnType<typeof enchant.Surface>;
+
+/**
+ * 互換性を保つためのエイリアス
+ */
+export interface ISkin extends OutputV1 {
   name: string;
-  image: string;
-  column: number;
-  row: number;
-  sprite: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  collider: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  direction: 1 | 4;
-  mayRotate: boolean;
-  frame?: {
-    idle?: (number | null)[];
-    walk?: (number | null)[];
-    attack?: (number | null)[];
-    dead?: (number | null)[];
-  };
+  surface: Surface;
 }
+
 export type SkinCachedItem = Promise<(object: RPGObject) => void>;
 
 let baseUrl = 'https://skins.hackforplay.xyz/';
@@ -38,7 +25,6 @@ export const setBaseUrl = (url: string) => {
 };
 
 const _cache: { [name: string]: SkinCachedItem } = {};
-const _surfaces: { [name: string]: typeof enchant.Surface } = {};
 
 export function decode(...args: (number | null)[]): (number | null)[] {
   const array = [];
@@ -62,7 +48,7 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   object.x += skin.sprite.x - object.offset.x;
   object.y += skin.sprite.y - object.offset.y;
   // パラメータのセット
-  object.image = _surfaces[skin.name];
+  object.image = skin.surface; // 画像バイナリは動的にロードしている
   object.width = skin.sprite.width;
   object.height = skin.sprite.height;
   object.offset = {
@@ -95,36 +81,74 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
     frame.dead = frame.dead || [0, 1];
   }
   // 互換性のため. アニメーションの終端を追加する
-  frame.attack.push(null, 1);
-  frame.dead.push(null, 1);
+  frame.attack?.push(null, 1);
+  frame.dead?.push(null, 1);
   // skin の参照を保持する
   object.currentSkin = skin;
 };
 
 export async function getSkin(
-  name: string | TemplateStringsArray
+  input: string | TemplateStringsArray
 ): SkinCachedItem {
-  if (name in _cache) return _cache[name + ''];
+  const name = input + '';
+  if (name in _cache) return _cache[name];
 
-  const _promise = Promise.resolve()
-    .then(() => {
-      if (!fetchText) {
-        throw new Error('feeles.fetchText is not defined');
-      }
-      return fetchText(baseUrl + name);
-    })
-    .then(
-      json =>
-        new Promise((resolve: (_skin: ISkin) => void, reject) => {
-          // スキンのダウンロード完了
-          const _skin: ISkin = JSON.parse(json);
-          // Data URL をメモリに載せるまで待つ (preload)
-          const onComplete = () => resolve(_skin);
-          const surface = enchant.Surface.load(_skin.image, onComplete, reject);
-          _surfaces[name + ''] = surface;
-        })
-    )
-    .then(_skin => dress(_skin));
+  const _promise = preload.then(definition => {
+    // スキンのダウンロード完了
+    const index = definition.index[name];
+    const item =
+      typeof index === 'number' ? definition.items[index] : undefined;
+    if (!item) {
+      throw new Error(`Not found: '${name}'`);
+    }
+    // まず単一色の画像を生成し、それから画像をロードする
+    const surface = initSurface(
+      item.sprite.width * item.column,
+      item.sprite.height * item.row,
+      definition.endpoint + item.imageUri
+    );
+    // V0 では JSON のロードを待っていたが、V1 では preload してあるので即時コール
+    return dress({ ...item, name, surface });
+  });
+  return (_cache[name] = _promise);
+}
 
-  return (_cache[name + ''] = _promise);
+/**
+ *
+ * @param width Surface 全体の幅
+ * @param height Surface 全体の高さ
+ * @param src ロードしたい画像の URL
+ * @param color 読み込み中の色
+ */
+export function initSurface(
+  width: number,
+  height: number,
+  src?: string,
+  color = 'rgba(#000000, 0.5)' // ロード中は半透明の黒になっている
+): Surface {
+  const surface = new enchant.Surface(width, height);
+  const context: CanvasRenderingContext2D = surface.context;
+
+  context.fillStyle = color;
+  context.fillRect(0, 0, width, height);
+  const handleError = () => {
+    // エラー時は真っ赤になる
+    context.fillStyle = '#ff0000';
+    context.fillRect(0, 0, width, height);
+  };
+
+  const img = new Image(width, height);
+  img.onload = () => {
+    context.clearRect(0, 0, width, height);
+    context.drawImage(img, 0, 0);
+  };
+  img.onerror = handleError;
+  src &&
+    fetchDataURL?.(src)
+      .then(dataUrl => {
+        img.src = dataUrl;
+      })
+      .catch(handleError);
+
+  return surface;
 }
