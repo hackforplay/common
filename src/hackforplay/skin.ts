@@ -124,7 +124,7 @@ export function initSurface(
   width: number,
   height: number,
   src?: string,
-  color = 'rgba(#000000, 0.5)' // ロード中は半透明の黒になっている
+  color = 'rgba(0,0,0,0.5)' // ロード中は半透明の黒になっている
 ): Surface {
   const surface = new enchant.Surface(width, height);
   const context: CanvasRenderingContext2D = surface.context;
