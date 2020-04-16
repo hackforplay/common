@@ -41,15 +41,15 @@ jobs:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - run: |
         echo $GITHUB_REF
-        PATCH_VERSION=${GITHUB_REF:1}
+        PATCH_VERSION=${GITHUB_REF/refs\/tags\/v/}
         MINOR_VERSION=${PATCH_VERSION%.*}
         echo $PATCH_VERSION
         echo $MINOR_VERSION
         echo ${{ github.event_name }}
     - name: Upload
-      if: startsWith(github.ref, 'v')
+      if: startsWith(github.ref, 'refs/tags/v')
       run: |
-        PATCH_VERSION=${GITHUB_REF:1}
+        PATCH_VERSION=${GITHUB_REF/refs\/tags\/v/}
         MINOR_VERSION=${PATCH_VERSION%.*}
         echo $PATCH_VERSION
         echo $MINOR_VERSION
