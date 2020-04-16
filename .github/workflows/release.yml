@@ -38,12 +38,6 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - run: |
-        echo $GITHUB_REF
-        PATCH_VERSION=${GITHUB_REF/refs\/tags\/v/}
-        MINOR_VERSION=${PATCH_VERSION%.*}
-        echo $PATCH_VERSION
-        echo $MINOR_VERSION
     - name: Upload
       if: startsWith(github.ref, 'refs/tags/v')
       run: |
@@ -52,5 +46,5 @@ jobs:
         echo $PATCH_VERSION
         echo $MINOR_VERSION
         # https://bit.ly/2xzjGVO
-        gsutil cp -r dist gs://cdn.hackforplay.xyz/common/test/${PATCH_VERSION}
-        gsutil cp -r dist/** gs://cdn.hackforplay.xyz/common/test/${MINOR_VERSION}
+        gsutil cp -r dist gs://cdn.hackforplay.xyz/common/${PATCH_VERSION}
+        gsutil cp -r dist/** gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}
