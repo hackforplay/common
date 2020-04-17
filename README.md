@@ -26,5 +26,3 @@ or manual deploy
 # Docs
 
 - `bundle exec jekyll serve -s docs`
-
-.
