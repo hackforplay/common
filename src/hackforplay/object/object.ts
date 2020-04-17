@@ -22,7 +22,7 @@ import { synonyms } from '../synonyms/rpgobject';
 import {
   PropertyMissing,
   proxyMap,
-  synonymizeClass
+  synonymizeClass,
 } from '../synonyms/synonymize';
 import talk from '../talk';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
@@ -36,7 +36,7 @@ function startFrameCoroutine(
   node: any,
   generator: IterableIterator<undefined>
 ) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     node.on('enterframe', function _() {
       const { done } = generator.next();
       if (done) {
@@ -76,12 +76,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     '_atk',
     '_penetrate',
     '_collisionFlag',
-    '_isKinematic'
+    '_isKinematic',
   ];
 
   public offset = {
     x: 0,
-    y: 0
+    y: 0,
   };
   public damage = 0; // 0 以外のとき, ふれたときに与えるダメージ
   public speed = 1.0;
@@ -110,6 +110,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public _preventFrameHits: RPGObject[] = []; // rpg-kit-rpgobjects.js で参照されるプロパティ
   public childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
+  public _cvsCache: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public then: undefined; // await されたときに then が参照される
 
   private _hp?: number;
@@ -235,7 +236,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public get center() {
     return {
       x: this.x - this.offset.x + 16,
-      y: this.y - this.offset.y + 16
+      y: this.y - this.offset.y + 16,
     };
   }
 
@@ -317,7 +318,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         : direction === Direction.Up
         ? 3
         : 0;
-    (this as any)._frameSequence = decode(...animation).map(n =>
+    (this as any)._frameSequence = decode(...animation).map((n) =>
       n === null ? null : n + column * row
     );
   }
@@ -353,7 +354,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       'playerenter',
       'playerstay',
       'playerexit',
-      'pickedup'
+      'pickedup',
     ];
     for (let i = 0; i < noCollisionEvents.length; i++) {
       if (this.isListening(noCollisionEvents[i])) {
@@ -419,7 +420,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     if (this.hpchangeFlag) {
       const event = new enchant.Event('hpchange', {
-        item: this // イベント引数の統一
+        item: this, // イベント引数の統一
       });
       this.dispatchEvent(event);
       this.hpchangeFlag = false;
@@ -431,7 +432,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       // 次のフレームで１度だけbecomeイベントが発火します。
       this.isBehaviorChanged = false;
       const event = new enchant.Event('become' + this.behavior, {
-        item: this // イベント引数の統一
+        item: this, // イベント引数の統一
       });
       this.dispatchEvent(event);
     }
@@ -449,13 +450,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         const hasZenkaku = /[０-９]/.exec(mapName); // 全角数字が含まれている場合は警告する
         if (hasZenkaku) {
           Hack.log(
-            `locate(${fromLeft}, ${fromTop}, ${mapName}) には全角の${
-              hasZenkaku[0]
-            }が入っています！全角/半角を押して半角文字にしましょう`
+            `locate(${fromLeft}, ${fromTop}, ${mapName}) には全角の${hasZenkaku[0]}が入っています！全角/半角を押して半角文字にしましょう`
           );
           return;
         }
-        generateMapFromDefinition(mapName).then(map => {
+        generateMapFromDefinition(mapName).then((map) => {
           Hack.maps[mapName] = map;
           this.locate(fromLeft, fromTop, mapName, ignoreTrodden); // マップができたらもう一度呼び出す
         });
@@ -580,7 +579,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       }
     }
 
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       this.setTimeout(resolve, this.getFrameLength());
       this.on('destroy', resolve);
     });
@@ -669,11 +668,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     // プレイヤーだけは例外的に仲間のいるマスをすり抜けられる
     const mayCollideItems = this.isPlayer
-      ? RPGObject.collection.filter(item => this.family !== item.family)
+      ? RPGObject.collection.filter((item) => this.family !== item.family)
       : [...RPGObject.collection];
 
     // 歩く先にあるオブジェクト
-    const hits = mayCollideItems.filter(obj => {
+    const hits = mayCollideItems.filter((obj) => {
       return (
         obj.map === Hack.map && // 今いるマップ
         obj.isKinematic &&
@@ -688,7 +687,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
 
     // 初めて衝突したオブジェクト
-    const newHits = hits.filter(node => {
+    const newHits = hits.filter((node) => {
       return !this._collidedNodes.includes(node);
     });
     this._collidedNodes.push(...newHits);
@@ -776,7 +775,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       event.hit = this;
       event.hits = [this];
       event.item = event.hit; // イベント引数の統一
-      hits.forEach(hitObj => {
+      hits.forEach((hitObj) => {
         hitObj.dispatchEvent(event);
       });
     }
@@ -826,7 +825,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { Layer } = RPGMap as any;
 
     // Range of layer
-    const sortingOrder = Object.keys(Layer).map(function(key) {
+    const sortingOrder = Object.keys(Layer).map(function (key) {
       return Layer[key];
     });
     const max = Math.max.apply(null, sortingOrder);
@@ -854,10 +853,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { Layer } = RPGMap as any;
     // 現在のレイヤーより大きいレイヤーのうち最も小さいもの
     const uppers = Object.keys(Layer)
-      .map(key => {
+      .map((key) => {
         return Layer[key];
       }, this)
-      .filter(layer => {
+      .filter((layer) => {
         return layer > this.layer;
       }, this);
     this.layer = uppers.length > 0 ? Math.min.apply(null, uppers) : this.layer;
@@ -868,10 +867,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { Layer } = RPGMap as any;
     // 現在のレイヤーより小さいレイヤーのうち最も大きいもの
     const unders = Object.keys(Layer)
-      .map(key => {
+      .map((key) => {
         return Layer[key];
       }, this)
-      .filter(layer => {
+      .filter((layer) => {
         return layer < this.layer;
       }, this);
     this.layer = unders.length > 0 ? Math.max.apply(null, unders) : this.layer;
@@ -894,7 +893,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (Array.isArray(vector)) {
       vector = {
         x: vector[0],
-        y: vector[1]
+        y: vector[1],
       };
     }
 
@@ -903,7 +902,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (length > 0) length = 1 / length;
     vector = {
       x: vector.x * length,
-      y: vector.y * length
+      y: vector.y * length,
     };
 
     node.locate(
@@ -1001,7 +1000,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const synonym: any = (events as any)[event.type];
     if (synonym) {
       const clone = Object.assign({}, event, {
-        type: synonym
+        type: synonym,
       });
       enchant.EventTarget.prototype.dispatchEvent.call(this, clone);
     }
@@ -1032,7 +1031,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public wait(second = 0) {
     let frame = second * game.fps;
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const handler = () => {
         if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
         if (--frame <= 0) {
@@ -1067,10 +1066,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private pickUp() {
     // Find items and dispatch pickedup event
     RPGObject.collection
-      .filter(item => {
+      .filter((item) => {
         return item.mapX === this.mapX && item.mapY === this.mapY;
       })
-      .forEach(item => {
+      .forEach((item) => {
         const event = new enchant.Event('pickedup');
         event.actor = this;
         item.dispatchEvent(event);
@@ -1160,9 +1159,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
-        `${this.name} からメッセージを送れません. new RPGObject(Skin.${
-          this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
+        `${this.name} からメッセージを送れません. new RPGObject(Skin.${this.name}) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
     _ruleInstance.message(this, name);
@@ -1182,9 +1179,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const { _ruleInstance } = this;
     if (!(_ruleInstance instanceof Rule)) {
       throw new Error(
-        `${this.name} からメッセージを送れません. new RPGObject(Skin.${
-          this.name
-        }) を rule.つくる('${this.name}') に書きかえてください`
+        `${this.name} からメッセージを送れません. new RPGObject(Skin.${this.name}) を rule.つくる('${this.name}') に書きかえてください`
       );
     }
     const { x, y } = this.forward;
@@ -1333,7 +1328,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     unit8 = false,
     prioritizeX = false
   ) {
-    movements = movements.filter(vec => vec.x !== 0 || vec.y !== 0);
+    movements = movements.filter((vec) => vec.x !== 0 || vec.y !== 0);
     // 優先されている方の差が大きい順
     movements.sort((a, b) =>
       prioritizeX
@@ -1406,13 +1401,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this._isJustBeingFound) return; // 同フレーム内でみつけたときがコールされたばかり
     const { _ruleInstance } = this;
     if (!_ruleInstance) return;
-    const sight = Vector2.from(this.forward)
-      .unit()
-      .scale(this.lengthOfView); // 視線に対して平行な単位ベクトル
-    const right = sight
-      .rotateDegree(90)
-      .unit()
-      .scale(this.fieldOfView); // 視線に対して右手方向 (X軸とは限らない) の単位ベクトル
+    const sight = Vector2.from(this.forward).unit().scale(this.lengthOfView); // 視線に対して平行な単位ベクトル
+    const right = sight.rotateDegree(90).unit().scale(this.fieldOfView); // 視線に対して右手方向 (X軸とは限らない) の単位ベクトル
     // this の (x, y) を原点として, ~ +sight までと, -right ~ +right までの矩形が視界の範囲
     const x1 = this.mapX - right.x;
     const x2 = this.mapX + sight.x + right.x;
@@ -1422,12 +1412,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       left: Math.min(x1, x2),
       right: Math.max(x1, x2),
       top: Math.min(y1, y2),
-      bottom: Math.max(y1, y2)
+      bottom: Math.max(y1, y2),
     };
     // 「みつけたとき」イベントが発火しうる対象のうち最も近いものを探す
     const foundable = RPGObject.collection
       .filter(
-        item =>
+        (item) =>
           item !== this &&
           item.map === this.map && // 同じマップにいる場合のみ見つけられる
           rangeOfView.left <= item.mapX &&
@@ -1435,7 +1425,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           rangeOfView.top <= item.mapY &&
           item.mapY <= rangeOfView.bottom
       )
-      .filter(item =>
+      .filter((item) =>
         _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this, item)
       );
     const found = this.getNearest(foundable);
@@ -1449,7 +1439,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public toJSON() {
     return {
-      name: this.name
+      name: this.name,
     };
   }
 
@@ -1467,7 +1457,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       utterThis.addEventListener('end', () => {
         resolve();
       });
-      utterThis.addEventListener('error', e => {
+      utterThis.addEventListener('error', (e) => {
         reject(e);
       });
       speechSynthesis.speak(utterThis);
