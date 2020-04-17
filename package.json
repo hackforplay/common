@@ -9,9 +9,10 @@
     "dist"
   ],
   "scripts": {
+    "build": "webpack && npm run babel && npm run definition",
     "definition": "ts-node src/make-definition.ts",
     "start": "webpack-dev-server",
-    "prepublishOnly": "webpack && npm run babel && npm run definition",
+    "prepublishOnly": "npm run build; npm test",
     "babel": "babel -d lib -D src --extensions '.js,.ts'",
     "format": "prettier --write '**/*.[j|t]s'",
     "lint": "npx eslint src --ext .js,.ts",
