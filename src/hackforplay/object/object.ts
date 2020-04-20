@@ -502,7 +502,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
     else _remove.call(this);
     // fix: https://github.com/hackforplay/common/issues/91
-    this._ruleInstance?.unregisterRules(this.proxy);
+    this._ruleInstance && this._ruleInstance.unregisterRules(this.proxy);
   }
   private setFrame() {
     errorRemoved('setFrame', this);
