@@ -1497,7 +1497,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * ただし Proxy オブジェクトかどうかを判定する術はないので、
    * 取得できなかったとしても、それを知ることは出来ない
    */
-  private get proxy(): RPGObject {
+  public get proxy(): RPGObject {
     return proxyMap.get(this) || this;
   }
 

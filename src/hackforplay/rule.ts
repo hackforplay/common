@@ -448,7 +448,7 @@ export class Rule {
     this.runOneObjectLisener('たおされたとき', e.target);
   }).bind(this);
   private onタップされたとき = ((e: IEvent) => {
-    this.runOneObjectLisener('タップされたとき', e.target);
+    this.runOneObjectLisener('タップされたとき', e.target.proxy);
   }).bind(this);
   private onすすめなかったとき = ((e: ICollidedEvent) => {
     if (e.map || e.hits.length === 0) {
