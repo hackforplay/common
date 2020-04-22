@@ -5069,7 +5069,8 @@
 			layer._colorManager.detachDetectColor(node);
 			node.removeEventListener('childadded', onchildadded);
 			node.removeEventListener('childremoved', onchildremoved);
-			delete node._cvsCache;
+			// delete node._cvsCache;
+			node._cvsCache = undefined; // #92
 		}
 		if (node.childNodes) {
 			for (var i = 0, l = node.childNodes.length; i < l; i++) {
