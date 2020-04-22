@@ -18,23 +18,23 @@ import { dakuten, handakuten, stringToArray } from './utils/string-utils';
 const Hack = getHack();
 
 game.preload(
-  'resources/enchantjs/monster1.gif',
-  'resources/enchantjs/monster2.gif',
-  'resources/enchantjs/monster3.gif',
-  'resources/enchantjs/monster4.gif',
-  'resources/enchantjs/monster5.gif',
-  'resources/enchantjs/bigmonster1.gif',
-  'resources/enchantjs/bigmonster2.gif',
+  // 'resources/enchantjs/monster1.gif',
+  // 'resources/enchantjs/monster2.gif',
+  // 'resources/enchantjs/monster3.gif',
+  // 'resources/enchantjs/monster4.gif',
+  // 'resources/enchantjs/monster5.gif',
+  // 'resources/enchantjs/bigmonster1.gif',
+  // 'resources/enchantjs/bigmonster2.gif',
   // 'resources/enchantjs/x2/map1.gif',
-  'resources/enchantjs/x2/dotmat.gif',
-  'resources/enchantjs/x1.5/chara0.png',
-  'resources/enchantjs/x1.5/chara5.png',
+  // 'resources/enchantjs/x2/dotmat.gif',
+  // 'resources/enchantjs/x1.5/chara0.png',
+  // 'resources/enchantjs/x1.5/chara5.png',
   'resources/hackforplay/enchantbook.png',
   'resources/enchantjs/icon0.png',
   'resources/enchantjs/x2/effect0.png',
-  'resources/hackforplay/madosyo_small.png',
-  'resources/enchantjs/shadow.gif',
-  'resources/enchantjs/x1.5/chara7.png',
+  // 'resources/hackforplay/madosyo_small.png',
+  // 'resources/enchantjs/shadow.gif',
+  // 'resources/enchantjs/x1.5/chara7.png',
   'resources/hackforplay/clear.png',
   'resources/hackforplay/gameover.png',
   // 'hackforplay/button_retry.png',
@@ -43,15 +43,14 @@ game.preload(
   'resources/hackforplay/menu-button-menu.png',
   // 'hackforplay/menu-button-restage.png',
   // 'hackforplay/menu-button-hint.png',
-  'resources/hackforplay/menu-button-comment.png',
+  // 'resources/hackforplay/menu-button-comment.png',
   'resources/hackforplay/menu-button-retry.png',
-  'resources/hackforplay/new_button_next.png',
+  // 'resources/hackforplay/new_button_next.png',
   // 'hackforplay/new_button_comment.png',
   // 'hackforplay/new_button_restage.png',
-  'resources/hackforplay/attack.png',
-  'resources/hackforplay/magician_girl.png'
+  'resources/hackforplay/attack.png'
+  // 'resources/hackforplay/magician_girl.png'
 );
-
 game.keybind(' '.charCodeAt(0), 'a');
 
 Hack.on('load', function () {

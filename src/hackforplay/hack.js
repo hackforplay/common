@@ -506,29 +506,6 @@ Hack.overlay = function () {
       else Hack.openMenu();
     };
 
-    // コメント入力画面を表示するボタン
-    addGUIParts(
-      game.assets['resources/hackforplay/menu-button-comment.png'],
-      function () {
-        return !{
-          getItem: function () {}
-        }.getItem('stage_param_comment'); // 存在しない場合は !'' === true
-      },
-      function () {
-        // GUIParts,overlayを100ミリ秒間非表示にする
-        GUIParts.concat(overlay).forEach(function (item) {
-          const visibility = item.visible;
-          item.visible = false;
-          setTimeout(function () {
-            item.visible = visibility;
-          }, 100);
-        });
-        window.parent.postMessage('show_comment', '*');
-        setTimeout(function () {
-          Hack.closeMenu();
-        }, 500);
-      }
-    );
     // ゲームを再スタートするボタン
     addGUIParts(
       game.assets['resources/hackforplay/menu-button-retry.png'],
