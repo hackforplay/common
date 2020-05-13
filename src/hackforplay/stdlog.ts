@@ -49,10 +49,10 @@ export function logFromAsset(self: Self, message: string) {
   return log('asset', message, `modules/${self.name}.js`);
 }
 
-export function logToDeprecated(name: string) {
+export function logToDeprecated(name: string, removeVersion = 'v0.25') {
   return log(
     'error',
-    `${name} is deprecated. It will remove v0.25`,
+    `${name} is deprecated. It will remove ${removeVersion}`,
     '@hackforplay/common'
   );
 }
