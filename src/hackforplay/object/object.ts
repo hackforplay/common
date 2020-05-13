@@ -1479,6 +1479,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   /**
+   * このインスタンスの名前が与えられた名前と一致するかどうかを調べる
+   * @param name アセットの名前
+   */
+  public is(name: string) {
+    return this.name === name;
+  }
+
+  /**
    * 互換性保持のため
    */
   public set dir(dir: Dir.IDir) {

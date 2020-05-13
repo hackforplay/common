@@ -43,5 +43,6 @@ export const synonyms: ISynonyms = {
   おいかける: { type: 'function', name: 'chase', await: true },
   ふりむく: { type: 'function', name: 'faceTo' },
   テレポートランダム: { type: 'function', name: 'teleportRandom' },
-  むきをかえる: { type: 'function', name: 'turn' }
+  むきをかえる: { type: 'function', name: 'turn' },
+  は: { type: 'function', name: 'is' }
 };
