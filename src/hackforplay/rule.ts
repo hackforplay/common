@@ -1,14 +1,19 @@
 import { log } from '@hackforplay/log';
 import { IDir } from './dir';
+import { Direction } from './direction';
 import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
 import RPGObject, { RPGObjectWithSynonym } from './object/object';
-import { errorInEvent, errorRemoved, logFromAsset } from './stdlog';
+import {
+  errorInEvent,
+  errorRemoved,
+  logFromAsset,
+  logToDeprecated
+} from './stdlog';
 import { synonyms } from './synonyms/rule';
 import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
 import talk from './talk';
-import { Direction } from './direction';
 
 interface IEvent {
   target: RPGObject;
@@ -52,7 +57,14 @@ export class Rule {
   }
   private _this: string | null = null;
   private readonly _knownThisNames: Set<string> = new Set();
-  public item: string | typeof Enemy | typeof Anyone | null = null;
+  private _item: string | typeof Enemy | typeof Anyone | null = null;
+  public get item() {
+    return this._item;
+  }
+  public set item(value) {
+    logToDeprecated('rule.this', 'v0.34');
+    this._item = value;
+  }
   // listeners
   private readonly _listenersOfNo: {
     [type: string]: NoObjectListener;
@@ -129,11 +141,7 @@ export class Rule {
       );
       return;
     }
-    let item = this.item;
-    if (!item) {
-      errorInEvent('rule.item がない', { name }, type);
-      item = Anyone;
-    }
+    const item = this.item || Anyone; // rule.item のデフォルトは Anyone にする. rule.item はいつか削除する
     const container =
       this._listenersOfTwo[type] || (this._listenersOfTwo[type] = {});
     const listeners = container[name] || (container[name] = {});
