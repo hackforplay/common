@@ -44,5 +44,6 @@ export const synonyms: ISynonyms = {
   ふりむく: { type: 'function', name: 'faceTo' },
   テレポートランダム: { type: 'function', name: 'teleportRandom' },
   むきをかえる: { type: 'function', name: 'turn' },
-  は: { type: 'function', name: 'is' }
+  は: { type: 'function', name: 'is' },
+  てきかどうか: { type: 'function', name: 'isEnemy' }
 };

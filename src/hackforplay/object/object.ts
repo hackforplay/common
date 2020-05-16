@@ -6,7 +6,12 @@ import { default as BehaviorTypes } from '../behavior-types';
 import { default as Camera } from '../camera';
 import * as Dir from '../dir';
 import { Direction, turn } from '../direction';
-import { default as Family, getMaster, registerServant } from '../family';
+import {
+  default as Family,
+  getMaster,
+  isOpposite,
+  registerServant
+} from '../family';
 import { default as game } from '../game';
 import { getHack } from '../get-hack';
 import { generateMapFromDefinition } from '../load-maps';
@@ -1484,6 +1489,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    */
   public is(name: string) {
     return this.name === name;
+  }
+
+  /**
+   * 相手のキャラクターが敵かどうかを調べる
+   * @param item 相手のキャラクター
+   */
+  public isEnemy(item: RPGObject) {
+    return isOpposite(this, item);
   }
 
   /**
