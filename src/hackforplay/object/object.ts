@@ -1424,7 +1424,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (!_ruleInstance) return;
     const targetObject =
       typeof target === 'string'
-        ? this.getNearest(_ruleInstance.getCollection(name))
+        ? this.getNearest(_ruleInstance.getCollection(target))
         : target;
     if (targetObject) {
       this._flyToward = new Vector2(targetObject.mapX, targetObject.mapY)
