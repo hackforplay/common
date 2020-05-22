@@ -62,7 +62,7 @@ export class Rule {
     return this._item;
   }
   public set item(value) {
-    logToDeprecated('rule.this', 'v0.34');
+    // logToDeprecated('rule.item', 'v0.34');
     this._item = value;
   }
   // listeners
