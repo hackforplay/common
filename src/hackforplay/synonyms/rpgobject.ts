@@ -45,5 +45,6 @@ export const synonyms: ISynonyms = {
   テレポートランダム: { type: 'function', name: 'teleportRandom' },
   むきをかえる: { type: 'function', name: 'turn' },
   は: { type: 'function', name: 'is' },
-  てきかどうか: { type: 'function', name: 'isEnemy' }
+  てきかどうか: { type: 'function', name: 'isEnemy' },
+  うかべる: { type: 'function', name: 'think', await: true }
 };

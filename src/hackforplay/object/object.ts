@@ -30,6 +30,7 @@ import {
   synonymizeClass
 } from '../synonyms/synonymize';
 import talk from '../talk';
+import { showThinkSprite } from '../think';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import * as N from './numbers';
 
@@ -1497,6 +1498,22 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    */
   public isEnemy(item: RPGObject) {
     return isOpposite(this, item);
+  }
+
+  private cancelPreviousThink = () => {};
+  /**
+   * キャラクターの頭の上に感情や状態を表す記号を表示する
+   * @param name 感情を表す記号. "!" や "?" など
+   */
+  public think(name: string) {
+    this.cancelPreviousThink();
+    return new Promise(resolve => {
+      this.cancelPreviousThink = showThinkSprite(
+        name,
+        this,
+        resolve
+      );
+    });
   }
 
   /**
