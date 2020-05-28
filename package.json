@@ -46,6 +46,7 @@
       "ts"
     ],
     "require": [
+      "./test/helpers/url-loader.js",
       "ts-node/register/transpile-only",
       "canvas",
       "raf/polyfill",
