@@ -54,8 +54,8 @@ export function showThinkSprite(
 
   const frame = decode(...config.frames);
   const sprite = new enchant.Sprite(config.width, config.height);
-  sprite.x = node.x + config.dx;
-  sprite.y = node.y + config.dy;
+  sprite.x = node.x + (node.width - sprite.width) / 2 + config.dx; // 中央揃え
+  sprite.y = node.y + config.dy; // 上揃え
   sprite.image = enchant.Surface.load(
     config.dataUrl,
     () => {
