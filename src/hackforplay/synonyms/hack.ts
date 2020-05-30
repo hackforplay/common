@@ -7,5 +7,7 @@ export const synonyms: ISynonyms = {
   じかんをとめる: { type: 'function', name: 'stopTimer' },
   じかんをうごかす: { type: 'function', name: 'startTimer' },
   がめんにだす: { type: 'function', name: 'showLabel' },
-  がめんからけす: { type: 'function', name: 'hideLabel' }
+  がめんからけす: { type: 'function', name: 'hideLabel' },
+  まどうしょ: { type: 'primitive', name: 'code' },
+  まどうしょをひからせる: { type: 'primitive', name: 'emphasizeCode' }
 };
