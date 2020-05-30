@@ -18,7 +18,7 @@ export const configs: { [key: string]: ThinkImageConfig | undefined } = {
     height: 32,
     dx: 0,
     dy: -8,
-    frames: [0, 3, 1, 3, 2, 50]
+    frames: [0, 3, 1, 3, 2, 25]
   },
   '?': {
     dataUrl: require('../resources/images/question.png').default,
@@ -26,7 +26,7 @@ export const configs: { [key: string]: ThinkImageConfig | undefined } = {
     height: 32,
     dx: 0,
     dy: -8,
-    frames: [0, 3, 1, 3, 2, 4, 3, 50]
+    frames: [0, 3, 1, 3, 2, 4, 3, 25]
   }
 };
 
