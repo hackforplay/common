@@ -18,7 +18,7 @@ Module.prototype.require = function () {
       : id.endsWith('image/gif')
       ? 'image/gif'
       : undefined;
-    return 'data:' + mime + ';base64,' + base64;
+    return { default: 'data:' + mime + ';base64,' + base64 };
   }
 
   return originalRequire.apply(this, arguments);
