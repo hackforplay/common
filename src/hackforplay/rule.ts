@@ -360,6 +360,9 @@ export class Rule {
     if (this.hasTwoObjectListener('ふまれたとき', name)) {
       object.on('addtrodden', this.onふまれたとき);
     }
+    if (this.hasTwoObjectListener('どかれたとき', name)) {
+      object.on('removetrodden', this.onどかれたとき);
+    }
     if (this.hasTwoObjectListener('ぶつかったとき', name)) {
       object.on('triggerenter', this.onぶつかったとき);
     }
@@ -379,6 +382,7 @@ export class Rule {
     object.removeEventListener('becomeattack', this.onこうげきするとき);
     object.removeEventListener('becomedead', this.onたおされたとき);
     object.removeEventListener('addtrodden', this.onふまれたとき);
+    object.removeEventListener('removetrodden', this.onどかれたとき);
     object.removeEventListener('triggerenter', this.onぶつかったとき);
     object.removeEventListener('collided', this.onすすめなかったとき);
     object.removeEventListener('attacked', this.onこうげきされたとき);
@@ -456,6 +460,9 @@ export class Rule {
   private onふまれたとき = ((e: IEvent) => {
     this.runTwoObjectListener('ふまれたとき', e.target, e.item);
   }).bind(this);
+  private onどかれたとき = ((e: IEvent) => {
+    this.runTwoObjectListener('どかれたとき', e.target, e.item);
+  }).bind(this);
   private onぶつかったとき = ((e: IEvent) => {
     if (e && e.item) {
       const { collisionFlag } = e.item;
@@ -498,6 +505,9 @@ export class Rule {
   }
   public trodden(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
+  }
+  public removeTrodden(func: TwoObjectListener) {
+    this.addTwoObjectListener('どかれたとき', func);
   }
   public collided(func: TwoObjectListener) {
     this.addTwoObjectListener('ぶつかったとき', func);
