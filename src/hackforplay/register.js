@@ -7,6 +7,7 @@ import { DirectionWithSynonym } from './direction';
 import Family from './family';
 import game from './game';
 import { getHack } from './get-hack';
+import { useGlobals } from './globals';
 import Key from './key';
 import Effect from './object/effect';
 import RPGObject from './object/object';
@@ -61,6 +62,8 @@ export default function register(_global) {
   _global.log = logFromUser;
   _global.Direction = _global.Direction || DirectionWithSynonym;
   _global.むき = DirectionWithSynonym;
+  _global.globals = useGlobals('globals');
+  _global.へんすう = useGlobals('へんすう');
 
   // ここからはデバッグ用
   _global.__thinkConfigs = configs;
