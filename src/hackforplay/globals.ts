@@ -8,11 +8,7 @@ export class MissingGlobal extends Error {
 }
 
 export interface GlobalsSubscriber {
-  <T>(payload: {
-    key: string | number | symbol;
-    prevValue: T;
-    nextValue: T;
-  }): void;
+  <T>(payload: { key: string; prevValue: T; nextValue: T }): void;
 }
 
 const globalsSubscribers = new Set<GlobalsSubscriber>();
@@ -27,21 +23,23 @@ export function subscribeGlobals(subscriber: GlobalsSubscriber) {
 export function useGlobals(displayName: string) {
   return new Proxy<{ [key: string]: any }>(singletonTarget, {
     get(target, p, receiver) {
-      if (p in target) {
-        return Reflect.get(target, p, receiver);
+      const key = p.toString(); // Object のキーに使うので 2 と "2" は同一のものとして扱う
+      if (key in target) {
+        return Reflect.get(target, key, receiver);
       }
-      throw new MissingGlobal(displayName, p.toString());
+      throw new MissingGlobal(displayName, key);
     },
     set(target, p, nextValue, receiver) {
-      const prevValue = Reflect.get(target, p, receiver);
-      if (p in target) {
+      const key = p.toString(); // Object のキーに使うので 2 と "2" は同一のものとして扱う
+      const prevValue = Reflect.get(target, key, receiver);
+      if (key in target) {
         // 直前の値と比較する
         if (prevValue === nextValue) {
           return true; // 成功, ただし通知はしない
         }
       }
-      Reflect.set(target, p, nextValue, receiver);
-      globalsSubscribers.forEach(cb => cb({ key: p, prevValue, nextValue }));
+      Reflect.set(target, key, nextValue, receiver);
+      globalsSubscribers.forEach(cb => cb({ key, prevValue, nextValue }));
       return true;
     }
   });
