@@ -1,5 +1,10 @@
 import test from 'ava';
-import { MissingGlobal, subscribeGlobals, useGlobals } from './globals';
+import {
+  MissingGlobal,
+  SetGlobalRecursively,
+  subscribeGlobals,
+  useGlobals
+} from './globals';
 
 test('Test subscribeGlobal', t => {
   t.plan(2);
@@ -25,4 +30,15 @@ test('All globals has same reference', t => {
 
   g1['object'] = {};
   t.is(g1['object'], g2['object']);
+});
+
+test('Set global recursively', t => {
+  const g = useGlobals('g');
+  const error = t.throws(() => {
+    subscribeGlobals(() => {
+      g['same key'] += 1;
+    });
+    g['same key'] = 0;
+  });
+  t.true(error instanceof SetGlobalRecursively);
 });

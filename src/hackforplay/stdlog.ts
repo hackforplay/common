@@ -1,5 +1,5 @@
 import { log } from '@hackforplay/log';
-import { MissingGlobal } from './globals';
+import { MissingGlobal, SetGlobalRecursively } from './globals';
 
 type Self = { name: string };
 
@@ -18,7 +18,7 @@ export function errorInEvent(error: any, self?: Self, eventName?: string) {
     log('error', message, fileName);
   }
 
-  if (error instanceof MissingGlobal) {
+  if (error instanceof MissingGlobal || error instanceof SetGlobalRecursively) {
     const message = [
       self ? `${self.name} の` : '',
       eventName ? `${eventName} にある` : '',
