@@ -14,7 +14,7 @@ export function errorInEvent(error: any, self?: Self, eventName?: string) {
       eventName ? `${eventName} に` : '',
       `「${varName}」と書いてしまったみたい`
     ].join(' ');
-    log('error', message, fileName);
+    return log('error', message, fileName);
   }
 
   return log('error', `原因不明のエラーです。コンソールを見て下さい`, fileName);
