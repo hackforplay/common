@@ -4,6 +4,7 @@ import { Direction } from './direction';
 import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
+import { subscribeGlobals } from './globals';
 import RPGObject, { RPGObjectWithSynonym } from './object/object';
 import { errorInEvent, logFromAsset } from './stdlog';
 import { synonyms } from './synonyms/rule';
@@ -38,6 +39,7 @@ const Enemy: unique symbol = Symbol('Rule.Enemy');
 type NoObjectListener = (this: void) => Promise<void>;
 type OneObjectListener = (this: RPGObject) => Promise<void>;
 type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
+type GlobalsChangedListener = (this: RPGObject, name: string) => Promise<void>;
 
 export class Rule {
   /**
@@ -71,11 +73,19 @@ export class Rule {
       };
     };
   } = {};
+  private readonly _globalsChangedListeners = new Map<
+    string,
+    GlobalsChangedListener
+  >();
   private readonly _collections: {
     [type: string]: RPGObject[];
   } = {};
 
   private readonly _pairingWaitList: { [key: string]: RPGObject } = {};
+
+  constructor() {
+    subscribeGlobals(({ key }) => this.emitGlobalsChanged(key));
+  }
 
   public addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
@@ -523,6 +533,21 @@ export class Rule {
   }
   public found(func: TwoObjectListener) {
     this.addTwoObjectListener('みつけたとき', func);
+  }
+  public globalsChanged(func: GlobalsChangedListener) {
+    const name = this.this;
+    if (!name) {
+      errorInEvent('Context not found', undefined, `rule.globalsChanged`);
+      return;
+    }
+    this._globalsChangedListeners.set(name, func);
+  }
+  private emitGlobalsChanged(key: string) {
+    this._globalsChangedListeners.forEach((func, name) => {
+      this._collections[name]?.forEach(item => {
+        handleError('へんすうがかわったとき', name, func.call(item, key));
+      });
+    });
   }
 
   public [PropertyMissing](chainedName: string) {
