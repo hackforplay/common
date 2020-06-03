@@ -33,7 +33,8 @@ async function make() {
       rule: makeGlobal(_rule, 'トリガー'),
       create: { type: 'function', name: 'つくる' },
       Family: makeGlobal(_family, 'なかま'),
-      Direction: makeGlobal(_direction, 'むき')
+      Direction: makeGlobal(_direction, 'むき'),
+      globals: makeGlobal({}, 'へんすう')
     },
     this: {
       type: 'instance',

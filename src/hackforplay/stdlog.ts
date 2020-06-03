@@ -1,4 +1,5 @@
 import { log } from '@hackforplay/log';
+import { MissingGlobal, SetGlobalRecursively } from './globals';
 
 type Self = { name: string };
 
@@ -15,6 +16,15 @@ export function errorInEvent(error: any, self?: Self, eventName?: string) {
       `「${varName}」と書いてしまったみたい`
     ].join(' ');
     log('error', message, fileName);
+  }
+
+  if (error instanceof MissingGlobal || error instanceof SetGlobalRecursively) {
+    const message = [
+      self ? `${self.name} の` : '',
+      eventName ? `${eventName} にある` : '',
+      error.message
+    ].join(' ');
+    return log('error', message, fileName);
   }
 
   return log('error', `原因不明のエラーです。コンソールを見て下さい`, fileName);

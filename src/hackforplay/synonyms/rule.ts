@@ -17,5 +17,6 @@ export const synonyms: ISynonyms = {
   こうげきされたとき: { type: 'function', name: 'beAttacked' },
   メッセージされたとき: { type: 'function', name: 'messaged' },
   しょうかんされたとき: { type: 'function', name: 'summoned' },
-  みつけたとき: { type: 'function', name: 'found' }
+  みつけたとき: { type: 'function', name: 'found' },
+  へんすうがかわったとき: { type: 'function', name: 'globalsChanged' }
 };
