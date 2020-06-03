@@ -5,12 +5,7 @@ import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
 import RPGObject, { RPGObjectWithSynonym } from './object/object';
-import {
-  errorInEvent,
-  errorRemoved,
-  logFromAsset,
-  logToDeprecated
-} from './stdlog';
+import { errorInEvent, logFromAsset } from './stdlog';
 import { synonyms } from './synonyms/rule';
 import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
 import talk from './talk';
@@ -45,26 +40,19 @@ type OneObjectListener = (this: RPGObject) => Promise<void>;
 type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
 
 export class Rule {
+  /**
+   * @deprecated
+   */
   public static readonly Anyone = Anyone;
+  /**
+   * @deprecated
+   */
   public static readonly Enemy = Enemy;
 
-  // public vars
   public get this(): string | null {
-    return window.__sandbox_context_name || this._this; // 互換性保持のため
+    return window.__sandbox_context_name;
   }
-  public set this(value: string | null) {
-    errorRemoved('rule.this');
-  }
-  private _this: string | null = null;
   private readonly _knownThisNames: Set<string> = new Set();
-  private _item: string | typeof Enemy | typeof Anyone | null = null;
-  public get item() {
-    return this._item;
-  }
-  public set item(value) {
-    // logToDeprecated('rule.item', 'v0.34');
-    this._item = value;
-  }
   // listeners
   private readonly _listenersOfNo: {
     [type: string]: NoObjectListener;
@@ -141,16 +129,14 @@ export class Rule {
       );
       return;
     }
-    const item = this.item || Anyone; // rule.item のデフォルトは Anyone にする. rule.item はいつか削除する
     const container =
       this._listenersOfTwo[type] || (this._listenersOfTwo[type] = {});
     const listeners = container[name] || (container[name] = {});
     if (listeners[name]) {
       errorInEvent('上書きしてしまう', { name }, type);
     }
-    listeners[item] = func;
+    listeners[Anyone] = func; // 後方互換性のため
     this._knownThisNames.add(name);
-    this.item = null;
   }
 
   public async runTwoObjectListener(
@@ -374,6 +360,9 @@ export class Rule {
     if (this.hasTwoObjectListener('ふまれたとき', name)) {
       object.on('addtrodden', this.onふまれたとき);
     }
+    if (this.hasTwoObjectListener('どかれたとき', name)) {
+      object.on('removetrodden', this.onどかれたとき);
+    }
     if (this.hasTwoObjectListener('ぶつかったとき', name)) {
       object.on('triggerenter', this.onぶつかったとき);
     }
@@ -393,6 +382,7 @@ export class Rule {
     object.removeEventListener('becomeattack', this.onこうげきするとき);
     object.removeEventListener('becomedead', this.onたおされたとき);
     object.removeEventListener('addtrodden', this.onふまれたとき);
+    object.removeEventListener('removetrodden', this.onどかれたとき);
     object.removeEventListener('triggerenter', this.onぶつかったとき);
     object.removeEventListener('collided', this.onすすめなかったとき);
     object.removeEventListener('attacked', this.onこうげきされたとき);
@@ -470,6 +460,9 @@ export class Rule {
   private onふまれたとき = ((e: IEvent) => {
     this.runTwoObjectListener('ふまれたとき', e.target, e.item);
   }).bind(this);
+  private onどかれたとき = ((e: IEvent) => {
+    this.runTwoObjectListener('どかれたとき', e.target, e.item);
+  }).bind(this);
   private onぶつかったとき = ((e: IEvent) => {
     if (e && e.item) {
       const { collisionFlag } = e.item;
@@ -512,6 +505,9 @@ export class Rule {
   }
   public trodden(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
+  }
+  public removeTrodden(func: TwoObjectListener) {
+    this.addTwoObjectListener('どかれたとき', func);
   }
   public collided(func: TwoObjectListener) {
     this.addTwoObjectListener('ぶつかったとき', func);

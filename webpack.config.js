@@ -30,6 +30,14 @@ const common = {
         include: [path.resolve(__dirname, 'src')],
         loader: 'babel-loader',
         test: /\.[jt]s$/
+      },
+      {
+        test: /\.(png|jpg|gif)$/i,
+        use: [
+          {
+            loader: 'url-loader'
+          }
+        ]
       }
     ]
   },

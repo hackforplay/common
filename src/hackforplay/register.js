@@ -17,6 +17,7 @@ import Rule from './rule';
 import { logFromUser } from './stdlog';
 import { synonyms } from './synonyms/hack';
 import { synonymize } from './synonyms/synonymize';
+import { configs } from './think';
 import TextArea from './ui/textarea';
 
 log('system', '世界は始まりを告げた。ハローワールド！', '@hackforplay/common');
@@ -60,4 +61,7 @@ export default function register(_global) {
   _global.log = logFromUser;
   _global.Direction = _global.Direction || DirectionWithSynonym;
   _global.むき = DirectionWithSynonym;
+
+  // ここからはデバッグ用
+  _global.__thinkConfigs = configs;
 }
