@@ -334,6 +334,7 @@ class RPGObject extends enchant.Sprite {
 
   async attack() {
     if (this.behavior !== BehaviorTypes.Idle || !Hack.isPlaying) return;
+    if (!this.parentNode) return; // fix: https://bit.ly/37739X3
     this.behavior = BehaviorTypes.Attack;
     const dx = this.mapX + this.forward.x;
     const dy = this.mapY + this.forward.y;
