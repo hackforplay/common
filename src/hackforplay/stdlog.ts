@@ -15,7 +15,7 @@ export function errorInEvent(error: any, self?: Self, eventName?: string) {
       eventName ? `${eventName} に` : '',
       `「${varName}」と書いてしまったみたい`
     ].join(' ');
-    log('error', message, fileName);
+    return log('error', message, fileName);
   }
 
   if (error instanceof MissingGlobal || error instanceof SetGlobalRecursively) {
