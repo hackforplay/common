@@ -575,7 +575,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this.summon(this.skill);
     } else {
       // ダメージを与えるオブジェクトを生成する
-      damageObject = new RPGObjectWithSynonym();
+      damageObject = new RPGObjectWithSynonym(); // eslint-disable-line
       damageObject.damage = this.atk;
       damageObject.collisionFlag = false;
       registerServant(this, damageObject);
