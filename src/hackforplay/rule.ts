@@ -513,6 +513,9 @@ export class Rule {
   public tapped(func: OneObjectListener) {
     this.addOneObjectLisener('タップされたとき', func);
   }
+  public mapChanged(func: OneObjectListener) {
+    this.addOneObjectLisener('マップがかわったとき', func);
+  }
   public trodden(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
   }

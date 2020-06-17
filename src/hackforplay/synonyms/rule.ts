@@ -11,6 +11,7 @@ export const synonyms: ISynonyms = {
   おかねがかわったとき: { type: 'function', name: 'moneyChanged' },
   じかんがすすんだとき: { type: 'function', name: 'timePassed' },
   タップされたとき: { type: 'function', name: 'tapped' },
+  マップがかわったとき: { type: 'function', name: 'mapChanged' },
   ふまれたとき: { type: 'function', name: 'trodden' },
   どかれたとき: { type: 'function', name: 'removeTrodden' },
   ぶつかったとき: { type: 'function', name: 'collided' },

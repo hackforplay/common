@@ -484,6 +484,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           }
         }
         map.scene.addChild(this);
+        // トリガーを発火
+        this._ruleInstance?.runOneObjectLisener(
+          'マップがかわったとき',
+          this.proxy
+        );
       }
     }
     if (ignoreTrodden) {
