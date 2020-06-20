@@ -1503,7 +1503,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param item 相手のキャラクター
    */
   public isEnemy(item: RPGObject) {
-    return isOpposite(this, item);
+    return isOpposite(this, item) && item.hp > 0;
   }
 
   private cancelPreviousThink = () => {};
