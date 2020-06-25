@@ -1421,7 +1421,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   private _isJustBeingFound = false; // みつけたときに同フレーム内で this.find() して Stackoverflow するのを防ぐフラグ
-  public async find() {
+  private async findImpl(filter?: (item: RPGObject) => boolean) {
     if (!Hack.isPlaying) return; // ゲームが終了している
     if (this.behavior !== BehaviorTypes.Idle) return;
     if (this._isJustBeingFound) return; // 同フレーム内でみつけたときがコールされたばかり
@@ -1454,13 +1454,26 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       .filter(item =>
         _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this, item)
       );
-    const found = this.getNearest(foundable);
+    const found = this.getNearest(
+      filter ? foundable.filter(filter) : foundable
+    );
     if (found) {
       this._isJustBeingFound = true; // このフレームでは find() をスキップ
       const p = _ruleInstance.runTwoObjectListener('みつけたとき', this, found);
       this._isJustBeingFound = false; // スキップタイム終了
       await p; // await this.find() でみつけたときをループできるよう, 終了を待つ
     }
+  }
+
+  public async find() {
+    return this.findImpl();
+  }
+
+  /**
+   * 敵とみなされるキャラクターに限定した find()
+   */
+  public async findEnemy() {
+    return this.findImpl(item => this.isEnemy(item));
   }
 
   public toJSON() {

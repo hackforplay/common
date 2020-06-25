@@ -34,6 +34,7 @@ export const synonyms: ISynonyms = {
   しょうかんする: { type: 'function', name: 'summon' },
   へんしんする: { type: 'function', name: 'transform' },
   みつける: { type: 'function', name: 'find', await: true },
+  てきをみつける: { type: 'function', name: 'findEnemy', await: true },
   とんでいく: { type: 'function', name: 'flyToward' },
   おとをならす: { type: 'function', name: 'se', await: true },
   はなす: { type: 'function', name: 'talk', await: true },
