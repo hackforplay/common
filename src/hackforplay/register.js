@@ -9,6 +9,7 @@ import game from './game';
 import { getHack } from './get-hack';
 import { useGlobals } from './globals';
 import Key from './key';
+import { langExports } from './lang';
 import Effect from './object/effect';
 import RPGObject from './object/object';
 import Player from './object/player';
@@ -64,6 +65,7 @@ export default function register(_global) {
   _global.むき = DirectionWithSynonym;
   _global.globals = useGlobals('globals');
   _global.へんすう = useGlobals('へんすう');
+  Object.assign(_global, langExports);
 
   // ここからはデバッグ用
   _global.__thinkConfigs = configs;
