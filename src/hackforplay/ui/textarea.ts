@@ -32,20 +32,21 @@ interface IChar {
 
 const parser = new DOMParser();
 
-function parse(xml: string, retry = false): Document {
+function parse(xml: string): Node {
   let document = parser.parseFromString(
-    `<root>${xml}</root>`,
+    `<root>${xml
+      .split('\n')
+      .map(line => `<group>${line}</group>`)
+      .join('')}</root>`,
     'application/xml'
   );
   const error = document.querySelector('parsererror');
   if (error) {
-    console.error(error.textContent);
-    // パースに失敗したらタグを置換して再度試す
-    if (!retry) return parse(xml.replace(/</g, '＜').replace(/>/g, '＞'), true);
-    document = parser.parseFromString(
-      `<root>パースに失敗しました</root>`,
-      'application/xml'
-    );
+    console.warn(error.textContent);
+    // パースに失敗したらそのまま表示する
+    const doc = document.createDocumentFragment();
+    doc.appendChild(document.createTextNode(xml));
+    return doc;
   }
   return document;
 }
@@ -166,7 +167,7 @@ class TextArea extends enchant.Sprite {
 
   push(text: string) {
     const lineFeed = this.source.length ? '\n' : '';
-    this.source += `${lineFeed}<group>${text}</group>`;
+    this.source += `${lineFeed}${text}`;
     this.updateDocument();
     this.updateValues();
   }
