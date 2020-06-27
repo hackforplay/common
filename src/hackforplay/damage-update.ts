@@ -54,8 +54,8 @@ export function damageUpdate() {
     if (Hack.isPlaying) {
       // ゲームが継続している間しかダメージは入らないが、当たり判定はある
       for (const object of newHits) {
-        object.damageTime = object.attackedDamageTime; // チカチカする
         if (object.hasHp) {
+          object.damageTime = object.attackedDamageTime; // チカチカする
           object.hp -= damager.damage; // 体力が number なら減らす
         }
         // イベントを発火させる
