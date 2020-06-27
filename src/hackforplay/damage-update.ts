@@ -4,6 +4,8 @@ import { getMaster, isOpposite } from './family';
 import { getHack } from './get-hack';
 import RPGObject from './object/object';
 
+const previousHitsMap = new WeakMap<RPGObject, WeakSet<RPGObject>>();
+
 export function damageUpdate() {
   const Hack = getHack();
   const nonDamagers = RPGObject.collection.filter(
@@ -42,9 +44,16 @@ export function damageUpdate() {
       return false;
     });
 
+    // 直前の処理で触れていないものだけを対象にする
+    const previousHitsSet = previousHitsMap.get(damager);
+    const newHits = previousHitsSet
+      ? hits.filter(item => !previousHitsSet.has(item))
+      : hits;
+    previousHitsMap.set(damager, new WeakSet(hits));
+
     if (Hack.isPlaying) {
       // ゲームが継続している間しかダメージは入らないが、当たり判定はある
-      for (const object of hits) {
+      for (const object of newHits) {
         object.damageTime = object.attackedDamageTime; // チカチカする
         if (object.hasHp) {
           object.hp -= damager.damage; // 体力が number なら減らす
@@ -60,7 +69,7 @@ export function damageUpdate() {
       }
     }
 
-    if (hits.length > 0) {
+    if (newHits.length > 0) {
       // もし貫通限界を超えたらオブジェクトを破棄する
       damager.addPenetratedCount();
     }
