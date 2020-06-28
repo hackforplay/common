@@ -29,18 +29,14 @@ export function physicsUpdate() {
     return !item.isKinematic && item.collisionFlag && !item._stop;
   });
 
-  __physicsUpdateOnFrame(1, 1, physicsPhantom);
-  __physicsUpdateOnFrame(1, 1, physicsCollision);
+  __physicsUpdateOnFrame(physicsPhantom);
+  __physicsUpdateOnFrame(physicsCollision);
   for (const item of physicsPhantom) {
     item.updateCollider(); // TODO: 動的プロパティ
   }
 }
 
-function __physicsUpdateOnFrame(
-  tick: number,
-  frame: number,
-  physics: RPGObject[]
-) {
+function __physicsUpdateOnFrame(physics: RPGObject[]) {
   physics
     .map(function (self) {
       if (self._flyToward) {
@@ -50,11 +46,11 @@ function __physicsUpdateOnFrame(
         self.velocityY = self._flyToward.y * self.speed * correction;
       } else {
         // force() を使った Physical Update (廃止予定)
-        self.velocityX += self.accelerationX / frame;
-        self.velocityY += self.accelerationY / frame;
+        self.velocityX += self.accelerationX;
+        self.velocityY += self.accelerationY;
       }
-      self.x += self.velocityX / frame;
-      self.y += self.velocityY / frame;
+      self.x += self.velocityX;
+      self.y += self.velocityY;
       // Intersects
       const intersects = self.intersect(RPGObject) as RPGObject[]; // TODO: これはバグ? intersect はマップに依らない判定のはず
       intersects.splice(intersects.indexOf(self), 1); // ignore self
