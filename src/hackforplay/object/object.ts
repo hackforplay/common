@@ -134,7 +134,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private hpchangeFlag = false;
   private hpLabel?: any;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
-  private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
+  public _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
   private _image?: typeof enchant.Surface;
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
@@ -329,7 +329,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     );
   }
 
-  private updateCollider() {
+  public updateCollider() {
     this.collider.pos.x = this.x;
     this.collider.pos.y = this.y;
   }

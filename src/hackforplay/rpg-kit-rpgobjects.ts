@@ -36,7 +36,11 @@ export function physicsUpdate() {
   }
 }
 
-function __physicsUpdateOnFrame(tick, frame, physics) {
+function __physicsUpdateOnFrame(
+  tick: number,
+  frame: number,
+  physics: RPGObject[]
+) {
   physics
     .map(function (self) {
       if (self._flyToward) {
@@ -52,7 +56,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       self.x += self.velocityX / frame;
       self.y += self.velocityY / frame;
       // Intersects
-      const intersects = self.intersect(RPGObject);
+      const intersects = self.intersect(RPGObject) as RPGObject[];
       intersects.splice(intersects.indexOf(self), 1); // ignore self
       // Dispatch trigger(stay|exit) event
       (self._preventFrameHits || [])
@@ -93,7 +97,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
         hits: entered.filter(function (item) {
           return !item.isKinematic && item.collisionFlag;
         })
-      };
+      } as any;
     })
     .filter(function (item) {
       // ===> Physics collision
@@ -153,7 +157,7 @@ function __physicsUpdateOnFrame(tick, frame, physics) {
       obj.self.dispatchEvent(obj.event);
     });
 
-  function dispatchTriggerEvent(type, self, hit) {
+  function dispatchTriggerEvent(type: string, self: RPGObject, hit: RPGObject) {
     const event = new enchant.Event('trigger' + type);
     event.hit = hit;
     event.item = hit; // 引数名の統一
