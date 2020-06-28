@@ -7,6 +7,8 @@ import './rpg-kit-main';
 
 const Hack = getHack();
 
+const previousIntersectsMap = new WeakMap<RPGObject, WeakSet<RPGObject>>();
+
 /**
  * Physics Update (廃止予定)
  * isKinematic === false のオブジェクトに対して物理演算を行う (現状では衝突判定も行っている)
@@ -56,12 +58,13 @@ function __physicsUpdateOnFrame(physics: RPGObject[]) {
       intersects.splice(intersects.indexOf(self), 1); // ignore self
 
       // Intersect on time (enter) or still intersect
-      const entered = intersects.filter(function (item) {
-        return (
-          !self._preventFrameHits || self._preventFrameHits.indexOf(item) < 0
-        );
-      });
-      self._preventFrameHits = intersects; // Update cache
+      const previousHits = previousIntersectsMap.get(self);
+      const entered =
+        previousHits === undefined
+          ? intersects
+          : intersects.filter(item => !previousHits.has(item));
+      previousIntersectsMap.set(self, new WeakSet(intersects));
+
       // Dispatch triggerenter event
       entered
         .filter(function (item) {

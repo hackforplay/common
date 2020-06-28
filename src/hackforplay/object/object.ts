@@ -113,7 +113,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public isInvincible = false; // ダメージを受けなくなるフラグ
   public currentSkin?: ISkin; // 適用されているスキン
   public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
-  public _preventFrameHits: RPGObject[] = []; // rpg-kit-rpgobjects.js で参照されるプロパティ
   public childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public _cvsCache: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
