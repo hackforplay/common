@@ -60,24 +60,7 @@ function __physicsUpdateOnFrame(
       // Intersects
       const intersects = self.intersect(RPGObject) as RPGObject[]; // TODO: これはバグ? intersect はマップに依らない判定のはず
       intersects.splice(intersects.indexOf(self), 1); // ignore self
-      // Dispatch trigger(stay|exit) event
-      (self._preventFrameHits || [])
-        .filter(function (item) {
-          return item.isKinematic;
-        })
-        .forEach(function (item) {
-          if (intersects.indexOf(item) < 0) {
-            dispatchTriggerEvent('exit', self, item);
-            dispatchTriggerEvent('exit', item, self);
-          } else if (
-            tick === frame &&
-            !item.collisionFlag &&
-            !self.collisionFlag
-          ) {
-            dispatchTriggerEvent('stay', self, item);
-            dispatchTriggerEvent('stay', item, self);
-          }
-        });
+
       // Intersect on time (enter) or still intersect
       const entered = intersects.filter(function (item) {
         return (
