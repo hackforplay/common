@@ -17,7 +17,7 @@ export function physicsUpdate() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
 
   const physics = RPGObject.collection.filter(function (item) {
-    return !item.isKinematic && !item._stop;
+    return !item.isKinematic && !item._stop && item.map === Hack.map;
   });
 
   for (const self of physics) {
@@ -46,18 +46,16 @@ export function physicsCollision() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
 
   const physics = RPGObject.collection.filter(
-    item => !item.isKinematic && !item._stop
-  ); // TODO: マップに関するフィルタを追加
+    item => !item.isKinematic && !item._stop && item.map === Hack.map
+  );
 
   const collidables = RPGObject.collection.filter(
-    item => item.isKinematic && item.collisionFlag
+    item => item.isKinematic && item.collisionFlag && item.map === Hack.map
   );
 
   for (const self of physics) {
     const colsSelf = self.collider || self.colliders?.[0];
     if (!colsSelf) continue; // collider がない
-
-    // TODO: マップに関するフィルタを追加
 
     // Intersects
     const intersects = collidables.filter(item => {
