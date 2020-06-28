@@ -33,32 +33,18 @@ export function physicsUpdate() {
 }
 /**
  * Physics Collision (廃止予定)
- * isKinematic === false のオブジェクトに対して衝突判定を行う
- *
- * [Case]                     : [Event]     : [Note]
- * Kinematics ===> Kinematics	: oncollided	: Need collisionFlag is true
- * Physics    ===> Physics    : oncollided	: Need collisionFlag is true, Change velocity
- * Physics    ===> Kinematics	: ontriggered	: Ignore collisionFlag, Don't change velocity
+ * isKinematic === false のオブジェクトに対して接触判定を行う
+ * 接触していた場合は "ぶつかったとき" トリガーを発火させる
  */
 export function physicsCollision() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
-}
 
-function __physicsUpdateOnFrame(physics: RPGObject[]) {
+  const physics = RPGObject.collection.filter(
+    item => !item.isKinematic && !item._stop
+  );
+
   physics
     .map(function (self) {
-      if (self._flyToward) {
-        // flyToward() を使った Physics Update (暫定処理)
-        const correction = 3.3; // 移動速度を walk と合わせるための係数
-        self.velocityX = self._flyToward.x * self.speed * correction;
-        self.velocityY = self._flyToward.y * self.speed * correction;
-      } else {
-        // force() を使った Physical Update (廃止予定)
-        self.velocityX += self.accelerationX;
-        self.velocityY += self.accelerationY;
-      }
-      self.x += self.velocityX;
-      self.y += self.velocityY;
       // Intersects
       const intersects = self.intersect(RPGObject) as RPGObject[]; // TODO: これはバグ? intersect はマップに依らない判定のはず
       intersects.splice(intersects.indexOf(self), 1); // ignore self
@@ -152,4 +138,21 @@ function __physicsUpdateOnFrame(physics: RPGObject[]) {
     .forEach(function (obj) {
       obj.self.dispatchEvent(obj.event);
     });
+}
+
+function __physicsUpdateOnFrame(physics: RPGObject[]) {
+  physics.forEach(function (self) {
+    if (self._flyToward) {
+      // flyToward() を使った Physics Update (暫定処理)
+      const correction = 3.3; // 移動速度を walk と合わせるための係数
+      self.velocityX = self._flyToward.x * self.speed * correction;
+      self.velocityY = self._flyToward.y * self.speed * correction;
+    } else {
+      // force() を使った Physical Update (廃止予定)
+      self.velocityX += self.accelerationX;
+      self.velocityY += self.accelerationY;
+    }
+    self.x += self.velocityX;
+    self.y += self.velocityY;
+  });
 }
