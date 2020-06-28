@@ -18,16 +18,26 @@ const previousIntersectsMap = new WeakMap<RPGObject, WeakSet<RPGObject>>();
 export function physicsUpdate() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
 
-  const physicsPhantom = RPGObject.collection.filter(function (item) {
-    return !item.isKinematic && !item.collisionFlag && !item._stop;
-  });
-  const physicsCollision = RPGObject.collection.filter(function (item) {
-    return !item.isKinematic && item.collisionFlag && !item._stop;
+  const physics = RPGObject.collection.filter(function (item) {
+    return !item.isKinematic && !item._stop;
   });
 
-  __physicsUpdateOnFrame(physicsPhantom);
-  __physicsUpdateOnFrame(physicsCollision);
-  for (const item of physicsPhantom) {
+  physics.forEach(function (self) {
+    if (self._flyToward) {
+      // flyToward() を使った Physics Update (暫定処理)
+      const correction = 3.3; // 移動速度を walk と合わせるための係数
+      self.velocityX = self._flyToward.x * self.speed * correction;
+      self.velocityY = self._flyToward.y * self.speed * correction;
+    } else {
+      // force() を使った Physical Update (廃止予定)
+      self.velocityX += self.accelerationX;
+      self.velocityY += self.accelerationY;
+    }
+    self.x += self.velocityX;
+    self.y += self.velocityY;
+  });
+
+  for (const item of physics) {
     item.updateCollider(); // TODO: 動的プロパティ
   }
 }
@@ -138,21 +148,4 @@ export function physicsCollision() {
     .forEach(function (obj) {
       obj.self.dispatchEvent(obj.event);
     });
-}
-
-function __physicsUpdateOnFrame(physics: RPGObject[]) {
-  physics.forEach(function (self) {
-    if (self._flyToward) {
-      // flyToward() を使った Physics Update (暫定処理)
-      const correction = 3.3; // 移動速度を walk と合わせるための係数
-      self.velocityX = self._flyToward.x * self.speed * correction;
-      self.velocityY = self._flyToward.y * self.speed * correction;
-    } else {
-      // force() を使った Physical Update (廃止予定)
-      self.velocityX += self.accelerationX;
-      self.velocityY += self.accelerationY;
-    }
-    self.x += self.velocityX;
-    self.y += self.velocityY;
-  });
 }
