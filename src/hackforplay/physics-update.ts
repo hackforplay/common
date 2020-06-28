@@ -22,7 +22,7 @@ export function physicsUpdate() {
     return !item.isKinematic && !item._stop;
   });
 
-  physics.forEach(function (self) {
+  for (const self of physics) {
     if (self._flyToward) {
       // flyToward() を使った Physics Update (暫定処理)
       const correction = 3.3; // 移動速度を walk と合わせるための係数
@@ -35,10 +35,8 @@ export function physicsUpdate() {
     }
     self.x += self.velocityX;
     self.y += self.velocityY;
-  });
 
-  for (const item of physics) {
-    item.updateCollider(); // TODO: 動的プロパティ
+    self.updateCollider(); // TODO: 動的プロパティ
   }
 }
 /**
