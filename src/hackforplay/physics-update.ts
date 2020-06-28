@@ -21,7 +21,7 @@ const Hack = getHack();
 
 export function physicsUpdate() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
-  const frame = game.collisionFrames || 10;
+
   const physicsPhantom = RPGObject.collection.filter(function (item) {
     return !item.isKinematic && !item.collisionFlag && !item._stop;
   });
@@ -30,9 +30,7 @@ export function physicsUpdate() {
   });
 
   __physicsUpdateOnFrame(1, 1, physicsPhantom);
-  for (let tick = 1; tick <= frame; tick++) {
-    __physicsUpdateOnFrame(tick, frame, physicsCollision);
-  }
+  __physicsUpdateOnFrame(1, 1, physicsCollision);
   for (const item of physicsPhantom) {
     item.updateCollider(); // TODO: 動的プロパティ
   }
