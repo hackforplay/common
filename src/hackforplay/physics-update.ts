@@ -42,7 +42,7 @@ export function physicsUpdate() {
 /**
  * Physics Collision (廃止予定)
  * isKinematic === false のオブジェクトに対して接触判定を行う
- * 接触していた場合は "ぶつかったとき" トリガーを発火させる
+ * isKinematic なオブジェクトと接触していた場合は "ぶつかったとき" トリガーを発火させる
  */
 export function physicsCollision() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
@@ -51,99 +51,27 @@ export function physicsCollision() {
     item => !item.isKinematic && !item._stop
   );
 
-  physics
-    .map(function (self) {
-      // Intersects
-      const intersects = self.intersect(RPGObject) as RPGObject[]; // TODO: これはバグ? intersect はマップに依らない判定のはず
-      intersects.splice(intersects.indexOf(self), 1); // ignore self
+  physics.map(function (self) {
+    // Intersects
+    const intersects = self.intersect(RPGObject) as RPGObject[]; // TODO: これはバグ? intersect はマップに依らない判定のはず
+    intersects.splice(intersects.indexOf(self), 1); // ignore self
 
-      // Intersect on time (enter) or still intersect
-      const previousHits = previousIntersectsMap.get(self);
-      const entered =
-        previousHits === undefined
-          ? intersects
-          : intersects.filter(item => !previousHits.has(item));
-      previousIntersectsMap.set(self, new WeakSet(intersects));
+    // Intersect on time (enter) or still intersect
+    const previousHits = previousIntersectsMap.get(self);
+    const entered =
+      previousHits === undefined
+        ? intersects
+        : intersects.filter(item => !previousHits.has(item));
+    previousIntersectsMap.set(self, new WeakSet(intersects));
 
-      // Dispatch triggerenter event
-      entered
-        .filter(function (item) {
-          return item.isKinematic;
-        })
-        .forEach(function (item) {
-          self._ruleInstance?.runTwoObjectListener(
-            'ぶつかったとき',
-            self,
-            item
-          );
-          self._ruleInstance?.runTwoObjectListener(
-            'ぶつかったとき',
-            item,
-            self
-          );
-        });
-      return {
-        self: self,
-        hits: entered.filter(function (item) {
-          return !item.isKinematic && item.collisionFlag;
-        })
-      } as any;
-    })
-    .filter(function (item) {
-      // ===> Physics collision
-      return item.self.collisionFlag;
-    })
-    .filter(function (item) {
-      const self = item.self;
-      const event = (item.event = new enchant.Event('collided'));
-      const hits = (event.hits = item.hits);
-      const calc = (item.calc = {
-        x: self.x,
-        y: self.y,
-        vx: self.velocityX,
-        vy: self.velocityY
+    // Dispatch triggerenter event
+    entered
+      .filter(function (item) {
+        return item.isKinematic;
+      })
+      .forEach(function (item) {
+        self._ruleInstance?.runTwoObjectListener('ぶつかったとき', self, item);
+        self._ruleInstance?.runTwoObjectListener('ぶつかったとき', item, self);
       });
-      if (hits.length > 0) {
-        // Hit objects
-        event.hit = hits[0];
-        const m1 = self.mass,
-          m2 = hits[0].mass;
-        calc.vx =
-          ((m1 - m2) * self.velocityX + 2 * m2 * hits[0].velocityX) / (m1 + m2);
-        calc.vy =
-          ((m1 - m2) * self.velocityY + 2 * m2 * hits[0].velocityY) / (m1 + m2);
-        event.map = false;
-      } else if (self.collideMapBoader) {
-        // マップの端にぶつかる処理
-        const mapHitX =
-            (self.velocityX < 0 && self.x <= 0) ||
-            (self.velocityX > 0 && self.x + self.width >= game.width),
-          mapHitY =
-            (self.velocityY < 0 && self.y <= 0) ||
-            (self.velocityY > 0 && self.y + self.height >= game.height);
-        calc.x = mapHitX
-          ? Math.max(0, Math.min(game.width - self.width, self.x))
-          : self.x;
-        calc.y = mapHitX
-          ? Math.max(0, Math.min(game.height - self.height, self.y))
-          : self.y;
-        // calc.vx = (mapHitX ? -1 : 1) * self.velocityX;
-        // calc.vy = (mapHitY ? -1 : 1) * self.velocityY;
-        event.map = mapHitX || mapHitY;
-      }
-      event.item = event.hit; // イベント引数の統一
-      return event.map || hits.length > 0;
-    })
-    .filter(function (item) {
-      const self = item.self;
-      const calc = item.calc;
-      self.x = calc.x;
-      self.y = calc.y;
-      self.velocityX = calc.vx;
-      self.velocityY = calc.vy;
-      return true;
-    })
-    .forEach(function (obj) {
-      obj.self.dispatchEvent(obj.event);
-    });
+  });
 }
