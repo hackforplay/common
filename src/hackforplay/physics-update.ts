@@ -1,6 +1,4 @@
-import enchant from '../enchantjs/enchant';
-import '../enchantjs/ui.enchant';
-import game from './game';
+import SAT from '../lib/sat.min';
 import { getHack } from './get-hack';
 import RPGObject from './object/object';
 import './rpg-kit-main';
@@ -41,20 +39,37 @@ export function physicsUpdate() {
 }
 /**
  * Physics Collision (廃止予定)
- * isKinematic === false のオブジェクトに対して接触判定を行う
- * isKinematic なオブジェクトと接触していた場合は "ぶつかったとき" トリガーを発火させる
+ * isKinematic === false のオブジェクト X に対して接触判定を行う (collisionFlag は関係ない)
+ * X が isKinematic === true && collisionFlag == true のオブジェクト Y と接触していた場合、 X, Y 互いに "ぶつかったとき" トリガーを発火させる
  */
 export function physicsCollision() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
 
   const physics = RPGObject.collection.filter(
     item => !item.isKinematic && !item._stop
+  ); // TODO: マップに関するフィルタを追加
+
+  const collidables = RPGObject.collection.filter(
+    item => item.isKinematic && item.collisionFlag
   );
 
-  physics.map(function (self) {
+  for (const self of physics) {
+    const colsSelf = self.collider || self.colliders?.[0];
+    if (!colsSelf) continue; // collider がない
+
+    // TODO: マップに関するフィルタを追加
+
     // Intersects
-    const intersects = self.intersect(RPGObject) as RPGObject[]; // TODO: これはバグ? intersect はマップに依らない判定のはず
-    intersects.splice(intersects.indexOf(self), 1); // ignore self
+    const intersects = collidables.filter(item => {
+      const colsItem = item.collider || item.colliders?.[0];
+      if (!colsItem) return false; // collider がない
+
+      const response = new SAT.Response();
+      const collided = SAT.testPolygonPolygon(colsSelf, colsItem, response);
+      // 重なっていないのに collided になる場合がある.
+      // その場合は overlap (重なりの大きさ) が 0 になっている
+      return collided && response && response.overlap !== 0;
+    });
 
     // Intersect on time (enter) or still intersect
     const previousHits = previousIntersectsMap.get(self);
@@ -65,13 +80,9 @@ export function physicsCollision() {
     previousIntersectsMap.set(self, new WeakSet(intersects));
 
     // Dispatch triggerenter event
-    entered
-      .filter(function (item) {
-        return item.isKinematic;
-      })
-      .forEach(function (item) {
-        self._ruleInstance?.runTwoObjectListener('ぶつかったとき', self, item);
-        self._ruleInstance?.runTwoObjectListener('ぶつかったとき', item, self);
-      });
-  });
+    for (const item of entered) {
+      self._ruleInstance?.runTwoObjectListener('ぶつかったとき', self, item);
+      self._ruleInstance?.runTwoObjectListener('ぶつかったとき', item, self);
+    }
+  }
 }
