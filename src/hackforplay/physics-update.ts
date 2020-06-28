@@ -11,16 +11,10 @@ const previousIntersectsMap = new WeakMap<RPGObject, WeakSet<RPGObject>>();
 
 /**
  * Physics Update (廃止予定)
- * isKinematic === false のオブジェクトに対して物理演算を行う (現状では衝突判定も行っている)
+ * isKinematic === false のオブジェクトに対して物理演算を行う
  * この処理はメインループの中で最も高負荷になることがあり、FPS を下げていることが分かった https://bit.ly/2YCTDYY
  * walk などの "マス目" を使った表現とも相性が良くないので、将来的に廃止する予定
- *
- * [Case]                     : [Event]     : [Note]
- * Kinematics ===> Kinematics	: oncollided	: Need collisionFlag is true
- * Physics    ===> Physics    : oncollided	: Need collisionFlag is true, Change velocity
- * Physics    ===> Kinematics	: ontriggered	: Ignore collisionFlag, Don't change velocity
  */
-
 export function physicsUpdate() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
 
@@ -36,6 +30,18 @@ export function physicsUpdate() {
   for (const item of physicsPhantom) {
     item.updateCollider(); // TODO: 動的プロパティ
   }
+}
+/**
+ * Physics Collision (廃止予定)
+ * isKinematic === false のオブジェクトに対して衝突判定を行う
+ *
+ * [Case]                     : [Event]     : [Note]
+ * Kinematics ===> Kinematics	: oncollided	: Need collisionFlag is true
+ * Physics    ===> Physics    : oncollided	: Need collisionFlag is true, Change velocity
+ * Physics    ===> Kinematics	: ontriggered	: Ignore collisionFlag, Don't change velocity
+ */
+export function physicsCollision() {
+  if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
 }
 
 function __physicsUpdateOnFrame(physics: RPGObject[]) {
