@@ -15,7 +15,9 @@ const Hack = getHack();
  * Physics ===> Kinematics		: ontriggered	: Ignore collisionFlag, Don't change velocity
  */
 
-game.on('enterframe', function physicsUpdate() {
+game.on('enterframe', physicsUpdate);
+
+export function physicsUpdate() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
   const frame = game.collisionFrames || 10;
   const physicsPhantom = RPGObject.collection.filter(function (item) {
@@ -32,7 +34,7 @@ game.on('enterframe', function physicsUpdate() {
   for (const item of physicsPhantom) {
     item.updateCollider(); // TODO: 動的プロパティ
   }
-});
+}
 
 function __physicsUpdateOnFrame(tick, frame, physics) {
   physics
