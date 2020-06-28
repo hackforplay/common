@@ -74,8 +74,16 @@ function __physicsUpdateOnFrame(
           return item.isKinematic;
         })
         .forEach(function (item) {
-          dispatchTriggerEvent('enter', self, item);
-          dispatchTriggerEvent('enter', item, self);
+          self._ruleInstance?.runTwoObjectListener(
+            'ぶつかったとき',
+            self,
+            item
+          );
+          self._ruleInstance?.runTwoObjectListener(
+            'ぶつかったとき',
+            item,
+            self
+          );
         });
       return {
         self: self,
@@ -141,13 +149,4 @@ function __physicsUpdateOnFrame(
     .forEach(function (obj) {
       obj.self.dispatchEvent(obj.event);
     });
-
-  function dispatchTriggerEvent(type: string, self: RPGObject, hit: RPGObject) {
-    const event = new enchant.Event('trigger' + type);
-    event.hit = hit;
-    event.item = hit; // 引数名の統一
-    event.mapX = hit.mapX;
-    event.mapY = hit.mapY;
-    self.dispatchEvent(event);
-  }
 }
