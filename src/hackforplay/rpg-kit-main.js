@@ -9,7 +9,6 @@ import { getHack } from './get-hack';
 import { KeyClass } from './key';
 import Keyboard from './keyboard';
 import { generateMapFromDefinition } from './load-maps';
-import './physics-update';
 import './rpg-kit-color';
 import RPGMap from './rpg-map';
 import { errorRemoved, logToDeprecated } from './stdlog';

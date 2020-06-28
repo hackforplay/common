@@ -13,7 +13,7 @@ import { getHack } from './get-hack';
 import loadMap from './load-map';
 import loadMaps from './load-maps';
 import './loader';
-import './physics-update';
+import { physicsUpdate } from './physics-update';
 import './rpg-kit-main';
 import { audioConfigs, getConfig } from './se-data';
 import { getBaseUrl, getSkin, setBaseUrl } from './skin';
@@ -109,4 +109,5 @@ Hack.audioConfigs = audioConfigs;
  */
 Hack.getAudioConfig = getConfig;
 
+game.on('enterframe', physicsUpdate);
 game.on('enterframe', damageUpdate);
