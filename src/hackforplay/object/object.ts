@@ -32,6 +32,7 @@ import {
 import talk from '../talk';
 import { showThinkSprite } from '../think';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
+import { observeArray } from '../utils/observe-array';
 import * as N from './numbers';
 
 const Hack = getHack();
@@ -62,7 +63,7 @@ const opt = <T>(opt: T | undefined, def: T): T =>
 export default class RPGObject extends enchant.Sprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   private static _collectionTarget = [RPGObject];
-  public static collection: RPGObject[] = [];
+  public static collection = observeArray<RPGObject>([]); // Proxy でトラップする
   private static _collective = true;
   // へんしんするときに初期化するプロパティの設定
   private static readonly propNamesToInit = [
