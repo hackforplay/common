@@ -5,6 +5,7 @@ import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
 import { memoMethod, objectsInDefaultMap } from '../cache';
 import { default as Camera } from '../camera';
+import { createDamageObject } from '../damage-update';
 import * as Dir from '../dir';
 import { Direction, turn } from '../direction';
 import {
@@ -583,33 +584,33 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.behavior = BehaviorTypes.Attack;
     const dx = this.mapX + this.forward.x;
     const dy = this.mapY + this.forward.y;
-    let damageObject: RPGObject | undefined;
+    const frameLength = this.getFrameLength();
 
     if (this.skill) {
       // アセットをしょうかんする
       this.summon(this.skill);
     } else {
       // ダメージを与えるオブジェクトを生成する
-      damageObject = new RPGObjectWithSynonym(); // eslint-disable-line
-      damageObject.damage = this.atk;
-      damageObject.collisionFlag = false;
-      registerServant(this, damageObject);
-      damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
-      damageObject.collider.setOffset(new SAT.V(12, 12));
-      if (this.map) {
-        damageObject.locate(dx, dy, this.map.name); // 同じ場所に配置する
-      } else {
-        damageObject.locate(dx, dy);
-      }
+      const position = new SAT.V(dx * 32, dy * 32);
+      const collider = new SAT.Box(position, 8, 8).toPolygon();
+      collider.setOffset(new SAT.V(12, 12));
+      createDamageObject({
+        attacker: this,
+        collider,
+        damage: this.atk,
+        item: this,
+        map: this.map,
+        onDamage() {},
+        until: game.frame + 3 // 少し経ってから消える(デバッグ用)
+      });
     }
 
     await new Promise(resolve => {
-      this.setTimeout(resolve, this.getFrameLength());
+      this.setTimeout(resolve, frameLength);
       this.on('destroy', resolve);
     });
 
     this.behavior = BehaviorTypes.Idle;
-    damageObject && damageObject.destroy();
   }
 
   public async walk(distance = 1, forward?: IVector2, setForward = true) {
