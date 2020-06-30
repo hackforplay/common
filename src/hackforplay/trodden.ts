@@ -76,9 +76,9 @@ function isTrodden(target: RPGObject, item: RPGObject) {
   ) {
     return false;
   }
-  const colliders: any[] = target.colliders || [target.collider];
+  const collider = target.collider || target.colliders?.[0];
   const p = new SAT.Vector(item.center.x, item.center.y);
-  return colliders.some(poly => SAT.pointInPolygon(p, poly));
+  return collider && SAT.pointInPolygon(p, collider);
 }
 
 /**
