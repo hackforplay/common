@@ -70,8 +70,9 @@ export default function trodden() {
 function isTrodden(target: RPGObject, item: RPGObject) {
   if (
     target === item ||
-    !RPGObject.collection.includes(target) ||
-    !RPGObject.collection.includes(item)
+    target.map !== item.map ||
+    !target.parentNode ||
+    !item.parentNode
   ) {
     return false;
   }
