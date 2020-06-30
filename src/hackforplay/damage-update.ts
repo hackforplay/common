@@ -25,13 +25,15 @@ export function damageUpdate() {
 
   for (const damager of damagers) {
     const attacker = getMaster(damager); // attacker が自分の場合は undefined かも知れない
+    const col1 = damager.collider || damager.colliders?.[0];
 
     // 接触している RPGObject を取得する
-    const hits = nonDamagers.filter(item => {
-      const cols1 = damager.colliders ? damager.colliders : [damager.collider];
-      const cols2 = item.colliders ? item.colliders : [item.collider];
-      for (const col1 of cols1) {
-        for (const col2 of cols2) {
+    const hits = col1
+      ? nonDamagers.filter(item => {
+          const col2 = item.collider || item.colliders?.[0];
+          if (!col2) {
+            return false;
+          }
           const response = new SAT.Response();
           const collided = SAT.testPolygonPolygon(col1, col2, response);
           if (collided && response && response.overlap !== 0) {
@@ -39,10 +41,9 @@ export function damageUpdate() {
             // その場合は overlap (重なりの大きさ) が 0 になっている
             return isOpposite(item, damager); // 敵対関係のものだけを残す
           }
-        }
-      }
-      return false;
-    });
+          return false;
+        })
+      : [];
 
     // 直前の処理で触れていないものだけを対象にする
     const previousHitsSet = previousHitsMap.get(damager);
