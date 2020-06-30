@@ -1,11 +1,9 @@
 import { default as enchant } from '../enchantjs/enchant';
 import SAT from '../lib/sat.min';
 import BehaviorTypes from './behavior-types';
+import { objectsInDefaultMap } from './cache';
 import game from './game';
-import { getHack } from './get-hack';
 import RPGObject from './object/object';
-
-const Hack = getHack();
 
 game.on('enterframe', trodden);
 
@@ -20,9 +18,7 @@ const targetItemSetMap = new WeakMap<RPGObject, Set<RPGObject>>();
  * NOTICE: "removetrodden" イベント中に locate で移動すると, うまく移動できない
  */
 export default function trodden() {
-  const collection = [...RPGObject.collection].filter(
-    item => item.map === Hack.map
-  );
+  const collection = objectsInDefaultMap();
 
   // 2
   for (const item of collection) {
