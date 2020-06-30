@@ -104,6 +104,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public showHpLabel = true; // デフォルトで表示
   public name = ''; // アセットの名前
   public collider?: any;
+  /**
+   * @deprecated
+   */
   public colliders?: any;
   public isAutoPickUp?: boolean;
   public pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
