@@ -3,6 +3,7 @@ import { default as enchant } from '../../enchantjs/enchant';
 import '../../enchantjs/ui.enchant';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
+import { memoMethod, objectsInDefaultMap } from '../cache';
 import { default as Camera } from '../camera';
 import * as Dir from '../dir';
 import { Direction, turn } from '../direction';
@@ -351,9 +352,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.rotateIfNeeded();
   }
 
-  public get collisionFlag() {
-    if (this._collisionFlag !== undefined) return this._collisionFlag;
-    if (this.damage) return false; // ダメージオブジェクトは衝突処理がない
+  // https://bit.ly/2Zif1lt
+  private getDefaultCollisionFlag = memoMethod(() => {
     const noCollisionEvents = [
       'addtrodden',
       'removetrodden',
@@ -368,6 +368,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       }
     }
     return true;
+  }).bind(this);
+  public get collisionFlag() {
+    return this._collisionFlag !== undefined
+      ? this._collisionFlag
+      : this.damage
+      ? false // ダメージオブジェクトは衝突処理がない
+      : this.getDefaultCollisionFlag();
   }
 
   public set collisionFlag(value: boolean) {
@@ -682,13 +689,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     // プレイヤーだけは例外的に仲間のいるマスをすり抜けられる
     const mayCollideItems = this.isPlayer
-      ? RPGObject.collection.filter(item => this.family !== item.family)
-      : [...RPGObject.collection];
+      ? objectsInDefaultMap().filter(item => this.family !== item.family)
+      : objectsInDefaultMap();
 
     // 歩く先にあるオブジェクト
     const hits = mayCollideItems.filter(obj => {
       return (
-        obj.map === Hack.map && // 今いるマップ
         obj.isKinematic &&
         obj.collisionFlag &&
         (obj.walkDestination
