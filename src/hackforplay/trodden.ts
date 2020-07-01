@@ -7,7 +7,7 @@ import RPGObject from './object/object';
 
 game.on('enterframe', trodden);
 
-const walkingRPGObjects = new WeakSet<RPGObject>();
+const walkingRPGObjectIds = new Set<number>();
 const targetItemSetMap = new WeakMap<RPGObject, Set<RPGObject>>();
 
 /**
@@ -22,7 +22,10 @@ export default function trodden() {
 
   // 2
   for (const item of collection) {
-    if (walkingRPGObjects.has(item) && item.behavior === BehaviorTypes.Idle) {
+    if (
+      walkingRPGObjectIds.has(item.id) &&
+      item.behavior === BehaviorTypes.Idle
+    ) {
       // 1. 歩き終わったタイミングをフックする
       const targets = collection.filter(target => isTrodden(target, item));
       for (const target of targets) {
@@ -35,7 +38,7 @@ export default function trodden() {
           itemSet.add(item);
         }
       }
-      walkingRPGObjects.delete(item);
+      walkingRPGObjectIds.delete(item.id);
     }
   }
 
@@ -98,9 +101,9 @@ export function unregister() {
  * @param item 歩き始めたオブジェクト
  */
 export function registerWalkingObject(item: RPGObject) {
-  walkingRPGObjects.add(item);
+  walkingRPGObjectIds.add(item.id);
 }
 
 export function unregisterWalkingObject(item: RPGObject) {
-  walkingRPGObjects.delete(item);
+  walkingRPGObjectIds.delete(item.id);
 }

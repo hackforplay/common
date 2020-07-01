@@ -28,7 +28,8 @@ import * as _synonyms from '../synonyms';
 import { synonyms } from '../synonyms/rpgobject';
 import {
   PropertyMissing,
-  proxyMap,
+  reverseSynonymize,
+  synonymize,
   synonymizeClass
 } from '../synonyms/synonymize';
 import talk from '../talk';
@@ -505,10 +506,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         }
         map.scene.addChild(this);
         // トリガーを発火
-        this._ruleInstance?.runOneObjectLisener(
-          'マップがかわったとき',
-          this.proxy
-        );
+        this._ruleInstance?.runOneObjectLisener('マップがかわったとき', this);
       }
     }
     if (ignoreTrodden) {
@@ -527,7 +525,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public destroy(delay = 0) {
     const _remove = () => {
       this.dispatchEvent(new enchant.Event('destroy')); // ondestroy event を発火
-      this.remove.call(this.proxy);
+      this.remove.call(this.reverseProxy); // https://bit.ly/3icN2MG
       if (this.hpLabel) this.hpLabel.remove();
     };
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
@@ -1250,8 +1248,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
 
     _ruleInstance.installAsset(name);
-    _ruleInstance.unregisterRules(this.proxy);
-    _ruleInstance.registerRules(this.proxy, name);
+    _ruleInstance.unregisterRules(this);
+    _ruleInstance.registerRules(this, name);
     if (_hp !== undefined) {
       this.hp = _hp; // https://bit.ly/2P37rph
     }
@@ -1559,27 +1557,26 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   /**
-   * https://github.com/hackforplay/common/issues/84
-   * enchant.js のイベントハンドラはコール時に this を bind してしまうため
-   * this が Proxy ではなく RPGObject になってしまう。
-   * それではコレクション配列に保持されているオブジェクトの参照と一致しないため
-   * 例えば remove() などのメソッドが動かなくなる。
-   * そこで、 Proxy を bind すべきメソッドをさらに bind するために、
-   * 元の参照から Proxy オブジェクトの参照を得る（WeakMap を使う）。
-   * ただし Proxy オブジェクトかどうかを判定する術はないので、
-   * 取得できなかったとしても、それを知ることは出来ない
+   * Synonymize された新しい Proxy オブジェクトの参照を返す
+   * あるいは前回の結果のキャッシュを返す
    */
   public get proxy(): RPGObject {
-    return proxyMap.get(this) || this;
+    return synonymize(this, synonyms, this[PropertyMissing]);
   }
 
-  public [PropertyMissing](chainedName: string) {
+  public [PropertyMissing] = ((chainedName: string) => {
     const message = `${this.name} の「${chainedName}」はないみたい`;
     log('error', message, '@hackforplay/common');
+  }).bind(this);
+
+  /**
+   * this が Proxy オブジェクトだった場合、元のインスタンスの参照を得る
+   * そうでなければ this をそのまま返す
+   */
+  public get reverseProxy(): RPGObject {
+    return reverseSynonymize(this);
   }
 }
-
-export const RPGObjectWithSynonym = synonymizeClass(RPGObject, synonyms);
 
 function makeHpLabel(self: RPGObject) {
   const label = new (enchant as any).ui.ScoreLabel();
