@@ -62,6 +62,8 @@ const followingPlayerObjects = new WeakSet<RPGObject>();
 const opt = <T>(opt: T | undefined, def: T): T =>
   opt !== undefined ? opt : def;
 
+const uniqId = (i => () => ++i)(0);
+
 export default class RPGObject extends enchant.Sprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   private static _collectionTarget = [RPGObject];
@@ -145,8 +147,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private isBehaviorChanged = false;
   private _collideMapBoader?: boolean; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
 
+  /**
+   * オブジェクト同士の比較に使うためのユニークな識別子 #86
+   * 読み取り専用。暫定的に 1 以上の整数 (number) にしている
+   */
+  public readonly id: number;
+
   public constructor() {
     super(0, 0);
+    this.id = uniqId();
 
     this.moveTo(game.width, game.height);
 
