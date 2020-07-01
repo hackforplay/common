@@ -10,7 +10,6 @@ import { KeyClass } from './key';
 import Keyboard from './keyboard';
 import { generateMapFromDefinition } from './load-maps';
 import './rpg-kit-color';
-import './rpg-kit-rpgobjects';
 import RPGMap from './rpg-map';
 import { errorRemoved, logToDeprecated } from './stdlog';
 import { dakuten, handakuten, stringToArray } from './utils/string-utils';

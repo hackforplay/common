@@ -13,8 +13,8 @@ import { getHack } from './get-hack';
 import loadMap from './load-map';
 import loadMaps from './load-maps';
 import './loader';
+import { physicsCollision, physicsUpdate } from './physics-update';
 import './rpg-kit-main';
-import './rpg-kit-rpgobjects';
 import { audioConfigs, getConfig } from './se-data';
 import { getBaseUrl, getSkin, setBaseUrl } from './skin';
 import './trodden';
@@ -109,4 +109,6 @@ Hack.audioConfigs = audioConfigs;
  */
 Hack.getAudioConfig = getConfig;
 
+game.on('enterframe', physicsUpdate);
 game.on('enterframe', damageUpdate);
+game.on('enterframe', physicsCollision);

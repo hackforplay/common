@@ -5,7 +5,7 @@ import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
 import { subscribeGlobals } from './globals';
-import RPGObject, { RPGObjectWithSynonym } from './object/object';
+import RPGObject from './object/object';
 import { errorInEvent, logFromAsset } from './stdlog';
 import { synonyms } from './synonyms/rule';
 import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
@@ -125,7 +125,7 @@ export class Rule {
     if (!listeners) return;
     const specify = listeners[name];
     if (specify) {
-      await handleError(type, name, specify.call(object)); // エラーハンドリング
+      await handleError(type, name, specify.call(object.proxy)); // エラーハンドリング
     }
   }
 
@@ -164,17 +164,17 @@ export class Rule {
     const specify = listeners[itemName];
     if (specify) {
       // 特定のアセットにだけ作用
-      await handleError(type, name, specify.call(object, item));
+      await handleError(type, name, specify.call(object.proxy, item.proxy));
     }
     const enemy = listeners[Enemy];
     if (enemy && isOpposite(item, object) && item.hp > 0) {
       // 自分の敵なら
-      await handleError(type, name, enemy.call(object, item));
+      await handleError(type, name, enemy.call(object.proxy, item.proxy));
     }
     const anyone = listeners[Anyone];
     if (anyone) {
       // 誰でも良い
-      await handleError(type, name, anyone.call(object, item));
+      await handleError(type, name, anyone.call(object.proxy, item.proxy));
     }
   }
 
@@ -234,13 +234,13 @@ export class Rule {
   private addToCollection(object: RPGObject) {
     const collections =
       this._collections[object.name] || (this._collections[object.name] = []);
-    collections.push(object);
+    collections.push(object.reverseProxy);
   }
 
   private removeFromCollection(object: RPGObject) {
     const collections = this._collections[object.name];
     if (!collections) return;
-    const index = collections.indexOf(object);
+    const index = collections.indexOf(object.reverseProxy);
     if (index < 0) return;
     collections.splice(index, 1);
   }
@@ -425,7 +425,7 @@ export class Rule {
   ) {
     this.installAsset(name);
 
-    const object = new RPGObjectWithSynonym();
+    const object = new RPGObject();
     object._ruleInstance = this;
     if (typeof dir === 'function') {
       object.forward = dir(object);
@@ -446,7 +446,7 @@ export class Rule {
       }') にあらわれた`
     );
 
-    return object;
+    return object.proxy;
   }
 
   private onこうげきするとき = ((e: IEvent) => {
