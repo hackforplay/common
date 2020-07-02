@@ -2,6 +2,7 @@ import { default as enchant } from '../enchantjs/enchant';
 import TextArea from '../hackforplay/ui/textarea';
 import { getHack } from './get-hack';
 import Key from './key';
+import { langExports } from './lang';
 
 export interface IConfig {
   text: Partial<TextArea>;
@@ -112,7 +113,7 @@ export default function talk(text: string, ...choices: string[]) {
     talkStack.unshift(talkInfo); // talkStack配列の一番前に追加
     // 選択肢のボタンを作成
     if (choices.length === 0) {
-      choices.push('とじる'); // 選択肢のテキスト表示
+      choices.push(langExports.lang === 'ja' ? 'とじる' : 'Close'); // 選択肢のテキスト表示
     }
     showNextIfExist();
   }).then(choise => {
