@@ -37,7 +37,7 @@ function parse(xml: string): Node {
     `<root>${xml
       .split('\n')
       .map(line => `<group>${line}</group>`)
-      .join('')}</root>`,
+      .join('\n')}</root>`,
     'application/xml'
   );
   const error = document.querySelector('parsererror');
