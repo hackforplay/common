@@ -3,7 +3,7 @@ import { default as enchant } from '../../enchantjs/enchant';
 import '../../enchantjs/ui.enchant';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
-import { memoMethod, objectsInDefaultMap } from '../cache';
+import { memo, objectsInDefaultMap } from '../cache';
 import { default as Camera } from '../camera';
 import { createDamageObject } from '../damage-update';
 import * as Dir from '../dir';
@@ -367,7 +367,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   // https://bit.ly/2Zif1lt
-  private getDefaultCollisionFlag = memoMethod(() => {
+  private getDefaultCollisionFlag = memo(() => {
     const noCollisionEvents = [
       'addtrodden',
       'removetrodden',

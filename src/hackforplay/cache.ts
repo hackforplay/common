@@ -1,62 +1,44 @@
 import { getHack } from './get-hack';
 import RPGObject from './object/object';
 
-interface MemoCache<Dependencies = any[], Result = any> {
-  deps: Dependencies;
+interface MemoCache<Params = any[], Result = any> {
+  params: Params;
   result: Result;
 }
 
-const memo__caches = new Map<string, MemoCache>();
+const memo__caches = new WeakMap<Function, MemoCache>();
 
 /**
  * deps が同じ場合はキャッシュされた結果を返すように関数をメモ化する
  * 1. 直前の値しかキャッシュされない
- * 2. 関数名ごとにメモ化される (無名関数には使えない)
- * 3. 引数は使えない (必要な場合はカリー化する)
- */
-function memo<Result, Dependencies extends any[]>(
-  fun: () => Result,
-  deps: Dependencies
-) {
-  if (!fun.name) {
-    throw new Error('Cannot memoize anonymous function via memo()');
-  }
-  const latestCache = memo__caches.get(fun.name);
-  if (latestCache) {
-    if (arrayShallowEquals(latestCache.deps, deps)) {
-      return latestCache.result as Result;
-    }
-  }
-  console.time(fun.name);
-  const result = fun();
-  console.timeEnd(fun.name);
-  memo__caches.set(fun.name, { deps, result });
-  return result;
-}
-
-const memoMethod__cache = new WeakMap<Function, MemoCache>();
-
-/**
- * クラスメソッドの結果をメモ化する関数
- * 関数の参照ごとにキャッシュされる
- * 引数が deps の役割を果たす
+ * 2. 関数名ごとにメモ化される (関数の参照が変わってはいけない)
+ *
+ * 関数をメモ化する場合は次のようにする
+ * function _adder(a, b) {
+ *   return a + b;
+ * }
+ * function adder(a, b) {
+ *   return memo(_adder)(a, b);
+ * }
+ *
+ * クラスメソッドに対して使う場合は次のようにする
  * private getDefaultCollisionFlag = memoMethod(() => {
  *   // Heavy calcuration
  *   return true;
  * }).bind(this);
  */
-export function memoMethod<Params extends any[], Result>(
+export function memo<Params extends any[], Result>(
   fun: (...params: Params) => Result
 ) {
   return (...params: Params) => {
-    const latestCache = memoMethod__cache.get(fun);
+    const latestCache = memo__caches.get(fun);
     if (latestCache) {
-      if (arrayShallowEquals(latestCache.deps, params)) {
+      if (arrayShallowEquals(latestCache.params, params)) {
         return latestCache.result as Result;
       }
     }
     const result = fun(...params);
-    memoMethod__cache.set(fun, { deps: params, result });
+    memo__caches.set(fun, { params, result });
     return result;
   };
 }
@@ -77,10 +59,13 @@ export function objectsInDefaultMap() {
   const map = 'map' in Hack ? Hack.map : undefined;
   const all = RPGObject.collection;
 
-  return memo(
-    function objectsInDefaultMap() {
-      return all.filter(item => item.map === map && Boolean(item.parentNode));
-    },
-    [map, all.mutatedCount]
-  );
+  return memo(_objectsInDefaultMap)(map, all, all.mutatedCount);
+}
+
+function _objectsInDefaultMap(
+  map: any,
+  all: RPGObject[],
+  mutatedCount: number // eslint-disable-line
+) {
+  return all.filter(item => item.map === map && Boolean(item.parentNode));
 }
