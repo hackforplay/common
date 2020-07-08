@@ -25,6 +25,8 @@ export const synonyms: ISynonyms = {
   みえるきょり: { type: 'primitive', name: 'lengthOfView' },
   むてきか: { type: 'primitive', name: 'isInvincible' },
   おや: { type: 'primitive', name: 'parent' },
+  みためのはば: { type: 'primitive', name: 'scaleX' },
+  みためのたかさ: { type: 'primitive', name: 'scaleY' },
   こうげきする: { type: 'function', name: 'attack', await: true },
   あるく: { type: 'function', name: 'walk', await: true },
   みぎにあるく: { type: 'function', name: 'walkRight', await: true },
