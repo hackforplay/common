@@ -739,8 +739,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._collidedNodes = [];
 
     let baseSpeed = 12; // speed=1 の時にかかる frame
-    const walkAnim =
-      this.currentSkin && this.currentSkin.frame && this.currentSkin.frame.walk;
+    const walkAnim = this.currentSkin?.frame?.walk;
     if (walkAnim) {
       baseSpeed = decode(...walkAnim).length - 1;
     }
