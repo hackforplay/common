@@ -86,7 +86,7 @@ export default class RPGMap extends enchant.EventTarget {
       this.isLoaded = true;
       (this as any).dispatchEvent(new enchant.Event('load'));
     }
-    if (Hack.player) this.scene.addChild(Hack.player);
+    if (Hack.player) this.scene.addChild(Hack.player.reverseProxy); // 後方互換性のため https://bit.ly/2DutF1P
     Hack.statusLabel = this.name;
   }
 
