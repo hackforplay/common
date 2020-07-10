@@ -29,8 +29,7 @@ import { synonyms } from '../synonyms/rpgobject';
 import {
   PropertyMissing,
   reverseSynonymize,
-  synonymize,
-  synonymizeClass
+  synonymize
 } from '../synonyms/synonymize';
 import talk from '../talk';
 import { showThinkSprite } from '../think';
