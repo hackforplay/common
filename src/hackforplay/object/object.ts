@@ -196,7 +196,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       new SAT.Box(new SAT.V(0, 0), this.width, this.height).toPolygon();
 
     // ツリーに追加
-    Hack.defaultParentNode && Hack.defaultParentNode.addChild(this);
+    Hack.defaultParentNode && Hack.defaultParentNode.addChild(this); // this は Proxy ではない
   }
 
   private n(type: string, operator: string, amount: number) {
@@ -504,7 +504,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
             }
           }
         }
-        map.scene.addChild(this);
+        map.scene.addChild(this.reverseProxy);
         // トリガーを発火
         this._ruleInstance?.runOneObjectLisener('マップがかわったとき', this);
       }
