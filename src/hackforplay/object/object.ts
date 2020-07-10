@@ -57,7 +57,6 @@ function startFrameCoroutine(
   });
 }
 
-const walkingObjects = new WeakSet<RPGObject>(); // https://bit.ly/2KqB1Gz
 const followingPlayerObjects = new WeakSet<RPGObject>();
 
 const opt = <T>(opt: T | undefined, def: T): T =>
@@ -518,7 +517,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
-    walkingObjects.delete(this);
+    this.behavior = BehaviorTypes.Idle; // https://bit.ly/38ID1SZ
     followingPlayerObjects.delete(this); // プレイヤーとはぐれた
   }
 
@@ -633,11 +632,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     distance = Math.round(distance);
 
     // distance 回歩く
-    walkingObjects.add(this);
     for (let i = 0; i < distance; ++i) {
       await startFrameCoroutine(this, this.walkImpl(forward || this.forward));
     }
-    walkingObjects.delete(this); // delete する必要はないが, 意味的に一応しておく
   }
 
   public walkRight() {
@@ -675,8 +672,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private walkDestination?: IVector2;
   private *walkImpl(forward: IVector2) {
-    if (!this.map) return;
-    if (!walkingObjects.has(this)) return;
+    if (!this.map || this.behavior !== BehaviorTypes.Idle) return;
 
     // タイルのサイズ
     const tw = this.map.tileWidth;
@@ -762,7 +758,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.walkDestination = new Vector2(nextMapX, nextMapY); // 歩行中にぶつからないようにする
     // startCoroutine の時点で 1frame 遅れていると考えて, 1 から始める
     for (let frame = 1; frame < requiredFrames; ++frame) {
-      if (!walkingObjects.has(this)) break;
+      if (this.behavior !== BehaviorTypes.Walk) {
+        break; // 移動中に locate された https://bit.ly/38ID1SZ
+      }
       const t = frame / requiredFrames;
       const x = beginX + t * (nextX - beginX);
       const y = beginY + t * (nextY - beginY);
@@ -778,8 +776,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     this.walkDestination = undefined;
 
-    if (walkingObjects.has(this)) {
-      // 移動の誤差を修正
+    if (this.behavior === BehaviorTypes.Walk) {
+      // 移動の誤差を修正 https://bit.ly/38ID1SZ
       this.x = nextX;
       this.y = nextY;
       this.updateCollider(); // TODO: 動的プロパティ
