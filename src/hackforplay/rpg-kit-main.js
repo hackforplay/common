@@ -418,7 +418,8 @@ Hack.createMap = function (template) {
 
 Hack.changeMap = async function (mapName) {
   const current = Hack.map;
-  const next = await generateMapFromDefinition(mapName, true);
+  const next =
+    Hack.maps[mapName] || (await generateMapFromDefinition(mapName, true));
 
   if (current && current.parentNode) {
     current.parentNode.removeChild(current.bmap);
