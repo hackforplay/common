@@ -59,8 +59,9 @@ async function loadMap(mapName: string, setAsDefault = false): Promise<RPGMap> {
 
   return new Promise(resolve => {
     const parsedMapJson = JSON.parse(mapJson);
-    const map =
-      createCompatibleMap(parsedMapJson, {}, () => resolve(map)) as RPGMap;
+    const map = createCompatibleMap(parsedMapJson, {}, () =>
+      resolve(map)
+    ) as RPGMap;
     Hack.maps = Hack.maps || {};
     Hack.maps[mapName] = map;
     if (setAsDefault) {
