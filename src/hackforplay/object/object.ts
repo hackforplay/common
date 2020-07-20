@@ -32,6 +32,7 @@ import {
 import talk from '../talk';
 import { showThinkSprite } from '../think';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
+import EnchantedSprite from './enchanted-sprite';
 import * as N from './numbers';
 
 const Hack = getHack();
@@ -59,7 +60,7 @@ const followingPlayerObjects = new WeakSet<RPGObject>();
 const opt = <T>(opt: T | undefined, def: T): T =>
   opt !== undefined ? opt : def;
 
-export default class RPGObject extends enchant.Sprite implements N.INumbers {
+export default class RPGObject extends EnchantedSprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   private static _collectionTarget = [RPGObject];
   public static collection: RPGObject[] = [];
@@ -114,10 +115,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public currentSkin?: ISkin; // 適用されているスキン
   public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
   public _preventFrameHits: RPGObject[] = []; // rpg-kit-rpgobjects.js で参照されるプロパティ
-  public childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
-  public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
-  public _cvsCache: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public then: undefined; // await されたときに then が参照される
+  public directionType = 'single';
 
   private _hp?: number;
   private _atk?: number;
@@ -129,7 +128,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
   private _collisionFlag?: boolean;
   private _isKinematic?: boolean; // this.isKinematic (Default: true)
-  private _layer: number = (RPGMap as any).Layer.Middle;
   private _collidedNodes: any[] = []; // 衝突した Node リスト
   private hpchangeFlag = false;
   private hpLabel?: any;
@@ -141,13 +139,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _collideMapBoader?: boolean; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
 
   public constructor() {
-    super(0, 0);
+    super();
+
+    this.zIndex = RPGMap.Layer.Middle;
 
     this.moveTo(game.width, game.height);
 
     // Destroy when dead
     this.on('becomedead', () => {
-      this.destroy(this.getFrameLength());
+      this.$destroy(this.getFrameLength());
     });
     this.on('hpchange', () => {
       if (this.hp <= 0) {
@@ -163,7 +163,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
 
     // 初期化
-    this.on('enterframe', this.geneticUpdate);
+    this.on('enterframe', () => this.geneticUpdate());
 
     // HPLabel
     this.on('hpchange', () => {
@@ -180,8 +180,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this.collider ||
       new SAT.Box(new SAT.V(0, 0), this.width, this.height).toPolygon();
 
+    RPGObject.collection.push(this);
+
     // ツリーに追加
-    Hack.defaultParentNode && Hack.defaultParentNode.addChild(this);
+    Hack.defaultParentNode?.addChild(this);
   }
 
   private n(type: string, operator: string, amount: number) {
@@ -504,7 +506,24 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     followingPlayerObjects.delete(this); // プレイヤーとはぐれた
   }
 
-  public destroy(delay = 0) {
+  public destroy(options?: {
+    children?: boolean;
+    texture?: boolean;
+    baseTexture?: boolean;
+  }) {
+    // TODO: 重そう
+    RPGObject.collection = RPGObject.collection.filter(
+      object => object !== this
+    );
+    super.destroy(options);
+  }
+
+  public remove() {
+    this.destroy();
+  }
+
+  // TODO: 後方互換性について検討する
+  public $destroy(delay = 0) {
     const _remove = () => {
       this.dispatchEvent(new enchant.Event('destroy')); // ondestroy event を発火
       this.remove.call(this.proxy);
@@ -830,11 +849,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public get layer() {
-    return this._layer;
+    return this.zIndex;
   }
   public set layer(value) {
     if (this === Hack.player) return; // プレイヤーのレイヤー移動を禁止
-    if (value === this._layer) return;
+    if (value === this.zIndex) return;
 
     const { Layer } = RPGMap as any;
 
@@ -844,15 +863,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
     const max = Math.max.apply(null, sortingOrder);
     const min = Math.min.apply(null, sortingOrder);
-    this._layer = Math.max(Math.min(value, max), min);
+    this.zIndex = Math.max(Math.min(value, max), min);
 
     // 他オブジェクトはプレイヤーレイヤーに干渉できないようにする
-    if (this._layer === Layer.Player) {
-      switch (Math.sign(value - this._layer)) {
+    if (this.zIndex === Layer.Player) {
+      switch (Math.sign(value - this.zIndex)) {
         case 1:
-          this._layer = this.bringOver();
+          this.zIndex = this.bringOver();
         case -1:
-          this._layer = this.bringUnder();
+          this.zIndex = this.bringUnder();
         default:
           break;
       }
@@ -946,7 +965,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // 速度がマイナスなら角度はそのままにする
     if (speed < 0) angle += 180;
 
-    node._rotation = angle;
+    node.rotation = angle;
 
     return this;
   }
@@ -1057,6 +1076,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
   }
 
+  private _endless: any;
+
   public async endless(virtual: any) {
     if (!this._endless) {
       // ルーチンをスタート
@@ -1126,7 +1147,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     context.drawImage(_element, 0, 0);
   }
 
-  public get parent() {
+  // TODO: 後方互換性について検討する
+  public get $parent() {
     return getMaster(this);
   }
 
@@ -1216,8 +1238,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this.しょうかんする(name, 0, 0);
   }
 
-  private static _initializedReference: RPGObject;
-  public transform(name: string) {
+  private しょうかんする: any;
+  private static _initializedReference: any;
+
+  // TODO: 後方互換性について検討する
+  public $transform(name: string) {
     const { _ruleInstance, _hp } = this;
     if (!_ruleInstance) return;
 
@@ -1227,7 +1252,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     // 一部のパラメータを初期値に戻す
     for (const key of RPGObject.propNamesToInit) {
-      this[key] = RPGObject._initializedReference[key];
+      (this as any)[key] = RPGObject._initializedReference[key];
     }
 
     _ruleInstance.installAsset(name);
