@@ -374,14 +374,6 @@ game.onawake = () => {
   setAlias && setAlias('game', game);
 };
 
-RPGMap.Layer = {
-  Over: 4,
-  Player: 3,
-  Middle: 2,
-  Shadow: 1,
-  Under: 0
-};
-
 Hack.createMap = function (template) {
   logToDeprecated('Hack.createMap');
   // テンプレートリテラルからマップを生成するラッパー

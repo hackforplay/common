@@ -17,6 +17,13 @@ export default class RPGMap extends enchant.EventTarget {
   public bmap: any;
   public fmap: any;
   public scene: any;
+  public static Layer = {
+    Over: 4,
+    Player: 3,
+    Middle: 2,
+    Shadow: 1,
+    Under: 0
+  };
   public isLoaded = false;
   public layerChangeFlag = false;
   public reflectionLines: Line[] = [];
