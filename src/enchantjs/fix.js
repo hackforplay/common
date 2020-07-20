@@ -1,4 +1,3 @@
-import { errorInEvent } from '../hackforplay/stdlog';
 import enchant, { CanvasRenderer } from './enchant';
 
 if (enchant.Core.instance !== null) {
@@ -176,59 +175,6 @@ extend(enchant.Scene, function () {
   // シーンは自動で子要素をソートする
   this.autoSorting = true;
 });
-
-const _addEventListener = enchant.EventTarget.prototype.addEventListener;
-enchant.EventTarget.prototype.addEventListener = function addEventListener(
-  type,
-  listener
-) {
-  if (typeof listener !== 'function') {
-    throw new TypeError(
-      `Invalid listener ${listener} on addEventListener of type ${type}`
-    );
-  }
-  _addEventListener.apply(this, arguments);
-};
-
-/**
- * dispatchEvent の例外を全て catch して IDE に流す
- */
-enchant.EventTarget.prototype.dispatchEvent = function dispatchEvent(event) {
-  try {
-    event.target = this;
-    event.localX = event.x - this._offsetX;
-    event.localY = event.y - this._offsetY;
-    if (
-      'on' + event.type in this &&
-      typeof this['on' + event.type] === 'function'
-    ) {
-      const res = this['on' + event.type](event);
-      reportAsyncError(res, event, this);
-    }
-    let listeners = this._listeners[event.type];
-    if (listeners != null) {
-      listeners = listeners.slice();
-      for (let i = 0, len = listeners.length; i < len; i++) {
-        const res = listeners[i].call(this, event);
-        reportAsyncError(res, event, this);
-      }
-    }
-  } catch (error) {
-    // イベントリスナーが同期関数だった場合の例外処理
-    errorInEvent(error, this, event.type);
-  }
-};
-
-/**
- * イベントリスナーが非同期関数だった場合の例外処理
- * @param {Promise|void} maybePromise
- */
-function reportAsyncError(maybePromise, event, _this) {
-  if (maybePromise instanceof Promise) {
-    maybePromise.catch(error => errorInEvent(error, _this, event.type));
-  }
-}
-
 /**
  * フォーカスが外れたとき, 全ての入力をオフにする
  */

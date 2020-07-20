@@ -40,14 +40,14 @@ const Hack = getHack();
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
 function startFrameCoroutine(
-  node: any,
+  node: RPGObject,
   generator: IterableIterator<undefined>
 ) {
   return new Promise(resolve => {
     node.on('enterframe', function _() {
       const { done } = generator.next();
       if (done) {
-        node.removeEventListener('enterframe', _);
+        node.off('enterframe', _);
         resolve();
       }
     });
@@ -558,7 +558,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     this.on(timing, task);
     function stopTimeout(this: RPGObject) {
       flag = false;
-      this.removeEventListener(timing, task);
+      this.off(timing, task);
     }
     return stopTimeout.bind(this);
   }
@@ -580,7 +580,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
 
     const stopInterval = () => {
       flag = false;
-      this.removeEventListener('enterframe', task);
+      this.off('enterframe', task);
     };
     this.on('enterframe', task);
     return stopInterval;
@@ -1026,8 +1026,13 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     this.computeFrame();
   }
 
+  // TODO: enchant.Event を廃止する
   public dispatchEvent(event: any) {
-    enchant.EventTarget.prototype.dispatchEvent.call(this, event);
+    event.target = this;
+    // TODO: offset の実装
+    event.localX = event.x; // - this._offsetX;
+    event.localY = event.y; // - this._offsetY;
+    this.emit(event.type ?? event, event);
     // Synonym Event を発火
     const events = (_synonyms as any).events;
     const synonym: any = (events as any)[event.type];
@@ -1035,7 +1040,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
       const clone = Object.assign({}, event, {
         type: synonym
       });
-      enchant.EventTarget.prototype.dispatchEvent.call(this, clone);
+      this.emit(clone.type ?? clone, clone);
     }
   }
 

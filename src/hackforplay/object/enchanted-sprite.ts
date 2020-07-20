@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Sprite, Texture } from 'pixi.js';
+import { errorInEvent } from '../stdlog';
 
 export default class EnchantedSprite extends Sprite {
   private __frameSequence: any;
@@ -22,13 +23,27 @@ export default class EnchantedSprite extends Sprite {
     });
   }
 
-  public emit(event: string | symbol, ...args: any[]): boolean {
-    const onEvent = 'on' + event.toString();
-    if (onEvent in this && typeof (this as any)[onEvent] === 'function') {
-      (this as any)[onEvent](...args);
-    }
+  public on(event: string, fn: Function, context?: any): this {
+    return super.on(event, catchAsyncError.call(this, event, fn), context);
+  }
 
-    return super.emit(event, ...args);
+  public once(event: string, fn: Function, context?: any): this {
+    return super.once(event, catchAsyncError.call(this, event, fn), context);
+  }
+
+  public emit(event: string | symbol, ...args: any[]): boolean {
+    try {
+      const onEvent = 'on' + event.toString();
+      if (onEvent in this && typeof (this as any)[onEvent] === 'function') {
+        const res = (this as any)[onEvent](...args);
+        reportAsyncError(res, event.toString(), this);
+      }
+      return super.emit(event, ...args);
+    } catch (error) {
+      // イベントリスナーが同期関数だった場合の例外処理
+      errorInEvent(error, this, event.toString());
+      return false;
+    }
   }
 
   public get childNodes() {
@@ -159,4 +174,37 @@ export default class EnchantedSprite extends Sprite {
   public intersect(other: any) {
     return [];
   }
+}
+
+/**
+ * イベントリスナーが非同期関数だった場合の例外処理
+ */
+function reportAsyncError(
+  maybePromise: Promise<void> | void,
+  event: string,
+  _this: EnchantedSprite
+) {
+  if (maybePromise instanceof Promise) {
+    maybePromise.catch(error => errorInEvent(error, _this, event));
+  }
+}
+
+/**
+ * 非同期なイベントリスナーの例外を検知する
+ */
+function catchAsyncError(
+  this: EnchantedSprite,
+  event: string,
+  fn: Function
+): Function {
+  if (typeof fn !== 'function') {
+    throw new TypeError(
+      `Invalid listener ${fn} on addEventListener of type ${event}`
+    );
+  }
+
+  return (...args: any[]) => {
+    const res = fn.call(this, ...args);
+    reportAsyncError(res, event, this);
+  };
 }
