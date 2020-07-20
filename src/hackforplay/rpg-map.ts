@@ -1,9 +1,12 @@
+import { Container, DisplayObject } from 'pixi.js';
+import application from '../application';
 import { default as enchant } from '../enchantjs/enchant';
 import { default as game } from './game';
 import { getHack } from './get-hack';
 import Vector2, { IVector2 } from './math/vector2';
 import { default as dictionary } from './object/dictionary';
 import RPGObject from './object/object';
+import PixiMap from './pixi-map';
 import './rpg-kit-color';
 import { default as Line } from './shapes/line';
 import { errorRemoved } from './stdlog';
@@ -15,9 +18,6 @@ const Hack = getHack();
  * レイヤー化された切り替え可能なマップ
  */
 export default class RPGMap extends enchant.EventTarget {
-  public bmap: any;
-  public fmap: any;
-  public scene: any;
   public static Layer = {
     Over: 4,
     Player: 3,
@@ -25,6 +25,15 @@ export default class RPGMap extends enchant.EventTarget {
     Shadow: 1,
     Under: 0
   };
+
+  public static ref: WeakMap<Container, RPGMap> = new WeakMap<
+    Container,
+    RPGMap
+  >();
+
+  public bmap: PixiMap;
+  public fmap: PixiMap;
+  public scene: Container;
   public isLoaded = false;
   public layerChangeFlag = false;
   public reflectionLines: Line[] = [];
@@ -44,18 +53,21 @@ export default class RPGMap extends enchant.EventTarget {
   ) {
     super();
 
-    this.bmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより奥に表示されるマップ
-    this.fmap = new enchant.Map(tileWidth, tileHeight); // 他のオブジェクトより手前に表示されるマップ
+    this.bmap = new PixiMap(tileWidth, tileHeight); // 他のオブジェクトより奥に表示されるマップ
+    this.fmap = new PixiMap(tileWidth, tileHeight); // 他のオブジェクトより手前に表示されるマップ
 
     this._tileNumX = tileNumX;
     this._tileNumY = tileNumY;
 
-    this.scene = new enchant.Group(); // マップ上に存在するオブジェクトをまとめるグループ
-    (this as any).scene.ref = this;
-    this.scene.on('enterframe', this.autoSorting);
-    this.scene.on('childadded', function (this: any) {
-      const { ref } = this as any;
-      ref && (ref.layerChangeFlag = true);
+    this.scene = new Container();
+
+    RPGMap.ref.set(this.scene, this);
+
+    this.scene.on('enterframe', () => this.autoSorting());
+    this.scene.on('childAdded', (child: DisplayObject) => {
+      if (child instanceof RPGObject) {
+        this.layerChangeFlag = true;
+      }
     });
 
     this.bmap.name = 'BMap';
@@ -85,9 +97,11 @@ export default class RPGMap extends enchant.EventTarget {
         );
       }
     }
-    Hack.world.addChild(this.bmap);
-    Hack.world.addChild(this.scene);
-    Hack.world.addChild(this.fmap);
+
+    application.stage.addChild(this.bmap);
+    application.stage.addChild(this.scene);
+    application.stage.addChild(this.fmap);
+
     Hack.map = this;
     Hack.defaultParentNode = this.scene;
     if (!this.isLoaded) {
@@ -103,16 +117,9 @@ export default class RPGMap extends enchant.EventTarget {
   }
 
   public autoSorting() {
-    const ref: RPGMap =
-      this instanceof RPGMap ? this : (this as any).ref || Hack.map;
-    if (ref.layerChangeFlag) {
-      ref.scene.childNodes.sort((a: RPGObject, b: RPGObject) => {
-        if (!('layer' in a) && !('layer' in b)) return 0;
-        if (!('layer' in a)) return 1;
-        if (!('layer' in b)) return -1;
-        return a.layer - b.layer;
-      });
-      ref.layerChangeFlag = false;
+    if (this.layerChangeFlag) {
+      this.scene.sortChildren();
+      this.layerChangeFlag = false;
     }
   }
 
@@ -129,7 +136,7 @@ export default class RPGMap extends enchant.EventTarget {
     if (!this._type) {
       // 初期値は（0,0）のタイル
       Object.keys(dictionary)
-        .filter(key => (dictionary as any)[key] === this.bmap._data[0][0][0])
+        .filter(key => (dictionary as any)[key] === this.bmap.getData(0, 0))
         .forEach(key => (this._type = key));
     }
     return this._type;

@@ -102,4 +102,8 @@ export default class PixiMap extends Container {
       return false;
     }
   }
+
+  public getData(x: number, y: number) {
+    return this._data?.[y]?.[x] ?? -1;
+  }
 }

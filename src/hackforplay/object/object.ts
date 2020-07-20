@@ -218,7 +218,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public get map(): RPGMap | null {
-    return this.parentNode ? this.parentNode.ref : null;
+    return RPGMap.ref.get(this.parentNode) ?? null;
   }
 
   public get mapX() {
