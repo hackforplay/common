@@ -12,4 +12,16 @@ app.stage.sortableChildren = true;
 const enchantStageEl = document.querySelector('#enchant-stage')!.parentElement!;
 enchantStageEl.insertBefore(app.view, enchantStageEl.firstChild);
 
+function updateFrame(displayObject: PIXI.DisplayObject) {
+  displayObject.emit('enterframe');
+
+  if (displayObject instanceof Container) {
+    for (const child of displayObject.children) {
+      updateFrame(child);
+    }
+  }
+}
+
+app.ticker.add(() => updateFrame(app.stage));
+
 export default app;
