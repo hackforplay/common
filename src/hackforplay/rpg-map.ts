@@ -6,6 +6,7 @@ import { default as dictionary } from './object/dictionary';
 import RPGObject from './object/object';
 import './rpg-kit-color';
 import { default as Line } from './shapes/line';
+import { errorRemoved } from './stdlog';
 
 const Hack = getHack();
 
@@ -198,12 +199,10 @@ export default class RPGMap extends enchant.EventTarget {
   }
 
   public set background(value: any) {
-    this.bmap.overwrite = value;
-    this.bmap.redraw();
+    errorRemoved('background', this);
   }
 
   public set foreground(value: any) {
-    this.fmap.overwrite = value;
-    this.fmap.redraw();
+    errorRemoved('foreground', this);
   }
 }
