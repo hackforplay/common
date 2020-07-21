@@ -1,9 +1,9 @@
 import enchant from '../../enchantjs/enchant';
-import RPGObject from './object';
-import Key from '../key';
 import BehaviorTypes from '../behavior-types';
-import RPGMap from '../rpg-map';
 import Camera from '../camera';
+import Key from '../key';
+import RPGMap from '../rpg-map';
+import RPGObject from './object';
 
 class Player extends RPGObject {
   constructor(mod) {
@@ -24,7 +24,7 @@ class Player extends RPGObject {
     set('onenterframe');
     set('enterCheck');
     set('stayCheck');
-    this._layer = RPGMap.Layer.Player;
+    this.zIndex = RPGMap.Layer.Player;
 
     this.hp = 3;
     this.atk = 1;
@@ -100,7 +100,10 @@ class Player extends RPGObject {
 
   stayCheck() {
     // Dispatch playerstay/playerexit Event
-    this.enteredStack.forEach(function (item) {
+    this.enteredStack?.forEach(function (item) {
+      // TODO: item が削除されている場合があるので検証する
+      if (item.parent === null) return;
+
       if (item.mapX === this.mapX && item.mapY === this.mapY) {
         item.dispatchEvent(new enchant.Event('playerstay'));
       } else {
