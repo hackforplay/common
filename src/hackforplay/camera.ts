@@ -1,6 +1,5 @@
 import { default as enchant } from '../enchantjs/enchant';
 import '../enchantjs/fix';
-import '../enchantjs/ui.enchant';
 import { default as game } from './game';
 import { getHack } from './get-hack';
 import Vector2 from './math/vector2';
@@ -8,6 +7,7 @@ import * as N from './object/numbers';
 import RPGObject from './object/object';
 import './rpg-kit-main';
 import { synonyms } from './synonyms/rpgobject';
+import ScoreLabel from './ui/score-label';
 import { clamp } from './utils/math-utils';
 
 interface IRect {
@@ -19,6 +19,7 @@ interface IRect {
 
 const Hack = getHack();
 
+// TODO: _key の実装で any を使わないように修正する
 class Camera extends enchant.Sprite {
   public static collection: Camera[] = [];
   public static main: Camera | null = null;
@@ -41,7 +42,7 @@ class Camera extends enchant.Sprite {
   public borderLineWidth = 1;
 
   // カメラに表示されるHPなどのラベル
-  private _numberLabels: any[] = [];
+  private _numberLabels: ScoreLabel[] = [];
   private static _numberLabels: (keyof N.INumbers)[] = ['hp', 'money', 'time'];
   public static get numberLabels() {
     return Camera._numberLabels.slice();
@@ -322,31 +323,28 @@ class Camera extends enchant.Sprite {
   }
 
   private createNumberLabel(key: keyof N.INumbers) {
-    const {
-      ui: { ScoreLabel }
-    } = enchant as any;
-    const label = new ScoreLabel(this.w, this.h); // 見えない位置で初期化
+    const label = new ScoreLabel(); // 見えない位置で初期化
     const propertyName = synonyms[key] || key;
     label.label =
       (typeof propertyName === 'string'
         ? propertyName
         : propertyName.name
       ).toUpperCase() + ':';
-    label._key = key;
-    label.onenterframe = () => {
+    (label as any)._key = key;
+    label.on('enterframe', () => {
       if (!this.target) return;
       if (key in this.target) {
         const value = this.target[key];
         if (Number.isNaN(value)) {
-          label.score = label._current = NaN;
+          label.score = (label as any)._current = NaN;
         } else {
-          label.score = label._current = value;
+          label.score = (label as any)._current = value;
         }
       } else {
-        label._current = '?'; // LABEL: ? と描画される
+        (label as any)._current = '?'; // LABEL: ? と描画される
       }
-    };
-    Hack.menuGroup.addChild(label);
+    });
+    Hack.$menuGroup.addChild(label);
     return label;
   }
 
@@ -354,7 +352,7 @@ class Camera extends enchant.Sprite {
     let y = 10;
     const labelsWillRemove = [...this._numberLabels];
     for (const key of Camera.numberLabels) {
-      let label = labelsWillRemove.find(label => label._key === key);
+      let label = labelsWillRemove.find(label => (label as any)._key === key);
       if (!label) {
         // 足りないラベルを追加
         label = this.createNumberLabel(key);
@@ -364,7 +362,7 @@ class Camera extends enchant.Sprite {
         labelsWillRemove.splice(labelsWillRemove.indexOf(label), 1);
       }
       // ラベルを上から順に並べる
-      label.moveTo(Hack.menuGroup.x + 10, Hack.menuGroup.y + y);
+      label.position.set(Hack.menuGroup.x + 10, Hack.menuGroup.y + y);
       y += 20;
     }
     for (const label of labelsWillRemove) {
@@ -372,7 +370,7 @@ class Camera extends enchant.Sprite {
       if (index > -1) {
         this._numberLabels.splice(index, 1);
       }
-      label.remove();
+      label.destroy();
     }
   }
 }
