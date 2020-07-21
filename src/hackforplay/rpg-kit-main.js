@@ -1,3 +1,5 @@
+import { Container } from 'pixi.js';
+import app from '../application';
 import enchant from '../enchantjs/enchant';
 import '../mod/stop';
 import BehaviorTypes from './behavior-types';
@@ -98,7 +100,8 @@ function createDefaultKeyboard() {
   // デフォルトのキーボード
   const keyboard = new Keyboard();
   Hack.keyboard = keyboard;
-  Hack.popupGroup.addChild(keyboard);
+  // TODO: keyboard を PixiJS に移植する
+  // Hack.popupGroup.addChild(keyboard);
 
   keyboard.registerKeys(
     [
@@ -309,11 +312,11 @@ game.onawake = () => {
   game.rootScene.addChild(domGroup);
 
   // PopupGroup
-  const popupGroup = new enchant.Group();
+  const popupGroup = new Container();
   popupGroup.name = 'PopupGroup';
-  popupGroup.order = 1500;
+  popupGroup.zIndex = 1500;
   Hack.popupGroup = popupGroup;
-  game.rootScene.addChild(popupGroup);
+  app.stage.addChild(popupGroup);
 
   // デフォルトのキーボードを生成する
   createDefaultKeyboard();
