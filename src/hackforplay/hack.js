@@ -1,3 +1,5 @@
+import { Container } from 'pixi.js';
+import app from '../application';
 import enchant from '../enchantjs/enchant';
 import { hide, textArea } from '../mod/logFunc';
 import Camera from './camera';
@@ -413,6 +415,18 @@ Hack.overlay = function () {
     configurable: true,
     get: function () {
       return menuGroup;
+    }
+  });
+
+  // TODO: Hack.menuGroup を $menuGroup に置き換える
+  const $menuGroup = new Container();
+  $menuGroup.zIndex = 200;
+  app.stage.addChild($menuGroup);
+
+  Object.defineProperty(Hack, '$menuGroup', {
+    configurable: true,
+    get() {
+      return $menuGroup;
     }
   });
 
