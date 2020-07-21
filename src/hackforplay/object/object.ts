@@ -134,8 +134,6 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   private hpLabel?: ScoreLabel;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
   private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
-  private _image?: typeof enchant.Surface;
-  private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
   private _collideMapBoader?: boolean; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
 
@@ -1125,32 +1123,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     this._family = family;
   }
 
-  public get image() {
-    return this._image || null;
-  }
-
-  public set image(image: typeof enchant.Sprite | null) {
-    if (!image || this._image === image) return;
-    this._image = image;
-    this._noFilterImage = image;
-    this._computeFramePosition();
-  }
-
   public filter(filter = '') {
-    if (!('filter' in CanvasRenderingContext2D.prototype)) return; // ブラウザが非対応
-    if (!this._noFilterImage || !this._image) return;
-    if (this._image.context && this._image.context.filter === filter) return; // 同じフィルター
-    if (!filter) {
-      this._image = this._noFilterImage; // オリジナルに戻す
-      return;
-    }
-    const _element: HTMLImageElement | HTMLCanvasElement = this._noFilterImage
-      ._element;
-    const { width, height } = _element;
-    this._image = new enchant.Surface(width, height);
-    const context: CanvasRenderingContext2D = this._image.context;
-    context.filter = filter;
-    context.drawImage(_element, 0, 0);
+    errorRemoved('filter', this);
   }
 
   // TODO: 後方互換性について検討する
