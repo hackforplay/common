@@ -1,5 +1,4 @@
-import * as PIXI from 'pixi.js';
-import { Sprite, Texture } from 'pixi.js';
+import { Rectangle, Sprite, Texture } from 'pixi.js';
 import { errorInEvent } from '../stdlog';
 
 export default class EnchantedSprite extends Sprite {
@@ -14,7 +13,7 @@ export default class EnchantedSprite extends Sprite {
     this._frameSequence = 0;
   }
 
-  public set texture(texture: PIXI.Texture) {
+  public set texture(texture: Texture) {
     super.texture = texture;
 
     this._computeFramePosition();
@@ -150,7 +149,7 @@ export default class EnchantedSprite extends Sprite {
     const h = this.height;
 
     try {
-      const frame = new PIXI.Rectangle(_frameLeft, _frameTop, w, h);
+      const frame = new Rectangle(_frameLeft, _frameTop, w, h);
 
       super.texture.frame = frame;
       super.texture.updateUvs();
