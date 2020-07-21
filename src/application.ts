@@ -14,6 +14,8 @@ enchantStageEl.insertBefore(app.view, enchantStageEl.firstChild);
 
 function updateFrame(displayObject: PIXI.DisplayObject) {
   displayObject.emit('enterframe');
+  // TODO: `displayObject instanceof RPGObject` を検討する
+  if ('age' in displayObject) (displayObject as any).age++;
 
   if (displayObject instanceof Container) {
     for (const child of displayObject.children) {
