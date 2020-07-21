@@ -1,6 +1,6 @@
 import { log } from '@hackforplay/log';
+import { Texture } from 'pixi.js';
 import { default as enchant } from '../../enchantjs/enchant';
-import '../../enchantjs/ui.enchant';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
 import { default as Camera } from '../camera';
@@ -20,7 +20,7 @@ import { randomCollection } from '../random';
 import RPGMap from '../rpg-map';
 import { Rule } from '../rule';
 import soundEffect from '../se';
-import { decode, getSkin, initSurface, ISkin, SkinCachedItem } from '../skin';
+import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
 import { errorRemoved, logToDeprecated } from '../stdlog';
 import * as _synonyms from '../synonyms';
 import { synonyms } from '../synonyms/rpgobject';
@@ -305,8 +305,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   }
 
   private computeFrame(direction = this.direction, behavior = this.behavior) {
-    const { _width, _image, currentSkin } = this;
-    if (!_image || !_width || !currentSkin) return;
+    const { width, currentSkin } = this;
+    if (!width || !currentSkin) return;
 
     const { frame, column } = currentSkin;
     if (!frame || !(behavior in frame)) return;
@@ -325,7 +325,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
         : direction === Direction.Up
         ? 3
         : 0;
-    (this as any)._frameSequence = decode(...animation).map(n =>
+
+    this._frameSequence = decode(...animation).map(n =>
       n === null ? null : n + column * row
     );
   }
@@ -1253,7 +1254,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     let nearestObject: RPGObject | null = null;
     let nearestDistance = Infinity;
     for (const item of collection) {
-      if (!item.parentNode || !item.scene) continue; // マップ上に存在しないオブジェクトはのぞく
+      if (!item.parentNode) continue; // マップ上に存在しないオブジェクトはのぞく
       if (item.map !== this.map) continue; // 違うマップにいる場合はのぞく
       const dx = item.mapX - this.mapX;
       const dy = item.mapY - this.mapY;
@@ -1388,11 +1389,12 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
       ].join(' ');
       log('error', message, this.name ? `modules/${this.name}.js` : 'Unknown');
 
-      // スキンの名前を間違えたことが分かるようにする
-      this.image = initSurface(32, 32, undefined, '#fff');
-      const context: CanvasRenderingContext2D = this.image.context;
+      // TODO: スキンの名前を間違えたことが分かるようにする
+      /*
       context.fillStyle = '#000';
       context.fillText(name, 0, 16, 32);
+      */
+      this.texture = Texture.WHITE;
       this.width = 32;
       this.height = 32;
     }

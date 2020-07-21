@@ -1,19 +1,18 @@
 import { load, OutputV1 } from '@hackforplay/skins';
+import { BaseTexture, Texture } from 'pixi.js';
 import { default as enchant } from '../enchantjs/enchant';
 import { default as SAT } from '../lib/sat.min';
-import RPGObject from './object/object';
 import { fetchDataURL } from './feeles';
+import RPGObject from './object/object';
 
 const preload = load();
-
-type Surface = ReturnType<typeof enchant.Surface>;
 
 /**
  * 互換性を保つためのエイリアス
  */
 export interface ISkin extends OutputV1 {
   name: string;
-  surface: Surface;
+  surface: Texture;
 }
 
 export type SkinCachedItem = Promise<(object: RPGObject) => void>;
@@ -48,7 +47,8 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   object.x += skin.sprite.x - object.offset.x;
   object.y += skin.sprite.y - object.offset.y;
   // パラメータのセット
-  object.image = skin.surface; // 画像バイナリは動的にロードしている
+  object.texture = skin.surface;
+
   object.width = skin.sprite.width;
   object.height = skin.sprite.height;
   object.offset = {
@@ -125,7 +125,12 @@ export function initSurface(
   height: number,
   src?: string,
   color = 'rgba(0,0,0,0.5)' // ロード中は半透明の黒になっている
-): Surface {
+): Texture {
+  // TODO: 読み込み中の色を実装する
+  if (src) {
+    return new Texture(BaseTexture.from(src));
+  }
+
   const surface = new enchant.Surface(width, height);
   const context: CanvasRenderingContext2D = surface.context;
 
@@ -150,5 +155,5 @@ export function initSurface(
       })
       .catch(handleError);
 
-  return surface;
+  return Texture.from(surface._element);
 }
