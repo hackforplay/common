@@ -1,13 +1,13 @@
 // マウスで指した場所の座標がつねに表示される
-import enchant from '../enchantjs/enchant';
+import { Sprite, Texture } from 'pixi.js';
+import application from '../application';
 import Camera from '../hackforplay/camera';
 import '../hackforplay/core';
 import game from '../hackforplay/game';
 import { getHack } from '../hackforplay/get-hack';
+import MutableText from '../hackforplay/ui/mutable-text';
 
 const Hack = getHack();
-
-const MutableText = (enchant as any).ui.MutableText;
 
 const imageDataUrl =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAAXNSR0IArs4c6QAAAcRJREFUeAHt2y1OA1EUBeD3hpJ6HAl7QCIwOPbABnBIFoHEsQK2gUEg2QMJDk8K8+hr0p8ES+Yk9KvppObc+U7v1PSV4kWAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAIH/IFCTN3F2306Gw++7WttFrfV4yllaa++t1adxcXD7clPfpszezYoVsMKfj69DaUe7A019PZb6MX4Op6kSZlPf8Dqvf/OHUo6er2exL0Gf5fzhq5XlLMvLq/VsU74vDTKv/tjJJP9OTc4SLGDaZ/5v9u0nU//+bJNLiRWwO8Q+Xysg3L4CFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8DFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8DFBAWCMfbAAWEBcLxNkABYYFwvA1QQFggHG8D9rWA/v/88L1v4pOzxDagH47YCIQvkrPEzgf0kyllPl6u/p8fLGB1QGMx3KZGiG1AP5HST6aMY3lMPAJ6Zs9Ono5JlS6XAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECfy/wA9qGU1T+GdfUAAAAAElFTkSuQmCC';
@@ -19,25 +19,15 @@ export default function coordinate() {
   }
 
   // ラベルを初期化
-  const label = new MutableText(360, 300);
+  const label = new MutableText();
+  label.position.set(360, 300);
   // Hack に参照を追加
   Hack.coordinateLabel = label;
-  // クリックの邪魔にならないように
-  label.touchEnabled = false;
-
   // 青い枠を初期化
-  const sprite = new enchant.Sprite(96, 96);
-  sprite.moveTo(360, 300);
-  enchant.Surface.load(
-    imageDataUrl,
-    (event: any) => {
-      sprite.image = event.target;
-      Hack.menuGroup.addChild(sprite);
-    },
-    () => {}
-  );
+  const sprite = new Sprite(Texture.from(imageDataUrl));
+  sprite.position.set(360, 300);
+  Hack.$menuGroup.addChild(sprite);
 
-  sprite.touchEnabled = false;
   // Hack に参照を追加
   Hack.coordinateSprite = label;
 
@@ -61,18 +51,18 @@ export default function coordinate() {
     label.text = `(${x}, ${y})`;
     // マウスの位置より上にラベルをおく
     const labelX = clientX - label.width / 2; // マウスの中心
-    label.moveTo(labelX, clientY);
+    label.position.set(labelX, clientY);
     // 枠を移動
-    sprite.moveTo((x - 1) * 32, (y - 1) * 32);
+    sprite.position.set((x - 1) * 32, (y - 1) * 32);
   };
 
   // マウスの位置を追跡
-  const div: HTMLDivElement = game._element;
-  div.addEventListener(
+  const { view } = application;
+  view.addEventListener(
     'mousemove',
     event => {
       const { clientX, clientY } = event;
-      const rect = div.getBoundingClientRect();
+      const rect = view.getBoundingClientRect();
       const x = (clientX - rect.left) / game.scale;
       const y = (clientY - rect.top) / game.scale;
       if (0 <= x && x <= game.width && 0 <= y && y <= game.height) {
@@ -89,16 +79,16 @@ export default function coordinate() {
     sprite.visible = value;
   };
   // マウスが離れたら非表示にする
-  div.addEventListener('mouseleave', visibilitySetter(false), {
+  view.addEventListener('mouseleave', visibilitySetter(false), {
     passive: true
   });
   // マウスが戻ってきたらまた表示する
-  div.addEventListener('mouseenter', visibilitySetter(true), {
+  view.addEventListener('mouseenter', visibilitySetter(true), {
     passive: true
   });
 
   // タッチされた位置
-  div.addEventListener(
+  view.addEventListener(
     'touchstart',
     event => {
       const visible = !label.visible; // toggle
@@ -108,7 +98,7 @@ export default function coordinate() {
       const primaryTouch = event.touches.item(0);
       if (!primaryTouch) return;
       const { clientX, clientY } = primaryTouch;
-      const rect = div.getBoundingClientRect();
+      const rect = view.getBoundingClientRect();
       const x = (clientX - rect.left) / game.scale;
       const y = (clientY - rect.top) / game.scale;
       if (0 <= x && x <= game.width && 0 <= y && y <= game.height) {
@@ -120,5 +110,5 @@ export default function coordinate() {
     }
   );
 
-  Hack.menuGroup.addChild(label);
+  Hack.$menuGroup.addChild(label);
 }
