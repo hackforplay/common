@@ -32,6 +32,7 @@ import {
 import talk from '../talk';
 import { showThinkSprite } from '../think';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
+import ScoreLabel from '../ui/score-label';
 import EnchantedSprite from './enchanted-sprite';
 import * as N from './numbers';
 
@@ -130,7 +131,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   private _isKinematic?: boolean; // this.isKinematic (Default: true)
   private _collidedNodes: any[] = []; // 衝突した Node リスト
   private hpchangeFlag = false;
-  private hpLabel?: any;
+  private hpLabel?: ScoreLabel;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
   private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
   private _image?: typeof enchant.Surface;
@@ -167,11 +168,11 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
 
     // HPLabel
     this.on('hpchange', () => {
-      if (this.hasHp && this.showHpLabel) {
+      if (this.hpLabel && this.hasHp && this.showHpLabel) {
         this.hpLabel = this.hpLabel || makeHpLabel(this);
         this.hpLabel.label = 'HP:';
         this.hpLabel.score = this.hp;
-        this.hpLabel.opacity = 1;
+        this.hpLabel.alpha = 1;
       }
     });
 
@@ -527,7 +528,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     const _remove = () => {
       this.dispatchEvent(new enchant.Event('destroy')); // ondestroy event を発火
       this.remove.call(this.proxy);
-      if (this.hpLabel) this.hpLabel.remove();
+      this.hpLabel?.destroy();
     };
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
     else _remove.call(this);
@@ -1593,18 +1594,19 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
 export const RPGObjectWithSynonym = synonymizeClass(RPGObject, synonyms);
 
 function makeHpLabel(self: RPGObject) {
-  const label = new (enchant as any).ui.ScoreLabel();
+  const label = new ScoreLabel();
   label.label = 'HP:';
-  label.opacity = 0;
-  self.parentNode.addChild(label);
+  label.alpha = 0;
+
+  self.parent.addChild(label);
   self.on('enterframe', () => {
-    if (self.parentNode && self.parentNode !== label.parentNode) {
+    if (self.parent && self.parent !== label.parent) {
       self.parentNode.addChild(label);
     }
     label.x = self.x;
     label.y = self.y;
-    const diff = 1.01 - label.opacity;
-    label.opacity = Math.max(0, label.opacity - diff / 10);
+    const diff = 1.01 - label.alpha;
+    label.alpha = Math.max(0, label.alpha - diff / 10);
   });
   return label;
 }
