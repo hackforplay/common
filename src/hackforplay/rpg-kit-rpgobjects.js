@@ -1,5 +1,4 @@
 import enchant from '../enchantjs/enchant';
-import '../enchantjs/ui.enchant';
 import game from './game';
 import { getHack } from './get-hack';
 import RPGObject from './object/object';

@@ -1,7 +1,6 @@
 src/lib/*.js
 src/mod/3d
 src/enchantjs/enchant.js
-src/enchantjs/ui.enchant.js
 
 test
 
