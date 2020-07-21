@@ -244,15 +244,6 @@ game.onawake = () => {
   Hack.cameraGroup = cameraGroup;
   game.rootScene.addChild(cameraGroup);
 
-  // コントローラーグループ
-  const controllerGroup = new enchant.Group();
-  controllerGroup.name = 'ControllerGroup';
-  controllerGroup.order = 300;
-
-  Hack.controllerGroup = controllerGroup;
-
-  game.rootScene.addChild(controllerGroup);
-
   // マップ関連の親
   const world = new enchant.Group();
   world.name = 'World';
@@ -320,24 +311,6 @@ game.onawake = () => {
 
   // デフォルトのキーボードを生成する
   createDefaultKeyboard();
-
-  const pad = new enchant.ui.Pad();
-  pad.moveTo(20, 200);
-
-  controllerGroup.addChild(pad);
-
-  Hack.pad = pad;
-
-  const apad = new enchant.Sprite(64, 64);
-  apad.image = game.assets['resources/hackforplay/attack.png'];
-  apad.buttonMode = 'a';
-  apad.moveTo(400, 250);
-
-  controllerGroup.addChild(apad);
-  Hack.apad = apad;
-
-  Hack.pad.name = 'Pad';
-  Hack.apad.name = 'APad';
 
   // Enchant book
   Hack.enchantBookIcon = Hack.createSprite(64, 64, {
