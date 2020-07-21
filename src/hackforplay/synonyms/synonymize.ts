@@ -1,3 +1,4 @@
+import { Container } from 'pixi.js';
 import { FunctionValue, PrimitiveValue } from '../../definition';
 
 type Key = string | number | symbol;
@@ -63,12 +64,21 @@ export function synonymizeClass<T extends typeof Class>(
 
       // enchant.js の parentNode を付け替える
       const p = (instance as any).parentNode;
-      if (p) {
+
+      // TODO: PixiJS に移行したら削除する
+      if (p && !(p instanceof Container)) {
         const index = p.childNodes.indexOf(instance);
         if (index > -1) {
           p.childNodes.splice(index, 1, proxied);
         } else {
           p.childNodes.push(proxied);
+        }
+      }
+
+      if (p && p instanceof Container) {
+        const index = p.children.indexOf(instance as any);
+        if (index > -1) {
+          p.children[index] = proxied as any;
         }
       }
 
