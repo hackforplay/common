@@ -1,4 +1,4 @@
-import enchant from '../../enchantjs/enchant';
+import SurfaceSprite from '../surface-sprite';
 import { roundRect } from '../utils/canvas2d-utils';
 import { stringToArray } from '../utils/string-utils';
 
@@ -51,20 +51,40 @@ function parse(xml: string): Node {
   return document;
 }
 
-class TextArea extends enchant.Sprite {
-  private context: CanvasRenderingContext2D;
+class TextArea extends SurfaceSprite {
   private document: IConvertedDocument | null;
   private values: IChar[];
+  public debug: boolean;
+  public autoResizeVertical: boolean;
+  public maxHeight: number;
+  public background: string;
+  public borderColor: string;
+  public borderWidth: number;
+  public borderRadius: number;
+  public margin: number;
+  public padding: number;
+  public keepWordBreak: boolean;
+  public overflowBreakWord: boolean;
+  public defaultStyle: {
+    color: string;
+    size: string;
+    family: string;
+    weight: string;
+    align: string;
+    lineSpace: number;
+    space: number;
+    ruby: null;
+    rubyId: null;
+  };
+  public rubyStyle: any;
+  public verticalNormalizedPosition: number;
+  public source: string;
 
   constructor(w: number, h: number) {
     super(w, h);
 
     this.source = '';
     this.document = null;
-
-    this.image = new enchant.Surface(w, h);
-    this.context = this.image.context;
-
     this.debug = false;
 
     this.autoResizeVertical = false;
@@ -138,13 +158,8 @@ class TextArea extends enchant.Sprite {
     this._width = w;
     this._height = h;
 
-    if (this.image) {
-      this.image.width = w;
-      this.image.height = h;
-      this.image._element.width = w;
-      this.image._element.height = h;
-    }
-    this.dispatchEvent(new enchant.Event(enchant.Event.RESIZE));
+    super.resize(w, h);
+    this.emit('resize');
 
     this.updateValues();
 
@@ -546,6 +561,9 @@ class TextArea extends enchant.Sprite {
     ).stroke();
 
     this.renderBorder(context);
+
+    // TODO: 反映されないので調査する
+    this.updateTexture();
   }
 }
 

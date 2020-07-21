@@ -153,8 +153,8 @@ okButton.on('touchend', handleOkButtonPush);
 okButton.push('OK');
 
 game.on('awake', () => {
-  Hack.menuGroup.addChild(textArea);
-  Hack.menuGroup.addChild(okButton);
+  Hack.$menuGroup.addChild(textArea);
+  Hack.$menuGroup.addChild(okButton);
 });
 
 game.on('enterframe', () => {

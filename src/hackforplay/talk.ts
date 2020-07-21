@@ -1,7 +1,7 @@
-import { default as enchant } from '../enchantjs/enchant';
 import TextArea from '../hackforplay/ui/textarea';
 import { getHack } from './get-hack';
 import Key from './key';
+import SurfaceSprite from './surface-sprite';
 
 export interface IConfig {
   text: Partial<TextArea>;
@@ -77,7 +77,7 @@ export interface ITalkInfo {
 const talkStack: ITalkInfo[] = [];
 
 // テキストエリアを生成
-const textArea = new TextArea(config.text.width, config.text.height);
+const textArea = new TextArea(config.text.width!, config.text.height!);
 Object.assign(textArea, config.text);
 
 // 外から参照したいので出してみる
@@ -140,7 +140,7 @@ Key.up.release(() => {
   if (!current) return;
   if (current.cursor > 0) {
     current.cursor--;
-    cursor.y -= config.button.height;
+    cursor.y -= config.button.height!;
   }
 });
 
@@ -150,7 +150,7 @@ Key.down.release(() => {
   if (!current) return;
   if (current.cursor < current.choices.length - 1) {
     current.cursor++;
-    cursor.y += config.button.height;
+    cursor.y += config.button.height!;
   }
 });
 
@@ -167,7 +167,7 @@ function showNextIfExist() {
   // 新しい talkInfo を取得, もしあれば表示
   const [current] = talkStack;
   if (current) {
-    if (!textArea.parentNode) {
+    if (!textArea.parent) {
       Hack.popupGroup.addChild(textArea);
       textArea.show();
     }
@@ -176,7 +176,7 @@ function showNextIfExist() {
     textArea.y = 320 - textArea.height;
     // ボタンを生成
     for (const [index, choice] of current.choices.entries()) {
-      const button = new TextArea(config.button.width, config.button.height);
+      const button = new TextArea(config.button.width!, config.button.height!);
       Object.assign(button, config.button);
       Hack.popupGroup.addChild(button); // メニューにaddChild
       button.y =
@@ -204,8 +204,8 @@ function showNextIfExist() {
 
 function makeCursor() {
   const l = config.cursor.size >> 0;
-  const triangle = new enchant.Surface(l, l);
-  const ctx: CanvasRenderingContext2D = triangle.context;
+  const cursor = new SurfaceSprite(l, l);
+  const ctx: CanvasRenderingContext2D = cursor.context;
   ctx.beginPath();
   ctx.moveTo(0, 0);
   ctx.lineTo((l * Math.sqrt(3)) / 2, l / 2);
@@ -215,7 +215,6 @@ function makeCursor() {
   ctx.strokeStyle = config.cursor.borderColor;
   ctx.fill();
   ctx.stroke();
-  const cursor = new enchant.Sprite(l, l);
-  cursor.image = triangle;
+  cursor.updateTexture();
   return cursor;
 }

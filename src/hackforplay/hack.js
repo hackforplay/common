@@ -110,9 +110,6 @@ Hack.textarea = function () {
 }.call(new enchant.Entity());
 
 Hack.textArea = textArea;
-game.on('awake', () => {
-  Hack.menuGroup.addChild(textArea);
-});
 Hack.on('gameclear', hide); // ゲームクリア時閉じる
 Hack.on('gameover', hide); // ゲームオーバー時閉じる
 
