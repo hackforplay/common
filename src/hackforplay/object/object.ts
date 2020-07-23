@@ -517,7 +517,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
     this.behavior = BehaviorTypes.Idle; // https://bit.ly/38ID1SZ
-    followingPlayerObjects.delete(this); // プレイヤーとはぐれた
+    followingPlayerObjects.delete(this.reverseProxy); // プレイヤーとはぐれた
   }
 
   public destroy(delay = 0) {
@@ -1326,10 +1326,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         : nameOrTarget;
     if (!item || !item.parentNode) return;
 
-    if (!followingPlayerObjects.has(this)) {
+    if (!followingPlayerObjects.has(this.reverseProxy)) {
       if (item.family === this.family && item.isPlayer) {
         // 追いかけている相手が仲間のプレイヤーであれば、参照を保持する
-        followingPlayerObjects.add(this);
+        followingPlayerObjects.add(this.reverseProxy);
       }
     }
 
