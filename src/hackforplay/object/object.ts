@@ -295,7 +295,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public get isPlayer() {
-    return Boolean(Camera && Camera.main && Camera.main.target === this);
+    return Camera?.main?.target === this.proxy; // https://bit.ly/39lHonB
   }
 
   private getFrameLength() {
