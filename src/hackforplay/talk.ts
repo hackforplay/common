@@ -30,8 +30,8 @@ export const config: IConfig = {
     defaultStyle: {
       color: '#fff',
       size: '18',
-      family: 'PixelMplus, sans-serif',
-      weight: 'bold',
+      family: 'mplus, sans-serif',
+      weight: '',
       align: 'center',
       lineSpace: 5,
       space: 0,
@@ -51,8 +51,8 @@ export const config: IConfig = {
     defaultStyle: {
       color: '#fff',
       size: '16',
-      family: 'PixelMplus, sans-serif',
-      weight: 'bold',
+      family: 'mplus, sans-serif',
+      weight: '',
       align: 'center',
       lineSpace: 0,
       space: 0,
