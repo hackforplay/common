@@ -475,7 +475,10 @@ Hack.Attack = function (x, y, damage) {
         // ダメージ判定が起こる状態で,
         if (isOpposite(item, this)) {
           // 敵対している相手(もしくはその関係者)なら
-          item.damageTime = item.attackedDamageTime;
+          item.damageTime = Math.max(
+            0,
+            Math.ceil(item.attackedDamageTime * 30)
+          );
           item.hp -= damage;
         }
       }

@@ -72,7 +72,10 @@ export function damageUpdate() {
       // ゲームが継続している間しかダメージは入らないが、当たり判定はある
       for (const object of newHits) {
         if (object.hasHp) {
-          object.damageTime = object.attackedDamageTime; // チカチカする
+          object.damageTime = Math.max(
+            0,
+            Math.ceil(object.attackedDamageTime * 30)
+          ); // チカチカする
           object.hp -= damager.damage; // 体力が number なら減らす
         }
         // イベントを発火させる

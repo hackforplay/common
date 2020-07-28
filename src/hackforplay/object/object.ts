@@ -101,7 +101,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public accelerationY = 0;
   public mass = 1;
   public damageTime = 0;
-  public attackedDamageTime = 30; // * 1/30sec
+  /**
+   * 攻撃されたときの無敵時間
+   * 0.36 までは [frame] (初期値は 30) だったが、 0.37 から [sec] (初期値は 1)になった
+   */
+  public attackedDamageTime = 1;
   public _debugColor = 'rgba(0, 0, 255, 0.5)';
   public showHpLabel = true; // デフォルトで表示
   public name = ''; // アセットの名前
