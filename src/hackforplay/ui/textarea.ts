@@ -81,7 +81,7 @@ class TextArea extends SurfaceSprite {
   public verticalNormalizedPosition: number;
   public source: string;
 
-  constructor(w: number, h: number) {
+  public constructor(w: number, h: number) {
     super(w, h);
 
     this.source = '';
@@ -128,30 +128,30 @@ class TextArea extends SurfaceSprite {
     this.renderCanvas();
   }
 
-  get w() {
+  public get w() {
     return this.width;
   }
-  set w(value) {
+  public set w(value) {
     this.resize(value, this.h);
     this.width = value;
   }
 
-  get h() {
+  public get h() {
     return this.height;
   }
-  set h(value) {
+  public set h(value) {
     this.resize(this.w, value);
     this.height = value;
   }
 
-  get drawAreaW() {
+  public get drawAreaW() {
     return this.w - this.margin * 2 - this.padding * 2;
   }
-  get drawAreaH() {
+  public get drawAreaH() {
     return this.h - this.margin * 2 - this.padding * 2;
   }
 
-  resize(w: number, h: number) {
+  public resize(w: number, h: number) {
     if (this.w === w && this.h === h) return;
 
     this._width = w;
@@ -165,21 +165,21 @@ class TextArea extends SurfaceSprite {
     return this;
   }
 
-  show() {
+  public show() {
     this.visible = true;
   }
 
-  hide() {
+  public hide() {
     this.visible = false;
   }
 
-  clear() {
+  public clear() {
     this.values = [];
     this.source = '';
     this.document = null;
   }
 
-  push(text: string) {
+  public push(text: string) {
     if (!getHack()?.disableZenkakuMode) {
       text = convertHankakuToZenkaku(text);
     }
@@ -189,7 +189,7 @@ class TextArea extends SurfaceSprite {
     this.updateValues();
   }
 
-  getHeight() {
+  public getHeight() {
     if (!this.values.length) return 0;
     return Math.max(
       ...this.values.map(value => {
@@ -198,7 +198,7 @@ class TextArea extends SurfaceSprite {
     );
   }
 
-  updateDocument() {
+  private updateDocument() {
     let styleId = 0;
 
     function convertDocument(node: Node): IConvertedDocument {
@@ -232,7 +232,7 @@ class TextArea extends SurfaceSprite {
     this.document = convertDocument(parse(this.source));
   }
 
-  updateValues() {
+  private updateValues() {
     const context = this.context;
     const source = this.document;
 
@@ -493,10 +493,10 @@ class TextArea extends SurfaceSprite {
     this.renderCanvas();
   }
 
-  renderBackground(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
-  renderBorder(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  public renderBackground(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  public renderBorder(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
-  renderCanvas() {
+  private renderCanvas() {
     const context = this.context;
 
     function applyRenderStyles(textObject: any) {
