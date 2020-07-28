@@ -1,5 +1,4 @@
 import enchant from '../enchantjs/enchant';
-import '../enchantjs/ui.enchant';
 import './hack';
 
 /**

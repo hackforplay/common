@@ -1,12 +1,18 @@
-import { default as enchant } from '../enchantjs/enchant';
 import TextArea from '../hackforplay/ui/textarea';
 import { getHack } from './get-hack';
 import Key from './key';
 import { langExports } from './lang';
+import SurfaceSprite from './surface-sprite';
 
 export interface IConfig {
-  text: Partial<TextArea>;
-  button: Partial<TextArea>;
+  text: Partial<TextArea> & {
+    width: number;
+    height: number;
+  };
+  button: Partial<TextArea> & {
+    width: number;
+    height: number;
+  };
   cursor: {
     size: number;
     offsetX: number;
@@ -168,7 +174,7 @@ function showNextIfExist() {
   // 新しい talkInfo を取得, もしあれば表示
   const [current] = talkStack;
   if (current) {
-    if (!textArea.parentNode) {
+    if (!textArea.parent) {
       Hack.popupGroup.addChild(textArea);
       textArea.show();
     }
@@ -205,8 +211,8 @@ function showNextIfExist() {
 
 function makeCursor() {
   const l = config.cursor.size >> 0;
-  const triangle = new enchant.Surface(l, l);
-  const ctx: CanvasRenderingContext2D = triangle.context;
+  const cursor = new SurfaceSprite(l, l);
+  const ctx: CanvasRenderingContext2D = cursor.context;
   ctx.beginPath();
   ctx.moveTo(0, 0);
   ctx.lineTo((l * Math.sqrt(3)) / 2, l / 2);
@@ -216,7 +222,6 @@ function makeCursor() {
   ctx.strokeStyle = config.cursor.borderColor;
   ctx.fill();
   ctx.stroke();
-  const cursor = new enchant.Sprite(l, l);
-  cursor.image = triangle;
+  cursor.updateTexture();
   return cursor;
 }

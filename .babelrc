@@ -30,10 +30,5 @@
       }
     ]
   ],
-  "ignore": [
-    "src/stages/*/code*.js",
-    "src/enchantjs/enchant.js",
-    "src/enchantjs/ui.enchant.js",
-    "dist/*.js"
-  ]
+  "ignore": ["src/stages/*/code*.js", "src/enchantjs/enchant.js", "dist/*.js"]
 }

@@ -1,6 +1,6 @@
 import { log } from '@hackforplay/log';
+import { Texture } from 'pixi.js';
 import { default as enchant } from '../../enchantjs/enchant';
-import '../../enchantjs/ui.enchant';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
 import { memo, objectsInDefaultMap } from '../cache';
@@ -22,7 +22,7 @@ import { randomCollection } from '../random';
 import RPGMap from '../rpg-map';
 import { Rule } from '../rule';
 import soundEffect from '../se';
-import { decode, getSkin, initSurface, ISkin, SkinCachedItem } from '../skin';
+import { decode, getSkin, ISkin, SkinCachedItem } from '../skin';
 import { errorRemoved, logToDeprecated } from '../stdlog';
 import * as _synonyms from '../synonyms';
 import { synonyms } from '../synonyms/rpgobject';
@@ -34,7 +34,9 @@ import {
 import talk from '../talk';
 import { showThinkSprite } from '../think';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
+import ScoreLabel from '../ui/score-label';
 import { observeArray } from '../utils/observe-array';
+import EnchantedSprite from './enchanted-sprite';
 import * as N from './numbers';
 
 const Hack = getHack();
@@ -42,14 +44,14 @@ const Hack = getHack();
 // 1 フレーム ( enterframe ) 間隔で next する
 // Unity の StartCoroutine みたいな仕様
 function startFrameCoroutine(
-  node: any,
+  node: RPGObject,
   generator: IterableIterator<undefined>
 ) {
   return new Promise(resolve => {
     node.on('enterframe', function _() {
       const { done } = generator.next();
       if (done) {
-        node.removeEventListener('enterframe', _);
+        node.off('enterframe', _);
         resolve();
       }
     });
@@ -63,7 +65,7 @@ const opt = <T>(opt: T | undefined, def: T): T =>
 
 const uniqId = (i => () => ++i)(0);
 
-export default class RPGObject extends enchant.Sprite implements N.INumbers {
+export default class RPGObject extends EnchantedSprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   private static _collectionTarget = [RPGObject];
   public static collection = observeArray<RPGObject>([]); // Proxy でトラップする
@@ -124,10 +126,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public isInvincible = false; // ダメージを受けなくなるフラグ
   public currentSkin?: ISkin; // 適用されているスキン
   public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
-  public childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
+  public _preventFrameHits: RPGObject[] = []; // rpg-kit-rpgobjects.js で参照されるプロパティ
   public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public _cvsCache: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public then: undefined; // await されたときに then が参照される
+  public directionType = 'single';
 
   private _hp?: number;
   private _atk?: number;
@@ -139,14 +142,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
   private _collisionFlag?: boolean;
   private _isKinematic?: boolean; // this.isKinematic (Default: true)
-  private _layer: number = (RPGMap as any).Layer.Middle;
   private _collidedNodes: any[] = []; // 衝突した Node リスト
   private hpchangeFlag = false;
-  private hpLabel?: any;
+  private hpLabel?: ScoreLabel;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
   public _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
-  private _image?: typeof enchant.Surface;
-  private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
   private _collideMapBoader?: boolean; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
 
@@ -157,14 +157,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public readonly id: number;
 
   public constructor() {
-    super(0, 0);
+    super();
+
+    this.zIndex = RPGMap.Layer.Middle;
     this.id = uniqId();
 
-    this.moveTo(game.width, game.height);
+    this.moveTo(game.width, game.height); // TODO: 大きいキャラクターが右下からはみ出すバグがある
 
     // Destroy when dead
     this.on('becomedead', () => {
-      this.destroy(this.getFrameLength());
+      this.$destroy(this.getFrameLength());
     });
     this.on('hpchange', () => {
       if (this.hp <= 0) {
@@ -180,15 +182,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
 
     // 初期化
-    this.on('enterframe', this.geneticUpdate);
+    this.on('enterframe', () => this.geneticUpdate());
 
     // HPLabel
     this.on('hpchange', () => {
-      if (this.hasHp && this.showHpLabel) {
+      if (this.hpLabel && this.hasHp && this.showHpLabel) {
         this.hpLabel = this.hpLabel || makeHpLabel(this);
         this.hpLabel.label = 'HP:';
         this.hpLabel.score = this.hp;
-        this.hpLabel.opacity = 1;
+        this.hpLabel.alpha = 1;
       }
     });
 
@@ -197,8 +199,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this.collider ||
       new SAT.Box(new SAT.V(0, 0), this.width, this.height).toPolygon();
 
+    RPGObject.collection.push(this);
+
     // ツリーに追加
-    Hack.defaultParentNode && Hack.defaultParentNode.addChild(this); // this は Proxy ではない
+    Hack.defaultParentNode?.addChild(this); // this は Proxy ではない
   }
 
   private n(type: string, operator: string, amount: number) {
@@ -235,7 +239,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public get map(): RPGMap | null {
-    return this.parentNode ? this.parentNode.ref : null;
+    return RPGMap.ref.get(this.parentNode) ?? null;
   }
 
   public get mapX() {
@@ -321,8 +325,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   private computeFrame(direction = this.direction, behavior = this.behavior) {
-    const { _width, _image, currentSkin } = this;
-    if (!_image || !_width || !currentSkin) return;
+    const { width, currentSkin } = this;
+    if (!width || !currentSkin) return;
 
     const { frame, column } = currentSkin;
     if (!frame || !(behavior in frame)) return;
@@ -341,7 +345,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         : direction === Direction.Up
         ? 3
         : 0;
-    (this as any)._frameSequence = decode(...animation).map(n =>
+
+    this._frameSequence = decode(...animation).map(n =>
       n === null ? null : n + column * row
     );
   }
@@ -524,11 +529,42 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     followingPlayerObjects.delete(this.reverseProxy); // プレイヤーとはぐれた
   }
 
-  public destroy(delay = 0) {
+  public destroy(
+    options?:
+      | {
+          children?: boolean;
+          texture?: boolean;
+          baseTexture?: boolean;
+        }
+      | number
+  ) {
+    if (typeof options === 'number') {
+      throw new TypeError(''); // TODO: 歴史的な理由
+    }
+    // TODO: 重そう
+    const index = RPGObject.collection.indexOf(this.reverseProxy);
+    RPGObject.collection.splice(index, 1);
+
+    this.hpLabel?.destroy();
+    super.destroy.call(this.reverseProxy, options);
+    this.dispatchEvent('destroy');
+    this._ruleInstance?.unregisterRules(this.proxy);
+  }
+
+  /**
+   * @deprecated
+   * 後方互換性のため
+   */
+  private remove() {
+    this.destroy();
+  }
+
+  // TODO: 後方互換性について検討する
+  public $destroy(delay = 0) {
     const _remove = () => {
       this.dispatchEvent(new enchant.Event('destroy')); // ondestroy event を発火
-      this.remove.call(this.reverseProxy); // https://bit.ly/3icN2MG
-      if (this.hpLabel) this.hpLabel.remove();
+      this.destroy();
+      this.hpLabel?.destroy();
     };
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
     else _remove.call(this);
@@ -559,7 +595,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.on(timing, task);
     function stopTimeout(this: RPGObject) {
       flag = false;
-      this.removeEventListener(timing, task);
+      this.off(timing, task);
     }
     return stopTimeout.bind(this);
   }
@@ -581,7 +617,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     const stopInterval = () => {
       flag = false;
-      this.removeEventListener('enterframe', task);
+      this.off('enterframe', task);
     };
     this.on('enterframe', task);
     return stopInterval;
@@ -847,11 +883,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public get layer() {
-    return this._layer;
+    return this.zIndex;
   }
   public set layer(value) {
     if (this === Hack.player) return; // プレイヤーのレイヤー移動を禁止
-    if (value === this._layer) return;
+    if (value === this.zIndex) return;
 
     const { Layer } = RPGMap as any;
 
@@ -861,15 +897,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
     const max = Math.max.apply(null, sortingOrder);
     const min = Math.min.apply(null, sortingOrder);
-    this._layer = Math.max(Math.min(value, max), min);
+    this.zIndex = Math.max(Math.min(value, max), min);
 
     // 他オブジェクトはプレイヤーレイヤーに干渉できないようにする
-    if (this._layer === Layer.Player) {
-      switch (Math.sign(value - this._layer)) {
+    if (this.zIndex === Layer.Player) {
+      switch (Math.sign(value - this.zIndex)) {
         case 1:
-          this._layer = this.bringOver();
+          this.zIndex = this.bringOver();
         case -1:
-          this._layer = this.bringUnder();
+          this.zIndex = this.bringUnder();
         default:
           break;
       }
@@ -963,7 +999,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     // 速度がマイナスなら角度はそのままにする
     if (speed < 0) angle += 180;
 
-    node._rotation = angle;
+    node.rotation = angle;
 
     return this;
   }
@@ -1024,16 +1060,24 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.computeFrame();
   }
 
-  public dispatchEvent(event: any) {
-    enchant.EventTarget.prototype.dispatchEvent.call(this, event);
+  // TODO: enchant.Event を廃止する
+  public dispatchEvent(event: string | typeof enchant.Event) {
+    const name = typeof event === 'string' ? event : event.type;
+    const option = typeof event === 'string' ? {} : event;
+
+    option.target = this;
+    // TODO: offset の実装
+    option.localX = event.x; // - this._offsetX;
+    option.localY = event.y; // - this._offsetY;
+    this.emit(name, event);
     // Synonym Event を発火
     const events = (_synonyms as any).events;
-    const synonym: any = (events as any)[event.type];
+    const synonym: any = (events as any)[name];
     if (synonym) {
-      const clone = Object.assign({}, event, {
+      const clone = Object.assign({}, option, {
         type: synonym
       });
-      enchant.EventTarget.prototype.dispatchEvent.call(this, clone);
+      this.emit(synonym, clone);
     }
   }
 
@@ -1073,6 +1117,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       game.on('enterframe', handler);
     });
   }
+
+  private _endless: any;
 
   public async endless(virtual: any) {
     if (!this._endless) {
@@ -1115,35 +1161,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._family = family;
   }
 
-  public get image() {
-    return this._image || null;
-  }
-
-  public set image(image: typeof enchant.Sprite | null) {
-    if (!image || this._image === image) return;
-    this._image = image;
-    this._noFilterImage = image;
-    this._computeFramePosition();
-  }
-
   public filter(filter = '') {
-    if (!('filter' in CanvasRenderingContext2D.prototype)) return; // ブラウザが非対応
-    if (!this._noFilterImage || !this._image) return;
-    if (this._image.context && this._image.context.filter === filter) return; // 同じフィルター
-    if (!filter) {
-      this._image = this._noFilterImage; // オリジナルに戻す
-      return;
-    }
-    const _element: HTMLImageElement | HTMLCanvasElement = this._noFilterImage
-      ._element;
-    const { width, height } = _element;
-    this._image = new enchant.Surface(width, height);
-    const context: CanvasRenderingContext2D = this._image.context;
-    context.filter = filter;
-    context.drawImage(_element, 0, 0);
+    errorRemoved('filter', this);
   }
 
-  public get parent() {
+  // TODO: 後方互換性について検討する
+  public get $parent() {
     return getMaster(this);
   }
 
@@ -1233,8 +1256,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this.しょうかんする(name, 0, 0);
   }
 
-  private static _initializedReference: RPGObject;
-  public transform(name: string) {
+  private しょうかんする: any;
+  private static _initializedReference: any;
+
+  // TODO: 後方互換性について検討する
+  public $transform(name: string) {
     const { _ruleInstance, _hp } = this;
     if (!_ruleInstance) return;
 
@@ -1244,7 +1270,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
     // 一部のパラメータを初期値に戻す
     for (const key of RPGObject.propNamesToInit) {
-      this[key] = RPGObject._initializedReference[key];
+      (this as any)[key] = RPGObject._initializedReference[key];
     }
 
     _ruleInstance.installAsset(name);
@@ -1265,7 +1291,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     let nearestObject: RPGObject | null = null;
     let nearestDistance = Infinity;
     for (const item of collection) {
-      if (!item.parentNode || !item.scene) continue; // マップ上に存在しないオブジェクトはのぞく
+      if (!item.parentNode) continue; // マップ上に存在しないオブジェクトはのぞく
       if (item.map !== this.map) continue; // 違うマップにいる場合はのぞく
       const dx = item.mapX - this.mapX;
       const dy = item.mapY - this.mapY;
@@ -1400,11 +1426,12 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       ].join(' ');
       log('error', message, this.name ? `modules/${this.name}.js` : 'Unknown');
 
-      // スキンの名前を間違えたことが分かるようにする
-      this.image = initSurface(32, 32, undefined, '#fff');
-      const context: CanvasRenderingContext2D = this.image.context;
+      // TODO: スキンの名前を間違えたことが分かるようにする
+      /*
       context.fillStyle = '#000';
       context.fillText(name, 0, 16, 32);
+      */
+      this.texture = Texture.WHITE;
       this.width = 32;
       this.height = 32;
     }
@@ -1579,18 +1606,19 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 }
 
 function makeHpLabel(self: RPGObject) {
-  const label = new (enchant as any).ui.ScoreLabel();
+  const label = new ScoreLabel();
   label.label = 'HP:';
-  label.opacity = 0;
-  self.parentNode.addChild(label);
+  label.alpha = 0;
+
+  self.parent.addChild(label);
   self.on('enterframe', () => {
-    if (self.parentNode && self.parentNode !== label.parentNode) {
+    if (self.parent && self.parent !== label.parent) {
       self.parentNode.addChild(label);
     }
     label.x = self.x;
     label.y = self.y;
-    const diff = 1.01 - label.opacity;
-    label.opacity = Math.max(0, label.opacity - diff / 10);
+    const diff = 1.01 - label.alpha;
+    label.alpha = Math.max(0, label.alpha - diff / 10);
   });
   return label;
 }

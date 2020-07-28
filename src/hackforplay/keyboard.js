@@ -1,12 +1,10 @@
 import enchant from '../enchantjs/enchant';
-import '../enchantjs/ui.enchant';
 import '../enchantjs/fix';
-import './rpg-kit-main';
 import game from './game';
-import { stringToArray } from './utils/string-utils';
-import { step, between } from './utils/math-utils';
-
+import './rpg-kit-main';
 import ButtonRenderer from './ui/button-renderer';
+import { between, step } from './utils/math-utils';
+import { stringToArray } from './utils/string-utils';
 
 class KeyRenderer extends ButtonRenderer {
   constructor(text, props) {

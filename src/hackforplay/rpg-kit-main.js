@@ -1,3 +1,5 @@
+import { Container } from 'pixi.js';
+import app from '../application';
 import enchant from '../enchantjs/enchant';
 import '../mod/stop';
 import BehaviorTypes from './behavior-types';
@@ -97,7 +99,8 @@ function createDefaultKeyboard() {
   // デフォルトのキーボード
   const keyboard = new Keyboard();
   Hack.keyboard = keyboard;
-  Hack.popupGroup.addChild(keyboard);
+  // TODO: keyboard を PixiJS に移植する
+  // Hack.popupGroup.addChild(keyboard);
 
   keyboard.registerKeys(
     [
@@ -240,15 +243,6 @@ game.onawake = () => {
   Hack.cameraGroup = cameraGroup;
   game.rootScene.addChild(cameraGroup);
 
-  // コントローラーグループ
-  const controllerGroup = new enchant.Group();
-  controllerGroup.name = 'ControllerGroup';
-  controllerGroup.order = 300;
-
-  Hack.controllerGroup = controllerGroup;
-
-  game.rootScene.addChild(controllerGroup);
-
   // マップ関連の親
   const world = new enchant.Group();
   world.name = 'World';
@@ -308,32 +302,14 @@ game.onawake = () => {
   game.rootScene.addChild(domGroup);
 
   // PopupGroup
-  const popupGroup = new enchant.Group();
+  const popupGroup = new Container();
   popupGroup.name = 'PopupGroup';
-  popupGroup.order = 1500;
+  popupGroup.zIndex = 1500;
   Hack.popupGroup = popupGroup;
-  game.rootScene.addChild(popupGroup);
+  app.stage.addChild(popupGroup);
 
   // デフォルトのキーボードを生成する
   createDefaultKeyboard();
-
-  const pad = new enchant.ui.Pad();
-  pad.moveTo(20, 200);
-
-  controllerGroup.addChild(pad);
-
-  Hack.pad = pad;
-
-  const apad = new enchant.Sprite(64, 64);
-  apad.image = game.assets['resources/hackforplay/attack.png'];
-  apad.buttonMode = 'a';
-  apad.moveTo(400, 250);
-
-  controllerGroup.addChild(apad);
-  Hack.apad = apad;
-
-  Hack.pad.name = 'Pad';
-  Hack.apad.name = 'APad';
 
   // Enchant book
   Hack.enchantBookIcon = Hack.createSprite(64, 64, {
@@ -371,14 +347,6 @@ game.onawake = () => {
 
   setAlias && setAlias('Hack', Hack);
   setAlias && setAlias('game', game);
-};
-
-RPGMap.Layer = {
-  Over: 4,
-  Player: 3,
-  Middle: 2,
-  Shadow: 1,
-  Under: 0
 };
 
 Hack.createMap = function (template) {

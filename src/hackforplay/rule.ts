@@ -389,13 +389,13 @@ export class Rule {
   }
 
   public unregisterRules(object: RPGObject) {
-    object.removeEventListener('becomeattack', this.onこうげきするとき);
-    object.removeEventListener('becomedead', this.onたおされたとき);
-    object.removeEventListener('addtrodden', this.onふまれたとき);
-    object.removeEventListener('removetrodden', this.onどかれたとき);
-    object.removeEventListener('triggerenter', this.onぶつかったとき);
-    object.removeEventListener('collided', this.onすすめなかったとき);
-    object.removeEventListener('attacked', this.onこうげきされたとき);
+    object.off('becomeattack', this.onこうげきするとき);
+    object.off('becomedead', this.onたおされたとき);
+    object.off('addtrodden', this.onふまれたとき);
+    object.off('removetrodden', this.onどかれたとき);
+    object.off('triggerenter', this.onぶつかったとき);
+    object.off('collided', this.onすすめなかったとき);
+    object.off('attacked', this.onこうげきされたとき);
     this.removeFromCollection(object);
     object.name = ''; // つねに() を終了させる
   }

@@ -1,85 +1,100 @@
-import * as enchant from '../../enchantjs/enchant';
+import { BaseTexture, Container, Rectangle, Sprite, Texture } from 'pixi.js';
 import { getHack } from '../get-hack';
-import { convertHankakuToZenkaku } from './textarea';
-import { fillTextWithBorders, getBorderWidth } from './fill-text-with-borders';
 
-/**
- * ui.enchant.js の MutableText のように使えるラベル
- * ただし PixelMplus フォントを使ってレンダリングする
- * 描画領域の最大幅 (width) の指定は実装していない
- * 外部からアクセスされることのないプロパティは実装しない
- * - widthItemNum:  ASCII コード１文字あたりの文字幅
- * - _imageAge:     省メモリ化のための内部変数
- * - row:           １行あたりに収められる文字数
- * -
- */
-export class MutableText extends enchant.Sprite {
-  static fontFamily = 'mplus, monospace';
+const Hack = getHack();
 
-  fontSize: number;
+export default class MutableText extends Container {
   private _text = '';
-  width = 0;
-  height = 0;
+  private _sprites: Sprite[] = [];
 
-  _cvsCache = undefined;
-  childNodes = undefined;
-  _stop = false;
+  public fontSize: number;
+  public widthItemNum: number;
+  public returnLength = 0;
+  public maxWidth = 480;
 
-  constructor(x?: number, y?: number) {
-    super(x, y);
+  private static _baseTexture = new BaseTexture(
+    Hack.basePath + 'resources/enchantjs/font0.png'
+  );
 
-    this.fontSize = 12;
-    this.x = x;
-    this.y = y;
+  public constructor() {
+    super();
+    this.fontSize = 16;
+    this.widthItemNum = 16;
+
+    this.text = '';
+    if (arguments[2]) {
+      this.row = Math.floor(arguments[2] / this.fontSize);
+    }
   }
 
-  setText(value: string) {
-    if (!getHack()?.disableZenkakuMode) {
-      value = convertHankakuToZenkaku(value);
+  public setText(text: string) {
+    const newSprites = Array.from(
+      { length: text.length - this._sprites.length },
+      () => new Sprite(Texture.EMPTY)
+    );
+
+    for (const sprite of newSprites) {
+      this.addChild(sprite);
     }
-    this._text = value;
-    const border = getBorderWidth(this.fontSize) + 1;
-    this.width = getWidth(value, this.fontSize) + border * 2;
-    this.height = this.fontSize + border * 2;
-    this.image = new enchant.Surface(this.width, this.height);
-    const context = this.image.context as CanvasRenderingContext2D;
-    if (context) {
-      fillTextWithBorders(
-        context,
-        this.fontSize,
-        'white',
-        'black',
-        value,
-        border,
-        this.fontSize
+
+    this._sprites.push(...newSprites);
+
+    for (let i = 0; i < this._sprites.length; i++) {
+      this._sprites[i].visible = text.length - 1 >= i;
+    }
+
+    this._text = text;
+    if (!this.returnLength) {
+      this.width = Math.min(this.fontSize * this._text.length, this.maxWidth);
+    } else {
+      this.width = Math.min(this.returnLength * this.fontSize, this.maxWidth);
+    }
+    this.height =
+      this.fontSize * (Math.ceil(this._text.length / this.row) || 1);
+
+    for (let i = 0; i < text.length; i++) {
+      const charCode = text.charCodeAt(i);
+      let charPos = 0;
+      if (charCode >= 32 && charCode <= 127) {
+        charPos = charCode - 32;
+      }
+      const x = charPos % this.widthItemNum;
+      const y = (charPos / this.widthItemNum) | 0;
+
+      const sprite = this._sprites[i];
+
+      sprite.texture = new Texture(
+        MutableText._baseTexture,
+        new Rectangle(
+          x * this.fontSize,
+          y * this.fontSize,
+          this.fontSize,
+          this.fontSize
+        )
+      );
+      sprite.width = this.fontSize;
+      this;
+      sprite.position.set(
+        (i % this.row) * this.fontSize,
+        ((i / this.row) | 0) * this.fontSize
       );
     }
   }
 
-  get text() {
+  public get text() {
     return this._text;
   }
-  set text(value) {
-    // setter で高負荷な処理をするアンチパターンを踏んでいたので
-    // 比較処理を追加した
-    if (value !== this._text) {
-      this.setText(value);
-    }
-  }
-}
 
-let ctx: CanvasRenderingContext2D;
-function getWidth(text: string, fontSize: number) {
-  ctx = ctx || document.createElement('canvas').getContext('2d');
-  if (!ctx) {
-    // 計算できないので等幅として扱う
-    return text.length * fontSize;
+  public set text(value: string) {
+    this.setText(value);
   }
-  ctx.font = `${fontSize}px ${MutableText.fontFamily}`;
-  const { width } = ctx.measureText(text);
-  if (width === 0 && text !== '') {
-    // 計算できないので等幅として扱う
-    return text.length * fontSize;
+
+  public get row() {
+    return this.returnLength || this.width / this.fontSize;
   }
-  return width;
+
+  public set row(row) {
+    this.returnLength = row;
+    this.text = this.text;
+  }
 }

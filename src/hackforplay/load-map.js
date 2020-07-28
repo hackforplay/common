@@ -23,7 +23,7 @@ export default async function loadMap(mapName, url) {
     const newMap = createCompatibleMap(scene, {}, () => {
       if (Hack.map && Hack.map.name === mapName) {
         // 今いるマップが上書きされた
-        const r = n => n.parentNode.removeChild(n);
+        const r = n => n.parent.removeChild(n);
         r(Hack.map.bmap);
         r(Hack.map.scene);
         r(Hack.map.fmap);
