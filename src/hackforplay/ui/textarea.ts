@@ -125,9 +125,7 @@ class TextArea extends SurfaceSprite {
 
     this.values = [];
 
-    this.on('prerender', () => {
-      this.render();
-    });
+    this.renderCanvas();
   }
 
   get w() {
@@ -238,7 +236,10 @@ class TextArea extends SurfaceSprite {
     const context = this.context;
     const source = this.document;
 
-    if (!source) return;
+    if (!source) {
+      this.renderCanvas();
+      return;
+    }
 
     source.style = Object.assign({}, this.defaultStyle);
 
@@ -488,12 +489,14 @@ class TextArea extends SurfaceSprite {
         this.maxHeight
       );
     }
+
+    this.renderCanvas();
   }
 
   renderBackground(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
   renderBorder(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
-  render() {
+  renderCanvas() {
     const context = this.context;
 
     function applyRenderStyles(textObject: any) {
@@ -566,7 +569,6 @@ class TextArea extends SurfaceSprite {
 
     this.renderBorder(context);
 
-    // TODO: 反映されないので調査する
     this.updateTexture();
   }
 }

@@ -26,8 +26,6 @@ export default class SurfaceSprite extends Sprite {
   }
 
   public updateTexture() {
-    // TODO: 反映されない場合があるので調査する
-    this.texture.baseTexture.update();
     this.texture.update();
   }
 }
