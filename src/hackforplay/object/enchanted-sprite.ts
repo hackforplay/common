@@ -5,6 +5,7 @@ export default class EnchantedSprite extends Sprite {
   private __frameSequence: any;
   private _originalFrameSequence: any;
   private _frame = 0;
+  private catchedEventListeners = new WeakMap<Function, Function>();
 
   public age = 0;
 
@@ -23,11 +24,24 @@ export default class EnchantedSprite extends Sprite {
   }
 
   public on(event: string, fn: Function, context?: any): this {
-    return super.on(event, catchAsyncError.call(this, event, fn), context);
+    const catchedEventListener = catchAsyncError.call(this, event, fn);
+    this.catchedEventListeners.set(fn, catchedEventListener);
+    return super.on(event, catchedEventListener, context);
   }
 
   public once(event: string, fn: Function, context?: any): this {
-    return super.once(event, catchAsyncError.call(this, event, fn), context);
+    const catchedEventListener = catchAsyncError.call(this, event, fn);
+    this.catchedEventListeners.set(fn, catchedEventListener);
+    return super.once(event, catchedEventListener, context);
+  }
+
+  public off(event: string, fn?: Function | undefined, context?: any): this {
+    if (fn) {
+      const targetFunction = fn;
+      fn = this.catchedEventListeners.get(targetFunction);
+      this.catchedEventListeners.delete(targetFunction);
+    }
+    return super.off(event, fn, context);
   }
 
   public emit(event: string | symbol, ...args: any[]): boolean {
