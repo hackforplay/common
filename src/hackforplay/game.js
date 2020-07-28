@@ -7,4 +7,5 @@ window.Map = _Map;
 
 // コアのインスタンスを生成
 const game = new enchant.Core(480, 320);
+game._element.style.display = 'none';
 export default game;
