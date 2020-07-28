@@ -544,7 +544,11 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     // TODO: 重そう
     const index = RPGObject.collection.indexOf(this.reverseProxy);
     RPGObject.collection.splice(index, 1);
-    super.destroy(options);
+
+    this.hpLabel?.destroy();
+    super.destroy.call(this.reverseProxy, options);
+    this.dispatchEvent('destroy');
+    this._ruleInstance?.unregisterRules(this.proxy);
   }
 
   /**
@@ -1057,20 +1061,23 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   }
 
   // TODO: enchant.Event を廃止する
-  public dispatchEvent(event: any) {
-    event.target = this;
+  public dispatchEvent(event: string | typeof enchant.Event) {
+    const name = typeof event === 'string' ? event : event.type;
+    const option = typeof event === 'string' ? {} : event;
+
+    option.target = this;
     // TODO: offset の実装
-    event.localX = event.x; // - this._offsetX;
-    event.localY = event.y; // - this._offsetY;
-    this.emit(event.type ?? event, event);
+    option.localX = event.x; // - this._offsetX;
+    option.localY = event.y; // - this._offsetY;
+    this.emit(name, event);
     // Synonym Event を発火
     const events = (_synonyms as any).events;
-    const synonym: any = (events as any)[event.type];
+    const synonym: any = (events as any)[name];
     if (synonym) {
-      const clone = Object.assign({}, event, {
+      const clone = Object.assign({}, option, {
         type: synonym
       });
-      this.emit(clone.type ?? clone, clone);
+      this.emit(synonym, clone);
     }
   }
 
