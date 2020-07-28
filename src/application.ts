@@ -12,6 +12,16 @@ app.stage.sortableChildren = true;
 const enchantStageEl = document.querySelector('#enchant-stage')!.parentElement!;
 enchantStageEl.insertBefore(app.view, enchantStageEl.firstChild);
 
+// リサイズ時にゲームの比率を調節
+window.addEventListener('resize', () => {
+  const scale = Math.min(
+    window.innerWidth / app.screen.width,
+    window.innerHeight / app.screen.height
+  );
+  app.view.style.width = app.screen.width * scale + 'px';
+  app.view.style.height = app.screen.height * scale + 'px';
+});
+
 function updateFrame(displayObject: PIXI.DisplayObject) {
   displayObject.emit('enterframe');
   // TODO: `displayObject instanceof RPGObject` を検討する
