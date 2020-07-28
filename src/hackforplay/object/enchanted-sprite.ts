@@ -45,8 +45,12 @@ export default class EnchantedSprite extends Sprite {
     }
   }
 
+  /**
+   * @deprecated
+   * enchant.js 特有の処理との互換性のため
+   */
   public get childNodes() {
-    return this.children;
+    return [];
   }
 
   protected get _opacity() {
@@ -96,9 +100,9 @@ export default class EnchantedSprite extends Sprite {
   }
 
   private _rotateFrameSequence() {
-    var frameSequence = this._frameSequence;
+    const frameSequence = this._frameSequence;
     if (frameSequence && frameSequence.length !== 0) {
-      var nextFrame = frameSequence.shift();
+      const nextFrame = frameSequence.shift();
       if (nextFrame === null) {
         this._frameSequence = null;
         this.emit('animationend');
@@ -123,7 +127,7 @@ export default class EnchantedSprite extends Sprite {
     if (frameArray.length !== this._originalFrameSequence.length) {
       return false;
     }
-    for (var i = 0; i < frameArray.length; ++i) {
+    for (let i = 0; i < frameArray.length; ++i) {
       if (frameArray[i] !== this._originalFrameSequence[i]) {
         return false;
       }

@@ -1,3 +1,4 @@
+import { getHack } from '../get-hack';
 import SurfaceSprite from '../surface-sprite';
 import { roundRect } from '../utils/canvas2d-utils';
 import { stringToArray } from '../utils/string-utils';
@@ -37,7 +38,7 @@ function parse(xml: string): Node {
     `<root>${xml
       .split('\n')
       .map(line => `<group>${line}</group>`)
-      .join('')}</root>`,
+      .join('\n')}</root>`,
     'application/xml'
   );
   const error = document.querySelector('parsererror');
@@ -181,6 +182,9 @@ class TextArea extends SurfaceSprite {
   }
 
   push(text: string) {
+    if (!getHack()?.disableZenkakuMode) {
+      text = convertHankakuToZenkaku(text);
+    }
     const lineFeed = this.source.length ? '\n' : '';
     this.source += `${lineFeed}${text}`;
     this.updateDocument();
@@ -568,3 +572,17 @@ class TextArea extends SurfaceSprite {
 }
 
 export default TextArea;
+
+const GAP = 'Ａ'.charCodeAt(0) - 'A'.charCodeAt(0); // 65248
+
+/**
+ * 半角のアルファベットを全角アルファベットに変換する
+ * 8bit フォントを見やすくするため
+ * 範囲について: https://codesandbox.io/s/keen-wu-0du1b
+ */
+export function convertHankakuToZenkaku(text: string) {
+  return text
+    .replace(/[!-~]/gm, s => String.fromCharCode(s.charCodeAt(0) + GAP))
+    .replace(' ', '　') // space を全角スペースにする
+    .replace('\u00A0', '　'); // nbsp を全角スペースにする
+}

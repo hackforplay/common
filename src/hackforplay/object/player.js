@@ -40,7 +40,7 @@ class Player extends RPGObject {
     // デフォルトのカメラを作成する
     if (!Camera.main) {
       const camera = new Camera();
-      camera.target = this;
+      camera.target = this.proxy; // https://bit.ly/39lHonB
       Camera.main = camera;
       Hack.camera = Hack.camera; // 後方互換性 (~0.11)
     }

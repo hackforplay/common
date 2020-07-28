@@ -12,7 +12,6 @@ import { KeyClass } from './key';
 import Keyboard from './keyboard';
 import { generateMapFromDefinition } from './load-maps';
 import './rpg-kit-color';
-import './rpg-kit-rpgobjects';
 import RPGMap from './rpg-map';
 import { errorRemoved, logToDeprecated } from './stdlog';
 import { dakuten, handakuten, stringToArray } from './utils/string-utils';
@@ -387,7 +386,8 @@ Hack.createMap = function (template) {
 
 Hack.changeMap = async function (mapName) {
   const current = Hack.map;
-  const next = await generateMapFromDefinition(mapName, true);
+  const next =
+    Hack.maps[mapName] || (await generateMapFromDefinition(mapName, true));
 
   if (current && current.parentNode) {
     current.parentNode.removeChild(current.bmap);
@@ -443,7 +443,10 @@ Hack.Attack = function (x, y, damage) {
         // ダメージ判定が起こる状態で,
         if (isOpposite(item, this)) {
           // 敵対している相手(もしくはその関係者)なら
-          item.damageTime = item.attackedDamageTime;
+          item.damageTime = Math.max(
+            0,
+            Math.ceil(item.attackedDamageTime * 30)
+          );
           item.hp -= damage;
         }
       }

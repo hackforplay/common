@@ -55,7 +55,7 @@ export function hasContract(item1: RPGObject, item2: RPGObject) {
  */
 export function isMaster(master: RPGObject, servant: RPGObject): boolean {
   // servant => master => master's master... を再帰的に調べる
-  const actualMaster = servantMasterMap.get(servant); // 直属のマスター
+  const actualMaster = servantMasterMap.get(servant.reverseProxy); // 直属のマスター
   // master が直属のマスターであるか, あるいは直属のマスターと契約関係にあるか
   return (
     actualMaster !== undefined &&
@@ -64,7 +64,7 @@ export function isMaster(master: RPGObject, servant: RPGObject): boolean {
 }
 
 export function getMaster(servant: RPGObject) {
-  return servantMasterMap.get(servant);
+  return servantMasterMap.get(servant.reverseProxy);
 }
 
 /**
@@ -74,7 +74,7 @@ export function getMaster(servant: RPGObject) {
  */
 export function registerServant(master: RPGObject, servant: RPGObject) {
   // [servant] => master の参照を記録する
-  servantMasterMap.set(servant, master);
+  servantMasterMap.set(servant.reverseProxy, master.reverseProxy);
   // master と同じファミリーに所属させる
   servant.family = master.family;
 }
@@ -85,8 +85,8 @@ export function registerServant(master: RPGObject, servant: RPGObject) {
  * @param {RPGObject} servant サーヴァントだったオブジェクト
  */
 export function unregisterServant(master: RPGObject, servant: RPGObject) {
-  if (servantMasterMap.get(servant) === master) {
+  if (servantMasterMap.get(servant.reverseProxy) === master) {
     // [servant] => master の参照を削除
-    servantMasterMap.delete(servant);
+    servantMasterMap.delete(servant.reverseProxy);
   }
 }

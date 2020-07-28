@@ -3,7 +3,9 @@ import { Texture } from 'pixi.js';
 import { default as enchant } from '../../enchantjs/enchant';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
+import { memo, objectsInDefaultMap } from '../cache';
 import { default as Camera } from '../camera';
+import { createDamageObject } from '../damage-update';
 import * as Dir from '../dir';
 import { Direction, turn } from '../direction';
 import {
@@ -26,13 +28,14 @@ import * as _synonyms from '../synonyms';
 import { synonyms } from '../synonyms/rpgobject';
 import {
   PropertyMissing,
-  proxyMap,
-  synonymizeClass
+  reverseSynonymize,
+  synonymize
 } from '../synonyms/synonymize';
 import talk from '../talk';
 import { showThinkSprite } from '../think';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import ScoreLabel from '../ui/score-label';
+import { observeArray } from '../utils/observe-array';
 import EnchantedSprite from './enchanted-sprite';
 import * as N from './numbers';
 
@@ -55,16 +58,17 @@ function startFrameCoroutine(
   });
 }
 
-const walkingObjects = new WeakSet<RPGObject>(); // https://bit.ly/2KqB1Gz
 const followingPlayerObjects = new WeakSet<RPGObject>();
 
 const opt = <T>(opt: T | undefined, def: T): T =>
   opt !== undefined ? opt : def;
 
+const uniqId = (i => () => ++i)(0);
+
 export default class RPGObject extends EnchantedSprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   private static _collectionTarget = [RPGObject];
-  public static collection: RPGObject[] = [];
+  public static collection = observeArray<RPGObject>([]); // Proxy でトラップする
   private static _collective = true;
   // へんしんするときに初期化するプロパティの設定
   private static readonly propNamesToInit = [
@@ -99,11 +103,18 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   public accelerationY = 0;
   public mass = 1;
   public damageTime = 0;
-  public attackedDamageTime = 30; // * 1/30sec
+  /**
+   * 攻撃されたときの無敵時間
+   * 0.36 までは [frame] (初期値は 30) だったが、 0.37 から [sec] (初期値は 1)になった
+   */
+  public attackedDamageTime = 1;
   public _debugColor = 'rgba(0, 0, 255, 0.5)';
   public showHpLabel = true; // デフォルトで表示
   public name = ''; // アセットの名前
   public collider?: any;
+  /**
+   * @deprecated
+   */
   public colliders?: any;
   public isAutoPickUp?: boolean;
   public pairedObject?: RPGObject; // 「rule.つくる」で直前(後)に作られたインスタンス
@@ -116,6 +127,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   public currentSkin?: ISkin; // 適用されているスキン
   public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
   public _preventFrameHits: RPGObject[] = []; // rpg-kit-rpgobjects.js で参照されるプロパティ
+  public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
+  public _cvsCache: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public then: undefined; // await されたときに then が参照される
   public directionType = 'single';
 
@@ -133,16 +146,23 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   private hpchangeFlag = false;
   private hpLabel?: ScoreLabel;
   private warpTarget?: RPGObject; // warpTo() で新しく作られたインスタンス
-  private _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
+  public _flyToward?: Vector2; // velocity を動的に決定するための暫定プロパティ (~0.11)
   private isBehaviorChanged = false;
   private _collideMapBoader?: boolean; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
+
+  /**
+   * オブジェクト同士の比較に使うためのユニークな識別子 #86
+   * 読み取り専用。暫定的に 1 以上の整数 (number) にしている
+   */
+  public readonly id: number;
 
   public constructor() {
     super();
 
     this.zIndex = RPGMap.Layer.Middle;
+    this.id = uniqId();
 
-    this.moveTo(game.width, game.height);
+    this.moveTo(game.width, game.height); // TODO: 大きいキャラクターが右下からはみ出すバグがある
 
     // Destroy when dead
     this.on('becomedead', () => {
@@ -182,7 +202,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     RPGObject.collection.push(this);
 
     // ツリーに追加
-    Hack.defaultParentNode?.addChild(this);
+    Hack.defaultParentNode?.addChild(this); // this は Proxy ではない
   }
 
   private n(type: string, operator: string, amount: number) {
@@ -283,7 +303,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   }
 
   public get isPlayer() {
-    return Boolean(Camera && Camera.main && Camera.main.target === this);
+    return Camera?.main?.target === this.proxy; // https://bit.ly/39lHonB
   }
 
   private getFrameLength() {
@@ -331,7 +351,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     );
   }
 
-  private updateCollider() {
+  public updateCollider() {
     this.collider.pos.x = this.x;
     this.collider.pos.y = this.y;
   }
@@ -353,9 +373,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     this.rotateIfNeeded();
   }
 
-  public get collisionFlag() {
-    if (this._collisionFlag !== undefined) return this._collisionFlag;
-    if (this.damage) return false; // ダメージオブジェクトは衝突処理がない
+  // https://bit.ly/2Zif1lt
+  private getDefaultCollisionFlag = memo(() => {
     const noCollisionEvents = [
       'addtrodden',
       'removetrodden',
@@ -370,6 +389,13 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
       }
     }
     return true;
+  }).bind(this);
+  public get collisionFlag() {
+    return this._collisionFlag !== undefined
+      ? this._collisionFlag
+      : this.damage
+      ? false // ダメージオブジェクトは衝突処理がない
+      : this.getDefaultCollisionFlag();
   }
 
   public set collisionFlag(value: boolean) {
@@ -485,12 +511,9 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
             }
           }
         }
-        map.scene.addChild(this);
+        map.scene.addChild(this.reverseProxy);
         // トリガーを発火
-        this._ruleInstance?.runOneObjectLisener(
-          'マップがかわったとき',
-          this.proxy
-        );
+        this._ruleInstance?.runOneObjectLisener('マップがかわったとき', this);
       }
     }
     if (ignoreTrodden) {
@@ -502,23 +525,33 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     }
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
-    walkingObjects.delete(this);
-    followingPlayerObjects.delete(this); // プレイヤーとはぐれた
+    this.behavior = BehaviorTypes.Idle; // https://bit.ly/38ID1SZ
+    followingPlayerObjects.delete(this.reverseProxy); // プレイヤーとはぐれた
   }
 
-  public destroy(options?: {
-    children?: boolean;
-    texture?: boolean;
-    baseTexture?: boolean;
-  }) {
+  public destroy(
+    options?:
+      | {
+          children?: boolean;
+          texture?: boolean;
+          baseTexture?: boolean;
+        }
+      | number
+  ) {
+    if (typeof options === 'number') {
+      throw new TypeError(''); // TODO: 歴史的な理由
+    }
     // TODO: 重そう
-    RPGObject.collection = RPGObject.collection.filter(
-      object => object !== this
-    );
+    const index = RPGObject.collection.indexOf(this.reverseProxy);
+    RPGObject.collection.splice(index, 1);
     super.destroy(options);
   }
 
-  public remove() {
+  /**
+   * @deprecated
+   * 後方互換性のため
+   */
+  private remove() {
     this.destroy();
   }
 
@@ -526,7 +559,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   public $destroy(delay = 0) {
     const _remove = () => {
       this.dispatchEvent(new enchant.Event('destroy')); // ondestroy event を発火
-      this.remove.call(this.proxy);
+      this.destroy();
       this.hpLabel?.destroy();
     };
     if (delay > 0) this.setTimeout(_remove.bind(this), delay);
@@ -592,33 +625,33 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     this.behavior = BehaviorTypes.Attack;
     const dx = this.mapX + this.forward.x;
     const dy = this.mapY + this.forward.y;
-    let damageObject: RPGObject | undefined;
+    const frameLength = this.getFrameLength();
 
     if (this.skill) {
       // アセットをしょうかんする
       this.summon(this.skill);
     } else {
       // ダメージを与えるオブジェクトを生成する
-      damageObject = new RPGObjectWithSynonym(); // eslint-disable-line
-      damageObject.damage = this.atk;
-      damageObject.collisionFlag = false;
-      registerServant(this, damageObject);
-      damageObject.collider = new SAT.Box(new SAT.V(0, 0), 8, 8).toPolygon();
-      damageObject.collider.setOffset(new SAT.V(12, 12));
-      if (this.map) {
-        damageObject.locate(dx, dy, this.map.name); // 同じ場所に配置する
-      } else {
-        damageObject.locate(dx, dy);
-      }
+      const position = new SAT.V(dx * 32, dy * 32);
+      const collider = new SAT.Box(position, 8, 8).toPolygon();
+      collider.setOffset(new SAT.V(12, 12));
+      createDamageObject({
+        attacker: this,
+        collider,
+        damage: this.atk,
+        item: this,
+        map: this.map,
+        onDamage() {},
+        until: game.frame + 3 // 少し経ってから消える(デバッグ用)
+      });
     }
 
     await new Promise(resolve => {
-      this.setTimeout(resolve, this.getFrameLength());
+      this.setTimeout(resolve, frameLength);
       this.on('destroy', resolve);
     });
 
     this.behavior = BehaviorTypes.Idle;
-    damageObject && damageObject.destroy();
   }
 
   public async walk(distance = 1, forward?: IVector2, setForward = true) {
@@ -634,11 +667,9 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     distance = Math.round(distance);
 
     // distance 回歩く
-    walkingObjects.add(this);
     for (let i = 0; i < distance; ++i) {
       await startFrameCoroutine(this, this.walkImpl(forward || this.forward));
     }
-    walkingObjects.delete(this); // delete する必要はないが, 意味的に一応しておく
   }
 
   public walkRight() {
@@ -676,8 +707,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
 
   private walkDestination?: IVector2;
   private *walkImpl(forward: IVector2) {
-    if (!this.map) return;
-    if (!walkingObjects.has(this)) return;
+    if (!this.map || this.behavior !== BehaviorTypes.Idle) return;
 
     // タイルのサイズ
     const tw = this.map.tileWidth;
@@ -701,13 +731,12 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
 
     // プレイヤーだけは例外的に仲間のいるマスをすり抜けられる
     const mayCollideItems = this.isPlayer
-      ? RPGObject.collection.filter(item => this.family !== item.family)
-      : [...RPGObject.collection];
+      ? objectsInDefaultMap().filter(item => this.family !== item.family)
+      : objectsInDefaultMap();
 
     // 歩く先にあるオブジェクト
     const hits = mayCollideItems.filter(obj => {
       return (
-        obj.map === Hack.map && // 今いるマップ
         obj.isKinematic &&
         obj.collisionFlag &&
         (obj.walkDestination
@@ -745,8 +774,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     this._collidedNodes = [];
 
     let baseSpeed = 12; // speed=1 の時にかかる frame
-    const walkAnim =
-      this.currentSkin && this.currentSkin.frame && this.currentSkin.frame.walk;
+    const walkAnim = this.currentSkin?.frame?.walk;
     if (walkAnim) {
       baseSpeed = decode(...walkAnim).length - 1;
     }
@@ -764,7 +792,9 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     this.walkDestination = new Vector2(nextMapX, nextMapY); // 歩行中にぶつからないようにする
     // startCoroutine の時点で 1frame 遅れていると考えて, 1 から始める
     for (let frame = 1; frame < requiredFrames; ++frame) {
-      if (!walkingObjects.has(this)) break;
+      if (this.behavior !== BehaviorTypes.Walk) {
+        break; // 移動中に locate された https://bit.ly/38ID1SZ
+      }
       const t = frame / requiredFrames;
       const x = beginX + t * (nextX - beginX);
       const y = beginY + t * (nextY - beginY);
@@ -780,8 +810,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     }
     this.walkDestination = undefined;
 
-    if (walkingObjects.has(this)) {
-      // 移動の誤差を修正
+    if (this.behavior === BehaviorTypes.Walk) {
+      // 移動の誤差を修正 https://bit.ly/38ID1SZ
       this.x = nextX;
       this.y = nextY;
       this.updateCollider(); // TODO: 動的プロパティ
@@ -1237,8 +1267,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     }
 
     _ruleInstance.installAsset(name);
-    _ruleInstance.unregisterRules(this.proxy);
-    _ruleInstance.registerRules(this.proxy, name);
+    _ruleInstance.unregisterRules(this);
+    _ruleInstance.registerRules(this, name);
     if (_hp !== undefined) {
       this.hp = _hp; // https://bit.ly/2P37rph
     }
@@ -1319,10 +1349,10 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
         : nameOrTarget;
     if (!item || !item.parentNode) return;
 
-    if (!followingPlayerObjects.has(this)) {
+    if (!followingPlayerObjects.has(this.reverseProxy)) {
       if (item.family === this.family && item.isPlayer) {
         // 追いかけている相手が仲間のプレイヤーであれば、参照を保持する
-        followingPlayerObjects.add(this);
+        followingPlayerObjects.add(this.reverseProxy);
       }
     }
 
@@ -1547,27 +1577,26 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   }
 
   /**
-   * https://github.com/hackforplay/common/issues/84
-   * enchant.js のイベントハンドラはコール時に this を bind してしまうため
-   * this が Proxy ではなく RPGObject になってしまう。
-   * それではコレクション配列に保持されているオブジェクトの参照と一致しないため
-   * 例えば remove() などのメソッドが動かなくなる。
-   * そこで、 Proxy を bind すべきメソッドをさらに bind するために、
-   * 元の参照から Proxy オブジェクトの参照を得る（WeakMap を使う）。
-   * ただし Proxy オブジェクトかどうかを判定する術はないので、
-   * 取得できなかったとしても、それを知ることは出来ない
+   * Synonymize された新しい Proxy オブジェクトの参照を返す
+   * あるいは前回の結果のキャッシュを返す
    */
   public get proxy(): RPGObject {
-    return proxyMap.get(this) || this;
+    return synonymize(this, synonyms, this[PropertyMissing]);
   }
 
-  public [PropertyMissing](chainedName: string) {
+  public [PropertyMissing] = ((chainedName: string) => {
     const message = `${this.name} の「${chainedName}」はないみたい`;
     log('error', message, '@hackforplay/common');
+  }).bind(this);
+
+  /**
+   * this が Proxy オブジェクトだった場合、元のインスタンスの参照を得る
+   * そうでなければ this をそのまま返す
+   */
+  public get reverseProxy(): RPGObject {
+    return reverseSynonymize(this);
   }
 }
-
-export const RPGObjectWithSynonym = synonymizeClass(RPGObject, synonyms);
 
 function makeHpLabel(self: RPGObject) {
   const label = new ScoreLabel();

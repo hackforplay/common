@@ -18,6 +18,7 @@
       "error",
       { "functions": false, "classes": false }
     ],
+    "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/interface-name-prefix": 0,
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": 0,

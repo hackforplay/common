@@ -730,4 +730,9 @@ Object.defineProperty(Hack, 'code', {
 
 Hack.emphasizeCode = emphasizeCode;
 
+/**
+ * talk などの半角=>全角切り替えを無効にするフラグ
+ */
+Hack.disableZenkakuMode = false;
+
 export default Hack;

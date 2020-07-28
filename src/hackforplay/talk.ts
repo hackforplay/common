@@ -1,11 +1,18 @@
 import TextArea from '../hackforplay/ui/textarea';
 import { getHack } from './get-hack';
 import Key from './key';
+import { langExports } from './lang';
 import SurfaceSprite from './surface-sprite';
 
 export interface IConfig {
-  text: Partial<TextArea>;
-  button: Partial<TextArea>;
+  text: Partial<TextArea> & {
+    width: number;
+    height: number;
+  };
+  button: Partial<TextArea> & {
+    width: number;
+    height: number;
+  };
   cursor: {
     size: number;
     offsetX: number;
@@ -29,8 +36,8 @@ export const config: IConfig = {
     defaultStyle: {
       color: '#fff',
       size: '18',
-      family: 'PixelMplus, sans-serif',
-      weight: 'bold',
+      family: 'mplus, sans-serif',
+      weight: '',
       align: 'center',
       lineSpace: 5,
       space: 0,
@@ -50,8 +57,8 @@ export const config: IConfig = {
     defaultStyle: {
       color: '#fff',
       size: '16',
-      family: 'PixelMplus, sans-serif',
-      weight: 'bold',
+      family: 'mplus, sans-serif',
+      weight: '',
       align: 'center',
       lineSpace: 0,
       space: 0,
@@ -77,7 +84,7 @@ export interface ITalkInfo {
 const talkStack: ITalkInfo[] = [];
 
 // テキストエリアを生成
-const textArea = new TextArea(config.text.width!, config.text.height!);
+const textArea = new TextArea(config.text.width, config.text.height);
 Object.assign(textArea, config.text);
 
 // 外から参照したいので出してみる
@@ -112,7 +119,7 @@ export default function talk(text: string, ...choices: string[]) {
     talkStack.unshift(talkInfo); // talkStack配列の一番前に追加
     // 選択肢のボタンを作成
     if (choices.length === 0) {
-      choices.push('とじる'); // 選択肢のテキスト表示
+      choices.push(langExports.lang === 'ja' ? 'とじる' : 'Close'); // 選択肢のテキスト表示
     }
     showNextIfExist();
   }).then(choise => {
@@ -140,7 +147,7 @@ Key.up.release(() => {
   if (!current) return;
   if (current.cursor > 0) {
     current.cursor--;
-    cursor.y -= config.button.height!;
+    cursor.y -= config.button.height;
   }
 });
 
@@ -150,7 +157,7 @@ Key.down.release(() => {
   if (!current) return;
   if (current.cursor < current.choices.length - 1) {
     current.cursor++;
-    cursor.y += config.button.height!;
+    cursor.y += config.button.height;
   }
 });
 
@@ -176,7 +183,7 @@ function showNextIfExist() {
     textArea.y = 320 - textArea.height;
     // ボタンを生成
     for (const [index, choice] of current.choices.entries()) {
-      const button = new TextArea(config.button.width!, config.button.height!);
+      const button = new TextArea(config.button.width, config.button.height);
       Object.assign(button, config.button);
       Hack.popupGroup.addChild(button); // メニューにaddChild
       button.y =

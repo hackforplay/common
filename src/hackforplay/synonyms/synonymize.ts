@@ -1,4 +1,3 @@
-import { Container } from 'pixi.js';
 import { FunctionValue, PrimitiveValue } from '../../definition';
 
 type Key = string | number | symbol;
@@ -42,8 +41,14 @@ class Class {
   [PropertyMissing]: (chainedName: string) => void;
 }
 
-export const proxyMap = new Map<any, any>();
+const targetProxyCache = new WeakMap<any, any>();
+const reverseProxyCache = new WeakMap<any, any>();
 
+/**
+ * @deprecated
+ * パフォーマンスに問題があった (現在は修正済み)
+ * https://bit.ly/3icN2MG
+ */
 export function synonymizeClass<T extends typeof Class>(
   targetClass: T,
   synonyms: ISynonyms
@@ -52,40 +57,7 @@ export function synonymizeClass<T extends typeof Class>(
     construct(target, argArray) {
       const instance = new target(...argArray);
       const callback = instance[PropertyMissing].bind(instance);
-      const proxied = synonymize(instance, synonyms, callback);
-
-      // enchant.js の collection に介入する #68
-      if (Array.isArray(target.collection)) {
-        const index = target.collection.indexOf(instance);
-        if (index > -1) {
-          target.collection.splice(index, 1, proxied);
-        }
-      }
-
-      // enchant.js の parentNode を付け替える
-      const p = (instance as any).parentNode;
-
-      // TODO: PixiJS に移行したら削除する
-      if (p && !(p instanceof Container)) {
-        const index = p.childNodes.indexOf(instance);
-        if (index > -1) {
-          p.childNodes.splice(index, 1, proxied);
-        } else {
-          p.childNodes.push(proxied);
-        }
-      }
-
-      if (p && p instanceof Container) {
-        const index = p.children.indexOf(instance as any);
-        if (index > -1) {
-          p.children[index] = proxied as any;
-        }
-      }
-
-      // 元のオブジェクトから Proxy の参照を得るための苦肉の策
-      proxyMap.set(instance, proxied);
-
-      return proxied;
+      return synonymize(instance, synonyms, callback);
     }
   });
 }
@@ -104,9 +76,18 @@ function createProxy<T extends object>(
   propertyMissing: Class[typeof PropertyMissing],
   props: Key[] = []
 ): T {
-  return new Proxy(proxyTarget, {
+  // 既に作られているかチェックする
+  const cache = targetProxyCache.get(proxyTarget);
+  if (cache) {
+    return cache;
+  }
+  if (reverseProxyCache.has(proxyTarget)) {
+    return proxyTarget;
+  }
+
+  const proxied = new Proxy(proxyTarget, {
     get(target: any, p, receiver) {
-      const allProps = props.concat(p);
+      (window as any)._walkImplTime++;
       if (p in target) {
         const value = Reflect.get(target, p, receiver); // ユーザーが作った getter の中でもシノニムが使えるようにするため
         return value; // TODO: ISynonym は階層構造を持つ
@@ -118,6 +99,7 @@ function createProxy<T extends object>(
           return value; // TODO: ISynonym は階層構造を持つ
         }
       }
+      const allProps = props.concat(p);
       propertyMissing && propertyMissing(toString(allProps));
       return undefined;
     },
@@ -142,4 +124,21 @@ function createProxy<T extends object>(
       return true;
     }
   });
+
+  // この WeakMap からいつでも Proxy オブジェクトにアクセスできる
+  targetProxyCache.set(proxyTarget, proxied);
+
+  // この WeakMap で Proxy オブジェクトから元のオブジェクトを取得できる
+  reverseProxyCache.set(proxied, proxyTarget);
+
+  return proxied;
+}
+
+/**
+ * Synonymize されているかも知れないオブジェクトから
+ * 元のオブジェクトを得る。失敗した場合は自分自身を返す
+ */
+export function reverseSynonymize<T>(proxied: T): T {
+  const proxyTarget = reverseProxyCache.get(proxied);
+  return proxyTarget !== undefined ? proxyTarget : proxied;
 }

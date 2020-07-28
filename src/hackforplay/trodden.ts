@@ -1,15 +1,13 @@
 import { default as enchant } from '../enchantjs/enchant';
 import SAT from '../lib/sat.min';
 import BehaviorTypes from './behavior-types';
+import { objectsInDefaultMap } from './cache';
 import game from './game';
-import { getHack } from './get-hack';
 import RPGObject from './object/object';
-
-const Hack = getHack();
 
 game.on('enterframe', trodden);
 
-const walkingRPGObjects = new WeakSet<RPGObject>();
+const walkingRPGObjectIds = new Set<number>();
 const targetItemSetMap = new WeakMap<RPGObject, Set<RPGObject>>();
 
 /**
@@ -20,13 +18,14 @@ const targetItemSetMap = new WeakMap<RPGObject, Set<RPGObject>>();
  * NOTICE: "removetrodden" イベント中に locate で移動すると, うまく移動できない
  */
 export default function trodden() {
-  const collection = [...RPGObject.collection].filter(
-    item => item.map === Hack.map
-  );
+  const collection = objectsInDefaultMap();
 
   // 2
   for (const item of collection) {
-    if (walkingRPGObjects.has(item) && item.behavior === BehaviorTypes.Idle) {
+    if (
+      walkingRPGObjectIds.has(item.id) &&
+      item.behavior === BehaviorTypes.Idle
+    ) {
       // 1. 歩き終わったタイミングをフックする
       const targets = collection.filter(target => isTrodden(target, item));
       for (const target of targets) {
@@ -39,7 +38,7 @@ export default function trodden() {
           itemSet.add(item);
         }
       }
-      walkingRPGObjects.delete(item);
+      walkingRPGObjectIds.delete(item.id);
     }
   }
 
@@ -70,14 +69,15 @@ export default function trodden() {
 function isTrodden(target: RPGObject, item: RPGObject) {
   if (
     target === item ||
-    !RPGObject.collection.includes(target) ||
-    !RPGObject.collection.includes(item)
+    target.map !== item.map ||
+    !target.parentNode ||
+    !item.parentNode
   ) {
     return false;
   }
-  const colliders: any[] = target.colliders || [target.collider];
+  const collider = target.collider || target.colliders?.[0];
   const p = new SAT.Vector(item.center.x, item.center.y);
-  return colliders.some(poly => SAT.pointInPolygon(p, poly));
+  return collider && SAT.pointInPolygon(p, collider);
 }
 
 /**
@@ -101,9 +101,9 @@ export function unregister() {
  * @param item 歩き始めたオブジェクト
  */
 export function registerWalkingObject(item: RPGObject) {
-  walkingRPGObjects.add(item);
+  walkingRPGObjectIds.add(item.id);
 }
 
 export function unregisterWalkingObject(item: RPGObject) {
-  walkingRPGObjects.delete(item);
+  walkingRPGObjectIds.delete(item.id);
 }
