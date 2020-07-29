@@ -128,6 +128,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public _cvsCache: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public then: undefined; // await されたときに then が参照される
+  public frozen = false; // 動きを止めるプロパティ
 
   private _hp?: number;
   private _atk?: number;
@@ -588,6 +589,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public async attack() {
+    if (this.frozen) return;
     if (this.behavior !== BehaviorTypes.Idle || !Hack.isPlaying) return;
     if (!this.parentNode) return; // fix: https://bit.ly/37739X3
     this.behavior = BehaviorTypes.Attack;
@@ -623,6 +625,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public async walk(distance = 1, forward?: IVector2, setForward = true) {
+    if (this.frozen) return;
     if (!Hack.isPlaying) return;
     if (!this.isKinematic) return;
     if (this.behavior !== BehaviorTypes.Idle) return;
@@ -675,6 +678,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   private walkDestination?: IVector2;
   private *walkImpl(forward: IVector2) {
+    if (this.frozen) return;
     if (!this.map || this.behavior !== BehaviorTypes.Idle) return;
 
     // タイルのサイズ
@@ -984,6 +988,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       : Vector2.Down; // default
   }
   public set forward(value: any) {
+    if (this.frozen) return;
     const unit = Vector2.from(value).unit();
     this.direction =
       unit.y > 0
@@ -1006,6 +1011,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this._direction;
   }
   public set direction(value) {
+    if (this.frozen) return;
     this._direction = value;
     this.computeFrame();
   }
@@ -1015,6 +1021,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   public turn(dir: Dir.IDir | Direction): void {
+    if (this.frozen) return;
     if (typeof dir === 'function') {
       // 後方互換性のため
       this.forward = dir(this);
@@ -1283,6 +1290,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param target 相手キャラクターの変数または名前
    */
   public faceTo(target: RPGObject | string) {
+    if (this.frozen) return;
     const item =
       typeof target === 'string' ? this.getNearestByName(target) : target;
 
@@ -1300,6 +1308,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   private chaseSameMap(item: RPGObject, unit8: boolean) {
+    if (this.frozen) return;
     if (this.map !== item.map) return; // 違うマップなら追わない
     const dx = item.mapX - this.mapX;
     const dy = item.mapY - this.mapY;
@@ -1324,6 +1333,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    * @param {String} nameOrTarget
    */
   public async chase(nameOrTarget: string | RPGObject, unit8 = false) {
+    if (this.frozen) return;
     const item =
       typeof nameOrTarget === 'string'
         ? this.getNearestByName(nameOrTarget)
@@ -1359,6 +1369,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     unit8 = false,
     prioritizeX = false
   ) {
+    if (this.frozen) return;
     movements = movements.filter(vec => vec.x !== 0 || vec.y !== 0);
     // 優先されている方の差が大きい順
     movements.sort((a, b) =>
@@ -1421,6 +1432,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }).bind(this);
 
   public flyToward(target?: RPGObject | string) {
+    if (this.frozen) return;
     const { _ruleInstance } = this;
     if (!_ruleInstance) return;
     const targetObject =
