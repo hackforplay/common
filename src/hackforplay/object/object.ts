@@ -659,7 +659,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     for (const item of RPGObject.collection) {
       if (
         item.collisionFlag &&
-        this !== item &&
         this.map === item.map &&
         x === item.mapX &&
         y === item.mapY
