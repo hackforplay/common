@@ -1473,7 +1473,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const foundable = RPGObject.collection
       .filter(
         item =>
-          item !== this &&
+          item.id !== this.id &&
           item.map === this.map && // 同じマップにいる場合のみ見つけられる
           rangeOfView.left <= item.mapX &&
           item.mapX <= rangeOfView.right &&
