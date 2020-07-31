@@ -516,6 +516,9 @@ export class Rule {
   public mapChanged(func: OneObjectListener) {
     this.addOneObjectLisener('マップがかわったとき', func);
   }
+  public walked(func: OneObjectListener) {
+    this.addOneObjectLisener('あるいたとき', func);
+  }
   public trodden(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
   }

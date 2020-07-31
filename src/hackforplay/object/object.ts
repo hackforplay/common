@@ -791,6 +791,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.dispatchEvent(new enchant.Event('walkmove'));
     this.dispatchEvent(new enchant.Event('walkend'));
 
+    this._ruleInstance?.runOneObjectLisener('あるいたとき', this); // TOOD: フレームの最後に実行する
+
     this.behavior = BehaviorTypes.Idle;
   }
 
