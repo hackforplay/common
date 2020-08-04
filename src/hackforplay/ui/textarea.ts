@@ -125,7 +125,7 @@ class TextArea extends SurfaceSprite {
 
     this.values = [];
 
-    this.renderCanvas();
+    this.draw();
   }
 
   public get w() {
@@ -237,7 +237,7 @@ class TextArea extends SurfaceSprite {
     const source = this.document;
 
     if (!source) {
-      this.renderCanvas();
+      this.draw();
       return;
     }
 
@@ -490,13 +490,16 @@ class TextArea extends SurfaceSprite {
       );
     }
 
-    this.renderCanvas();
+    this.draw();
   }
 
   public renderBackground(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
   public renderBorder(context: any) {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
-  private renderCanvas() {
+  /**
+   * 描画処理
+   */
+  private draw() {
     const context = this.context;
 
     function applyRenderStyles(textObject: any) {
