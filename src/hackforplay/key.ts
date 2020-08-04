@@ -1,6 +1,8 @@
-import enchant from '../enchantjs/enchant';
-import game from './game';
+import { utils } from 'pixi.js';
+import application from '../application';
 import { keys } from './type-guards';
+
+// TODO: KeyboardEvent.keyCode が非推奨なので対応する
 
 /*
 
@@ -82,7 +84,6 @@ interface IKeyClassListener<ThisArg> {
 }
 
 export interface IKeyClass {
-  new (): IKeyClass; // eslint-disable-line
   name: string;
   count: number;
   readonly clicked: boolean;
@@ -166,42 +167,29 @@ const keyCode = {
   esc: 243
 };
 
-keys(keyCode)
-  .map(function (key) {
-    return keyCode[key];
-  })
-  .forEach(function (value) {
-    game.keybind(value, value);
-  });
+class KeyClass extends utils.EventEmitter implements IKeyClass {
+  public name: string;
+  public count: number;
 
-const KeyClass: IKeyClass = enchant.Class.create({
-  initialize: function () {
-    this.listeners = [];
-  },
+  public constructor() {
+    super();
+    this.name = '';
+    this.count = 0;
+  }
 
-  name: '',
+  public get clicked() {
+    return this.count === 1;
+  }
 
-  count: 0,
+  public get pressed() {
+    return this.count > 0;
+  }
 
-  clicked: {
-    get: function (this: IKeyClass) {
-      return this.count === 1;
-    }
-  },
+  public get released() {
+    return this.count <= 0;
+  }
 
-  pressed: {
-    get: function (this: IKeyClass) {
-      return this.count > 0;
-    }
-  },
-
-  released: {
-    get: function (this: IKeyClass) {
-      return this.count <= 0;
-    }
-  },
-
-  update: function (input: any) {
+  public update(input: any) {
     // 前フレームの状態を保持する
     const pressed = this.pressed;
     const released = this.released;
@@ -209,68 +197,34 @@ const KeyClass: IKeyClass = enchant.Class.create({
     this.count = input ? this.count + 1 : 0;
     // press, release, observe を呼び出す
     if (pressed && this.released) {
-      this.dispatch('release');
+      this.emit('release');
     }
     if (released && this.pressed) {
-      this.dispatch('press');
+      this.emit('press');
     }
-    this.dispatch('observe');
-  },
+    this.emit('observe');
+  }
 
-  dispatch: function (type: any) {
-    this.listeners
-      .filter(function (listener: any) {
-        return listener.type === type;
-      })
-      .forEach(function (this: any, listener: any) {
-        const thisArg =
-          listener.thisArg === undefined ? this : listener.thisArg;
-        listener.listener.call(thisArg, this);
-        if (listener.once) {
-          const index = this.listeners.indexOf(listener);
-          if (index > -1) this.listeners.splice(index, 1);
-        }
-      }, this);
-  },
-
-  on: function (type: any, event: any, thisArg: any) {
-    this.listeners.push({
-      type: type,
-      listener: event,
-      thisArg: thisArg,
-      once: false
-    });
-  },
-
-  once: function (type: any, event: any, thisArg: any) {
-    this.listeners.push({
-      type: type,
-      listener: event,
-      thisArg: thisArg,
-      once: true
-    });
-  },
-
-  press: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
+  public press<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('press', listener, thisArg);
-  },
+  }
 
-  release: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
-    this.on('release', listener, thisArg);
-  },
-
-  observe: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
-    this.on('observe', listener, thisArg);
-  },
-
-  pressOnce: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
-    this.on('press', listener, thisArg);
-  },
-
-  releaseOnce: function <T>(listener: IKeyClassListener<T>, thisArg: any) {
+  public release<T>(listener: IKeyClassListener<T>, thisArg: any) {
     this.on('release', listener, thisArg);
   }
-} as any);
+
+  public observe<T>(listener: IKeyClassListener<T>, thisArg: any) {
+    this.on('observe', listener, thisArg);
+  }
+
+  public pressOnce<T>(listener: IKeyClassListener<T>, thisArg: any) {
+    this.on('press', listener, thisArg);
+  }
+
+  public releaseOnce<T>(listener: IKeyClassListener<T>, thisArg: any) {
+    this.on('release', listener, thisArg);
+  }
+}
 
 keys(keyCode).forEach(function (key) {
   Key[key] = new KeyClass();
@@ -285,16 +239,31 @@ const alias: { [key: string]: string } = {
   right: 'right'
 };
 
-game.on('enterframe', function () {
+const inputStatus = new Map<number | string, boolean>();
+
+window.addEventListener(
+  'keydown',
+  ({ keyCode }) => {
+    inputStatus.set(keyCode, true);
+  },
+  true
+);
+window.addEventListener(
+  'keyup',
+  ({ keyCode }) => {
+    inputStatus.set(keyCode, false);
+  },
+  true
+);
+
+application.stage.on('enterframe', () => {
   keys(keyCode).forEach(function (key) {
-    let input = game.input[keyCode[key]];
+    let input = inputStatus.get(keyCode[key]);
 
     // ui.enchant.js などの対策
     if (key in alias) {
-      input = input || game.input[alias[key]];
+      input = input || inputStatus.get(alias[key]);
     }
-
-    // console.log(key);
 
     Key[key].update(input);
   });
