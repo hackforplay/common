@@ -538,6 +538,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
         }
       | number
   ) {
+    if (this._destroyed) return;
+
     if (typeof options === 'number') {
       throw new TypeError(''); // TODO: 歴史的な理由
     }
