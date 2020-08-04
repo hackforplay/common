@@ -11,7 +11,7 @@ const Hack = getHack();
 Hack.overlay = overlay;
 
 // overlay
-function overlay(...args: any[]) {
+export function overlay(...args: any[]) {
   const { width, height } = app.view;
 
   const sprite = new SurfaceSprite(width, height);

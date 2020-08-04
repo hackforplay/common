@@ -1,13 +1,25 @@
-import { between } from '../utils/math-utils';
+import { utils } from 'pixi.js';
+import { getHack } from '../get-hack';
 import { roundRect } from '../utils/canvas2d-utils';
-import { Event, EventTarget } from '../../enchantjs/enchant';
+import { between } from '../utils/math-utils';
+
+const Hack = getHack();
 
 /**
  * Canvas にボタンをレンダリングするクラス
- * @extends EventTarget
  */
-export default class ButtonRenderer extends EventTarget {
-  constructor(text, { x, y, w, h }) {
+export default class ButtonRenderer extends utils.EventEmitter {
+  public text: string;
+  public x: number;
+  public y: number;
+  public w: number;
+  public h: number;
+  public interactable: boolean;
+
+  public constructor(
+    text: string,
+    { x, y, w, h }: { x: number; y: number; w: number; h: number }
+  ) {
     super();
     this.text = text;
     this.x = x;
@@ -18,36 +30,32 @@ export default class ButtonRenderer extends EventTarget {
     this.interactable = true;
   }
 
-  isHover(x, y, context) {
+  public isHover(x: number, y: number, context: CanvasRenderingContext2D) {
     if (!this.interactable) return false;
 
     // 画面上の x, y 座標
-    const screenX = this.x + context.currentTransform.e;
-    const screenY = this.y + context.currentTransform.f;
+    const screenX = this.x + context.getTransform().e;
+    const screenY = this.y + context.getTransform().f;
+
     // x, y が範囲内に入っているか
     return (
-      between(Hack.mouseX, screenX, screenX + this.w) &&
-      between(Hack.mouseY, screenY, screenY + this.h)
+      between(x, screenX, screenX + this.w) &&
+      between(y, screenY, screenY + this.h)
     );
   }
 
-  update(context) {
+  public update(context: CanvasRenderingContext2D) {
     if (!this.interactable) return;
 
-    if (Hack.mouseInput.press) {
-      this._isTouch = this.isHover(Hack.mouseX, Hack.mouseY, context);
-    }
     if (
-      Hack.mouseInput.release &&
-      this._isTouch &&
+      Hack.mouseInput.clicked &&
       this.isHover(Hack.mouseX, Hack.mouseY, context)
     ) {
-      this._isTouch = false;
-      this.dispatchEvent(new Event('click'));
+      this.emit('click');
     }
   }
 
-  render(context, props) {
+  public render(context: CanvasRenderingContext2D, props: any) {
     this.update(context);
 
     props = Object.assign(

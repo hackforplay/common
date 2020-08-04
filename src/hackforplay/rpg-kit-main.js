@@ -99,8 +99,7 @@ function createDefaultKeyboard() {
   // デフォルトのキーボード
   const keyboard = new Keyboard();
   Hack.keyboard = keyboard;
-  // TODO: keyboard を PixiJS に移植する
-  // Hack.popupGroup.addChild(keyboard);
+  Hack.popupGroup.addChild(keyboard);
 
   keyboard.registerKeys(
     [
