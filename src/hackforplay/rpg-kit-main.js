@@ -8,9 +8,9 @@ import { isOpposite } from './family';
 import { connected, setAlias } from './feeles';
 import game from './game';
 import { getHack } from './get-hack';
-import { KeyClass } from './key';
 import Keyboard from './keyboard';
 import { generateMapFromDefinition } from './load-maps';
+import './mouse';
 import './rpg-kit-color';
 import RPGMap from './rpg-map';
 import { errorRemoved, logToDeprecated } from './stdlog';
@@ -206,34 +206,6 @@ game.onawake = () => {
   if (_initialized) return;
   _initialized = true;
   game.onawake = () => {};
-  // マウス座標
-  let mouseX = null;
-  let mouseY = null;
-  // 正規化されたマウス座標
-  let normalizedMouseX = null;
-  let normalizedMouseY = null;
-
-  game._element.onmousemove = function ({ x, y }) {
-    const rect = this.getBoundingClientRect();
-    mouseX = x;
-    mouseY = y;
-    normalizedMouseX = x / rect.width;
-    normalizedMouseY = y / rect.height;
-  };
-
-  Object.defineProperties(Hack, {
-    mouseX: { get: () => mouseX },
-    mouseY: { get: () => mouseY },
-    normalizedMouseX: { get: () => normalizedMouseX },
-    normalizedMouseY: { get: () => normalizedMouseY }
-  });
-
-  // マウスの入力状態
-  Hack.mouseInput = new KeyClass();
-  let mousePressed = false;
-  game.rootScene.on('touchstart', () => (mousePressed = true));
-  game.rootScene.on('touchend', () => (mousePressed = false));
-  game.on('enterframe', () => Hack.mouseInput.update(mousePressed));
 
   // カメラグループ
   const cameraGroup = new enchant.Group();
