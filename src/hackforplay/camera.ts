@@ -377,6 +377,15 @@ class Camera extends enchant.Sprite {
       label.destroy();
     }
   }
+
+  public contains(x: number, y: number) {
+    return (
+      this.x <= x &&
+      this.x + this.width >= x &&
+      this.y <= y &&
+      this.y + this.height >= y
+    );
+  }
 }
 
 // カメラを並べる

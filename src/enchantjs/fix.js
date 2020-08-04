@@ -29,15 +29,6 @@ enchant.Event.prototype.initialize = function $initialize(name, props) {
   }
 };
 
-enchant.Node.prototype.contains = function contains(x, y) {
-  return (
-    this.x <= x &&
-    this.x + this.width >= x &&
-    this.y <= y &&
-    this.y + this.height >= y
-  );
-};
-
 enchant.Node.prototype.name = 'Node';
 
 // Node#order を追加
