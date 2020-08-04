@@ -286,11 +286,11 @@ game.onawake = () => {
     }
   });
 
-  const overlayGroup = new enchant.Group();
+  const overlayGroup = new Container();
   overlayGroup.name = 'OverlayGroup';
-  overlayGroup.order = 1000;
+  overlayGroup.zIndex = 1000;
   Hack.overlayGroup = overlayGroup;
-  game.rootScene.addChild(overlayGroup);
+  app.stage.addChild(overlayGroup);
 
   // DOMGroup
   const domGroup = new enchant.Group();
