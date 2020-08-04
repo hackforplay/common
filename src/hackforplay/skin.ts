@@ -1,9 +1,9 @@
 import { load, OutputV1 } from '@hackforplay/skins';
-import { BaseTexture, Texture } from 'pixi.js';
-import { default as enchant } from '../enchantjs/enchant';
+import { Texture } from 'pixi.js';
 import { default as SAT } from '../lib/sat.min';
 import { fetchDataURL } from './feeles';
 import RPGObject from './object/object';
+import SurfaceSprite from './surface-sprite';
 
 const preload = load();
 
@@ -12,7 +12,7 @@ const preload = load();
  */
 export interface ISkin extends OutputV1 {
   name: string;
-  surface: Texture;
+  texture: Texture;
 }
 
 export type SkinCachedItem = Promise<(object: RPGObject) => void>;
@@ -47,7 +47,7 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   object.x += skin.sprite.x - object.offset.x;
   object.y += skin.sprite.y - object.offset.y;
   // パラメータのセット
-  object.texture = skin.surface;
+  object.texture = skin.texture;
 
   object.width = skin.sprite.width;
   object.height = skin.sprite.height;
@@ -102,13 +102,13 @@ export async function getSkin(
       throw new Error(`Not found: '${name}'`);
     }
     // まず単一色の画像を生成し、それから画像をロードする
-    const surface = initSurface(
+    const texture = initSurface(
       item.sprite.width * item.column,
       item.sprite.height * item.row,
       definition.endpoint + item.imageUri
     );
     // V0 では JSON のロードを待っていたが、V1 では preload してあるので即時コール
-    return dress({ ...item, name, surface });
+    return dress({ ...item, name, texture });
   });
   return (_cache[name] = _promise);
 }
@@ -126,12 +126,7 @@ export function initSurface(
   src?: string,
   color = 'rgba(0,0,0,0.5)' // ロード中は半透明の黒になっている
 ): Texture {
-  // TODO: 読み込み中の色を実装する
-  if (src) {
-    return new Texture(BaseTexture.from(src));
-  }
-
-  const surface = new enchant.Surface(width, height);
+  const surface = new SurfaceSprite(width, height);
   const context: CanvasRenderingContext2D = surface.context;
 
   context.fillStyle = color;
@@ -140,12 +135,14 @@ export function initSurface(
     // エラー時は真っ赤になる
     context.fillStyle = '#ff0000';
     context.fillRect(0, 0, width, height);
+    surface.updateTexture();
   };
 
   const img = new Image(width, height);
   img.onload = () => {
     context.clearRect(0, 0, width, height);
     context.drawImage(img, 0, 0);
+    surface.updateTexture();
   };
   img.onerror = handleError;
   src &&
@@ -155,5 +152,5 @@ export function initSurface(
       })
       .catch(handleError);
 
-  return Texture.from(surface._element);
+  return surface.texture;
 }
