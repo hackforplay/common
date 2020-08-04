@@ -76,16 +76,6 @@ enchant.Group.prototype.sortChildren = function sortChildren() {
   }
 };
 
-/**
- * タイムラインの再生終了まで待機する
- * @return {Promise} Promise
- */
-enchant.Timeline.prototype.async = function async() {
-  return new Promise(resolve => {
-    this.then(resolve);
-  });
-};
-
 enchant.Event.RESIZE = 'resize';
 enchant.Event.RENDERED = 'rendered';
 
