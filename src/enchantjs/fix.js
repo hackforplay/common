@@ -6,18 +6,6 @@ if (enchant.Core.instance !== null) {
   );
 }
 
-/**
- * 1 度だけ呼ばれるイベントリスナーを追加する
- * @param {string}   type     イベント名
- * @param {function} listener リスナー
- */
-enchant.EventTarget.prototype.once = function once(type, listener) {
-  this.on(type, function callback() {
-    this.removeEventListener(type, callback);
-    listener.apply(this, arguments);
-  });
-};
-
 // Easing を文字列で指定できるようにする
 const initializeTween = enchant.Tween.prototype.initialize;
 enchant.Tween.prototype.initialize = function $initialize(params) {

@@ -75,7 +75,7 @@ Hack.logAtPoint = logFunc.logAtPoint;
 logFunc.setHeight(180);
 
 // MODs
-game.once('load', coordinate);
+coordinate();
 
 // patch to FireFox space key page down
 window.onkeydown = event => !(event.key === ' ');
