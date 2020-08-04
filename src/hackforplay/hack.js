@@ -3,7 +3,7 @@ import app from '../application';
 import enchant from '../enchantjs/enchant';
 import { hide, textArea } from '../mod/logFunc';
 import Camera from './camera';
-import { code$, emphasizeCode, reload } from './feeles';
+import { code$, emphasizeCode } from './feeles';
 import game from './game';
 import { getHack } from './get-hack';
 import requestPostMessage from './request-post-message';
@@ -297,33 +297,6 @@ Hack.createSprite = function (width, height, prop) {
     if (!playing) return;
     playing = false;
     Hack.dispatchEvent(new enchant.Event('gameover'));
-  };
-
-  Hack.ongameover = function () {
-    const lay = Hack.overlay(
-      'rgba(0,0,0,0.4)',
-      'resources/hackforplay/gameover.png'
-    );
-    lay.opacity = 0;
-    lay.moveTo(-game.rootScene.x, -game.rootScene.y);
-    lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function () {
-      // [RETRY]
-      Hack.createSprite(165, 69, {
-        x: 157 - game.rootScene.x,
-        y: 320 - game.rootScene.y,
-        image: game.assets['resources/hackforplay/new_button_retry.png'],
-        defaultParentNode: Hack.overlayGroup,
-        ontouchend: function () {
-          // [RETRY] がクリックされたとき
-          reload(false);
-        }
-      }).tl.moveTo(
-        157 - game.rootScene.x,
-        240 - game.rootScene.y,
-        20,
-        enchant.Easing.CUBIC_EASEOUT
-      );
-    });
   };
 })();
 
