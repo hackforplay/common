@@ -1051,6 +1051,8 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
   }
 
   public turn(dir: Dir.IDir | Direction): void {
+    if (this._destroyed) return;
+
     if (typeof dir === 'function') {
       // 後方互換性のため
       this.forward = dir(this);
