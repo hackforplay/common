@@ -7,7 +7,6 @@ import Vector2, { IVector2 } from './math/vector2';
 import { default as dictionary } from './object/dictionary';
 import RPGObject from './object/object';
 import PixiMap from './pixi-map';
-import './rpg-kit-color';
 import { default as Line } from './shapes/line';
 import { errorRemoved } from './stdlog';
 

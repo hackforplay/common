@@ -1,5 +1,6 @@
 import { BaseTexture, Container, Rectangle, Sprite, Texture } from 'pixi.js';
 import { getHack } from '../get-hack';
+import '../hack';
 
 const Hack = getHack();
 

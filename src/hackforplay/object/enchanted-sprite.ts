@@ -1,5 +1,5 @@
 import { Rectangle, Sprite, Texture } from 'pixi.js';
-import { errorInEvent } from '../stdlog';
+import { errorInEvent, errorRemoved } from '../stdlog';
 
 export default class EnchantedSprite extends Sprite {
   private __frameSequence: any;
@@ -190,6 +190,23 @@ export default class EnchantedSprite extends Sprite {
   // TODO: 実装する
   public intersect(other: any) {
     return [];
+  }
+
+  /**
+   * @deprecated
+   */
+  public color: any;
+
+  /**
+   * @deprecated
+   */
+  public originalColor: any;
+
+  /**
+   * @deprecated
+   */
+  public moveColor() {
+    errorRemoved('moveColor', this);
   }
 }
 

@@ -11,7 +11,6 @@ import { getHack } from './get-hack';
 import Keyboard from './keyboard';
 import { generateMapFromDefinition } from './load-maps';
 import './mouse';
-import './rpg-kit-color';
 import RPGMap from './rpg-map';
 import { errorRemoved, logToDeprecated } from './stdlog';
 import { dakuten, handakuten, stringToArray } from './utils/string-utils';
