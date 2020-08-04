@@ -360,7 +360,7 @@ export default class RPGObject extends EnchantedSprite implements N.INumbers {
     if (this.mayRotate) {
       // 画像は上向きと想定する
       const angle = (this.forward.angle() / Math.PI) * 180 + 90; // 基準は上,時計回りの度数法
-      this.rotation = (angle + 360) % 360;
+      this.angle = (angle + 360) % 360;
     }
   }
 
