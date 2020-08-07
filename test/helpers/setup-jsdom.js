@@ -16,3 +16,8 @@ for (const key of Object.getOwnPropertyNames(window)) {
   if (exclude.includes(key)) continue; // exclude
   global[key] = window[key];
 }
+
+// div#enchant-stage を作成
+const div = window.document.createElement('div');
+div.id = 'enchant-stage';
+window.document.body.appendChild(div);
