@@ -48,10 +48,10 @@
     "require": [
       "./test/helpers/url-loader.js",
       "ts-node/register/transpile-only",
-      "canvas",
       "raf/polyfill",
       "./test/helpers/setup-jsdom.js",
       "./test/helpers/setup-feeles-env.js",
+      "./test/helpers/webgl.js",
       "web-audio-test-api"
     ]
   },
@@ -63,6 +63,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
     "@babel/register": "^7.8.3",
+    "@types/gl": "^4.1.0",
     "@types/jsdom": "^16.1.0",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
@@ -71,6 +72,7 @@
     "canvas": "^2.2.0",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.3.0",
+    "gl": "^4.5.3",
     "js-yaml": "^3.13.1",
     "jsdom": "^16.2.0",
     "np": "^6.0.0",
