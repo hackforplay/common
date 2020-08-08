@@ -2,18 +2,21 @@ const window = require('./setup-jsdom').window;
 const gl = require('gl');
 
 // headless-gl が使えるかどうかのテスト
-const ctx = gl(10, 10, { stencil: true });
-if (ctx.getContextAttributes().stencil !== true) {
-  throw new Error(
-    `ctx.getContextAttributes().stencil === ${
-      ctx.getContextAttributes().stencil
-    }`
-  );
-}
-const loseContext = ctx.getExtension('WEBGL_lose_context');
-if (loseContext) {
-  loseContext.loseContext();
-}
+const {
+  WebGLRenderingContext
+} = require('gl/src/javascript/webgl-rendering-context');
+new WebGLRenderingContext(
+  1,
+  1,
+  true,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false
+);
 
 // WebGLRenderingContext をうまく取り出せないので、とりあえず何か入れる
 window.WebGLRenderingContext = global.WebGLRenderingContext = true;
