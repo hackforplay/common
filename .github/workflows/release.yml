@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - '*'
+      - 'feature/pixi-ci-integration'
   release:
     types: [published]
   pull_request:
