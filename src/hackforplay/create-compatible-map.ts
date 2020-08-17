@@ -1,9 +1,12 @@
+import { Placement, SceneMap, Square } from '@hackforplay/next';
+import RPGMapClass from './rpg-map';
+
 export const size = 32;
 
 // 依存の注入
-let Surface;
-let RPGMap;
-let Image;
+let Surface: any;
+let RPGMap: typeof RPGMapClass;
+let Image: any;
 
 /**
  * 新しいマップエディタで書き出されたデータをパースして, 今までの RPGMap と互換性のあるオブジェクトを出力する
@@ -12,35 +15,35 @@ let Image;
  * @param {Function} callback 画像の書き込みが終わったらコールされる
  */
 export default function createCompatibleMap(
-  mapJson,
-  injection = {},
+  mapJson: SceneMap,
+  injection: any = {},
   callback = () => {}
 ) {
   // 依存の注入
   Surface =
     Surface || injection.Surface || require('../enchantjs/enchant').Surface;
-  RPGMap = RPGMap || injection.RPGMap || require('./rpg-map').default;
+  RPGMap = RPGMap || injection.RPGMap || RPGMapClass;
   Image = Image || injection.Image || window.Image;
   // 大きさを割り出す
   const height = mapJson.tables[0].length;
   const width = mapJson.tables[0][0].length;
   // { [key: number]: Square } にリマップ
-  const indexSquareMap = [];
+  const indexSquareMap: Square[] = [];
   for (const square of mapJson.squares) {
     indexSquareMap[square.index] = square;
   }
   // スクエアが存在しない場合のエラーメッセージ
-  const notFound = (table, x, y) =>
+  const notFound = (table: number[][], x: number, y: number) =>
     `${table[y][x]}番のスクエアは存在しません Table[${mapJson.tables.indexOf(
       table
     )}](${x},${y})`;
 
   // cmap は collider の少なくとも１辺が true だった場合に 1, そうでない時に 0 になる
-  const cmap = [];
+  const cmap: (0 | 1)[][] = [];
   for (let y = 0; y < height; y++) {
     cmap[y] = [];
     for (let x = 0; x < width; x++) {
-      cmap[y][x] = 0; // デフォルトは 0
+      let collider: 0 | 1 | -1 = -1;
       // 全ての階層を手前から奥に向かって調べる
       for (const table of mapJson.tables) {
         const index = table[y][x];
@@ -50,12 +53,13 @@ export default function createCompatibleMap(
           throw new Error(notFound(table, x, y));
         }
         // 最も手前の結果が優先される
-        const collider = getCollider(square.placement);
-        if (collider > -1) {
-          cmap[y][x] = collider;
+        const _collider = getCollider(square.placement);
+        if (_collider > -1) {
+          collider = _collider;
           break;
         }
       }
+      cmap[y][x] = collider === -1 ? 0 : collider; // デフォルトは 0
     }
   }
 
@@ -68,15 +72,15 @@ export default function createCompatibleMap(
    * 基本的には, 'Above' は fmap, それ以外は bmap に描画する
    * ただし, 'Inherit' は下のタイルと同じ xmap に描画する
    */
-  const bmap = [];
-  const fmap = [];
+  const bmap: number[][] = [];
+  const fmap: number[][] = [];
   for (let y = 0; y < height; y++) {
     fmap[y] = [];
     bmap[y] = [];
     for (let x = 0; x < width; x++) {
-      fmap[y][x] = bmap[y][x] - 1; // デフォルト
+      fmap[y][x] = bmap[y][x] = -1; // デフォルト
       // [y][x] のタイルをひとつの配列にする
-      const tileIndexes = mapJson.tables.reduce((p, table) => {
+      const tileIndexes = mapJson.tables.reduce<number[]>((p, table) => {
         const index = table[y][x];
         if (index < 0 || index === undefined) return p; // nope!
         const square = indexSquareMap[index];
@@ -129,12 +133,21 @@ export default function createCompatibleMap(
 }
 
 class RPGMapImageBuffer {
+  indexSquareMap: Square[];
+  callback: () => void;
+  surface: any;
+  bufferCount: number;
+  waitSurface: Promise<void>;
+  end = () => {};
+  cacheCount: { [key: string]: number };
+  cacheImage: any[];
+
   /**
    * 逐次的にバッファを追加できる enchant.Surface のラッパーを生成する
    * @param {Object} indexSquareMap
    * @param {Function} callback 画像の書き込みが終わったらコールされる
    */
-  constructor(indexSquareMap, callback) {
+  constructor(indexSquareMap: Square[], callback: () => void) {
     this.indexSquareMap = indexSquareMap;
     this.callback = callback;
     this.surface = null;
@@ -163,7 +176,7 @@ class RPGMapImageBuffer {
    * @param {Number[]} indexes バッファに追加したいタイルのindexを手前から順に指定する
    * @returns {Number} バッファ内の位置(frame)
    */
-  add(indexes) {
+  add(indexes: number[]) {
     const cacheKey = indexes.join(' ');
     if (cacheKey in this.cacheCount) {
       return this.cacheCount[cacheKey]; // すでにバッファされている
@@ -190,16 +203,16 @@ class RPGMapImageBuffer {
    * @param {Number} index タイルのindex
    * @returns {Image}
    */
-  loadImage(index) {
+  loadImage(index: number) {
     if (this.cacheImage[index]) {
       return this.cacheImage[index]; // すでにロードされた画像
     }
     const img = new Image();
     img.crossOrigin = 'anonymous';
     // src から画像をロードし, waitinglist に Promise を追加する
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise<void>((resolve, reject) => {
       img.onload = () => resolve();
-      img.onerror = e => reject(e);
+      img.onerror = (e: Error) => reject(e);
       const src = this.indexSquareMap[index].tile.image.src;
       img.src = src;
     });
@@ -215,7 +228,7 @@ class RPGMapImageBuffer {
  * @param {Object} placement
  * @return 壁: 1, 通路: 0, 継承: -1
  */
-function getCollider(placement) {
+function getCollider(placement: Placement) {
   switch (placement.type) {
     case 'Wall':
     case 'Barrier':
@@ -237,7 +250,7 @@ function getCollider(placement) {
  * @param {Object} placement
  * @return 1: fmap, 0: bmap, -1: inherit
  */
-function getHeight(placement) {
+function getHeight(placement: Placement) {
   switch (placement.type) {
     case 'Ground':
     case 'Wall':
