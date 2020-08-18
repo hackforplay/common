@@ -14,6 +14,17 @@ const Hack = getHack();
  * レイヤー化された切り替え可能なマップ
  */
 export default class RPGMap extends enchant.EventTarget {
+  /**
+   * @deprecated
+   */
+  public static Layer = {
+    Over: 4,
+    Player: 3,
+    Middle: 2,
+    Shadow: 1,
+    Under: 0
+  };
+
   public bmap: IEnchantjsMap;
   public fmap: IEnchantjsMap;
   public scene: any;
