@@ -101,6 +101,9 @@ export default function createCompatibleMap(
         }
         const fmapIndexes = tileIndexes.slice(0, minLevelOfFmap);
         const bmapIndexes = tileIndexes.slice(minLevelOfFmap);
+        if (typeof mapJson.base === 'number') {
+          bmapIndexes.push(mapJson.base); // base タイルを一番下に描画する
+        }
         // 表示順(手前から奥) => 描画順(奥から手前)
         fmapIndexes.reverse();
         bmapIndexes.reverse();
