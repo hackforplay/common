@@ -86,34 +86,32 @@ export default function createCompatibleMap(
         if (square.placement.type === 'Nope') return p; // nope!
         return p.concat(index);
       }, []);
-      if (tileIndexes.length > 0) {
-        // fmap と bmap に分ける
-        let minLevelOfFmap = 0;
-        for (let level = 0; level < tileIndexes.length; level++) {
-          const index = tileIndexes[level];
-          const square = indexSquareMap[index];
-          const height = getHeight(square.placement);
-          if (height === 1) {
-            minLevelOfFmap = level + 1;
-          } else if (height === 0) {
-            break;
-          }
+      // fmap と bmap に分ける
+      let minLevelOfFmap = 0;
+      for (let level = 0; level < tileIndexes.length; level++) {
+        const index = tileIndexes[level];
+        const square = indexSquareMap[index];
+        const height = getHeight(square.placement);
+        if (height === 1) {
+          minLevelOfFmap = level + 1;
+        } else if (height === 0) {
+          break;
         }
-        const fmapIndexes = tileIndexes.slice(0, minLevelOfFmap);
-        const bmapIndexes = tileIndexes.slice(minLevelOfFmap);
-        if (typeof mapJson.base === 'number') {
-          bmapIndexes.push(mapJson.base); // base タイルを一番下に描画する
-        }
-        // 表示順(手前から奥) => 描画順(奥から手前)
-        fmapIndexes.reverse();
-        bmapIndexes.reverse();
-        // バッファに追加
-        if (fmapIndexes.length > 0) {
-          fmap[y][x] = buffer.add(fmapIndexes);
-        }
-        if (bmapIndexes.length > 0) {
-          bmap[y][x] = buffer.add(bmapIndexes);
-        }
+      }
+      const fmapIndexes = tileIndexes.slice(0, minLevelOfFmap);
+      const bmapIndexes = tileIndexes.slice(minLevelOfFmap);
+      if (typeof mapJson.base === 'number') {
+        bmapIndexes.push(mapJson.base); // base タイルを一番下に描画する
+      }
+      // 表示順(手前から奥) => 描画順(奥から手前)
+      fmapIndexes.reverse();
+      bmapIndexes.reverse();
+      // バッファに追加
+      if (fmapIndexes.length > 0) {
+        fmap[y][x] = buffer.add(fmapIndexes);
+      }
+      if (bmapIndexes.length > 0) {
+        bmap[y][x] = buffer.add(bmapIndexes);
       }
     }
   }
