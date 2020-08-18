@@ -1,5 +1,6 @@
 export default function createMapJson() {
   return {
+    base: 1000,
     tables: [
       [
         [
