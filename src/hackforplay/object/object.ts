@@ -12,7 +12,8 @@ import {
   default as Family,
   getMaster,
   isOpposite,
-  registerServant
+  registerServant,
+  unregisterServant
 } from '../family';
 import { default as game } from '../game';
 import { getHack } from '../get-hack';
@@ -1154,6 +1155,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public get parent() {
     return getMaster(this);
   }
+  public set parent(object: RPGObject | undefined) {
+    if (object instanceof RPGObject) {
+      registerServant(object, this); // 自分を従者にする
+    } else {
+      unregisterServant(this); // 従属関係を解消する
+    }
+  }
 
   public set imageUrl(url: string) {
     errorRemoved('imageUrl', this);
@@ -1231,6 +1239,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       this
     );
     registerServant(this, appended); // 自分と同じ Family を持つ従者とする
+    appended.family = this.family; // master と同じファミリーに所属させる
     return appended;
   }
 
