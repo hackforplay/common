@@ -373,14 +373,6 @@ game.onawake = () => {
   setAlias && setAlias('game', game);
 };
 
-RPGMap.Layer = {
-  Over: 4,
-  Player: 3,
-  Middle: 2,
-  Shadow: 1,
-  Under: 0
-};
-
 Hack.createMap = function (template) {
   logToDeprecated('Hack.createMap');
   // テンプレートリテラルからマップを生成するラッパー
@@ -418,7 +410,8 @@ Hack.createMap = function (template) {
 
 Hack.changeMap = async function (mapName) {
   const current = Hack.map;
-  const next = await generateMapFromDefinition(mapName, true);
+  const next =
+    Hack.maps[mapName] || (await generateMapFromDefinition(mapName, true));
 
   if (current && current.parentNode) {
     current.parentNode.removeChild(current.bmap);
@@ -474,7 +467,10 @@ Hack.Attack = function (x, y, damage) {
         // ダメージ判定が起こる状態で,
         if (isOpposite(item, this)) {
           // 敵対している相手(もしくはその関係者)なら
-          item.damageTime = item.attackedDamageTime;
+          item.damageTime = Math.max(
+            0,
+            Math.ceil(item.attackedDamageTime * 30)
+          );
           item.hp -= damage;
         }
       }

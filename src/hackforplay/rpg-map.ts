@@ -14,8 +14,19 @@ const Hack = getHack();
  * レイヤー化された切り替え可能なマップ
  */
 export default class RPGMap extends enchant.EventTarget {
-  public bmap: any;
-  public fmap: any;
+  /**
+   * @deprecated
+   */
+  public static Layer = {
+    Over: 4,
+    Player: 3,
+    Middle: 2,
+    Shadow: 1,
+    Under: 0
+  };
+
+  public bmap: IEnchantjsMap;
+  public fmap: IEnchantjsMap;
   public scene: any;
   public isLoaded = false;
   public layerChangeFlag = false;
@@ -86,7 +97,7 @@ export default class RPGMap extends enchant.EventTarget {
       this.isLoaded = true;
       (this as any).dispatchEvent(new enchant.Event('load'));
     }
-    if (Hack.player) this.scene.addChild(Hack.player);
+    if (Hack.player) this.scene.addChild(Hack.player.reverseProxy); // 後方互換性のため https://bit.ly/2DutF1P
     Hack.statusLabel = this.name;
   }
 
@@ -191,12 +202,35 @@ export default class RPGMap extends enchant.EventTarget {
   }
 
   public set background(value: any) {
-    this.bmap.overwrite = value;
+    (this.bmap as any).overwrite = value;
     this.bmap.redraw();
   }
 
   public set foreground(value: any) {
-    this.fmap.overwrite = value;
+    (this.fmap as any).overwrite = value;
     this.fmap.redraw();
   }
+}
+
+/**
+ * enchant.js の Map インスタンス
+ */
+interface IEnchantjsMap {
+  initialize(tileWidth: number, tileHeight: number): void;
+  loadData(data: number[][]): void;
+  checkTile(x: number, y: number): number;
+  hitTest(x: number, y: number): boolean;
+  redraw(): void;
+  image: any;
+  tileWidth: number;
+  tileHeight: number;
+  _data: number[][][];
+  collisionData: (0 | 1)[][];
+  readonly width: number;
+  readonly height: number;
+
+  /**
+   * オリジナル？
+   */
+  name: string;
 }

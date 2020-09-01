@@ -29,6 +29,10 @@ class Camera extends enchant.Sprite {
   public background = '#000';
 
   public enabled = true;
+  /**
+   * カメラが追いかけるターゲット
+   * Proxy (Synonymized Instance) でなければならない https://bit.ly/39lHonB
+   */
   public target: RPGObject | null = null;
   public center: Vector2 | null = null;
   public clip = true;
