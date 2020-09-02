@@ -67,6 +67,7 @@ async function loadMapsImpl(mapJsonFile: string) {
         const loading = fetchText(maps.files[key])
           .then(makeMap)
           .then(map => {
+            rpgMaps.set(scopedKey, map);
             Hack.maps = Hack.maps ?? {};
             Hack.maps[scopedKey] = map;
           });
