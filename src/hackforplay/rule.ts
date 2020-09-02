@@ -10,6 +10,7 @@ import { errorInEvent, logFromAsset } from './stdlog';
 import { synonyms } from './synonyms/rule';
 import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
 import talk from './talk';
+import { loadMaps } from './load-maps';
 
 interface IEvent {
   target: RPGObject;
@@ -77,10 +78,6 @@ export class Rule {
   } = {};
 
   private readonly _pairingWaitList: { [key: string]: RPGObject } = {};
-
-  constructor() {
-    this.mainLoop();
-  }
 
   public addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
@@ -315,7 +312,9 @@ export class Rule {
 
   public async runゲームがはじまったとき() {
     this.startTimer(); // 自動的にタイマーをスタートさせる
+    await loadMaps(Hack.mapJsonFile); // Hack.mapJsonFile は通常 undefined
     await this.runNoObjectListener('ゲームがはじまったとき');
+    this.mainLoop();
   }
 
   private previousNow = 0;

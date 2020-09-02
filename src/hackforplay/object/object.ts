@@ -17,7 +17,7 @@ import {
 } from '../family';
 import { default as game } from '../game';
 import { getHack } from '../get-hack';
-import { generateMapFromDefinition } from '../load-maps';
+import { getMap } from '../load-maps';
 import Vector2, { IVector2 } from '../math/vector2';
 import { randomCollection } from '../random';
 import RPGMap from '../rpg-map';
@@ -469,7 +469,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  public async locate(
+  public locate(
     fromLeft: number,
     fromTop: number,
     mapName?: string,
@@ -485,21 +485,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           );
           return;
         }
-        generateMapFromDefinition(mapName).then(map => {
-          Hack.maps[mapName] = map;
-          this.locate(fromLeft, fromTop, mapName, ignoreTrodden); // マップができたらもう一度呼び出す
-        });
-        console.info(
-          `${mapName} is automaticaly generated. You can set background of map!`
-        );
-        return;
       }
       // オブジェクトのマップを移動させる
-      const map = Hack.maps[mapName] as RPGMap;
+      const map = getMap(mapName);
       if (map instanceof RPGMap && this.map !== map) {
         if (this.isPlayer) {
           // プレイヤーがワープする場合は, 先にマップを変更する
-          await Hack.changeMap(mapName);
+          Hack.changeMap(mapName);
           // つき従えているキャラクターをワープさせる
           for (const item of [...RPGObject.collection]) {
             if (followingPlayerObjects.has(item)) {
