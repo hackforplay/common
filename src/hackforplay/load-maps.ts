@@ -45,7 +45,6 @@ export function loadMaps(mapJsonFile = 'maps.json') {
 }
 
 async function loadMapsImpl(mapJsonFile: string) {
-  console.log('loadMapImpl');
   if (!fetchText) {
     throw new Error('feeles.fetchText が取得できません');
   }
