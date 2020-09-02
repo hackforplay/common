@@ -3,6 +3,12 @@ import { MissingGlobal } from './globals';
 
 type Self = { name: string };
 
+export class SystemError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
 export function errorInEvent(error: any, self?: Self, eventName?: string) {
   console.error(error);
   const fileName = self ? `modules/${self.name}.js` : 'Unknown';
@@ -25,6 +31,10 @@ export function errorInEvent(error: any, self?: Self, eventName?: string) {
       error.message
     ].join(' ');
     return log('error', message, fileName);
+  }
+
+  if (error instanceof SystemError) {
+    return log('error', error.message, fileName);
   }
 
   return log('error', `原因不明のエラーです。コンソールを見て下さい`, fileName);
