@@ -42,20 +42,16 @@ export default function coordinate() {
   Hack.coordinateSprite = label;
 
   const setPosition = (clientX: number, clientY: number) => {
-    let x = -1;
-    let y = -1;
-
     // マウスが重なっている一番手前のカメラを取得
     const camera = Camera.collection
       .filter(camera => camera.contains(clientX, clientY))
       .pop();
+    if (!camera) return;
 
-    // カメラがあるならマウス座標をゲーム内座標に変換
-    if (camera) {
-      [x, y] = camera
-        .projection(clientX, clientY)
-        .map(pos => Math.floor(pos / 32));
-    }
+    // マウス座標をゲーム内座標に変換
+    const [x, y] = camera
+      .projection(clientX, clientY)
+      .map(pos => Math.floor(pos / 32));
 
     // "(2, 3)" のように表示
     label.text = `(${x}, ${y})`;
@@ -63,10 +59,12 @@ export default function coordinate() {
     const labelX = clientX - label.width / 2; // マウスの中心
     label.moveTo(labelX, clientY);
     // 枠を移動
-    sprite.moveTo(
-      Math.floor(clientX / 32) * 32 - 32,
-      Math.floor(clientY / 32) * 32 - 32
-    );
+    const [left, top] = camera.gamePositionToScreen(x * 32, y * 32);
+    sprite.scaleX = 1 / camera.scale;
+    sprite.scaleY = 1 / camera.scale;
+    sprite.moveTo(left, top);
+    const padding = 32 + 16 * (1 - 1 / camera.scale);
+    sprite.moveBy(-padding, -padding);
   };
 
   // マウスの位置を追跡
