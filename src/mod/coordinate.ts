@@ -63,7 +63,10 @@ export default function coordinate() {
     const labelX = clientX - label.width / 2; // マウスの中心
     label.moveTo(labelX, clientY);
     // 枠を移動
-    sprite.moveTo((x - 1) * 32, (y - 1) * 32);
+    sprite.moveTo(
+      Math.floor(clientX / 32) * 32 - 32,
+      Math.floor(clientY / 32) * 32 - 32
+    );
   };
 
   // マウスの位置を追跡
