@@ -1,3 +1,6 @@
+/**
+ * "へんすう"の実体
+ */
 const singletonTarget = {};
 
 export class MissingGlobal extends Error {
@@ -7,27 +10,12 @@ export class MissingGlobal extends Error {
   }
 }
 
-export class SetGlobalRecursively extends Error {
-  constructor(displayname: string, property: string) {
-    const message = `${displayname}['${property}'] = がループしています`;
-    super(message);
-  }
+let changed = false;
+export function emitGlobalsChangedIfNeeded(listener: () => void) {
+  if (!changed) return; // 変わっていない
+  changed = false; // コールする前にフラグを下ろす => リスナーの中でフラグを立てられる
+  listener();
 }
-
-export interface GlobalsSubscriber {
-  <T>(payload: { key: string; prevValue: T; nextValue: T }): void;
-}
-
-const globalsSubscribers = new Set<GlobalsSubscriber>();
-
-export function subscribeGlobals(subscriber: GlobalsSubscriber) {
-  globalsSubscribers.add(subscriber);
-  return () => {
-    globalsSubscribers.delete(subscriber);
-  };
-}
-
-const detectRecursiveSetter = new Set<string>();
 
 export function useGlobals(displayName: string) {
   return new Proxy<{ [key: string]: any }>(singletonTarget, {
@@ -48,16 +36,8 @@ export function useGlobals(displayName: string) {
         }
       }
 
-      // 無限ループになるのを防ぐ
-      if (detectRecursiveSetter.has(key)) {
-        throw new SetGlobalRecursively(displayName, key);
-      }
-      detectRecursiveSetter.add(key);
-
+      changed = true; // このフレームの最後にリスナーをコールするようフラグを立てる
       Reflect.set(target, key, nextValue, receiver);
-      globalsSubscribers.forEach(cb => cb({ key, prevValue, nextValue }));
-
-      detectRecursiveSetter.delete(key);
 
       return true;
     }

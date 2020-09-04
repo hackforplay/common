@@ -9,7 +9,7 @@ import { connected, setAlias } from './feeles';
 import game from './game';
 import { getHack } from './get-hack';
 import Keyboard from './keyboard';
-import { generateMapFromDefinition } from './load-maps';
+import { getMap } from './load-maps';
 import './mouse';
 import RPGMap from './rpg-map';
 import { errorRemoved, logToDeprecated } from './stdlog';
@@ -354,18 +354,20 @@ Hack.createMap = function (template) {
   return map;
 };
 
-Hack.changeMap = async function (mapName) {
+Hack.changeMap = function (mapName) {
   const current = Hack.map;
-  const next =
-    Hack.maps[mapName] || (await generateMapFromDefinition(mapName, true));
-
   if (current && current.parentNode) {
     current.parentNode.removeChild(current.bmap);
     current.parentNode.removeChild(current.scene);
     current.parentNode.removeChild(current.fmap);
   }
-  next.load();
   current && current.dispatchEvent(new enchant.Event('leavemap'));
+
+  const next = getMap(mapName, next => {
+    // TODO: マップの描画が終わってから load するのではなく、load したあとマップの描画が完了したら rerender する
+    next.load();
+  });
+  Hack.map = next;
   next.dispatchEvent(new enchant.Event('entermap'));
 };
 

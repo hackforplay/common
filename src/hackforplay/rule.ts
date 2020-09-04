@@ -4,12 +4,13 @@ import { Direction } from './direction';
 import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
-import { subscribeGlobals } from './globals';
+import { emitGlobalsChangedIfNeeded } from './globals';
 import RPGObject from './object/object';
 import { errorInEvent, logFromAsset } from './stdlog';
 import { synonyms } from './synonyms/rule';
 import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
 import talk from './talk';
+import { loadMaps } from './load-maps';
 
 interface IEvent {
   target: RPGObject;
@@ -39,7 +40,6 @@ const Enemy: unique symbol = Symbol('Rule.Enemy');
 type NoObjectListener = (this: void) => Promise<void>;
 type OneObjectListener = (this: RPGObject) => Promise<void>;
 type TwoObjectListener = (this: RPGObject, item: RPGObject) => Promise<void>;
-type GlobalsChangedListener = (this: RPGObject, name: string) => Promise<void>;
 
 export class Rule {
   /**
@@ -73,19 +73,11 @@ export class Rule {
       };
     };
   } = {};
-  private readonly _globalsChangedListeners = new Map<
-    string,
-    GlobalsChangedListener
-  >();
   private readonly _collections: {
     [type: string]: RPGObject[];
   } = {};
 
   private readonly _pairingWaitList: { [key: string]: RPGObject } = {};
-
-  constructor() {
-    subscribeGlobals(({ key }) => this.emitGlobalsChanged(key));
-  }
 
   public addNoObjectListener(type: string, func: NoObjectListener) {
     if (this._listenersOfNo[type]) {
@@ -276,27 +268,53 @@ export class Rule {
   }
 
   /**
-   * 「つねに」を再帰的にコールするラッパー
-   * @param object RPGObject
-   * @param name string このアセットとして実行する (へんしんしたらストップしたい)
+   * つねに をコールするフラグ
+   * 初期値は undefined で、つねに をコールしない
+   * つねに がコールされたら false にして、 resolve したら true に戻す
    */
-  public runつねに(object: RPGObject, name: string) {
+  private enabledUpdate = new WeakMap<RPGObject, boolean>();
+
+  public startUpdate(object: RPGObject) {
+    this.enabledUpdate.set(object.reverseProxy, true);
+  }
+
+  /**
+   * このゲームのメインループ（にしたいもの）
+   */
+  private mainLoop() {
     if (!Hack.isPlaying) return; // ゲームが終了した
-    if (object.name !== name) return; // へんしんしたので終了
-    // TODO: パフォーマンスが悪化しそうなので改善する
-    requestAnimationFrame(() => {
-      if (Hack.world._stop || object._stop || !object.parentNode) {
-        return this.runつねに(object, name);
+
+    // つねに をコールする
+    // this._collections を使うべきか？（へんしんしたときちゃんと動くか？）
+    for (const object of Array.from(RPGObject.collection)) {
+      if (!this.enabledUpdate.get(object)) {
+        continue; // まだ途中になっているものがある => スキップ
       }
-      this.runOneObjectLisener('つねに', object).then(() =>
-        this.runつねに(object, name)
-      );
+      this.enabledUpdate.set(object, false); // 終わるまで次のコールを pending
+
+      this.runOneObjectLisener('つねに', object).then(() => {
+        this.enabledUpdate.set(object, true);
+      });
+    }
+
+    // へんすうがかわったとき をコールする
+    emitGlobalsChangedIfNeeded(() => {
+      for (const object of Array.from(RPGObject.collection)) {
+        this.runOneObjectLisener('へんすうがかわったとき', object);
+      }
+    });
+
+    // 次のループを準備
+    requestAnimationFrame(() => {
+      this.mainLoop();
     });
   }
 
   public async runゲームがはじまったとき() {
     this.startTimer(); // 自動的にタイマーをスタートさせる
+    await loadMaps(Hack.mapJsonFile); // Hack.mapJsonFile は通常 undefined
     await this.runNoObjectListener('ゲームがはじまったとき');
+    this.mainLoop();
   }
 
   private previousNow = 0;
@@ -356,7 +374,7 @@ export class Rule {
       pendings.push(p);
     }
     if (this.hasOneObjectLisener('つねに', name)) {
-      Promise.all(pendings).then(() => this.runつねに(object, name));
+      Promise.all(pendings).then(() => this.startUpdate(object));
     }
     if (this.hasOneObjectLisener('こうげきするとき', name)) {
       object.on('becomeattack', this.onこうげきするとき);
@@ -516,6 +534,12 @@ export class Rule {
   public mapChanged(func: OneObjectListener) {
     this.addOneObjectLisener('マップがかわったとき', func);
   }
+  public walked(func: OneObjectListener) {
+    this.addOneObjectLisener('あるいたとき', func);
+  }
+  public globalsChanged(func: OneObjectListener) {
+    this.addOneObjectLisener('へんすうがかわったとき', func);
+  }
   public trodden(func: TwoObjectListener) {
     this.addTwoObjectListener('ふまれたとき', func);
   }
@@ -536,21 +560,6 @@ export class Rule {
   }
   public found(func: TwoObjectListener) {
     this.addTwoObjectListener('みつけたとき', func);
-  }
-  public globalsChanged(func: GlobalsChangedListener) {
-    const name = this.this;
-    if (!name) {
-      errorInEvent('Context not found', undefined, `rule.globalsChanged`);
-      return;
-    }
-    this._globalsChangedListeners.set(name, func);
-  }
-  private emitGlobalsChanged(key: string) {
-    this._globalsChangedListeners.forEach((func, name) => {
-      this._collections[name]?.forEach(item => {
-        handleError('へんすうがかわったとき', name, func.call(item, key));
-      });
-    });
   }
 
   public [PropertyMissing](chainedName: string) {

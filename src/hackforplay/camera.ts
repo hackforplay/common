@@ -230,12 +230,23 @@ class Camera extends enchant.Sprite {
   }
 
   // スクリーン座標をゲーム内座標に変換する
-  public projection(screenX: number, screenY: number) {
+  public projection(screenX: number, screenY: number): [number, number] {
     const renderRect = this.getRenderRect();
     return [
       renderRect.x + (screenX - this.x) * (renderRect.width / this.width),
       renderRect.y + (screenY - this.y) * (renderRect.height / this.height)
     ];
+  }
+
+  /**
+   * ゲーム内座標をスクリーン座標に変換する
+   */
+  public gamePositionToScreen(gameX: number, gameY: number) {
+    const renderRect = this.getRenderRect();
+    return [
+      (gameX - renderRect.x) / (renderRect.width / this.width) + this.x,
+      (gameY - renderRect.y) / (renderRect.height / this.height) + this.y
+    ] as const;
   }
 
   // カメラ上の座標を計算する

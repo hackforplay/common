@@ -75,18 +75,13 @@ export function getMaster(servant: RPGObject) {
 export function registerServant(master: RPGObject, servant: RPGObject) {
   // [servant] => master の参照を記録する
   servantMasterMap.set(servant.reverseProxy, master.reverseProxy);
-  // master と同じファミリーに所属させる
-  servant.family = master.family;
 }
 
 /**
- * master を servant の従者オブジェクトではなくする
- * @param {RPGObject} master マスターだったオブジェクト
+ * servant の従属関係を解消する
  * @param {RPGObject} servant サーヴァントだったオブジェクト
  */
-export function unregisterServant(master: RPGObject, servant: RPGObject) {
-  if (servantMasterMap.get(servant.reverseProxy) === master) {
-    // [servant] => master の参照を削除
-    servantMasterMap.delete(servant.reverseProxy);
-  }
+export function unregisterServant(servant: RPGObject) {
+  // [servant] => master の参照を削除
+  servantMasterMap.delete(servant.reverseProxy);
 }
