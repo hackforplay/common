@@ -11,7 +11,7 @@ import find from './find';
 import game from './game';
 import { getHack } from './get-hack';
 import loadMap from './load-map';
-import loadMaps from './load-maps';
+import { loadMaps } from './load-maps';
 import './loader';
 import { physicsCollision, physicsUpdate } from './physics-update';
 import './rpg-kit-main';
@@ -75,7 +75,7 @@ Hack.logAtPoint = logFunc.logAtPoint;
 logFunc.setHeight(180);
 
 // MODs
-game.once('load', coordinate);
+coordinate();
 
 // patch to FireFox space key page down
 window.onkeydown = event => !(event.key === ' ');

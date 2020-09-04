@@ -8,10 +8,9 @@ import { isOpposite } from './family';
 import { connected, setAlias } from './feeles';
 import game from './game';
 import { getHack } from './get-hack';
-import { KeyClass } from './key';
 import Keyboard from './keyboard';
-import { generateMapFromDefinition } from './load-maps';
-import './rpg-kit-color';
+import { getMap } from './load-maps';
+import './mouse';
 import RPGMap from './rpg-map';
 import { errorRemoved, logToDeprecated } from './stdlog';
 import { dakuten, handakuten, stringToArray } from './utils/string-utils';
@@ -99,8 +98,7 @@ function createDefaultKeyboard() {
   // デフォルトのキーボード
   const keyboard = new Keyboard();
   Hack.keyboard = keyboard;
-  // TODO: keyboard を PixiJS に移植する
-  // Hack.popupGroup.addChild(keyboard);
+  Hack.popupGroup.addChild(keyboard);
 
   keyboard.registerKeys(
     [
@@ -206,34 +204,6 @@ game.onawake = () => {
   if (_initialized) return;
   _initialized = true;
   game.onawake = () => {};
-  // マウス座標
-  let mouseX = null;
-  let mouseY = null;
-  // 正規化されたマウス座標
-  let normalizedMouseX = null;
-  let normalizedMouseY = null;
-
-  game._element.onmousemove = function ({ x, y }) {
-    const rect = this.getBoundingClientRect();
-    mouseX = x;
-    mouseY = y;
-    normalizedMouseX = x / rect.width;
-    normalizedMouseY = y / rect.height;
-  };
-
-  Object.defineProperties(Hack, {
-    mouseX: { get: () => mouseX },
-    mouseY: { get: () => mouseY },
-    normalizedMouseX: { get: () => normalizedMouseX },
-    normalizedMouseY: { get: () => normalizedMouseY }
-  });
-
-  // マウスの入力状態
-  Hack.mouseInput = new KeyClass();
-  let mousePressed = false;
-  game.rootScene.on('touchstart', () => (mousePressed = true));
-  game.rootScene.on('touchend', () => (mousePressed = false));
-  game.on('enterframe', () => Hack.mouseInput.update(mousePressed));
 
   // カメラグループ
   const cameraGroup = new enchant.Group();
@@ -286,11 +256,11 @@ game.onawake = () => {
     }
   });
 
-  const overlayGroup = new enchant.Group();
+  const overlayGroup = new Container();
   overlayGroup.name = 'OverlayGroup';
-  overlayGroup.order = 1000;
+  overlayGroup.zIndex = 1000;
   Hack.overlayGroup = overlayGroup;
-  game.rootScene.addChild(overlayGroup);
+  app.stage.addChild(overlayGroup);
 
   // DOMGroup
   const domGroup = new enchant.Group();
@@ -384,18 +354,20 @@ Hack.createMap = function (template) {
   return map;
 };
 
-Hack.changeMap = async function (mapName) {
+Hack.changeMap = function (mapName) {
   const current = Hack.map;
-  const next =
-    Hack.maps[mapName] || (await generateMapFromDefinition(mapName, true));
-
   if (current && current.parentNode) {
     current.parentNode.removeChild(current.bmap);
     current.parentNode.removeChild(current.scene);
     current.parentNode.removeChild(current.fmap);
   }
-  next.load();
   current && current.dispatchEvent(new enchant.Event('leavemap'));
+
+  const next = getMap(mapName, next => {
+    // TODO: マップの描画が終わってから load するのではなく、load したあとマップの描画が完了したら rerender する
+    next.load();
+  });
+  Hack.map = next;
   next.dispatchEvent(new enchant.Event('entermap'));
 };
 

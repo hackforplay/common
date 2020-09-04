@@ -17,7 +17,9 @@ export function physicsUpdate() {
   if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
 
   const physics = RPGObject.collection.filter(function (item) {
-    return !item.isKinematic && !item._stop && item.map === Hack.map;
+    return (
+      !item.isKinematic && !item._stop && item.map === Hack.map && !item.frozen
+    );
   });
 
   for (const self of physics) {

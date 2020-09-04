@@ -1,4 +1,7 @@
 import { Application, Container } from 'pixi.js';
+import { getHack } from './hackforplay/get-hack';
+
+const Hack = getHack();
 
 const app = new Application({
   width: 480,
@@ -13,14 +16,17 @@ const enchantStageEl = document.querySelector('#enchant-stage')!.parentElement!;
 enchantStageEl.insertBefore(app.view, enchantStageEl.firstChild);
 
 // リサイズ時にゲームの比率を調節
-window.addEventListener('resize', () => {
+function resize() {
   const scale = Math.min(
     window.innerWidth / app.screen.width,
     window.innerHeight / app.screen.height
   );
+  Hack.scale = scale;
   app.view.style.width = app.screen.width * scale + 'px';
   app.view.style.height = app.screen.height * scale + 'px';
-});
+}
+window.addEventListener('resize', resize);
+resize();
 
 function updateFrame(displayObject: PIXI.DisplayObject) {
   displayObject.emit('enterframe');

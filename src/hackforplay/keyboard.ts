@@ -1,38 +1,71 @@
-import enchant from '../enchantjs/enchant';
+import { Quad, TweenLite } from 'gsap';
+import app from '../application';
 import '../enchantjs/fix';
-import game from './game';
+import Key from './key';
 import './rpg-kit-main';
+import SurfaceSprite from './surface-sprite';
+import { overlay } from './temp-hack';
 import ButtonRenderer from './ui/button-renderer';
 import { between, step } from './utils/math-utils';
 import { stringToArray } from './utils/string-utils';
 
 class KeyRenderer extends ButtonRenderer {
-  constructor(text, props) {
+  public selected: boolean;
+  public disabled: boolean;
+  constructor(text: string, props: any) {
     super(text, props);
     this.selected = false;
     this.disabled = false;
   }
 }
 
+type Page = {
+  keys: KeyRenderer[][];
+};
+
 /**
  * キーボード
- * @extends enchant.Sprite
  */
-class Keyboard extends enchant.Sprite {
+class Keyboard extends SurfaceSprite {
+  public referenceResolutionX: number;
+  public referenceResolutionY: number;
+  public currentKey: KeyRenderer | null;
+  public functionKeys: KeyRenderer[];
+  public pages: Page[];
+  public pageIndex: number;
+  public cursorX: number;
+  public cursorY: number;
+  public value: string;
+  public cancelable: boolean;
+  public fontWeight: string;
+  public fontSize: number;
+  public fontFamily: string;
+  public borderColor: string;
+  public borderWidth: number;
+  public textColor: string;
+  public selectedBorderWidth: number;
+  public selectedColor: string;
+  public keyColor: string;
+  public functionKeyColor: string;
+  public enterKeyColor: string;
+  public cancelKeyColor: string;
+  public valueKeyColor: string;
+  public valueKeyTextColor: string;
+  public easing: gsap.EaseFunction;
+  public fadeFrame: number;
+  public disabledAlpha: number;
+  public cancelKey: KeyRenderer;
+  public enterKey: KeyRenderer;
+  public maxLength: number;
+
   /**
    * コンストラクタ
-   * @constructor
    */
-  constructor() {
-    const w = game.width;
-    const h = game.height;
+  public constructor() {
+    const w = app.view.width;
+    const h = app.view.height;
 
     super(w, h);
-
-    this.w = w;
-    this.h = h;
-
-    this.image = new enchant.Surface(w, h);
 
     // デザイン時の解像度
     this.referenceResolutionX = 480;
@@ -45,9 +78,10 @@ class Keyboard extends enchant.Sprite {
     this.functionKeys = [];
 
     this.on('enterframe', this.update);
-    this.on('render', this.render);
 
-    this.scale(0);
+    this.anchor.set(0.5);
+    this.scale.set(0);
+    this.position.set(w / 2, h / 2);
 
     this.pages = [];
     this.pageIndex = 0;
@@ -82,7 +116,7 @@ class Keyboard extends enchant.Sprite {
     this.valueKeyColor = '#986f1c';
     this.valueKeyTextColor = '#fff';
 
-    this.easing = 'QUAD_EASEIN';
+    this.easing = Quad.easeIn;
     this.fadeFrame = 10;
 
     // キーが無効な場合の透明度
@@ -96,7 +130,7 @@ class Keyboard extends enchant.Sprite {
       h: 28
     });
     this.cancelKey.on('click', () => {
-      this.dispatchEvent(new enchant.Event('cancel'));
+      this.emit('cancel');
       this.select(this.cancelKey);
     });
 
@@ -108,7 +142,7 @@ class Keyboard extends enchant.Sprite {
       h: 28
     });
     this.enterKey.on('click', () => {
-      this.dispatchEvent(new enchant.Event('enter'));
+      this.emit('enter');
       this.select(this.enterKey);
     });
 
@@ -117,12 +151,8 @@ class Keyboard extends enchant.Sprite {
 
   /**
    * キーを取得する
-   * @param {number} x                X 位置
-   * @param {number} y                Y 位置
-   * @param {number} [pageIndex=null] ページ番号
-   * @return {KeyRenderer} キー
    */
-  at(x, y, pageIndex = null) {
+  private at(x: number, y: number, pageIndex: number | null = null) {
     if (pageIndex === null) pageIndex = this.pageIndex;
 
     // 通常キー
@@ -143,10 +173,8 @@ class Keyboard extends enchant.Sprite {
 
   /**
    * カーソルを移動する
-   * @param {number} x X 移動回数
-   * @param {number} y Y 移動回数
    */
-  move(x, y) {
+  private move(x: number, y: number): void {
     let newX = this.cursorX + x;
     const newY = this.cursorY + y;
 
@@ -158,7 +186,7 @@ class Keyboard extends enchant.Sprite {
 
     // キャンセル、決定ボタンに移動したときは特殊処理
     if (y > 0 && newY === 7) {
-      newX = Math.floor(newX >= 5);
+      newX = Math.floor(newX >= 5 ? 1 : 0);
     }
 
     // キャンセル、決定ボタンから通常キーに移動した場合
@@ -180,9 +208,8 @@ class Keyboard extends enchant.Sprite {
 
   /**
    * キーを選択する
-   * @param {KeyRenderer} key 選択するキー
    */
-  select(key) {
+  private select(key: KeyRenderer) {
     if (this.currentKey) this.currentKey.selected = false;
     this.currentKey = key;
     this.currentKey.selected = true;
@@ -191,7 +218,7 @@ class Keyboard extends enchant.Sprite {
   /**
    * アップデート
    */
-  update() {
+  private update() {
     if (!this.visible) return;
 
     if (Key.up.clicked) this.move(0, -1);
@@ -200,22 +227,24 @@ class Keyboard extends enchant.Sprite {
     if (Key.right.clicked) this.move(1, 0);
 
     if (Key.space.clicked || Key.enter.clicked) {
-      this.currentKey.dispatchEvent(new enchant.Event('click'));
+      this.currentKey?.emit('click');
     }
 
     // 最大文字数を超えないように調整
     this.value = stringToArray(this.value).slice(0, this.maxLength).join('');
+
+    this.draw();
   }
 
   /**
    * キーの描画スタイルを取得する
-   * @private
-   * @param {KeyRenderer} key        対象キー
-   * @param {string} backgroundColor 背景色
-   * @param {string} textColor       文字色
-   * @return {object} 描画スタイル
    */
-  _getKeyStyle(key, backgroundColor, textColor, useSelectedColor = true) {
+  private getKeyStyle(
+    key: KeyRenderer,
+    backgroundColor: string,
+    textColor?: string,
+    useSelectedColor = true
+  ) {
     return {
       backgroundColor:
         useSelectedColor && key.selected ? this.selectedColor : backgroundColor,
@@ -230,14 +259,14 @@ class Keyboard extends enchant.Sprite {
   /**
    * 描画
    */
-  render() {
+  private draw() {
     if (!this.visible) return;
 
-    const context = this.image.context;
+    const { context } = this;
 
     // context を初期化
     context.setTransform(1, 0, 0, 1, 0, 0);
-    context.clearRect(0, 0, this.w, this.h);
+    context.clearRect(0, 0, this.width, this.height);
     context.translate(30, 0);
 
     const n = this.maxLength;
@@ -260,12 +289,7 @@ class Keyboard extends enchant.Sprite {
 
       key.render(
         context,
-        this._getKeyStyle(
-          key,
-          this.valueKeyColor,
-          this.valueKeyTextColor,
-          false
-        )
+        this.getKeyStyle(key, this.valueKeyColor, this.valueKeyTextColor, false)
       );
     }
 
@@ -273,7 +297,7 @@ class Keyboard extends enchant.Sprite {
 
     // 特殊キーを描画する
     this.functionKeys.forEach(key => {
-      key.render(context, this._getKeyStyle(key, this.functionKeyColor));
+      key.render(context, this.getKeyStyle(key, this.functionKeyColor));
     });
 
     this.cancelKey.disabled = !this.cancelable;
@@ -281,11 +305,11 @@ class Keyboard extends enchant.Sprite {
 
     this.enterKey.render(
       context,
-      this._getKeyStyle(this.enterKey, this.enterKeyColor)
+      this.getKeyStyle(this.enterKey, this.enterKeyColor)
     );
     this.cancelKey.render(
       context,
-      this._getKeyStyle(this.cancelKey, this.cancelKeyColor)
+      this.getKeyStyle(this.cancelKey, this.cancelKeyColor)
     );
 
     // 開いているページ
@@ -296,21 +320,22 @@ class Keyboard extends enchant.Sprite {
     for (const x of step(10)) {
       for (const y of step(7)) {
         const key = page.keys[y][x];
-        key.render(context, this._getKeyStyle(key, this.keyColor));
+        key.render(context, this.getKeyStyle(key, this.keyColor));
       }
     }
+
+    this.updateTexture();
   }
 
   /**
    * キーを登録する
-   * @param {array} array キーリスト
    */
-  registerKeys(array, pageIndex) {
-    const keys = [];
+  public registerKeys(array: string[], pageIndex: number) {
+    const keys: KeyRenderer[][] = [];
     let index = 0;
 
     step(7).forEach(y => {
-      const rows = [];
+      const rows: KeyRenderer[] = [];
 
       step(2).forEach(side => {
         const values = stringToArray(array[index++]).slice(0, 5);
@@ -352,10 +377,8 @@ class Keyboard extends enchant.Sprite {
 
   /**
    * 特殊キーを登録する
-   * @param {string} name  名前
-   * @param {number} index 表示順
    */
-  registerFunctionKey(name, index) {
+  public registerFunctionKey(name: string, index: number) {
     const key = new KeyRenderer(name, {
       x: 336,
       y: index * 32,
@@ -377,7 +400,7 @@ class Keyboard extends enchant.Sprite {
   /**
    * キーボードの状態をリセットする
    */
-  reset() {
+  public reset() {
     this.pageIndex = 0;
     this.cursorX = 0;
     this.cursorY = 0;
@@ -387,41 +410,57 @@ class Keyboard extends enchant.Sprite {
 
   /**
    * キーボード入力を取得する
-   * @param {number} [maxLength=10]    最大文字数
-   * @param {string} [defaultValue=''] 初期値
-   * @param {*} [cancelValue=null]     キャンセルしたときに返す値
-   * @return {string} 入力された文字列
    */
-  async get(maxLength = 10, defaultValue = '', cancelValue = null) {
+  public async get(maxLength = 10, defaultValue = '', cancelValue = null) {
     this.maxLength = maxLength;
 
     this.reset();
     this.value = defaultValue;
-    this.scale(0);
+    this.scale.set(0);
 
-    const overlay = Hack.overlay('rgba(0, 0, 0, .5)');
-    overlay.opacity = 0;
+    const overlaySprite = overlay('rgba(0, 0, 0, .5)');
+    overlaySprite.alpha = 0;
     this.visible = true;
-    overlay.tl.fadeIn(this.fadeFrame, this.easing);
-    await this.tl.scaleTo(1, 1, this.fadeFrame, this.easing).async();
+
+    await Promise.all([
+      TweenLite.to(overlaySprite, this.fadeFrame / 30, {
+        alpha: 1,
+        ease: this.easing
+      }),
+      TweenLite.to(this.scale, this.fadeFrame / 30, {
+        x: 1,
+        y: 1,
+        ease: this.easing
+      })
+    ]);
 
     // 決定かキャンセルが押されるまで待つ
     const value = await Promise.race([
       new Promise(resolve => {
-        this.once('enter', function () {
+        this.once('enter', () => {
           resolve(this.value);
         });
       }),
       new Promise(resolve => {
-        this.once('cancel', function () {
+        this.once('cancel', () => {
           resolve(cancelValue);
         });
       })
     ]);
 
-    overlay.tl.fadeOut(this.fadeFrame, this.easing);
-    await this.tl.scaleTo(0, 0, this.fadeFrame, this.easing).async();
-    overlay.remove();
+    await Promise.all([
+      TweenLite.to(overlaySprite, this.fadeFrame / 30, {
+        alpha: 0,
+        ease: this.easing
+      }),
+      TweenLite.to(this.scale, this.fadeFrame / 30, {
+        x: 0,
+        y: 0,
+        ease: this.easing
+      })
+    ]);
+
+    overlaySprite.destroy();
     this.visible = false;
 
     return value;

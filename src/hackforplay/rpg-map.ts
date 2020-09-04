@@ -7,7 +7,6 @@ import Vector2, { IVector2 } from './math/vector2';
 import { default as dictionary } from './object/dictionary';
 import RPGObject from './object/object';
 import PixiMap from './pixi-map';
-import './rpg-kit-color';
 import { default as Line } from './shapes/line';
 import { errorRemoved } from './stdlog';
 
@@ -18,6 +17,9 @@ const Hack = getHack();
  * レイヤー化された切り替え可能なマップ
  */
 export default class RPGMap extends enchant.EventTarget {
+  /**
+   * @deprecated
+   */
   public static Layer = {
     Over: 4,
     Player: 3,

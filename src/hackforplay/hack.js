@@ -3,11 +3,12 @@ import app from '../application';
 import enchant from '../enchantjs/enchant';
 import { hide, textArea } from '../mod/logFunc';
 import Camera from './camera';
-import { code$, emphasizeCode, reload } from './feeles';
+import { code$, emphasizeCode } from './feeles';
 import game from './game';
 import { getHack } from './get-hack';
 import requestPostMessage from './request-post-message';
 import { errorInEvent } from './stdlog';
+import './temp-hack';
 
 function refocus() {
   window.document.activeElement.blur(); // Blur an enchantBook
@@ -276,37 +277,6 @@ Hack.createSprite = function (width, height, prop) {
   }.call(new enchant.Sprite(width, height));
 };
 
-// overlay
-Hack.overlay = function () {
-  return function (args) {
-    // scope: createSprite()
-
-    this.image = new enchant.Surface(game.width, game.height);
-    for (let i = 0; i < args.length; i++) {
-      const fill = args[i];
-      switch (true) {
-        case fill instanceof enchant.Surface:
-          this.image.draw(fill, 0, 0, game.width, game.height);
-          break;
-        case game.assets[fill] instanceof enchant.Surface:
-          this.image.draw(game.assets[fill], 0, 0, game.width, game.height);
-          break;
-        default:
-          this.image.context.fillStyle = fill;
-          this.image.context.fillRect(0, 0, game.width, game.height);
-          break;
-      }
-    }
-
-    return this;
-  }.call(
-    Hack.createSprite(game.width, game.height, {
-      defaultParentNode: Hack.overlayGroup
-    }),
-    arguments
-  );
-};
-
 (function () {
   let playing = true;
 
@@ -327,61 +297,6 @@ Hack.overlay = function () {
     if (!playing) return;
     playing = false;
     Hack.dispatchEvent(new enchant.Event('gameover'));
-  };
-
-  // 初期値
-  Hack.ongameclear = function () {
-    const lay = Hack.overlay(
-      'rgba(0,0,0,0.4)',
-      'resources/hackforplay/clear.png'
-    );
-    lay.opacity = 0;
-    lay.moveTo(-game.rootScene.x, -game.rootScene.y);
-    lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function () {
-      // [RETRY]
-      Hack.createSprite(165, 69, {
-        x: 314 - game.rootScene.x,
-        y: 320 - game.rootScene.y,
-        image: game.assets['resources/hackforplay/new_button_retry.png'],
-        defaultParentNode: Hack.overlayGroup,
-        ontouchend: function () {
-          // [RETRY] がクリックされたとき
-          reload(false);
-        }
-      }).tl.moveTo(
-        314 - game.rootScene.x,
-        0 - game.rootScene.y,
-        40,
-        enchant.Easing.CUBIC_EASEOUT
-      );
-    });
-  };
-
-  Hack.ongameover = function () {
-    const lay = Hack.overlay(
-      'rgba(0,0,0,0.4)',
-      'resources/hackforplay/gameover.png'
-    );
-    lay.opacity = 0;
-    lay.moveTo(-game.rootScene.x, -game.rootScene.y);
-    lay.tl.fadeIn(30, enchant.Easing.LINEAR).then(function () {
-      // [RETRY]
-      Hack.createSprite(165, 69, {
-        x: 157 - game.rootScene.x,
-        y: 320 - game.rootScene.y,
-        image: game.assets['resources/hackforplay/new_button_retry.png'],
-        defaultParentNode: Hack.overlayGroup,
-        ontouchend: function () {
-          // [RETRY] がクリックされたとき
-          reload(false);
-        }
-      }).tl.moveTo(
-        157 - game.rootScene.x,
-        240 - game.rootScene.y,
-        20,
-        enchant.Easing.CUBIC_EASEOUT
-      );
-    });
   };
 })();
 

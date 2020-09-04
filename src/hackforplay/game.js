@@ -1,5 +1,6 @@
 import '../application';
 import enchant from '../enchantjs/enchant';
+import '../enchantjs/fix';
 
 // https://github.com/hackforplay/common/issues/10
 const _Map = window.Map;

@@ -6,18 +6,6 @@ if (enchant.Core.instance !== null) {
   );
 }
 
-/**
- * 1 度だけ呼ばれるイベントリスナーを追加する
- * @param {string}   type     イベント名
- * @param {function} listener リスナー
- */
-enchant.EventTarget.prototype.once = function once(type, listener) {
-  this.on(type, function callback() {
-    this.removeEventListener(type, callback);
-    listener.apply(this, arguments);
-  });
-};
-
 // Easing を文字列で指定できるようにする
 const initializeTween = enchant.Tween.prototype.initialize;
 enchant.Tween.prototype.initialize = function $initialize(params) {
@@ -39,15 +27,6 @@ enchant.Event.prototype.initialize = function $initialize(name, props) {
     const value = props[key];
     this[key] = value;
   }
-};
-
-enchant.Node.prototype.contains = function contains(x, y) {
-  return (
-    this.x <= x &&
-    this.x + this.width >= x &&
-    this.y <= y &&
-    this.y + this.height >= y
-  );
 };
 
 enchant.Node.prototype.name = 'Node';
@@ -86,16 +65,6 @@ enchant.Group.prototype.sortChildren = function sortChildren() {
       return a.order - b.order;
     });
   }
-};
-
-/**
- * タイムラインの再生終了まで待機する
- * @return {Promise} Promise
- */
-enchant.Timeline.prototype.async = function async() {
-  return new Promise(resolve => {
-    this.then(resolve);
-  });
 };
 
 enchant.Event.RESIZE = 'resize';
