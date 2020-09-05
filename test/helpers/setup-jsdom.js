@@ -2,7 +2,7 @@ import { JSDOM } from 'jsdom';
 import { Image } from 'canvas';
 import register from './timers';
 
-const window = new JSDOM().window;
+export const window = new JSDOM().window;
 
 window.focus = () => {};
 window.Map = global.Map; // https://github.com/hackforplay/common/issues/10
@@ -16,3 +16,8 @@ for (const key of Object.getOwnPropertyNames(window)) {
   if (exclude.includes(key)) continue; // exclude
   global[key] = window[key];
 }
+
+// div#enchant-stage を作成
+const div = window.document.createElement('div');
+div.id = 'enchant-stage';
+window.document.body.appendChild(div);
