@@ -11,7 +11,7 @@ import { useGlobals } from './globals';
 import Key from './key';
 import { langExports } from './lang';
 import RPGObject from './object/object';
-import Player from './object/player';
+import { createPlayer } from './object/player';
 import random from './random';
 import RPGMap from './rpg-map';
 import Rule from './rule';
@@ -47,7 +47,7 @@ export default function register(_global) {
   _global.なかま = Family;
   _global.RPGObject = _global.RPGObject || RPGObject;
   _global.BehaviorTypes = _global.BehaviorTypes || BehaviorTypes;
-  _global.Player = _global.Player || Player;
+  _global.Player = _global.Player || createPlayer();
   _global.Effect = _global.Effect || Effect;
   _global.Key = _global.Key || Key;
   _global.game = _global.game || game;
