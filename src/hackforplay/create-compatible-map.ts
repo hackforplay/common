@@ -50,7 +50,8 @@ export default function createCompatibleMap(
         if (index < 0 || index === undefined) continue; // nope!
         const square = indexSquareMap[index];
         if (!square) {
-          throw new Error(notFound(table, x, y));
+          console.warn(notFound(table, x, y)); // タイルがスクエアに入っていないバグ
+          continue;
         }
         // 最も手前の結果が優先される
         const _collider = getCollider(square.placement);
