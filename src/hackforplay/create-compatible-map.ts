@@ -85,7 +85,8 @@ export default function createCompatibleMap(
         if (index < 0 || index === undefined) return p; // nope!
         const square = indexSquareMap[index];
         if (!square) {
-          throw new Error(notFound(table, x, y));
+          console.warn(notFound(table, x, y)); // タイルがスクエアに入っていないバグ
+          return p; // nope!
         }
         if (square.placement.type === 'Nope') return p; // nope!
         return p.concat(index);
