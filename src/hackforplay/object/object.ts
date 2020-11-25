@@ -15,6 +15,7 @@ import {
   registerServant,
   unregisterServant
 } from '../family';
+import { filterSurface } from '../filterSurface';
 import { default as game } from '../game';
 import { getHack } from '../get-hack';
 import { getMap } from '../load-maps';
@@ -1127,21 +1128,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this._computeFramePosition();
   }
 
-  public filter(filter = '') {
+  public filter(filterText = '') {
     if (!('filter' in CanvasRenderingContext2D.prototype)) return; // ブラウザが非対応
-    if (!this._noFilterImage || !this._image) return;
-    if (this._image.context && this._image.context.filter === filter) return; // 同じフィルター
-    if (!filter) {
+    if (!this._noFilterImage) return; // 元々の Surface が存在しない
+    if (!filterText) {
       this._image = this._noFilterImage; // オリジナルに戻す
       return;
     }
-    const _element: HTMLImageElement | HTMLCanvasElement = this._noFilterImage
-      ._element;
-    const { width, height } = _element;
-    this._image = new enchant.Surface(width, height);
-    const context: CanvasRenderingContext2D = this._image.context;
-    context.filter = filter;
-    context.drawImage(_element, 0, 0);
+    this._image = filterSurface(this._noFilterImage, filterText);
   }
 
   public get parent() {

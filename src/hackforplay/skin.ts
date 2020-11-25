@@ -114,6 +114,16 @@ export async function getSkin(
 }
 
 /**
+ * initSurface でロードされている途中の Surface のセット
+ */
+export const loadingSurfaceSet = new WeakSet();
+
+/**
+ * Surface のロードが完了した時に実行したいコールバックの配列
+ */
+export const surfaceLoadedCallbacks = new WeakMap<any, Function[]>();
+
+/**
  *
  * @param width Surface 全体の幅
  * @param height Surface 全体の高さ
@@ -127,6 +137,7 @@ export function initSurface(
   color = 'rgba(0,0,0,0.5)' // ロード中は半透明の黒になっている
 ): Surface {
   const surface = new enchant.Surface(width, height);
+  loadingSurfaceSet.add(surface);
   const context: CanvasRenderingContext2D = surface.context;
 
   context.fillStyle = color;
@@ -141,6 +152,8 @@ export function initSurface(
   img.onload = () => {
     context.clearRect(0, 0, width, height);
     context.drawImage(img, 0, 0);
+    loadingSurfaceSet.delete(surface);
+    surfaceLoadedCallbacks.get(surface)?.forEach(cb => cb());
   };
   img.onerror = handleError;
   src &&
