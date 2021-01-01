@@ -1405,7 +1405,9 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         this ? `${this.name} の` : '',
         `みためを '${name}' という なまえにしてしまったみたい`
       ].join(' ');
-      log('error', message, this.name ? `modules/${this.name}.js` : 'Unknown');
+      if (!Hack.disableSkinNotFoundError) {
+        log('error', message, this.name ? `modules/${this.name}.js` : 'Unknown');
+      }
 
       // スキンの名前を間違えたことが分かるようにする
       this.image = initSurface(32, 32, undefined, '#fff');

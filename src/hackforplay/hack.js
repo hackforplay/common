@@ -724,4 +724,9 @@ Hack.emphasizeCode = emphasizeCode;
  */
 Hack.disableZenkakuMode = false;
 
+/**
+ * 「見た目を〇〇という名前にしてしまったみたい」というエラーログを表示しないフラグ
+ */
+Hack.disableSkinNotFoundError = false;
+
 export default Hack;
