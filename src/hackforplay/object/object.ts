@@ -647,6 +647,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this.walk(1, forward, false);
   }
 
+  public walkBehind() {
+    const forward = Dir.behind(this);
+    return this.walk(1, forward, false);
+  }
+
   public canWalk(forward: IVector2) {
     if (!this.map) return false; // 削除された
     const x = this.mapX + forward.x;

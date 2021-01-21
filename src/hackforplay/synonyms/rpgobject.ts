@@ -33,6 +33,7 @@ export const synonyms: ISynonyms = {
   あるく: { type: 'function', name: 'walk', await: true },
   みぎにあるく: { type: 'function', name: 'walkRight', await: true },
   ひだりにあるく: { type: 'function', name: 'walkLeft', await: true },
+  うしろにあるく: { type: 'function', name: 'walkBehind', await: true },
   いく: { type: 'function', name: 'locate' },
   まつ: { type: 'function', name: 'wait', await: true },
   しょうかんする: { type: 'function', name: 'summon' },
