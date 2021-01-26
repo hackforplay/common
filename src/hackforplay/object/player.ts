@@ -12,6 +12,7 @@ class Player extends RPGObject {
   }
 
   enteredStack: RPGObject[] = [];
+  input: { [type: string]: string | string[] } = {};
 
   initialize() {
     this.enteredStack = [];
@@ -55,16 +56,11 @@ class Player extends RPGObject {
   }
 
   checkInput(type: string) {
-    const input = Array.isArray(this.input[type])
-      ? this.input[type]
-      : [this.input[type]];
-    return input
-      .map(function (name: keyof typeof Key) {
-        return Key[name].pressed;
-      })
-      .reduce(function (a: number, b: number) {
-        return a + b;
-      });
+    const input = this.input[type];
+    if (Array.isArray(input)) {
+      return input.some(name => isKey(name) && Key[name].pressed) ? 1 : 0;
+    }
+    return isKey(input) && Key[input].pressed ? 1 : 0;
   }
 
   onenterframe() {
@@ -111,6 +107,10 @@ class Player extends RPGObject {
       }
     });
   }
+}
+
+function isKey(name: string): name is keyof typeof Key {
+  return name in Key;
 }
 
 export default Player;
