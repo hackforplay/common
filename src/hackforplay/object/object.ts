@@ -142,7 +142,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
   private _collisionFlag?: boolean;
   private _isKinematic?: boolean; // this.isKinematic (Default: true)
-  private _layer: number = (RPGMap as any).Layer.Middle;
+  protected _layer: number = (RPGMap as any).Layer.Middle;
   private _collidedNodes: any[] = []; // 衝突した Node リスト
   private hpchangeFlag = false;
   private hpLabel?: any;
@@ -1411,7 +1411,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         `みためを '${name}' という なまえにしてしまったみたい`
       ].join(' ');
       if (!Hack.disableSkinNotFoundError) {
-        log('error', message, this.name ? `modules/${this.name}.js` : 'Unknown');
+        log(
+          'error',
+          message,
+          this.name ? `modules/${this.name}.js` : 'Unknown'
+        );
       }
 
       // スキンの名前を間違えたことが分かるようにする

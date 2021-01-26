@@ -6,16 +6,19 @@ import RPGMap from '../rpg-map';
 import Camera from '../camera';
 
 class Player extends RPGObject {
-  constructor(mod) {
-    super(mod);
+  constructor() {
+    super();
     this.initialize();
   }
+
+  enteredStack: RPGObject[] = [];
+  input: { [type: string]: string | string[] } = {};
 
   initialize() {
     this.enteredStack = [];
     this.on('enterframe', Player.prototype.stayCheck);
     this.on('walkend', Player.prototype.enterCheck);
-    const set = key => {
+    const set = (key: string) => {
       if (!(key in this)) {
         this[key] = Player.prototype[key].bind(this);
       }
@@ -42,32 +45,26 @@ class Player extends RPGObject {
       const camera = new Camera();
       camera.target = this.proxy; // https://bit.ly/39lHonB
       Camera.main = camera;
-      Hack.camera = Hack.camera; // 後方互換性 (~0.11)
     }
 
     // 歩き終わったときに自動でモノを拾う (pickUp)
     this.isAutoPickUp = true;
   }
 
-  static set(object) {
+  static set(object: RPGObject) {
     Player.prototype.initialize.call(object);
   }
 
-  checkInput(type) {
-    const input = Array.isArray(this.input[type])
-      ? this.input[type]
-      : [this.input[type]];
-    return input
-      .map(function (name) {
-        return Key[name].pressed;
-      })
-      .reduce(function (a, b) {
-        return a + b;
-      });
+  checkInput(type: string) {
+    const input = this.input[type];
+    if (Array.isArray(input)) {
+      return input.some(name => isKey(name) && Key[name].pressed) ? 1 : 0;
+    }
+    return isKey(input) && Key[input].pressed ? 1 : 0;
   }
 
   onenterframe() {
-    if (!Hack.isPlaying) return;
+    if (!(Hack as any).isPlaying) return;
 
     if (this.behavior === BehaviorTypes.Idle) {
       if (this.checkInput('attack')) {
@@ -89,18 +86,18 @@ class Player extends RPGObject {
   enterCheck() {
     // Dispatch playerenter Event
     RPGObject.collection
-      .filter(function (item) {
+      .filter(item => {
         return item.mapX === this.mapX && item.mapY === this.mapY;
-      }, this)
-      .forEach(function (item) {
+      })
+      .forEach(item => {
         item.dispatchEvent(new enchant.Event('playerenter'));
         this.enteredStack.push(item);
-      }, this);
+      });
   }
 
   stayCheck() {
     // Dispatch playerstay/playerexit Event
-    this.enteredStack.forEach(function (item) {
+    this.enteredStack.forEach(item => {
       if (item.mapX === this.mapX && item.mapY === this.mapY) {
         item.dispatchEvent(new enchant.Event('playerstay'));
       } else {
@@ -108,8 +105,12 @@ class Player extends RPGObject {
         const index = this.enteredStack.indexOf(item);
         this.enteredStack.splice(index, 1);
       }
-    }, this);
+    });
   }
+}
+
+function isKey(name: string): name is keyof typeof Key {
+  return name in Key;
 }
 
 export default Player;
