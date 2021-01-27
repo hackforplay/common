@@ -126,9 +126,14 @@ export default function talk(text: string, ...choices: string[]) {
 
 let answers: TextArea[] = [];
 const cursor = makeCursor();
+let isSpaceKeyBlocked = false; // スペースキーを押している間に会話が始まってすぐ閉じる問題の対処
 
 // スペースキーでウィンドウを閉じたい
-Key.space.release(() => {
+Key.space.release(function () {
+  if (isSpaceKeyBlocked) {
+    isSpaceKeyBlocked = false; // ブロック解除
+    return;
+  }
   const [current] = talkStack;
   if (!current) return;
   const { choices, resolve, cursor } = current;
@@ -197,6 +202,9 @@ function showNextIfExist() {
     }
     Hack.popupGroup.addChild(cursor); // カーソルを常に手前に表示
     cursor.x = 480 - (config.button.width || 0) + config.cursor.offsetX;
+    if (Key.space.pressed) {
+      isSpaceKeyBlocked = true; // スペースキー押下中の進行をブロックする
+    }
   } else {
     Hack.popupGroup.removeChild(textArea);
     Hack.popupGroup.removeChild(cursor);
