@@ -42,10 +42,8 @@ export default function coordinate() {
   Hack.coordinateSprite = label;
 
   const setPosition = (clientX: number, clientY: number) => {
-    // マウスが重なっている一番手前のカメラを取得
-    const camera = Camera.collection
-      .filter(camera => camera.contains(clientX, clientY))
-      .pop();
+    // マウスが重なっている→メインカメラを使う
+    const camera = Camera.main;
     if (!camera) return;
 
     // マウス座標をゲーム内座標に変換
