@@ -304,6 +304,15 @@ export class Rule {
       }
     });
 
+    // みつけたときをコールする
+    const foundInCurrentFrame = Array.from(this.__foundInCurrentFrame);
+    this.__foundInCurrentFrame = [];
+    for (const { self, item, resolve } of foundInCurrentFrame) {
+      this.runTwoObjectListener('みつけたとき', self, item).then(() => {
+        resolve();
+      });
+    }
+
     // 次のループを準備
     requestAnimationFrame(() => {
       this.mainLoop();
@@ -561,6 +570,17 @@ export class Rule {
   public found(func: TwoObjectListener) {
     this.addTwoObjectListener('みつけたとき', func);
   }
+
+  /**
+   * @deprecated
+   * 「みつけたとき」を同じループで何度も呼ばないようにするための暫定的な変数
+   * 0.41 で統一的なイベント in ループの仕組みを作る
+   */
+  public __foundInCurrentFrame: {
+    self: RPGObject;
+    item: RPGObject;
+    resolve: () => void;
+  }[] = [];
 
   public [PropertyMissing](chainedName: string) {
     const message = `トリガーに「${chainedName}」はないみたい`;

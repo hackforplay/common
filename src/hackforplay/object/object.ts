@@ -1494,10 +1494,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       filter ? foundable.filter(filter) : foundable
     );
     if (found) {
-      this._isJustBeingFound = true; // このフレームでは find() をスキップ
-      const p = _ruleInstance.runTwoObjectListener('みつけたとき', this, found);
-      this._isJustBeingFound = false; // スキップタイム終了
-      await p; // await this.find() でみつけたときをループできるよう, 終了を待つ
+      // await this.find() でみつけたときをループできるよう, 終了を待つ
+      await new Promise<void>(resolve => {
+        _ruleInstance.__foundInCurrentFrame.push({
+          item: found,
+          resolve,
+          self: this
+        });
+      });
     }
   }
 
