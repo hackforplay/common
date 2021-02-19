@@ -2,6 +2,12 @@ import { default as enchant } from '../enchantjs/enchant';
 import '../enchantjs/ui.enchant';
 import RPGObject from './object/object';
 
+type Line = {
+  text: string;
+  width: number;
+  height: number;
+};
+
 /**
  * キャラクターの頭上に表示するラベル
  */
@@ -32,14 +38,6 @@ export class HeadLabel extends enchant.Entity {
    * CanvasRenderingContext2D に与えるフォント
    */
   public font = '14px mplus';
-  /**
-   * 描画領域の幅
-   */
-  public width = 0;
-  /**
-   * 描画領域の高さ
-   */
-  public height = 0;
 
   constructor(node: RPGObject) {
     super();
@@ -64,27 +62,39 @@ export class HeadLabel extends enchant.Entity {
     this.y = this.node.y;
   }
 
+  private lines: Line[] = [];
+
   /**
    * enchant.js で使われる描画関数
    */
   public cvsRender(ctx: CanvasRenderingContext2D) {
+    // 改行文字ごとに分割
+    const lineTexts = this.text.split('\n');
+
     ctx.textBaseline = 'top';
     ctx.font = this.font;
     if (this.previousText !== this.text) {
       // テキストの内容が変わったので、幅と高さを再計算する
-      const metrics = ctx.measureText(this.text);
-      this.width = metrics.width;
-      this.height = metrics.actualBoundingBoxDescent;
+      this.lines = lineTexts.map<Line>(text => {
+        const metrics = ctx.measureText(text);
+        return {
+          height: metrics.fontBoundingBoxDescent,
+          text,
+          width: metrics.width
+        };
+      });
       this.previousText = this.text;
     }
 
-    // 背景色を塗る
-    ctx.fillStyle = this.background;
     const p = this.padding;
-    ctx.fillRect(-p, -p, this.width + p * 2, this.height + p * 2);
-
-    // テキストを描画する
-    ctx.fillStyle = this.color;
-    ctx.fillText(this.text, 0, 0);
+    let y = 0;
+    for (let i = this.lines.length - 1; i >= 0; i--) {
+      const { height, text, width } = this.lines[i];
+      ctx.fillStyle = this.background;
+      ctx.fillRect(-width / 2 - p, y - p, width + p * 2, height + p * 2); // 背景色を塗る
+      ctx.fillStyle = this.color;
+      ctx.fillText(text, -width / 2, y); // テキストを描画する
+      y -= height + p * 2;
+    }
   }
 }
