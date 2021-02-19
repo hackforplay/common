@@ -18,6 +18,7 @@ import {
 import { filterSurface } from '../filterSurface';
 import { default as game } from '../game';
 import { getHack } from '../get-hack';
+import { HeadLabel } from '../HeadLabel';
 import { getMap } from '../load-maps';
 import Vector2, { IVector2 } from '../math/vector2';
 import { randomCollection } from '../random';
@@ -1577,6 +1578,26 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public set dir(dir: Dir.IDir) {
     logToDeprecated('this.dir = Dir.(...)');
     this.forward = dir(this);
+  }
+
+  private _label: any;
+  /**
+   * キャラクターの頭上に表示する文字列
+   * ラベルが存在しない場合は空文字で表す
+   */
+  public get label() {
+    return this._label?.text ?? '';
+  }
+  public set label(text: string) {
+    if (text) {
+      // ラベルの文字列を変更する・生成する
+      this._label = this._label ?? new HeadLabel(this);
+      this._label.text = text;
+    } else {
+      // ラベルインスタンスを削除する
+      this._label?.remove();
+      this._label = undefined;
+    }
   }
 
   /**
