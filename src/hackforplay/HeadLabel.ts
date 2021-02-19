@@ -6,6 +6,7 @@ import RPGObject from './object/object';
  * キャラクターの頭上に表示するラベル
  */
 export class HeadLabel extends enchant.Entity {
+  private node: RPGObject;
   /**
    * 表示する文字列
    */
@@ -42,19 +43,25 @@ export class HeadLabel extends enchant.Entity {
 
   constructor(node: RPGObject) {
     super();
-
-    // 追従させる
-    node.on('enterframe', () => {
-      if (node.parentNode && node.parentNode !== this.parentNode) {
-        node.parentNode.addChild(this);
-      }
-    });
-    node.on('prerender', () => {
-      this.x = node.x + node.width / 2 - this.width / 2;
-      this.y = node.y;
-    });
-
+    this.node = node;
     node.parentNode?.addChild(this);
+  }
+
+  public onenterframe() {
+    // 追従させる
+    if (
+      this.node.parentNode &&
+      this.parentNode &&
+      this.node.parentNode !== this.parentNode
+    ) {
+      this.node.parentNode.addChild(this);
+    }
+  }
+
+  public onprerender() {
+    // 追従させる
+    this.x = this.node.x + this.node.width / 2 - this.width / 2;
+    this.y = this.node.y;
   }
 
   /**
