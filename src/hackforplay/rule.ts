@@ -21,6 +21,32 @@ interface ICollidedEvent extends IEvent {
   hits: RPGObject[];
 }
 
+type E<T extends string, Args> = {
+  eventName: T;
+  args: Args;
+  callback: () => void;
+};
+
+type EventType =
+  | E<'つくられたとき', [RPGObject]>
+  | E<'つねに', [RPGObject]>
+  | E<'こうげきするとき', [RPGObject]>
+  | E<'たおされたとき', [RPGObject]>
+  | E<'すすめなかったとき', [RPGObject]>
+  | E<'おかねがかわったとき', [RPGObject]>
+  | E<'じかんがすすんだとき', [RPGObject]>
+  | E<'タップされたとき', [RPGObject]>
+  | E<'マップがかわったとき', [RPGObject]>
+  | E<'あるいたとき', [RPGObject]>
+  | E<'へんすうがかわったとき', [RPGObject]>
+  | E<'ふまれたとき', [RPGObject, RPGObject]>
+  | E<'どかれたとき', [RPGObject, RPGObject]>
+  | E<'ぶつかったとき', [RPGObject, RPGObject]>
+  | E<'こうげきされたとき', [RPGObject, RPGObject]>
+  | E<'メッセージされたとき', [RPGObject, RPGObject]>
+  | E<'しょうかんされたとき', [RPGObject, RPGObject]>
+  | E<'みつけたとき', [RPGObject, RPGObject]>;
+
 const Hack = getHack();
 
 function handleError(
@@ -304,13 +330,19 @@ export class Rule {
       }
     });
 
-    // みつけたときをコールする
-    const foundInCurrentFrame = Array.from(this.__foundInCurrentFrame);
-    this.__foundInCurrentFrame = [];
-    for (const { self, item, resolve } of foundInCurrentFrame) {
-      this.runTwoObjectListener('みつけたとき', self, item).then(() => {
-        resolve();
-      });
+    // 予約されたイベントを発火させて、要素を空にする
+    const events = Array.from(this.scheduledEvents);
+    this.scheduledEvents = [];
+    for (const { args, callback, eventName } of events) {
+      if (args.length === 1) {
+        this.runOneObjectLisener(eventName, args[0]).then(() => {
+          callback();
+        });
+      } else if (args.length === 2) {
+        this.runTwoObjectListener(eventName, args[0], args[1]).then(() => {
+          callback();
+        });
+      }
     }
 
     // 次のループを準備
@@ -572,15 +604,12 @@ export class Rule {
   }
 
   /**
-   * @deprecated
-   * 「みつけたとき」を同じループで何度も呼ばないようにするための暫定的な変数
-   * 0.41 で統一的なイベント in ループの仕組みを作る
+   * このループの最後にイベントを実行させる
    */
-  public __foundInCurrentFrame: {
-    self: RPGObject;
-    item: RPGObject;
-    resolve: () => void;
-  }[] = [];
+  public scheduleEventEmit(event: EventType) {
+    this.scheduledEvents.push(event);
+  }
+  private scheduledEvents: EventType[] = [];
 
   public [PropertyMissing](chainedName: string) {
     const message = `トリガーに「${chainedName}」はないみたい`;

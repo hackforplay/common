@@ -1497,10 +1497,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (found) {
       // await this.find() でみつけたときをループできるよう, 終了を待つ
       await new Promise<void>(resolve => {
-        _ruleInstance.__foundInCurrentFrame.push({
-          item: found,
-          resolve,
-          self: this
+        _ruleInstance.scheduleEventEmit({
+          eventName: 'みつけたとき',
+          args: [this, found],
+          callback: resolve
         });
       });
     }
