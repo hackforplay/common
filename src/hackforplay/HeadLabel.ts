@@ -46,12 +46,11 @@ export class HeadLabel extends enchant.Entity {
   }
 
   public onenterframe() {
-    // 追従させる
-    if (
-      this.node.parentNode &&
-      this.parentNode &&
-      this.node.parentNode !== this.parentNode
-    ) {
+    if (!this.parentNode) return;
+    if (!this.node.parentNode) {
+      this.remove();
+    } else if (this.node.parentNode !== this.parentNode) {
+      // 追従させる
       this.node.parentNode.addChild(this);
     }
   }
