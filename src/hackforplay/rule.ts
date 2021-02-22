@@ -24,7 +24,7 @@ interface ICollidedEvent extends IEvent {
 type E<T extends string, Args> = {
   eventName: T;
   args: Args;
-  callback: () => void;
+  callback?: () => void;
 };
 
 type EventType =
@@ -334,14 +334,14 @@ export class Rule {
     const events = Array.from(this.scheduledEvents);
     this.scheduledEvents = [];
     for (const { args, callback, eventName } of events) {
+      let p: Promise<void> | void;
       if (args.length === 1) {
-        this.runOneObjectLisener(eventName, args[0]).then(() => {
-          callback();
-        });
+        p = this.runOneObjectLisener(eventName, args[0]);
       } else if (args.length === 2) {
-        this.runTwoObjectListener(eventName, args[0], args[1]).then(() => {
-          callback();
-        });
+        p = this.runTwoObjectListener(eventName, args[0], args[1]);
+      }
+      if (callback && p) {
+        p.then(callback);
       }
     }
 
