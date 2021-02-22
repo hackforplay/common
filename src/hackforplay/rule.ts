@@ -336,9 +336,9 @@ export class Rule {
     for (const { args, callback, eventName } of events) {
       let p: Promise<void> | void;
       if (args.length === 1) {
-        p = this.runOneObjectLisener(eventName, args[0]);
+        p = this.runOneObjectLisener(eventName, args[0].proxy);
       } else if (args.length === 2) {
-        p = this.runTwoObjectListener(eventName, args[0], args[1]);
+        p = this.runTwoObjectListener(eventName, args[0].proxy, args[1].proxy);
       }
       if (callback && p) {
         p.then(callback);
@@ -605,6 +605,7 @@ export class Rule {
 
   /**
    * このループの最後にイベントを実行させる
+   * RPGObject は自動的に proxy に変換される
    */
   public scheduleEventEmit(event: EventType) {
     this.scheduledEvents.push(event);
