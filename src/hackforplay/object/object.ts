@@ -48,7 +48,7 @@ function startFrameCoroutine(
   node: any,
   generator: IterableIterator<undefined>
 ) {
-  return new Promise(resolve => {
+  return new Promise<void>(resolve => {
     node.on('enterframe', function _() {
       const { done } = generator.next();
       if (done) {
@@ -611,7 +611,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       });
     }
 
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
       this.setTimeout(resolve, frameLength);
       this.on('destroy', resolve);
     });
@@ -1070,7 +1070,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public wait(second = 0) {
     let frame = second * game.fps;
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       const handler = () => {
         if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
         if (--frame <= 0) {
@@ -1533,7 +1533,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public async speak(text: string) {
     const utterThis = new SpeechSynthesisUtterance(text);
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       utterThis.addEventListener('end', () => {
         resolve();
       });
@@ -1567,7 +1567,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    */
   public think(name: string) {
     this.cancelPreviousThink();
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       this.cancelPreviousThink = showThinkSprite(name, this, resolve);
     });
   }
