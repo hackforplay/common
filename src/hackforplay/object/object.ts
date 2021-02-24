@@ -276,9 +276,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public set money(value: number) {
     if (this._money === value) return;
     this._money = value;
-    const { _ruleInstance } = this;
-    if (!_ruleInstance) return;
-    _ruleInstance.runOneObjectLisener('おかねがかわったとき', this);
+    this._ruleInstance?.scheduleEventEmit({
+      eventName: 'おかねがかわったとき',
+      args: [this]
+    });
   }
 
   public get opacity() {
@@ -504,7 +505,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         }
         map.scene.addChild(this.reverseProxy);
         // トリガーを発火
-        this._ruleInstance?.runOneObjectLisener('マップがかわったとき', this);
+        this._ruleInstance?.scheduleEventEmit({
+          eventName: 'マップがかわったとき',
+          args: [this]
+        });
       }
     }
     if (ignoreTrodden) {
@@ -791,7 +795,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.dispatchEvent(new enchant.Event('walkmove'));
     this.dispatchEvent(new enchant.Event('walkend'));
 
-    this._ruleInstance?.runOneObjectLisener('あるいたとき', this); // TOOD: フレームの最後に実行する
+    this._ruleInstance?.scheduleEventEmit({
+      eventName: 'あるいたとき',
+      args: [this]
+    });
 
     this.behavior = BehaviorTypes.Idle;
   }

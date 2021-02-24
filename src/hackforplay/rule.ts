@@ -273,7 +273,10 @@ export class Rule {
     const collections = this._collections[name];
     if (!collections) return;
     for (const item of collections) {
-      this.runTwoObjectListener('メッセージされたとき', item, sender);
+      this.scheduleEventEmit({
+        eventName: 'メッセージされたとき',
+        args: [item, sender]
+      });
     }
   }
 
@@ -382,7 +385,10 @@ export class Rule {
     if (!listeners) return;
     for (const name of Object.keys(listeners)) {
       for (const item of this.getCollection(name)) {
-        this.runOneObjectLisener('じかんがすすんだとき', item);
+        this.scheduleEventEmit({
+          eventName: 'じかんがすすんだとき',
+          args: [item]
+        });
       }
     }
   }
@@ -509,28 +515,49 @@ export class Rule {
   }
 
   private onこうげきするとき = ((e: IEvent) => {
-    this.runOneObjectLisener('こうげきするとき', e.target);
+    this.scheduleEventEmit({
+      eventName: 'こうげきするとき',
+      args: [e.target]
+    });
   }).bind(this);
   private onたおされたとき = ((e: IEvent) => {
-    this.runOneObjectLisener('たおされたとき', e.target);
+    this.scheduleEventEmit({
+      eventName: 'たおされたとき',
+      args: [e.target]
+    });
   }).bind(this);
   private onタップされたとき = ((e: IEvent) => {
-    this.runOneObjectLisener('タップされたとき', e.target.proxy);
+    this.scheduleEventEmit({
+      eventName: 'タップされたとき',
+      args: [e.target]
+    });
   }).bind(this);
   private onすすめなかったとき = ((e: ICollidedEvent) => {
     if (e.map || e.hits.length === 0) {
       // マップの枠か、cmapとぶつかった => 相手のいない衝突
-      this.runOneObjectLisener('すすめなかったとき', e.target);
+      this.scheduleEventEmit({
+        eventName: 'すすめなかったとき',
+        args: [e.target]
+      });
     } else {
       // 何かとぶつかった
-      this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
+      this.scheduleEventEmit({
+        eventName: 'ぶつかったとき',
+        args: [e.target, e.item]
+      });
     }
   }).bind(this);
   private onふまれたとき = ((e: IEvent) => {
-    this.runTwoObjectListener('ふまれたとき', e.target, e.item);
+    this.scheduleEventEmit({
+      eventName: 'ふまれたとき',
+      args: [e.target, e.item]
+    });
   }).bind(this);
   private onどかれたとき = ((e: IEvent) => {
-    this.runTwoObjectListener('どかれたとき', e.target, e.item);
+    this.scheduleEventEmit({
+      eventName: 'どかれたとき',
+      args: [e.target, e.item]
+    });
   }).bind(this);
   private onぶつかったとき = ((e: IEvent) => {
     if (e && e.item) {
