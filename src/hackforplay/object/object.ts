@@ -131,7 +131,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public _cvsCache: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public then: undefined; // await されたときに then が参照される
   public frozen = false; // 動きを止めるプロパティ
-  public fixed = false; // 画面上に固定するフラグ
 
   private _hp?: number;
   private _atk?: number;
@@ -153,6 +152,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _noFilterImage?: typeof enchant.Surface; // filter がかかっていないオリジナルの画像
   private isBehaviorChanged = false;
   private _collideMapBoader?: boolean; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
+  private _fixed = false;
 
   /**
    * オブジェクト同士の比較に使うためのユニークな識別子 #86
@@ -1599,6 +1599,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    */
   public get reverseProxy(): RPGObject {
     return reverseSynonymize(this);
+  }
+
+  public get fixed() {
+    return this._fixed;
+  }
+  public set fixed(value) {
+    /* fixed に値がセットされた時にコールされる関数 */
+    this._fixed = value;
+    this.parentNode.removeChild(this.reverseProxy)
+	  Hack.cameraGroup.addChild(this)
   }
 }
 
