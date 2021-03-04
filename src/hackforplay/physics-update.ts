@@ -81,8 +81,14 @@ export function physicsCollision() {
 
     // Dispatch triggerenter event
     for (const item of entered) {
-      self._ruleInstance?.runTwoObjectListener('ぶつかったとき', self, item);
-      self._ruleInstance?.runTwoObjectListener('ぶつかったとき', item, self);
+      self._ruleInstance?.scheduleEventEmit({
+        eventName: 'ぶつかったとき',
+        args: [self, item]
+      });
+      self._ruleInstance?.scheduleEventEmit({
+        eventName: 'ぶつかったとき',
+        args: [item, self]
+      });
     }
   }
 }

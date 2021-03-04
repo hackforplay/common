@@ -18,6 +18,7 @@ import {
 import { filterSurface } from '../filterSurface';
 import { default as game } from '../game';
 import { getHack } from '../get-hack';
+import { HeadLabel } from '../HeadLabel';
 import { getMap } from '../load-maps';
 import Vector2, { IVector2 } from '../math/vector2';
 import { randomCollection } from '../random';
@@ -47,7 +48,7 @@ function startFrameCoroutine(
   node: any,
   generator: IterableIterator<undefined>
 ) {
-  return new Promise(resolve => {
+  return new Promise<void>(resolve => {
     node.on('enterframe', function _() {
       const { done } = generator.next();
       if (done) {
@@ -142,7 +143,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private _behavior: string = BehaviorTypes.Idle; // call this.onbecomeidle
   private _collisionFlag?: boolean;
   private _isKinematic?: boolean; // this.isKinematic (Default: true)
-  private _layer: number = (RPGMap as any).Layer.Middle;
+  protected _layer: number = (RPGMap as any).Layer.Middle;
   private _collidedNodes: any[] = []; // 衝突した Node リスト
   private hpchangeFlag = false;
   private hpLabel?: any;
@@ -275,9 +276,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public set money(value: number) {
     if (this._money === value) return;
     this._money = value;
-    const { _ruleInstance } = this;
-    if (!_ruleInstance) return;
-    _ruleInstance.runOneObjectLisener('おかねがかわったとき', this);
+    this._ruleInstance?.scheduleEventEmit({
+      eventName: 'おかねがかわったとき',
+      args: [this]
+    });
   }
 
   public get opacity() {
@@ -503,7 +505,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         }
         map.scene.addChild(this.reverseProxy);
         // トリガーを発火
-        this._ruleInstance?.runOneObjectLisener('マップがかわったとき', this);
+        this._ruleInstance?.scheduleEventEmit({
+          eventName: 'マップがかわったとき',
+          args: [this]
+        });
       }
     }
     if (ignoreTrodden) {
@@ -610,7 +615,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       });
     }
 
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
       this.setTimeout(resolve, frameLength);
       this.on('destroy', resolve);
     });
@@ -644,6 +649,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public walkLeft() {
     const forward = Dir.leftHand(this);
+    return this.walk(1, forward, false);
+  }
+
+  public walkBehind() {
+    const forward = Dir.behind(this);
     return this.walk(1, forward, false);
   }
 
@@ -785,7 +795,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     this.dispatchEvent(new enchant.Event('walkmove'));
     this.dispatchEvent(new enchant.Event('walkend'));
 
-    this._ruleInstance?.runOneObjectLisener('あるいたとき', this); // TOOD: フレームの最後に実行する
+    this._ruleInstance?.scheduleEventEmit({
+      eventName: 'あるいたとき',
+      args: [this]
+    });
 
     this.behavior = BehaviorTypes.Idle;
   }
@@ -1064,7 +1077,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public wait(second = 0) {
     let frame = second * game.fps;
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       const handler = () => {
         if (!Hack.world || Hack.world._stop) return; // ゲームがストップしている
         if (--frame <= 0) {
@@ -1406,7 +1419,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         `みためを '${name}' という なまえにしてしまったみたい`
       ].join(' ');
       if (!Hack.disableSkinNotFoundError) {
-        log('error', message, this.name ? `modules/${this.name}.js` : 'Unknown');
+        log(
+          'error',
+          message,
+          this.name ? `modules/${this.name}.js` : 'Unknown'
+        );
       }
 
       // スキンの名前を間違えたことが分かるようにする
@@ -1485,10 +1502,14 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       filter ? foundable.filter(filter) : foundable
     );
     if (found) {
-      this._isJustBeingFound = true; // このフレームでは find() をスキップ
-      const p = _ruleInstance.runTwoObjectListener('みつけたとき', this, found);
-      this._isJustBeingFound = false; // スキップタイム終了
-      await p; // await this.find() でみつけたときをループできるよう, 終了を待つ
+      // await this.find() でみつけたときをループできるよう, 終了を待つ
+      await new Promise<void>(resolve => {
+        _ruleInstance.scheduleEventEmit({
+          eventName: 'みつけたとき',
+          args: [this, found],
+          callback: resolve
+        });
+      });
     }
   }
 
@@ -1519,7 +1540,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
 
   public async speak(text: string) {
     const utterThis = new SpeechSynthesisUtterance(text);
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       utterThis.addEventListener('end', () => {
         resolve();
       });
@@ -1553,7 +1574,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
    */
   public think(name: string) {
     this.cancelPreviousThink();
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       this.cancelPreviousThink = showThinkSprite(name, this, resolve);
     });
   }
@@ -1564,6 +1585,26 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public set dir(dir: Dir.IDir) {
     logToDeprecated('this.dir = Dir.(...)');
     this.forward = dir(this);
+  }
+
+  private _label: any;
+  /**
+   * キャラクターの頭上に表示する文字列
+   * ラベルが存在しない場合は空文字で表す
+   */
+  public get label() {
+    return this._label?.text ?? '';
+  }
+  public set label(text: string) {
+    if (text) {
+      // ラベルの文字列を変更する・生成する
+      this._label = this._label ?? new HeadLabel(this);
+      this._label.text = text;
+    } else {
+      // ラベルインスタンスを削除する
+      this._label?.remove();
+      this._label = undefined;
+    }
   }
 
   /**

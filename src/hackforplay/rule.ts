@@ -21,6 +21,32 @@ interface ICollidedEvent extends IEvent {
   hits: RPGObject[];
 }
 
+type E<T extends string, Args> = {
+  eventName: T;
+  args: Args;
+  callback?: () => void;
+};
+
+type EventType =
+  | E<'つくられたとき', [RPGObject]>
+  | E<'つねに', [RPGObject]>
+  | E<'こうげきするとき', [RPGObject]>
+  | E<'たおされたとき', [RPGObject]>
+  | E<'すすめなかったとき', [RPGObject]>
+  | E<'おかねがかわったとき', [RPGObject]>
+  | E<'じかんがすすんだとき', [RPGObject]>
+  | E<'タップされたとき', [RPGObject]>
+  | E<'マップがかわったとき', [RPGObject]>
+  | E<'あるいたとき', [RPGObject]>
+  | E<'へんすうがかわったとき', [RPGObject]>
+  | E<'ふまれたとき', [RPGObject, RPGObject]>
+  | E<'どかれたとき', [RPGObject, RPGObject]>
+  | E<'ぶつかったとき', [RPGObject, RPGObject]>
+  | E<'こうげきされたとき', [RPGObject, RPGObject]>
+  | E<'メッセージされたとき', [RPGObject, RPGObject]>
+  | E<'しょうかんされたとき', [RPGObject, RPGObject]>
+  | E<'みつけたとき', [RPGObject, RPGObject]>;
+
 const Hack = getHack();
 
 function handleError(
@@ -247,7 +273,10 @@ export class Rule {
     const collections = this._collections[name];
     if (!collections) return;
     for (const item of collections) {
-      this.runTwoObjectListener('メッセージされたとき', item, sender);
+      this.scheduleEventEmit({
+        eventName: 'メッセージされたとき',
+        args: [item, sender]
+      });
     }
   }
 
@@ -304,6 +333,21 @@ export class Rule {
       }
     });
 
+    // 予約されたイベントを発火させて、要素を空にする
+    const events = Array.from(this.scheduledEvents);
+    this.scheduledEvents = [];
+    for (const { args, callback, eventName } of events) {
+      let p: Promise<void> | void;
+      if (args.length === 1) {
+        p = this.runOneObjectLisener(eventName, args[0].proxy);
+      } else if (args.length === 2) {
+        p = this.runTwoObjectListener(eventName, args[0].proxy, args[1].proxy);
+      }
+      if (callback && p) {
+        p.then(callback);
+      }
+    }
+
     // 次のループを準備
     requestAnimationFrame(() => {
       this.mainLoop();
@@ -341,7 +385,10 @@ export class Rule {
     if (!listeners) return;
     for (const name of Object.keys(listeners)) {
       for (const item of this.getCollection(name)) {
-        this.runOneObjectLisener('じかんがすすんだとき', item);
+        this.scheduleEventEmit({
+          eventName: 'じかんがすすんだとき',
+          args: [item]
+        });
       }
     }
   }
@@ -468,28 +515,49 @@ export class Rule {
   }
 
   private onこうげきするとき = ((e: IEvent) => {
-    this.runOneObjectLisener('こうげきするとき', e.target);
+    this.scheduleEventEmit({
+      eventName: 'こうげきするとき',
+      args: [e.target]
+    });
   }).bind(this);
   private onたおされたとき = ((e: IEvent) => {
-    this.runOneObjectLisener('たおされたとき', e.target);
+    this.scheduleEventEmit({
+      eventName: 'たおされたとき',
+      args: [e.target]
+    });
   }).bind(this);
   private onタップされたとき = ((e: IEvent) => {
-    this.runOneObjectLisener('タップされたとき', e.target.proxy);
+    this.scheduleEventEmit({
+      eventName: 'タップされたとき',
+      args: [e.target]
+    });
   }).bind(this);
   private onすすめなかったとき = ((e: ICollidedEvent) => {
     if (e.map || e.hits.length === 0) {
       // マップの枠か、cmapとぶつかった => 相手のいない衝突
-      this.runOneObjectLisener('すすめなかったとき', e.target);
+      this.scheduleEventEmit({
+        eventName: 'すすめなかったとき',
+        args: [e.target]
+      });
     } else {
       // 何かとぶつかった
-      this.runTwoObjectListener('ぶつかったとき', e.target, e.item);
+      this.scheduleEventEmit({
+        eventName: 'ぶつかったとき',
+        args: [e.target, e.item]
+      });
     }
   }).bind(this);
   private onふまれたとき = ((e: IEvent) => {
-    this.runTwoObjectListener('ふまれたとき', e.target, e.item);
+    this.scheduleEventEmit({
+      eventName: 'ふまれたとき',
+      args: [e.target, e.item]
+    });
   }).bind(this);
   private onどかれたとき = ((e: IEvent) => {
-    this.runTwoObjectListener('どかれたとき', e.target, e.item);
+    this.scheduleEventEmit({
+      eventName: 'どかれたとき',
+      args: [e.target, e.item]
+    });
   }).bind(this);
   private onぶつかったとき = ((e: IEvent) => {
     if (e && e.item) {
@@ -561,6 +629,15 @@ export class Rule {
   public found(func: TwoObjectListener) {
     this.addTwoObjectListener('みつけたとき', func);
   }
+
+  /**
+   * このループの最後にイベントを実行させる
+   * RPGObject は自動的に proxy に変換される
+   */
+  public scheduleEventEmit(event: EventType) {
+    this.scheduledEvents.push(event);
+  }
+  private scheduledEvents: EventType[] = [];
 
   public [PropertyMissing](chainedName: string) {
     const message = `トリガーに「${chainedName}」はないみたい`;
