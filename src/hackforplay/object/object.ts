@@ -1636,7 +1636,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     /* fixed に値がセットされた時にコールされる関数 */
     this._fixed = value;
     this.parentNode.removeChild(this.reverseProxy);
-    Hack.cameraGroup.addChild(this);
+    Hack.cameraGroup.addChild(this.reverseProxy);
   }
 }
 
