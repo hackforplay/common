@@ -462,7 +462,6 @@ export class Rule {
     object.removeEventListener('collided', this.onすすめなかったとき);
     object.removeEventListener('attacked', this.onこうげきされたとき);
     this.removeFromCollection(object);
-    object.name = ''; // つねに() を終了させる
   }
 
   public installAsset(name: string) {
