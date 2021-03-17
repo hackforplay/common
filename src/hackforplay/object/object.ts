@@ -127,7 +127,6 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public currentSkin?: ISkin; // 適用されているスキン
   public _stop = false; // オブジェクトの onenterframe を停止させるフラグ
   public childNodes: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
-  public detectRender: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public _cvsCache: undefined; // enchant.js 内部で参照されるが初期化されていないプロパティ
   public then: undefined; // await されたときに then が参照される
   public frozen = false; // 動きを止めるプロパティ
@@ -1599,6 +1598,17 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   public get reverseProxy(): RPGObject {
     return reverseSynonymize(this);
   }
+
+  /**
+   * enchant.js コアで参照される Optional なメンバー関数
+   * タッチ判定に使われる判定領域の描画を行う
+   * 未定義の場合は ctx.fillRect(0, 0, width, height); になる
+   * この関数を設定することでタッチ判定のカメラ移動に対応している
+   */
+  public detectRender(ctx: CanvasRenderingContext2D) {
+    const { x, y } = memo(getRenderOffset)(game.frame);
+    ctx.fillRect(-x || 0, -y || 0, this.width, this.height);
+  }
 }
 
 function makeHpLabel(self: RPGObject) {
@@ -1616,4 +1626,12 @@ function makeHpLabel(self: RPGObject) {
     label.opacity = Math.max(0, label.opacity - diff / 10);
   });
   return label;
+}
+
+function getRenderOffset(frame: number): { x: number; y: number } {
+  const rect = Camera.main?.getRenderRect();
+  return {
+    x: rect?.x || 0,
+    y: rect?.y || 0
+  };
 }
