@@ -1464,6 +1464,11 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
+  /**
+   * find で見つからなくなるフラグ
+   */
+  public sneaking = false;
+
   private _isJustBeingFound = false; // みつけたときに同フレーム内で this.find() して Stackoverflow するのを防ぐフラグ
   private async findImpl(filter?: (item: RPGObject) => boolean) {
     if (!Hack.isPlaying) return; // ゲームが終了している
@@ -1493,7 +1498,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           rangeOfView.left <= item.mapX &&
           item.mapX <= rangeOfView.right &&
           rangeOfView.top <= item.mapY &&
-          item.mapY <= rangeOfView.bottom
+          item.mapY <= rangeOfView.bottom &&
+          !item.sneaking // みつからないフラグが true ではない
       )
       .filter(item =>
         _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this, item)
