@@ -32,6 +32,7 @@ export const synonyms: ISynonyms = {
   うごけない: { type: 'primitive', name: 'frozen' },
   ラベル: { type: 'primitive', name: 'label' },
   こてい: { type: 'primitive', name: 'fixed' },
+  みつからない: { type: 'primitive', name: 'sneaking' },
   こうげきする: { type: 'function', name: 'attack', await: true },
   あるく: { type: 'function', name: 'walk', await: true },
   みぎにあるく: { type: 'function', name: 'walkRight', await: true },
