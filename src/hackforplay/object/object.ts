@@ -1271,10 +1271,21 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
   }
 
-  private getNearestByName(name: string) {
+  /**
+   * 自分に最も近いキャラクターを返す
+   * @param name アセット名
+   * @param withoutSneaking sneeking フラグが true かつ敵のオブジェクトを検索対象から除外するフラグ
+   * @returns 見つかったキャラクターオブジェクト
+   */
+  private getNearestByName(name: string, withoutSneaking = false) {
     const { _ruleInstance } = this;
     if (!_ruleInstance) return null;
-    return this.getNearest(_ruleInstance.getCollection(name));
+    const collection = _ruleInstance.getCollection(name);
+    return this.getNearest(
+      withoutSneaking
+        ? collection.filter(obj => !obj.sneaking || !this.isEnemy(obj))
+        : collection
+    );
   }
 
   private getNearest(collection: RPGObject[]): RPGObject | null {
@@ -1345,8 +1356,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     if (this.frozen) return;
     const item =
       typeof nameOrTarget === 'string'
-        ? this.getNearestByName(nameOrTarget)
-        : nameOrTarget;
+        ? this.getNearestByName(nameOrTarget, true)
+        : !nameOrTarget.sneaking || !this.isEnemy(nameOrTarget) // みつからないフラグ
+        ? nameOrTarget
+        : null;
     if (!item || !item.parentNode) return;
 
     if (!followingPlayerObjects.has(this.reverseProxy)) {
@@ -1465,7 +1478,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   }
 
   /**
-   * find で見つからなくなるフラグ
+   * find, chase で見つからなくなるフラグ
    */
   public sneaking = false;
 
@@ -1499,7 +1512,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
           item.mapX <= rangeOfView.right &&
           rangeOfView.top <= item.mapY &&
           item.mapY <= rangeOfView.bottom &&
-          !item.sneaking // みつからないフラグが true ではない
+          (!item.sneaking || !this.isEnemy(item)) // みつからないフラグが true ではないか、敵ではない
       )
       .filter(item =>
         _ruleInstance.hasTwoObjectListenerWith('みつけたとき', this, item)
