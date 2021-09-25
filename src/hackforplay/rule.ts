@@ -11,6 +11,7 @@ import { synonyms } from './synonyms/rule';
 import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
 import talk from './talk';
 import { loadMaps } from './load-maps';
+import { startShadowServer } from './shadow';
 
 interface IEvent {
   target: RPGObject;
@@ -358,6 +359,7 @@ export class Rule {
     this.startTimer(); // 自動的にタイマーをスタートさせる
     await loadMaps(Hack.mapJsonFile); // Hack.mapJsonFile は通常 undefined
     await this.runNoObjectListener('ゲームがはじまったとき');
+    startShadowServer();
     this.mainLoop();
   }
 

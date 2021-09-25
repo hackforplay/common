@@ -346,6 +346,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
         : direction === Direction.Up
         ? 3
         : 0;
+    // enchant.js で制御されるスプライトアニメーションを設定
     (this as any)._frameSequence = decode(...animation).map(n =>
       n === null ? null : n + column * row
     );
