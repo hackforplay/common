@@ -729,4 +729,10 @@ Hack.disableZenkakuMode = false;
  */
 Hack.disableSkinNotFoundError = false;
 
+/**
+ * 【実験用】
+ * シャドー機能のサーバ URL
+ */
+Hack.shadowServerUrl = 'http://localhost:3000';
+
 export default Hack;
