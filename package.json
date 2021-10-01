@@ -20,7 +20,7 @@
     "watch": "ava --watch",
     "resources": "gsutil -m -h \"Cache-Control:public, max-age=3600\" cp -r src/resources gs://hackforplay-common",
     "cors": "gsutil cors set cors.json gs://hackforplay-common",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release --branches next"
   },
   "repository": {
     "type": "git",
