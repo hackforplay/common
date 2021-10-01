@@ -59,5 +59,7 @@ jobs:
           echo $MINOR_VERSION
           # https://bit.ly/2xzjGVO
           gsutil cp -r dist gs://cdn.hackforplay.xyz/common/${PATCH_VERSION}
-          gsutil cp -r 'dist/**' gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}
-          gsutil cp -r 'dist/ja/*' gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}/ja/
+          # gsutil cp -r 'dist/**' gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}
+          # gsutil cp -r 'dist/ja/*' gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}/ja/
+          # /alpha にアップロードする
+          gsutil cp -r 'dist/**' gs://cdn.hackforplay.xyz/common/alpha
