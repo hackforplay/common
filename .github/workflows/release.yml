@@ -44,7 +44,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
       - run: |
           echo $GITHUB_REF
-          PATCH_VERSION=${GITHUB_REF/refs\/tags\/v/}
+          PATCH_VERSION=${GITHUB_REF/refs\/tags\/}
           MINOR_VERSION=${PATCH_VERSION%.*}
           echo $PATCH_VERSION
           echo $MINOR_VERSION
@@ -53,11 +53,11 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           npm run build
-          PATCH_VERSION=${GITHUB_REF/refs\/tags\/v/}
-          MINOR_VERSION=${PATCH_VERSION%.*}
+          PATCH_VERSION=${GITHUB_REF/refs\/tags\/}
+          # MINOR_VERSION=${PATCH_VERSION%.*}
           echo $PATCH_VERSION
-          echo $MINOR_VERSION
+          # echo $MINOR_VERSION
           # https://bit.ly/2xzjGVO
           gsutil cp -r dist gs://cdn.hackforplay.xyz/common/${PATCH_VERSION}
-          gsutil cp -r 'dist/**' gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}
-          gsutil cp -r 'dist/ja/*' gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}/ja/
+          # gsutil cp -r 'dist/**' gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}
+          # gsutil cp -r 'dist/ja/*' gs://cdn.hackforplay.xyz/common/${MINOR_VERSION}/ja/
