@@ -96,6 +96,6 @@
     "socket.io-client": "^4.2.0"
   },
   "engines": {
-    "node": "^10.13.0"
+    "node": "12.x"
   }
 }
