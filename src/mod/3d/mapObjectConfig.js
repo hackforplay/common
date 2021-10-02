@@ -11,36 +11,36 @@ const MapObjectConfig = {
     moveZ: 0
   },
 
-  '321': {
+  321: {
     isBlock: true
   },
 
-  '341': {
+  341: {
     replace: 321
   },
-  '323': {
+  323: {
     isGround: true
   },
 
-  '340': {
+  340: {
     replace: 320
   },
-  '320': {
+  320: {
     isBlock: true
   },
 
-  '422': {
+  422: {
     isGround: true,
     moveY: -32
   },
 
   // 花
-  '421': {
+  421: {
     alpha: true
   },
 
   // 地面系
-  '342': {
+  342: {
     isBlock: true
   },
 
@@ -73,7 +73,7 @@ const MapObjectConfig = {
   '324-329': {
     isGround: true
   },
-  '441': {
+  441: {
     isGround: true
   }
 };

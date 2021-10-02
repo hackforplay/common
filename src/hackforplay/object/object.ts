@@ -64,7 +64,10 @@ const followingPlayerObjects = new WeakSet<RPGObject>();
 const opt = <T>(opt: T | undefined, def: T): T =>
   opt !== undefined ? opt : def;
 
-const uniqId = (i => () => ++i)(0);
+const uniqId = (
+  i => () =>
+    ++i
+)(0);
 
 export default class RPGObject extends enchant.Sprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
