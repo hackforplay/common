@@ -121,7 +121,7 @@ export const loadingSurfaceSet = new WeakSet();
 /**
  * Surface のロードが完了した時に実行したいコールバックの配列
  */
-export const surfaceLoadedCallbacks = new WeakMap<any, Function[]>();
+export const surfaceLoadedCallbacks = new WeakMap<any, Function[]>(); // eslint-disable-line
 
 /**
  *

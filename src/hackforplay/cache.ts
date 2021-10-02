@@ -6,6 +6,7 @@ interface MemoCache<Params = any[], Result = any> {
   result: Result;
 }
 
+// eslint-disable-next-line
 const memo__caches = new WeakMap<Function, MemoCache>();
 
 /**

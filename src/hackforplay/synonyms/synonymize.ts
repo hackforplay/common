@@ -62,6 +62,7 @@ export function synonymizeClass<T extends typeof Class>(
   });
 }
 
+// eslint-disable-next-line
 export function synonymize<T extends object>(
   target: T,
   synonyms: ISynonyms,
@@ -70,6 +71,7 @@ export function synonymize<T extends object>(
   return createProxy(target, synonyms, propertyMissing);
 }
 
+// eslint-disable-next-line
 function createProxy<T extends object>(
   proxyTarget: T,
   synonyms: ISynonyms,
