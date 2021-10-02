@@ -153,6 +153,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
   private isBehaviorChanged = false;
   private _collideMapBoader?: boolean; // マップの端に衝突判定があると見なすか. false ならマップ外を歩ける
   private _fixed = false;
+  private _skipWalkingAfterLocate = false; // locate された後に walk で位置が変わるのを防ぐフラグ
 
   /**
    * オブジェクト同士の比較に使うためのユニークな識別子 #86
@@ -520,7 +521,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     this.moveTo(fromLeft * 32 + this.offset.x, fromTop * 32 + this.offset.y);
     this.updateCollider(); // TODO: 動的プロパティ
-    this.behavior = BehaviorTypes.Idle; // https://bit.ly/38ID1SZ
+    this._skipWalkingAfterLocate = true; // https://bit.ly/3D3Uwez
     followingPlayerObjects.delete(this.reverseProxy); // プレイヤーとはぐれた
   }
 
@@ -765,9 +766,10 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     const nextY = beginY + th * unit.y;
 
     this.walkDestination = new Vector2(nextMapX, nextMapY); // 歩行中にぶつからないようにする
+    this._skipWalkingAfterLocate = false;
     // startCoroutine の時点で 1frame 遅れていると考えて, 1 から始める
     for (let frame = 1; frame < requiredFrames; ++frame) {
-      if (this.behavior !== BehaviorTypes.Walk) {
+      if (this._skipWalkingAfterLocate) {
         break; // 移動中に locate された https://bit.ly/38ID1SZ
       }
       const t = frame / requiredFrames;
@@ -785,7 +787,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     }
     this.walkDestination = undefined;
 
-    if (this.behavior === BehaviorTypes.Walk) {
+    if (!this._skipWalkingAfterLocate) {
       // 移動の誤差を修正 https://bit.ly/38ID1SZ
       this.x = nextX;
       this.y = nextY;
@@ -801,6 +803,7 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     });
 
     this.behavior = BehaviorTypes.Idle;
+    this._skipWalkingAfterLocate = false;
   }
 
   private dispatchCollidedEvent(hits: RPGObject[], map: boolean) {
