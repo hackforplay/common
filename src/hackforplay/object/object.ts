@@ -64,10 +64,7 @@ const followingPlayerObjects = new WeakSet<RPGObject>();
 const opt = <T>(opt: T | undefined, def: T): T =>
   opt !== undefined ? opt : def;
 
-const uniqId = (
-  i => () =>
-    ++i
-)(0);
+const uniqId = (i => () => ++i)(0);
 
 export default class RPGObject extends enchant.Sprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
@@ -661,7 +658,8 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this.walk(1, forward, false);
   }
 
-  public canWalk(forward: IVector2) {
+  public canWalk(vector?: IVector2) {
+    const forward = vector || this.forward;
     if (!this.map) return false; // 削除された
     const x = this.mapX + forward.x;
     const y = this.mapY + forward.y;
