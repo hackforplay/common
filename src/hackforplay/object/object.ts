@@ -1655,10 +1655,15 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this._fixed;
   }
   public set fixed(value) {
-    /* fixed に値がセットされた時にコールされる関数 */
+    if (this._fixed === value) return;
     this._fixed = value;
     this.parentNode.removeChild(this.reverseProxy);
-    Hack.cameraGroup.addChild(this.reverseProxy);
+    if (value) {
+      Hack.cameraGroup.addChild(this.reverseProxy);
+    } else {
+      // どのマップにいたかによらず、プレイヤーのいるマップに戻す
+      Hack.player?.parentNode.addChild(this.reverseProxy);
+    }
   }
 
   /**
