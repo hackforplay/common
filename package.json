@@ -92,8 +92,5 @@
     "@hackforplay/skins": "^1.2.1",
     "@types/js-yaml": "^3.12.5",
     "rxjs": "^6.6.3"
-  },
-  "engines": {
-    "node": "14.x"
   }
 }
