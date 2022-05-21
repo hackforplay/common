@@ -91,6 +91,6 @@
     "@hackforplay/next": "^0.8.5",
     "@hackforplay/skins": "^1.2.1",
     "@types/js-yaml": "^3.12.5",
-    "rxjs": "^6.6.3"
+    "rxjs": "^7.0.0"
   }
 }
