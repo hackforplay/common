@@ -39,6 +39,7 @@ import { showThinkSprite } from '../think';
 import { registerWalkingObject, unregisterWalkingObject } from '../trodden';
 import { observeArray } from '../utils/observe-array';
 import * as N from './numbers';
+import { getTransformDefaultProps } from './transform-default-props';
 
 const Hack = getHack();
 
@@ -64,33 +65,16 @@ const followingPlayerObjects = new WeakSet<RPGObject>();
 const opt = <T>(opt: T | undefined, def: T): T =>
   opt !== undefined ? opt : def;
 
-const uniqId = (i => () => ++i)(0);
+const uniqId = (
+  i => () =>
+    ++i
+)(0);
 
 export default class RPGObject extends enchant.Sprite implements N.INumbers {
   // RPGObject.collection に必要な初期化
   private static _collectionTarget = [RPGObject];
   public static collection = observeArray<RPGObject>([]); // Proxy でトラップする
   private static _collective = true;
-  // へんしんするときに初期化するプロパティの設定
-  private static readonly propNamesToInit = [
-    // 初期値で上書きしたいプロパティ
-    'damage',
-    'speed',
-    'opacity',
-    'velocityX',
-    'velocityY',
-    'accelerationX',
-    'accelerationY',
-    'mass',
-    'skill',
-    'fieldOfView',
-    'lengthOfView',
-    // 未初期化状態に戻したいプロパティ
-    '_atk',
-    '_penetrate',
-    '_collisionFlag',
-    '_isKinematic'
-  ];
 
   public offset = {
     x: 0,
@@ -1253,19 +1237,13 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
     return this.しょうかんする(name, 0, 0);
   }
 
-  private static _initializedReference: RPGObject;
   public transform(name: string) {
     const { _ruleInstance, _hp } = this;
     if (!_ruleInstance) return;
 
-    // 初期値を参照するためのインスタンスを作る
-    RPGObject._initializedReference =
-      RPGObject._initializedReference || new RPGObject();
-
     // 一部のパラメータを初期値に戻す
-    for (const key of RPGObject.propNamesToInit) {
-      this[key] = RPGObject._initializedReference[key];
-    }
+    const props = getTransformDefaultProps();
+    Object.assign(this, props);
 
     _ruleInstance.installAsset(name);
     _ruleInstance.unregisterRules(this);
