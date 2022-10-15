@@ -60,18 +60,6 @@ const common = {
       minSize: 30000,
       name: false
     }
-  },
-
-  devServer: {
-    hot: false,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': '*'
-    },
-    static: {
-      directory: path.join(__dirname, 'dist'),
-    },
-    allowedHosts: ['*']
   }
 };
 
@@ -82,6 +70,17 @@ module.exports = [
     output: {
       ...common.output,
       filename: '[name].js'
+    },
+    devServer: {
+      hot: false,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*'
+      },
+      static: {
+        directory: path.join(__dirname, 'dist')
+      },
+      allowedHosts: ['*']
     }
   },
   {
