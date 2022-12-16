@@ -152,6 +152,18 @@ Hack.clearLog = function () {
   Hack.textArea.hide();
 };
 
+Hack.removeLog = function (line = 0) {
+  const lines = Hack.textArea.source.split('\n');
+  lines.splice(line, 1);
+  if (lines.length > 0) {
+    Hack.textArea.source = lines.join('\n');
+    Hack.textArea.updateDocument();
+    Hack.textArea.updateValues();
+  } else {
+    Hack.clearLog();
+  }
+};
+
 // enchantBook
 Hack.enchantBook = function () {
   // scope: new Entity
