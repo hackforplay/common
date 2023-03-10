@@ -1,16 +1,17 @@
 import { log } from '@hackforplay/log';
+import { objectsInDefaultMap } from './cache';
 import { IDir } from './dir';
 import { Direction } from './direction';
 import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
 import { emitGlobalsChangedIfNeeded } from './globals';
+import { loadMaps } from './load-maps';
 import RPGObject from './object/object';
 import { errorInEvent, logFromAsset } from './stdlog';
 import { synonyms } from './synonyms/rule';
 import { PropertyMissing, synonymizeClass } from './synonyms/synonymize';
 import talk from './talk';
-import { loadMaps } from './load-maps';
 
 interface IEvent {
   target: RPGObject;
@@ -314,8 +315,7 @@ export class Rule {
     if (!Hack.isPlaying) return; // ゲームが終了した
 
     // つねに をコールする
-    // this._collections を使うべきか？（へんしんしたときちゃんと動くか？）
-    for (const object of Array.from(RPGObject.collection)) {
+    for (const object of objectsInDefaultMap()) {
       if (!this.enabledUpdate.get(object)) {
         continue; // まだ途中になっているものがある => スキップ
       }
