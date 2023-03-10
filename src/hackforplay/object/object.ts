@@ -690,10 +690,16 @@ export default class RPGObject extends enchant.Sprite implements N.INumbers {
       nextMapY < 0 ||
       nextMapY >= ty; // 画面外にいこうとしている
 
+    // 同じマップにいるオブジェクト
+    const currentMap = this.map;
+    const objectsInSameMap = RPGObject.collection.filter(
+      obj => obj.map === currentMap
+    );
+
     // プレイヤーだけは例外的に仲間のいるマスをすり抜けられる
     const mayCollideItems = this.isPlayer
-      ? objectsInDefaultMap().filter(item => this.family !== item.family)
-      : objectsInDefaultMap();
+      ? objectsInSameMap.filter(item => this.family !== item.family)
+      : objectsInSameMap;
 
     // 歩く先にあるオブジェクト
     const hits = mayCollideItems.filter(obj => {
