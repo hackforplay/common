@@ -385,6 +385,9 @@ export class Rule {
     if (!listeners) return;
     for (const name of Object.keys(listeners)) {
       for (const item of this.getCollection(name)) {
+        const map = 'map' in Hack ? Hack.map : undefined;
+        if (item.map !== map) continue; // プレイヤーと同じマップにいるものだけが対象
+
         this.scheduleEventEmit({
           eventName: 'じかんがすすんだとき',
           args: [item]
