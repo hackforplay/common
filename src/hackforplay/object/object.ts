@@ -3,7 +3,7 @@ import { default as enchant } from '../../enchantjs/enchant';
 import '../../enchantjs/ui.enchant';
 import { default as SAT } from '../../lib/sat.min';
 import { default as BehaviorTypes } from '../behavior-types';
-import { memo, objectsInDefaultMap } from '../cache';
+import { memo } from '../cache';
 import { default as Camera } from '../camera';
 import { createDamageObject } from '../damage-update';
 import * as Dir from '../dir';
