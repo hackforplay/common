@@ -23,7 +23,7 @@ const propNamesToInit = [
 
 let transformDefaultProps:
   | undefined
-  | Pick<RPGObject, typeof propNamesToInit[number]> = undefined;
+  | Pick<RPGObject, (typeof propNamesToInit)[number]> = undefined;
 
 /** へんしんする時に初期化するプロパティとその値 */
 export function getTransformDefaultProps() {

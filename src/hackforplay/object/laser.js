@@ -172,7 +172,7 @@ class Laser extends RPGObject {
           collidedPoint.add(reflectDirection.scale(currentLength))
         )
       );
-    }.call(this, newLine));
+    }).call(this, newLine);
 
     this.updateCollider();
   }
