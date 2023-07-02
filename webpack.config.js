@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 
 /*
@@ -65,13 +64,14 @@ const common = {
 
   devServer: {
     hot: false,
-    inline: false,
-    contentBase: path.join(__dirname, 'dist'),
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': '*'
     },
-    disableHostCheck: true
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    allowedHosts: ['*']
   }
 };
 
