@@ -15,14 +15,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup gcloud environment
         uses: google-github-actions/setup-gcloud@v0
         with:
           # The service account key which will be used for authentication.
           service_account_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
       - name: Use Node.js 18
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
       - run: npm ci
