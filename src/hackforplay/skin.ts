@@ -66,10 +66,19 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
     new SAT.V(skin.collider.x - skin.sprite.x, skin.collider.y - skin.sprite.y)
   ); // (x, y) は Sprite の起点 -> Sprite の分を引く, collider の分を足す
 
+  if (skin.direction === 4) {
+    object.directionType = 'quadruple';
+  }
+
+  // skin の参照を保持する
+  object.currentSkin = skin;
+};
+
+/** skin設定に与えられていない情報を補完する。破壊的なメソッド */
+function fixSkinData(skin: OutputV1) {
   // アニメーションの初期値を設定する
   const frame = (skin.frame = skin.frame || {});
   if (skin.direction === 4) {
-    object.directionType = 'quadruple';
     frame.idle = frame.idle || [1, 1];
     frame.walk = frame.walk || [0, 3, 1, 3, 2, 3, 1, 1];
     frame.attack = frame.attack || [3, 4, 4, 4, 5, 4];
@@ -83,9 +92,7 @@ export const dress = (skin: ISkin) => (object: RPGObject) => {
   // 互換性のため. アニメーションの終端を追加する
   frame.attack?.push(null, 1);
   frame.dead?.push(null, 1);
-  // skin の参照を保持する
-  object.currentSkin = skin;
-};
+}
 
 export async function getSkin(
   input: string | TemplateStringsArray
@@ -107,6 +114,7 @@ export async function getSkin(
       item.sprite.height * item.row,
       definition.endpoint + item.imageUri
     );
+    fixSkinData(item);
     // V0 では JSON のロードを待っていたが、V1 では preload してあるので即時コール
     return dress({ ...item, name, surface });
   });
