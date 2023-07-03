@@ -21,10 +21,10 @@ jobs:
         with:
           # The service account key which will be used for authentication.
           service_account_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
-      - name: Use Node.js 16
+      - name: Use Node.js 18
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '18'
       - run: npm ci
       - name: Run semantic-release
         run: npx semantic-release
