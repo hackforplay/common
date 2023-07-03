@@ -9,11 +9,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "node build.js && npm run babel && npm run definition",
+    "build": "node build.js && npm run definition",
     "definition": "ts-node src/make-definition.ts",
     "start": "node serve.js",
     "prepublishOnly": "npm run build; npm test",
-    "babel": "babel -d lib -D src --extensions '.js,.ts'",
     "format": "prettier --write .",
     "lint": "npx eslint src --ext .js,.ts && npx prettier --check .",
     "test": "npm run lint && ava",
