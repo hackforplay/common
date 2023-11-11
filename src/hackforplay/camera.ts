@@ -23,9 +23,6 @@ class Camera extends enchant.Sprite {
   public static collection: Camera[] = [];
   public static main: Camera | null = null;
 
-  public x: number;
-  public y: number;
-
   public background = '#000';
 
   public enabled = true;
