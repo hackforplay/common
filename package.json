@@ -86,7 +86,7 @@
     "webpack-dev-server": "^4.3.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.15.4",
+    "@babel/runtime": "^7.18.0",
     "@hackforplay/log": "^1.3.4",
     "@hackforplay/next": "^0.8.5",
     "@hackforplay/skins": "^1.2.1",
