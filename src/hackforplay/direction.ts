@@ -53,23 +53,33 @@ export function turn(current: Direction, target: Direction) {
     case Direction.Up:
     case Direction.Right:
     case Direction.Down:
-    case Direction.Left:
+    case Direction.Left: {
       return target;
-    case Direction.RightHand:
+    }
+    case Direction.RightHand: {
       const right = dirToNumber(current) + 1;
       return absolutes[right % 4];
-    case Direction.Behind:
+    }
+    case Direction.Behind: {
       const behind = dirToNumber(current) + 2;
       return absolutes[behind % 4];
-    case Direction.LeftHand:
+    }
+    case Direction.LeftHand: {
       const left = dirToNumber(current) + 3;
       return absolutes[left % 4];
-    case Direction.Random:
-    case Direction.RandomDiagonal: // 未実装
-    default:
+    }
+    case Direction.Random: {
+      const rand = Math.floor(Math.random() * 4);
+      return absolutes[rand];
+    }
+    case Direction.RandomDiagonal: {
+      // 未実装
+    }
+    default: {
       // 予期せぬ引数が与えられた場合はランダム
       const rand = Math.floor(Math.random() * 4);
       return absolutes[rand];
+    }
   }
 }
 

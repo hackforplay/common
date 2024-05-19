@@ -1,7 +1,7 @@
 import { log } from '@hackforplay/log';
 import { objectsInDefaultMap } from './cache';
 import { IDir } from './dir';
-import { Direction } from './direction';
+import { Direction, turn } from './direction';
 import { hasContract, isOpposite } from './family';
 import { install } from './feeles';
 import { getHack } from './get-hack';
@@ -497,7 +497,7 @@ export class Rule {
     if (typeof dir === 'function') {
       object.forward = dir(object);
     } else if (dir) {
-      object.direction = dir;
+      object.direction = turn(Direction.Up, dir);
     }
     if (x !== undefined && y !== undefined) {
       object.locate(x, y, map);
