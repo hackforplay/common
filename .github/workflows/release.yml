@@ -34,7 +34,7 @@ jobs:
           # The service account key which will be used for authentication.
           service_account_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
       - name: Use Node.js 18
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
       - run: npm ci
