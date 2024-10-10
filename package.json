@@ -73,7 +73,7 @@
     "js-yaml": "4.1.0",
     "jsdom": "25.0.1",
     "np": "10.0.7",
-    "prettier": "2.8.8",
+    "prettier": "3.3.3",
     "raf": "3.4.1",
     "semantic-release": "24.1.2",
     "ts-node": "10.9.2",
