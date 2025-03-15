@@ -38,10 +38,10 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCLOUD_SERVICE_KEY }}
-      - name: Use Node.js 18
+      - name: Use Node.js 23
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '23'
       - run: npm ci
       - name: Run semantic-release
         run: |
