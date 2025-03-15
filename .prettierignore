@@ -1,10 +1,11 @@
-/dist
-/lib
+dist
+lib
 node_modules
+.turbo
+
 
 package.json
 package-lock.json
 
-src/enchantjs/enchant.js
-src/enchantjs/ui.enchant.js
-src/lib/sat.min.js
+packages/game/src/enchantjs/enchant.js
+packages/game/src/enchantjs/ui.enchant.js
