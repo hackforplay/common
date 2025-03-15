@@ -45,9 +45,10 @@ jobs:
       - run: npm ci
       - name: Run semantic-release
         run: |
-          echo "Running semantic-release..."
+          echo "Running semantic-release from packages/game directory..."
           # Set DEBUG environment variable to get more detailed logs
           export DEBUG=semantic-release:*
+          cd packages/game
           npx semantic-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

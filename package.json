@@ -1,5 +1,6 @@
 {
   "name": "@hackforplay/monorepo",
+  "private": true,
   "workspaces": [
     "packages/*"
   ],
