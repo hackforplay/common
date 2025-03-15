@@ -6,7 +6,7 @@
   "packageManager": "npm@10.0.0",
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test",
+    "test": "npx prettier -c . && turbo run test",
     "lint": "turbo run lint",
     "format": "prettier --write ."
   },
