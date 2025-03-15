@@ -40,7 +40,7 @@ jobs:
       - name: Run semantic-release
         run: npx semantic-release
         env:
-          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }} # https://bit.ly/3cllYHl
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: |
           npm run build
