@@ -9,4 +9,5 @@ const Hack = getHack();
 
 export { Hack, enchant, register, Rule };
 
-export { Definition } from './definition';
+// Export types
+export type { Definition } from './definition';
