@@ -63,6 +63,8 @@ typings/
 # build
 lib
 dist
+# Don't ignore src/lib directories
+!packages/game/src/lib
 
 #test
 /test/tmp
@@ -73,3 +75,4 @@ _site
 .sass-cache
 
 false
+.turbo
