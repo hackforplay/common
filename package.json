@@ -4,7 +4,7 @@
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "npm@10.9.2",
+  "packageManager": "npm@11.2.0",
   "scripts": {
     "build": "turbo run build",
     "test": "npx prettier -c . && turbo run test",
