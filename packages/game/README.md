@@ -1,13 +1,13 @@
 # @hackforplay/common
 
-HackForPlayでステージを構築するための共通パッケージ
+HackForPlay でステージを構築するための共通パッケージ
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![npm latest version](https://img.shields.io/npm/v/@hackforplay/common/latest.svg)](https://www.npmjs.com/package/@hackforplay/common)
 
 ## 概要
 
-@hackforplay/commonは、教育用プログラミングゲーム「HackForPlay」でステージを構築するためのパッケージです。
+@hackforplay/common は、教育用プログラミングゲーム「HackForPlay」でステージを構築するためのパッケージです。
 ゲームオブジェクト、ルール、イベント処理などの機能を提供し、インタラクティブなゲーム作成を可能にします。
 
 ## プロジェクト構造
@@ -73,9 +73,9 @@ npx ava test/specific-test-file.js
 
 ## デプロイプロセス
 
-デプロイは以下の2つの場所に対して行われます：
+デプロイは以下の 2 つの場所に対して行われます：
 
-1. **npm registry**: Node.jsアプリケーションで使用するためのパッケージ
-2. **Google Cloud Storage**: ブラウザで直接使用するためのCDNホスティング
+1. **npm registry**: Node.js アプリケーションで使用するためのパッケージ
+2. **Google Cloud Storage**: ブラウザで直接使用するための CDN ホスティング
 
-semantic-releaseを使用して、コミットメッセージに基づいて自動的にバージョンが決定されます。
+semantic-release を使用して、コミットメッセージに基づいて自動的にバージョンが決定されます。
