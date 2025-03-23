@@ -13,6 +13,7 @@
     "build:docs": "cd packages/docs && npm run build-docs && bundle exec jekyll build"
   },
   "devDependencies": {
+    "@types/fs-extra": "11.0.4",
     "prettier": "2.8.8",
     "turbo": "2.4.4"
   }
