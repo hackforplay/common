@@ -1,0 +1,367 @@
+rule:
+  name: トリガー
+  type: object
+  desc: |
+    アセットごとに定義できるトリガー関数
+    特定の条件に一致した時にだけ関数が実行される
+  fields:
+    gameStarted:
+      name: ゲームがはじまったとき
+      type: function
+      desc: |
+        ゲームが始まった時に一度だけ呼ばれる関数を登録できる
+      args:
+        - name: ゲームがはじまったとき
+          type: function
+          desc: ゲームが始まった時に一度だけ呼ばれる関数
+      code: |
+        rule.ゲームがはじまったとき(async function() {
+          // ゲームが始まったときに実行される
+          await this.はなす('ゲームスタート！');
+        });
+
+    created:
+      name: つくられたとき
+      type: function
+      desc: |
+        キャラクターが作られた時に呼ばれる関数を登録できる
+      args:
+        - name: つくられたとき
+          type: function
+          desc: キャラクターが作られた時に呼ばれる関数
+      code: |
+        rule.つくられたとき(async function() {
+          // このキャラクターが作られたときに実行される
+          this.たいりょく = 3;
+          this.こうげきりょく = 1;
+          this.スキル = 'ビーム';
+
+          // 初期の挨拶
+          await this.はなす('こんにちは！');
+        });
+
+    updated:
+      name: つねに
+      type: function
+      desc: |
+        キャラクターがいる間、何度も呼ばれ続ける関数を登録できる
+      args:
+        - name: つねに
+          type: function
+          desc: キャラクターがいる間、何度も呼ばれ続ける関数
+      code: |
+        rule.つねに(async function() {
+          // このキャラクターが存在する間、常に実行され続ける
+
+          // 体力が少なくなったら逃げる
+          if (this.たいりょく < 2) {
+            await this.テレポートランダム();
+          }
+        });
+
+    attacked:
+      name: こうげきするとき
+      type: function
+      desc: |
+        キャラクターが[こうげきする](rpgobject#こうげきする)ときに呼ばれる関数を登録できる
+      args:
+        - name: こうげきするとき
+          type: function
+          desc: キャラクターが[こうげきする](rpgobject#こうげきする)ときに呼ばれる関数
+      code: |
+        rule.こうげきするとき(async function() {
+          // このキャラクターが攻撃するときに実行される
+          await this.おとをならす(('▼ おと', 'ダメージ01'));
+          await this.うかべる('!');
+        });
+
+    defeated:
+      name: たおされたとき
+      type: function
+      desc: |
+        キャラクターの[たいりょく](rpgobject#たいりょく)が 0 になったときに呼ばれる関数を登録できる
+      args:
+        - name: たおされたとき
+          type: function
+          desc: キャラクターの[たいりょく](rpgobject#たいりょく)が 0 になったときに呼ばれる関数
+      code: |
+        rule.たおされたとき(async function() {
+          // このキャラクターが倒されたときに実行される
+          await this.おとをならす(('▼ おと', 'やられた01'));
+
+          // アイテムをドロップする
+          this.しょうかんする('緑色のほうせき', 0, 0);
+
+          // スコアを加算
+          this.おかね += 100;
+        });
+
+    canNotWalk:
+      name: すすめなかったとき
+      type: function
+      desc: |
+        キャラクターが[あるく](rpgobject#あるく)つもりがマップ上のしょうがいぶつや画面端にぶつかってしまった時に呼ばれる関数を登録できる
+        [マップのはしにぶつかるか](rpgobject#マップのはしにぶつかるか)を使って、この関数が画面端で呼ばれるかどうかを変えられる
+      args:
+        - name: すすめなかったとき
+          type: function
+          desc: ぶつかってしまった時に呼ばれる関数
+      code: |
+        rule.すすめなかったとき(async function() {
+          // このキャラクターが進めなかったときに実行される
+
+          // 進めなかったことを表示
+          await this.うかべる('?');
+
+          // 別の方向に進む
+          const むき = らんすう(1, 5); // 1から4までのランダムな数
+          this.むきをかえる(むき);
+          await this.あるく();
+        });
+
+    moneyChanged:
+      name: おかねがかわったとき
+      type: function
+      desc: |
+        キャラクターが持っている[おかね](rpgobject#おかね)の量が変わった時に呼ばれる関数を登録できる
+      args:
+        - name: おかねがかわったとき
+          type: function
+          desc: キャラクターが持っている[おかね](rpgobject#おかね)の量が変わった時に呼ばれる関数
+      code: |
+        rule.おかねがかわったとき(async function() {
+          // このキャラクターのお金が変わったときに実行される
+
+          // お金が変わったことを表示
+          await this.うかべる('$');
+
+          // 現在のお金の量を確認
+          log(this.おかね);
+
+          // お金が一定量を超えたら何かする
+          if (this.おかね >= 100) {
+            await this.はなす('お金が100以上になりました！');
+            // 何か特別なアイテムを買う
+            this.おかね -= 100;
+            this.しょうかんする('緑色のほうせき', 0, 0);
+          }
+        });
+
+    timePassed:
+      name: じかんがすすんだとき
+      type: function
+      desc: |
+        １秒経つごとに呼ばれる関数を登録できる
+      args:
+        - name: じかんがすすんだとき
+          type: function
+          desc: １秒経つごとに呼ばれる関数
+      code: |
+        rule.じかんがすすんだとき(async function() {
+          // 1秒ごとに実行される
+
+          // 時間経過で体力を回復
+          if (this.たいりょく < 3 && らんすう(1, 10) === 1) { // 10%の確率で
+            this.たいりょく += 1;
+            await this.うかべる('♥');
+          }
+        });
+
+    tapped:
+      name: タップされたとき
+      type: function
+      desc: |
+        キャラクターがタップ（クリック）された時に呼ばれる関数を登録できる
+      args:
+        - name: タップされたとき
+          type: function
+          desc: キャラクターがタップ（クリック）された時に呼ばれる関数
+      code: |
+        rule.タップされたとき(async function() {
+          // このキャラクターがタップされたときに実行される
+
+          // 会話を始める
+          const こたえ = await this.はなす('こんにちは！何か用かな？', 'はい', 'いいえ');
+
+          if (こたえ === 'はい') {
+            await this.はなす('何をお手伝いしましょう？');
+            // アイテムをあげる
+            this.しょうかんする('緑色のほうせき', 1, 0);
+          } else {
+            await this.はなす('また話しかけてね！');
+          }
+        });
+
+    mapChanged:
+      name: マップがかわったとき
+      type: function
+      desc: |
+        キャラクターのいるマップがかわった時に呼ばれる関数を登録できる
+      args:
+        - name: タップされたとき
+          type: function
+          desc: キャラクターのいるマップがかわった時に呼ばれる関数
+      code: |
+        rule.マップがかわったとき(async function() {
+          // このキャラクターのいるマップが変わったときに実行される
+
+          // マップが変わったことを表示
+          await this.うかべる('!');
+
+          // 新しいマップの名前を確認
+          log(this.マップ);
+
+          // マップによって行動を変える
+          if (this.マップ === 'map1') {
+            await this.はなす('ここは map1 だね！');
+          } else if (this.マップ === 'map2') {
+            await this.はなす('ここは map2 だね！');
+          }
+        });
+
+    walked:
+      name: あるいたとき
+      type: function
+      desc: |
+        キャラクターが[あるく](rpgobject#あるく)時に呼ばれる関数を登録できる
+      args:
+        - name: タップされたとき
+          type: function
+          desc: キャラクターが[あるく](rpgobject#あるく)時に呼ばれる関数
+      code: |
+        rule.あるいたとき(async function() {
+          // このキャラクターが歩いたときに実行される
+
+          // おかねをふやす
+          this.おかね += 1
+        });
+
+    trodden:
+      name: ふまれたとき
+      type: function
+      desc: |
+        キャラクターが別のキャラクターに踏まれた時に呼ばれる関数を登録できる
+      args:
+        - name: ふまれたとき
+          type: function
+          desc: キャラクターが別のキャラクターに踏まれた時に呼ばれる関数
+      code: |
+        rule.ふまれたとき(async function(item) {
+          // このキャラクターが踏まれたときに実行される
+          // item は踏んだキャラクター
+
+          if (item.は('プレイヤー')) {
+            // プレイヤーに踏まれた場合
+            await this.おとをならす(('▼ おと', 'おかね01'));
+            this.きえる(); // アイテムを消す
+
+            // プレイヤーのおかねを増やす
+            item.おかね += 10;
+          }
+        });
+
+    removeTrodden:
+      name: どかれたとき
+      type: function
+      desc: |
+        キャラクターが別のキャラクターに踏まれたあと、どかれたときに呼ばれる関数を登録できる
+      args:
+        - name: どかれたとき
+          type: function
+          desc: キャラクターが別のキャラクターに踏まれたあとどかれたときに呼ばれる関数
+      code: |
+        rule.どかれたとき(async function(item) {
+          // このキャラクターが踏まれた後、どかれたときに実行される
+          // item はどいたキャラクター
+
+          // どかれたことを表示
+          await this.うかべる('?');
+
+          // 特定のキャラクターがどいた場合の処理
+          if (item.は('プレイヤー')) {
+            await this.はなす('ありがとう、どいてくれて');
+          }
+        });
+
+    collided:
+      name: ぶつかったとき
+      type: function
+      desc: |
+        キャラクターが別のキャラクターとぶつかったときに呼ばれる関数を登録できる
+        [ぶつかるか](rpgobject#ぶつかるか)を使って、この関数が呼ばれるかどうかを変えられる
+      args:
+        - name: ぶつかったとき
+          type: function
+          desc: キャラクターが別のキャラクターとぶつかったときに呼ばれる関数
+      code: |
+        rule.ぶつかったとき(async function(item) {
+          // このキャラクターが他のキャラクターとぶつかったときに実行される
+          // item はぶつかった相手のキャラクター
+
+        });
+
+    beAttacked:
+      name: こうげきされたとき
+      type: function
+      desc: |
+        キャラクターが別のキャラクターからこうげきされた時に呼ばれる関数を登録できる
+      args:
+        - name: こうげきされたとき
+          type: function
+          desc: キャラクターが別のキャラクターからこうげきされた時に呼ばれる関数
+      code: |
+        rule.こうげきされたとき(async function(item) {
+          // このキャラクターが攻撃されたときに実行される
+          // item は攻撃してきたキャラクター
+
+        });
+
+    messaged:
+      name: メッセージされたとき
+      type: function
+      desc: |
+        誰かの[メッセージする](rpgobject#メッセージする)をこのキャラクターが受け取った時に呼ばれる関数を登録できる
+      args:
+        - name: メッセージされたとき
+          type: function
+          desc: 誰かの[メッセージする](rpgobject#メッセージする)をこのキャラクターが受け取った時に呼ばれる関数
+      code: |
+        rule.メッセージされたとき(async function(item) {
+          // このキャラクターがメッセージを受け取ったときに実行される
+          // item はメッセージを送ったキャラクター
+
+        });
+
+    summoned:
+      name: しょうかんされたとき
+      type: function
+      desc: |
+        [しょうかんする](rpgobject#しょうかんする)によってキャラクターが作られた時に一度だけ呼ばれる関数を登録できる
+        この関数が呼ばれるまえに、かならず[つくられたとき](#つくられたとき)に登録した関数が呼ばれる
+      args:
+        - name: しょうかんされたとき
+          type: function
+          desc: |
+            [しょうかんする](rpgobject#しょうかんする)によってキャラクターが作られた時に一度だけ呼ばれる関数
+      code: |
+        rule.しょうかんされたとき(async function(item) {
+          // このキャラクターが召喚されたときに実行される
+          // item は召喚したキャラクター（親）
+
+        });
+
+    found:
+      name: みつけたとき
+      type: function
+      desc: |
+        キャラクターが[みつける](rpgobject#みつける)によって別のキャラクターを見つけた時に呼ばれる関数を登録できる
+      args:
+        - name: みつけたとき
+          type: function
+          desc: キャラクターが[みつける](#みつける)によって別のキャラクターを見つけた時に呼ばれる関数
+      code: |
+        rule.みつけたとき(async function(item) {
+          // このキャラクターが他のキャラクターを見つけたときに実行される
+          // item は見つけたキャラクター
+
+        });

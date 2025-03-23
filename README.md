@@ -8,6 +8,7 @@ Monorepo for HackforPlay packages
 ## Packages
 
 - [@hackforplay/common](./packages/game/README.md) - Common package for building stages in hackforplay
+- [@hackforplay/docs](./packages/docs/README.md) - Documentation for HackforPlay
 
 ## Development
 

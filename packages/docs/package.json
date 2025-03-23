@@ -1,0 +1,15 @@
+{
+  "name": "@hackforplay/docs",
+  "version": "1.0.0",
+  "description": "Documentation for HackforPlay",
+  "private": true,
+  "workspaces": [
+    "scripts/*"
+  ],
+  "scripts": {
+    "yaml-to-md": "cd scripts/yaml-to-md && npm run start",
+    "build-docs": "npm run yaml-to-md",
+    "start": "bundle exec jekyll serve",
+    "build": "bundle exec jekyll build"
+  }
+}

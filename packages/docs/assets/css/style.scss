@@ -1,0 +1,45 @@
+---
+---
+
+@import '{{ site.theme }}';
+
+#a-title {
+  text-decoration: none;
+}
+
+.highlight .err {
+  color: inherit;
+  background-color: inherit;
+}
+
+#footer {
+  margin-top: 40px;
+  margin-bottom: 200px;
+}
+
+.site-footer-links > li {
+  padding-top: 1em;
+}
+
+body {
+  position: relative;
+}
+
+#side-bar {
+  position: absolute;
+  height: 100%;
+}
+
+#side-bar > * {
+  position: sticky;
+  top: 0px;
+  padding: 1em;
+  z-index: 1;
+}
+
+@media only screen and (max-width: $large-breakpoint) {
+  #side-bar {
+    position: relative;
+    padding: 0rem 3rem;
+  }
+}

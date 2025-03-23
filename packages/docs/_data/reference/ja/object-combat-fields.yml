@@ -1,0 +1,84 @@
+RPGObject:
+  name: RPGObject
+  type: class
+  desc: キャラクターのクラス
+  fields:
+    atk:
+      name: こうげきりょく
+      type: number
+      init: 0
+      desc: |
+        キャラクターのこうげきりょく
+        [こうげきする](rpgobject#こうげきする)ときに相手にあたえるダメージの量
+        もし[しょうかんする](rpgobject#しょうかんする)で作られたキャラクターなら、おやのこうげきりょくを引きつぐ
+      code: |
+        this.こうげきりょく = 1;
+
+    hp:
+      name: たいりょく
+      type: number
+      init: 0
+      desc: |
+        キャラクターのたいりょく
+        たいりょくが 0 になると、キャラクターは消えてしまう
+        たいりょくを設定しなかったら、キャラクターは無敵になる
+      code: |
+        this.たいりょく = 1;
+
+    damage:
+      name: ダメージ
+      type: number
+      init: 0
+      desc: |
+        このキャラクターがぶつかったときに、相手に与えるダメージ
+        何も設定しなければ、ダメージをあたえない
+      code: |
+        this.ダメージ = 2;
+
+    isInvincible:
+      name: むてきか
+      type: boolean
+      init: false
+      desc: |
+        このキャラクターが無敵かどうか
+        true にすると、[ダメージ](rpgobject#ダメージ)を受けなくなる
+      code: |
+        this.むてきか = true; // 無敵モードにする
+
+    attackedDamageTime:
+      name: むてきじかん
+      type: number
+      init: 1
+      desc: |
+        キャラクターが攻撃されたときにチカチカする（むてきになる）時間。単位は秒
+      code: |
+        this.むてきじかん = 2; // 攻撃されたら2秒間無敵になる
+
+    penetrate:
+      name: かんつうするかいすう
+      type: number
+      init: 0
+      desc: |
+        このキャラクターが他のキャラクターに[ダメージ](rpgobject#ダメージ)を与えたとき、消えずにのこる（貫通する）回数
+        かんつうするかいすうが 0 だと、ぶつかったときに消えてしまう
+      code: |
+        this.かんつうするかいすう = 3;
+
+    skill:
+      name: スキル
+      type: string
+      init: ''
+      desc: |
+        このキャラクターが[こうげきする](rpgobject#こうげきする)ときに出てくるキャラクターの名前
+      code: |
+        this.スキル = 'ビーム';
+
+    family:
+      name: なかま
+      type: string
+      init: '__Independence'
+      desc: |
+        このキャラクターが何の[なかま](enum#なかま)なのか
+        何も設定しなければ、誰の仲間でもない
+      code: |
+        this.なかま = なかま.プレイヤー;

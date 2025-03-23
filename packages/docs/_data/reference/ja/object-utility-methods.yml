@@ -1,0 +1,147 @@
+RPGObject:
+  name: RPGObject
+  type: class
+  desc: キャラクターのクラス
+  fields:
+    summon:
+      name: しょうかんする
+      type: function
+      desc: |
+        このキャラクターに別のキャラクターをしょうかんさせる
+        とくに設定しなければ、しょうかんされたキャラクターは同じ[なかま](enum#なかま)になる
+      args:
+        - name: なまえ
+          type: string
+          desc: しょうかんしたいキャラクターの名前
+        - name: まえに
+          type: number
+          init: 1
+          desc: 自分から見て何マス前にしょうかんするか
+        - name: みぎに
+          type: number
+          init: 0
+          desc: 自分から見て何マス前にしょうかんするか
+        - name: マップ
+          type: string
+          desc: どのマップにしょうかんするか
+        - name: 向き
+          type: IDir
+          desc: どの向きにしょうかんするか
+
+    transform:
+      name: へんしんする
+      type: function
+      desc: |
+        このキャラクターを別のキャラクターに変身させる
+        変身後は[たいりょく](rpgobject#たいりょく)以外のパラメータが元に戻る
+      args:
+        - name: なまえ
+          type: string
+          desc: 変身後のキャラクターの名前
+      code: |
+        await this.へんしんする('ナイト女');
+
+    se:
+      name: おとをならす
+      type: function
+      desc: |
+        音を一度ならす
+      args:
+        - name: 名前
+          type: string
+          desc: |
+            鳴らしたい音の名前
+            使える音: あわ01,きぬずれ01,きぬずれ02,かいふく01,かいふく02,ダメージ01,ダメージ02,ダメージ03,ダメージ04,ぶきみ01,ぶきみ02,やられた01,やられた02,はずれ01,ばくはつ01,ばくはつ02,ばくはつ03,ばくはつ04,ばくはつ05,おちる01,ほのお01,ほのお02,ほのお03,ゲームオーバー01,ゲームオーバー02,まほう01,まほう02,まほう03,まほう04,おかね01,おかね02,おかね03,パワーダウン01,パワーダウン02,パワーダウン03,パワーダウン04,パワーアップ01,パワーアップ02,パワーアップ03,パワーアップ04,パワーアップ05,にげる01,なぞとき01,ビーム01,ビーム02,ビーム03,ビーム04,ビーム05,かたな01,じゅもん01,せいかい01,せいかい02,せいかい03,せいかい04,あせ01,けんをふる01,けんをふる02,けんをふる03,けんをふる04,テレポート01,テレポート02,たおれる01,むち01,まじょ01
+      code: |
+        await this.おとをならす(('▼ おと', 'あわ01'));
+
+    talk:
+      name: はなす
+      type: function
+      desc: |
+        キャラクターに言葉をしゃべらせる
+        せんたくし①を設定すると、といかけ（質問）になり、答えるボタンが表示される
+        せんたくし②を設定すると、答えるボタンが２つから選べるようになる
+      args:
+        - name: ことば
+          type: string
+          desc: しゃべらせたい言葉
+        - name: せんたくし①
+          type: string
+          desc: １つ目のせんたくし
+        - name: せんたくし②
+          type: string
+          desc: ２つ目のせんたくし。他にいくつでも設定できる
+      return:
+        name: かいとう
+        type: string
+        desc: せんたくしの中からえらばれたもの
+      code: |
+        こたえ = await this.はなす('１＋１は？', '１', '２');
+        if (こたえ === '１') {
+          await this.はなす('はずれだよ')
+        }
+        if (こたえ === '２') {
+          await this.はなす('せいかい！')
+        }
+
+    costume:
+      name: みためをかえる
+      type: function
+      desc: |
+        このキャラクターの見た目を、別の見た目にかえる
+      args:
+        - name: なまえ
+          type: string
+          desc: どの見た目にするか
+      code: |
+        await this.みためをかえる('紫色のゴースト');
+
+    message:
+      name: メッセージする
+      type: function
+      desc: |
+        このキャラクターから別のアセットのキャラクターたちに対してメッセージをおくる
+        メッセージを受け取ったキャラクターはすべて[メッセージされたとき](trigger#メッセージされたとき)が呼ばれる
+      args:
+        - name: なまえ
+          type: string
+          desc: メッセージを送りたいキャラクターの名前
+      code: |
+        await this.メッセージする('赤色のとつブロック');
+
+    destroy:
+      name: きえる
+      type: function
+      desc: |
+        このキャラクターをただちに消去する
+      code: |
+        await this.きえる();
+
+    wait:
+      name: まつ
+      type: function
+      desc: |
+        次の行のコードを実行するまで何秒か待つ
+        このキャラクターが動けなくなるのではない
+      args:
+        - name: 秒数
+          type: number
+          desc: 何秒待つか
+      code: |
+        await this.まつ(1);
+        await this.あるく();
+
+    think:
+      name: うかべる
+      type: function
+      desc: |
+        あたまの上に何かをうかべる。しばらくすると消える
+        うかべられるものは、 '!' と '?'
+      code: |
+        await this.うかべる('!');
+      args:
+        - name: きごう
+          type: string
+          desc: |
+            うかべたい記号。決まったものしか使えない

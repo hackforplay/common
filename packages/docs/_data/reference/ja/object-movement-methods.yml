@@ -1,0 +1,133 @@
+RPGObject:
+  name: RPGObject
+  type: class
+  desc: キャラクターのクラス
+  fields:
+    speed:
+      name: あるくはやさ
+      type: number
+      init: 1
+      desc: |
+        このキャラクターが[あるく](rpgobject#あるく)ときのはやさ
+      code: |
+        this.あるくはやさ = 2; // 2倍の速さで歩く
+
+    frozen:
+      name: うごけない
+      type: boolean
+      init: false
+      desc: |
+        キャラクターをうごけなくするフラグ。これを true にすると、
+        [あるく](rpgobject#あるく)ことや[こうげきする](rpgobject#こうげきする)ことができなくなる
+      code: |
+        this.うごけない = true;
+
+  walk:
+    name: あるく
+    type: function
+    desc: |
+      キャラクターを一歩歩かせる
+    code: |
+      await this.あるく();
+
+  walkRight:
+    name: みぎにあるく
+    type: function
+    desc: |
+      このキャラクターの[むき](enum#むき)を変えずに右に一歩歩かせる
+    code: |
+      await this.みぎにあるく();
+
+  walkLeft:
+    name: ひだりにあるく
+    type: function
+    desc: |
+      このキャラクターの[むき](enum#むき)を変えずに左に一歩歩かせる
+    code: |
+      await this.ひだりにあるく();
+
+  locate:
+    name: いく
+    type: function
+    desc: |
+      このキャラクターのいちをかえる
+    args:
+      - name: ひだりから
+        type: number
+        desc: ひだりから何マス目にいどうするか
+      - name: うえから
+        type: number
+        desc: うえから何マス目にいどうするか
+      - name: マップ
+        type: string
+        desc: どのマップにいどうするか
+    code: |
+      await this.いく(7, 5, 'map2');
+
+  flyToward:
+    name: とんでいく
+    type: function
+    desc: |
+      このキャラクターが今向いている方向に向かって、このキャラクターをとばす
+      もくひょうに別のキャラクターを入れると、そのキャラクターに向かってとんでいく
+    args:
+      - name: もくひょう
+        type: string
+        desc: |
+          もくひょうにするキャラクターの名前
+          このキャラクターから一番近いキャラクターがひとつえらばれて、そこへ向かってとんでいく
+    code: |
+      await this.とんでいく('プレイヤー');
+
+  chase:
+    name: おいかける
+    type: function
+    desc: |
+      相手のキャラクターのことを追いかけるように一歩[あるく](rpgobject#あるく)
+    args:
+      - name: あいて
+        type: string | RPGObject
+        desc: |
+          相手のアセット名、または相手キャラクターの変数
+          アセット名を入れた場合は、一番近いキャラクターを追いかける
+      - name: ななめにも進むか
+        type: boolean
+        init: false
+        desc: |
+          ふつうは４方向にしか進まないが、ここに true を入れると８方向に進む
+    code: |
+      await this.おいかける('プレイヤー', true);
+
+  faceTo:
+    name: ふりむく
+    type: function
+    desc: |
+      相手のキャラクターの方を振り向く
+    args:
+      - name: あいて
+        type: RPGObject
+        desc: |
+          相手キャラクターの変数
+    code: |
+      await this.ふりむく(プレイヤー);
+
+  teleportRandom:
+    name: テレポートランダム
+    type: function
+    desc: |
+      ランダムな位置にテレポートする
+    code: |
+      await this.テレポートランダム();
+
+  turn:
+    name: むきをかえる
+    type: function
+    desc: |
+      このキャラクターの[むき](enum#むき)をかえる
+    code: |
+      this.むきをかえる(むき.うえ); // 上を向く
+    args:
+      - name: むき
+        type: string
+        desc: |
+          このキャラクターをどの[むき enum/Direction]にするか

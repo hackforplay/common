@@ -1,0 +1,61 @@
+RPGObject:
+  name: RPGObject
+  type: class
+  desc: キャラクターのクラス
+  fields:
+    mapName:
+      name: マップ
+      type: string
+      init: ''
+      desc: |
+        キャラクターがいるマップのなまえ
+        マップをかえるには[いく](rpgobject#いく)を使う
+      code: |
+        this.マップ = 'map2';
+
+    mapX:
+      name: ひだりから
+      type: number
+      init: 15
+      desc: |
+        キャラクターがひだりから何マス目にいるか
+        ばしょをかえるには[いく](rpgobject#いく)を使う
+        このへんすうには代入できない
+
+    mapY:
+      name: うえから
+      type: number
+      init: 10
+      desc: |
+        キャラクターがうえから何マス目にいるか
+        ばしょをかえるには[いく](rpgobject#いく)を使う
+        このへんすうには代入できない
+
+    collideMapBoader:
+      name: マップのはしにぶつかるか
+      type: boolean
+      init: true
+      desc: |
+        このキャラクターがマップの端にぶつかるかどうか
+        true ならぶつかる
+      code: |
+        this.マップのはしにぶつかるか = false; // マップの端を通り抜けられる
+
+    forward:
+      name: ベクトル
+      type: Vector2
+      desc: |
+        このキャラクターが向いている方向の[ベクトル](vector#vector2)
+        つねに大きさが１の単位ベクトルである
+      code: |
+        const x = this.ベクトル.x;
+        const y = this.ベクトル.y;
+
+    direction:
+      name: むき
+      type: string
+      init: むき.した
+      desc: |
+        このキャラクターの今の[むき](enum#むき)
+      code: |
+        this.むき = むき.した;

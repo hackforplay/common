@@ -1,0 +1,592 @@
+RPGObject:
+  name: RPGObject
+  type: class
+  desc: キャラクターのクラス
+  fields:
+    atk:
+      name: こうげきりょく
+      type: number
+      init: 0
+      desc: |
+        キャラクターのこうげきりょく
+        [こうげきする](rpgobject#こうげきする)ときに相手にあたえるダメージの量
+        もし[しょうかんする](rpgobject#しょうかんする)で作られたキャラクターなら、おやのこうげきりょくを引きつぐ
+      code: |
+        this.こうげきりょく = 1;
+
+    # 仕様が固まるまで保留
+    # location:
+    #   name: ばしょ
+    #   type: Location
+    #   desc: |
+    #     キャラクターの今いる[ばしょ location/Location]をあらわす
+
+    mapName: # map.name の getter と、locate のラッパーとしての setter を作る
+      name: マップ
+      type: string
+      init: ''
+      desc: |
+        キャラクターがいるマップのなまえ
+        マップをかえるには[いく](rpgobject#いく)を使う
+      code: |
+        this.マップ = 'map2';
+
+    mapX:
+      name: ひだりから
+      type: number
+      init: 15
+      desc: |
+        キャラクターがひだりから何マス目にいるか
+        ばしょをかえるには[いく](rpgobject#いく)を使う
+        このへんすうには代入できない
+
+    mapY:
+      name: うえから
+      type: number
+      init: 10
+      desc: |
+        キャラクターがうえから何マス目にいるか
+        ばしょをかえるには[いく](rpgobject#いく)を使う
+        このへんすうには代入できない
+
+    money:
+      name: おかね
+      type: number
+      init: 0
+      desc: |
+        このキャラクターが持っているおかねの量
+      code: |
+        this.money = 1;
+
+    opacity:
+      name: みえやすさ
+      type: number
+      init: 1
+      desc: |
+        このキャラクターの不透明度
+        0 にするとキャラクターが見えなくなる
+      code: |
+        this.opacty = 0;
+
+    collisionFlag:
+      name: ぶつかるか
+      type: boolean
+      init: false
+      desc: |
+        このキャラクターが他のキャラクターとぶつかるかどうか
+        true にするとぶつかる
+        何も設定しなかった場合、[ふまれたとき](trigger#ふまれたとき)がなければ true になる
+      code: |
+        this.ぶつかるか = true;
+
+    penetrate:
+      name: かんつうするかいすう
+      type: number
+      init: 0
+      desc: |
+        このキャラクターが他のキャラクターに[ダメージ](rpgobject#ダメージ)を与えたとき、消えずにのこる（貫通する）回数
+        かんつうするかいすうが 0 だと、ぶつかったときに消えてしまう
+      code: |
+        this.かんつうするかいすう = 3;
+
+    hp:
+      name: たいりょく
+      type: number
+      init: 0
+      desc: |
+        キャラクターのたいりょく
+        たいりょくが 0 になると、キャラクターは消えてしまう
+        たいりょくを設定しなかったら、キャラクターは無敵になる
+      code: |
+        this.たいりょく = 1;
+
+    behavior:
+      name: なにをしているか
+      type: string
+      init: 'idle'
+      desc: |
+        このキャラクターが今何をしているか
+        'idle' なら、今は何もしていない
+        'walk' なら、今は[あるく](rpgobject#あるく)している
+        'attack' なら、今は[こうげきする](rpgobject#こうげきする)している
+        'dead' なら、[たいりょく](rpgobject#たいりょく)が 0 になってしまった
+      code: |
+        if (this.なにをしているか === 'idle') {
+          await this.あるく();
+        }
+
+    forward:
+      name: ベクトル
+      type: Vector2
+      desc: |
+        このキャラクターが向いている方向の[ベクトル](vector#vector2)
+        つねに大きさが１の単位ベクトルである
+      code: |
+        const x = this.ベクトル.x;
+        const y = this.ベクトル.y;
+
+    direction:
+      name: むき
+      type: string
+      init: むき.した
+      desc: |
+        このキャラクターの今の[むき](enum#むき)
+      code: |
+        this.むき = むき.した;
+
+    family:
+      name: なかま
+      type: string
+      init: '__Independence'
+      desc: |
+        このキャラクターが何の[なかま](enum#なかま)なのか
+        何も設定しなければ、誰の仲間でもない
+      code: |
+        this.なかま = なかま.プレイヤー;
+
+    damage:
+      name: ダメージ
+      type: number
+      init: 0
+      desc: |
+        このキャラクターがぶつかったときに、相手に与えるダメージ
+        何も設定しなければ、ダメージをあたえない
+      code: |
+        this.ダメージ = 2;
+
+    speed:
+      name: あるくはやさ
+      type: number
+      init: 1
+      desc: |
+        このキャラクターが[あるく](rpgobject#あるく)ときのはやさ
+      code: |
+        this.あるくはやさ = 2; // 2倍の速さで歩く
+
+    collideMapBoader:
+      name: マップのはしにぶつかるか
+      type: boolean
+      init: true
+      desc: |
+        このキャラクターがマップの端にぶつかるかどうか
+        true ならぶつかる
+      code: |
+        this.マップのはしにぶつかるか = false; // マップの端を通り抜けられる
+
+    showHpLabel:
+      name: たいりょくがみえるか
+      type: boolean
+      init: true
+      desc: |
+        このキャラクターの[たいりょく](rpgobject#たいりょく)がみえるかどうか
+        true なら見える
+      code: |
+        this.たいりょくがみえるか = false; // 体力ゲージを非表示にする
+
+    name:
+      name: なまえ
+      type: string
+      desc: |
+        このキャラクターのアセット名
+        たとえばプレイヤーの[なまえ](rpgobject#なまえ)は 'プレイヤー' になっている
+      code: |
+        if (this.なまえ === 'プレイヤー') {
+          await this.はなす('こんにちは！');
+        }
+
+    skill:
+      name: スキル
+      type: string
+      init: ''
+      desc: |
+        このキャラクターが[こうげきする](rpgobject#こうげきする)ときに出てくるキャラクターの名前
+      code: |
+        this.スキル = 'ビーム';
+
+    fieldOfView:
+      name: みえるはんい
+      type: number
+      init: 1
+      desc: |
+        このキャラクターが[みつける](rpgobject#みつける)ときに、何マスとなりまで見つけられるか
+      code: |
+        this.みえるはんい = 2; // 周囲2マスまで見える
+
+    lengthOfView:
+      name: みえるきょり
+      type: number
+      init: 10
+      desc: |
+        このキャラクターが[みつける](rpgobject#みつける)ときに、何マス前まで見つけられるか
+      code: |
+        this.みえるきょり = 5; // 5マス先まで見える
+
+    isInvincible:
+      name: むてきか
+      type: boolean
+      init: false
+      desc: |
+        このキャラクターが無敵かどうか
+        true にすると、[ダメージ](rpgobject#ダメージ)を受けなくなる
+      code: |
+        this.むてきか = true; // 無敵モードにする
+
+    parent:
+      name: おや
+      type: RPGObject
+      init: undefined
+      desc: |
+        このキャラクターを[しょうかんする](rpgobject#しょうかんする)によって作ったキャラクター
+      code: |
+        if (this.おや) {
+          // 親キャラクターがいる場合の処理
+          await this.おや.はなす('これは私が作ったキャラクターです');
+        }
+
+    scaleX:
+      name: みためのはば
+      type: number
+      init: 1
+      desc: |
+        キャラクターの横の長さを何倍に見せるか。見た目だけが変わる（当たり判定は変わらない）
+      code: |
+        this.みためのはば = 2; // 横幅を2倍に見せる
+
+    scaleY:
+      name: みためのたかさ
+      type: number
+      init: 1
+      desc: |
+        キャラクターのたての長さを何倍に見せるか。見た目だけが変わる（当たり判定は変わらない）
+      code: |
+        this.みためのたかさ = 0.5; // 高さを半分に見せる
+
+    attackedDamageTime:
+      name: むてきじかん
+      type: number
+      init: 1
+      desc: |
+        キャラクターが攻撃されたときにチカチカする（むてきになる）時間。単位は秒
+      code: |
+        this.むてきじかん = 2; // 攻撃されたら2秒間無敵になる
+
+    frozen:
+      name: うごけない
+      type: boolean
+      init: false
+      desc: |
+        キャラクターをうごけなくするフラグ。これを true にすると、
+        [あるく](rpgobject#あるく)ことや[こうげきする](rpgobject#こうげきする)ことができなくなる
+      code: |
+        this.うごけない = true;
+
+    attack:
+      name: こうげきする
+      type: function
+      desc: |
+        キャラクターにこうげきさせる
+      code: |
+        await this.こうげきする()
+
+    walk:
+      name: あるく
+      type: function
+      desc: |
+        キャラクターを一歩歩かせる
+      code: |
+        await this.あるく();
+
+    walkRight:
+      name: みぎにあるく
+      type: function
+      desc: |
+        このキャラクターの[むき](enum#むき)を変えずに右に一歩歩かせる
+      code: |
+        await this.みぎにあるく();
+
+    walkLeft:
+      name: ひだりにあるく
+      type: function
+      desc: |
+        このキャラクターの[むき](enum#むき)を変えずに左に一歩歩かせる
+      code: |
+        await this.ひだりにあるく();
+
+    locate:
+      name: いく
+      type: function
+      desc: |
+        このキャラクターのいちをかえる
+      args:
+        - name: ひだりから
+          type: number
+          desc: ひだりから何マス目にいどうするか
+        - name: うえから
+          type: number
+          desc: うえから何マス目にいどうするか
+        - name: マップ
+          type: string
+          desc: どのマップにいどうするか
+      code: |
+        await this.いく(7, 5, 'map2');
+
+    wait:
+      name: まつ
+      type: function
+      desc: |
+        次の行のコードを実行するまで何秒か待つ
+        このキャラクターが動けなくなるのではない
+      args:
+        - name: 秒数
+          type: number
+          desc: 何秒待つか
+      code: |
+        await this.まつ(1);
+        await this.あるく();
+
+    summon:
+      name: しょうかんする
+      type: function
+      desc: |
+        このキャラクターに別のキャラクターをしょうかんさせる
+        とくに設定しなければ、しょうかんされたキャラクターは同じ[なかま](enum#なかま)になる
+      args:
+        - name: なまえ
+          type: string
+          desc: しょうかんしたいキャラクターの名前
+        - name: まえに
+          type: number
+          init: 1
+          desc: 自分から見て何マス前にしょうかんするか
+        - name: みぎに
+          type: number
+          init: 0
+          desc: 自分から見て何マス前にしょうかんするか
+        - name: マップ
+          type: string
+          desc: どのマップにしょうかんするか
+        - name: 向き
+          type: IDir
+          desc: どの向きにしょうかんするか
+
+    transform:
+      name: へんしんする
+      type: function
+      desc: |
+        このキャラクターを別のキャラクターに変身させる
+        変身後は[たいりょく](rpgobject#たいりょく)以外のパラメータが元に戻る
+      args:
+        - name: なまえ
+          type: string
+          desc: 変身後のキャラクターの名前
+      code: |
+        await this.へんしんする('ナイト女');
+
+    find:
+      name: みつける
+      type: function
+      desc: |
+        まわりをみわたして、別のキャラクターのことをみつけようとする
+        何かをみつけたら、[みつけたとき](trigger#みつけたとき)が呼ばれる
+      code: |
+        await this.みつける();
+
+    findEnemy:
+      name: てきをみつける
+      type: function
+      desc: |
+        [てきかどうか](rpgobject#てきかどうか)をチェックして、
+        てきだけを[みつける](rpgobject#みつける)
+      code: |
+        await this.てきをみつける();
+
+    flyToward:
+      name: とんでいく
+      type: function
+      desc: |
+        このキャラクターが今向いている方向に向かって、このキャラクターをとばす
+        もくひょうに別のキャラクターを入れると、そのキャラクターに向かってとんでいく
+      args:
+        - name: もくひょう
+          type: string
+          desc: |
+            もくひょうにするキャラクターの名前
+            このキャラクターから一番近いキャラクターがひとつえらばれて、そこへ向かってとんでいく
+      code: |
+        await this.とんでいく('プレイヤー');
+
+    se:
+      name: おとをならす
+      type: function
+      desc: |
+        音を一度ならす
+      args:
+        - name: 名前
+          type: string
+          desc: |
+            鳴らしたい音の名前
+            使える音: あわ01,きぬずれ01,きぬずれ02,かいふく01,かいふく02,ダメージ01,ダメージ02,ダメージ03,ダメージ04,ぶきみ01,ぶきみ02,やられた01,やられた02,はずれ01,ばくはつ01,ばくはつ02,ばくはつ03,ばくはつ04,ばくはつ05,おちる01,ほのお01,ほのお02,ほのお03,ゲームオーバー01,ゲームオーバー02,まほう01,まほう02,まほう03,まほう04,おかね01,おかね02,おかね03,パワーダウン01,パワーダウン02,パワーダウン03,パワーダウン04,パワーアップ01,パワーアップ02,パワーアップ03,パワーアップ04,パワーアップ05,にげる01,なぞとき01,ビーム01,ビーム02,ビーム03,ビーム04,ビーム05,かたな01,じゅもん01,せいかい01,せいかい02,せいかい03,せいかい04,あせ01,けんをふる01,けんをふる02,けんをふる03,けんをふる04,テレポート01,テレポート02,たおれる01,むち01,まじょ01
+      code: |
+        await this.おとをならす(('▼ おと', 'あわ01'));
+
+    talk:
+      name: はなす
+      type: function
+      desc: |
+        キャラクターに言葉をしゃべらせる
+        せんたくし①を設定すると、といかけ（質問）になり、答えるボタンが表示される
+        せんたくし②を設定すると、答えるボタンが２つから選べるようになる
+      args:
+        - name: ことば
+          type: string
+          desc: しゃべらせたい言葉
+        - name: せんたくし①
+          type: string
+          desc: １つ目のせんたくし
+        - name: せんたくし②
+          type: string
+          desc: ２つ目のせんたくし。他にいくつでも設定できる
+      return:
+        name: かいとう
+        type: string
+        desc: せんたくしの中からえらばれたもの
+      code: |
+        こたえ = await this.はなす('１＋１は？', '１', '２');
+        if (こたえ === '１') {
+          await this.はなす('はずれだよ')
+        }
+        if (こたえ === '２') {
+          await this.はなす('せいかい！')
+        }
+
+    costume:
+      name: みためをかえる
+      type: function
+      desc: |
+        このキャラクターの見た目を、別の見た目にかえる
+      args:
+        - name: なまえ
+          type: string
+          desc: どの見た目にするか
+      code: |
+        await this.みためをかえる('紫色のゴースト');
+
+    message:
+      name: メッセージする
+      type: function
+      desc: |
+        このキャラクターから別のアセットのキャラクターたちに対してメッセージをおくる
+        メッセージを受け取ったキャラクターはすべて[メッセージされたとき](trigger#メッセージされたとき)が呼ばれる
+      args:
+        - name: なまえ
+          type: string
+          desc: メッセージを送りたいキャラクターの名前
+      code: |
+        await this.メッセージする('赤色のとつブロック');
+
+    destroy:
+      name: きえる
+      type: function
+      desc: |
+        このキャラクターをただちに消去する
+      code: |
+        await this.きえる();
+
+    chase:
+      name: おいかける
+      type: function
+      desc: |
+        相手のキャラクターのことを追いかけるように一歩[あるく](rpgobject#あるく)
+      args:
+        - name: あいて
+          type: string | RPGObject
+          desc: |
+            相手のアセット名、または相手キャラクターの変数
+            アセット名を入れた場合は、一番近いキャラクターを追いかける
+        - name: ななめにも進むか
+          type: boolean
+          init: false
+          desc: |
+            ふつうは４方向にしか進まないが、ここに true を入れると８方向に進む
+      code: |
+        await this.おいかける('プレイヤー', true);
+
+    faceTo:
+      name: ふりむく
+      type: function
+      desc: |
+        相手のキャラクターの方を振り向く
+      args:
+        - name: あいて
+          type: RPGObject
+          desc: |
+            相手キャラクターの変数
+      code: |
+        await this.ふりむく(プレイヤー);
+
+    teleportRandom:
+      name: テレポートランダム
+      type: function
+      desc: |
+        ランダムな位置にテレポートする
+      code: |
+        await this.テレポートランダム();
+
+    turn:
+      name: むきをかえる
+      type: function
+      desc: |
+        このキャラクターの[むき](enum#むき)をかえる
+      code: |
+        this.むきをかえる(むき.うえ); // 上を向く
+      args:
+        - name: むき
+          type: string
+          desc: |
+            このキャラクターをどの[むき enum/Direction]にするか
+
+    is:
+      name: は
+      type: function
+      desc: |
+        そのキャラクターが指定した[なまえ](rpgobject#なまえ)のものかどうかをしらべる
+      code: |
+        if (item.は('プレイヤー')) {
+          // あいてのキャラクターがプレイヤーであれば、ここに入る
+        }
+      args:
+        - name: なまえ
+          type: string
+          desc: |
+            キャラクターの[なまえ](rpgobject#なまえ)
+
+    isEnemy:
+      name: てきかどうか
+      type: function
+      desc: |
+        指定したキャラクターが自分にとって敵(てき)かどうかをしらべる
+        同じ[なかま](rpgobject#なかま)でないか、どくりつ同士であれば、敵になる
+      code: |
+        if (this.てきかどうか(item)) {
+          // 相手のてきあれば、ここに入る
+        }
+      args:
+        - name: あいて
+          type: RPGObject
+          desc: |
+            てきかどうかをしらべたいキャラクター
+
+    think:
+      name: うかべる
+      type: function
+      desc: |
+        あたまの上に何かをうかべる。しばらくすると消える
+        うかべられるものは、 '!' と '?'
+      code: |
+        await this.うかべる('!');
+      args:
+        - name: きごう
+          type: string
+          desc: |
+            うかべたい記号。決まったものしか使えない
+
