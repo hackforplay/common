@@ -35,9 +35,7 @@ jobs:
 
       - name: Build documentation
         run: |
-          cd packages/docs
-          npm run build-docs
-          bundle exec jekyll build
+          npm run build -- --filter=@hackforplay/docs
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

@@ -9,8 +9,7 @@
     "build": "turbo run build",
     "test": "npx prettier -c . && turbo run test",
     "lint": "turbo run lint",
-    "format": "prettier --write .",
-    "build:docs": "cd packages/docs && npm run build-docs && bundle exec jekyll build"
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@types/fs-extra": "11.0.4",
