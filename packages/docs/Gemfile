@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+
+# gem "rails"
+gem "rake"
+gem "jekyll", "~> 3.8.5"
+gem "github-pages", "~> 204"
+gem 'html-proofer'
+gem "webrick", "~> 1.7.0"
+gem "ffi", "~> 1.15.5"
+gem "rexml"

@@ -1,0 +1,86 @@
+Hack:
+  name: ハック
+  type: object
+  desc: |
+    ゲームの状態を変える関数を集めたオブジェクト
+  fields:
+    gameclear:
+      name: ゲームクリア
+      type: function
+      desc: ゲームクリアにする
+      code: |
+        ハック.ゲームクリア();
+
+    gameover:
+      name: ゲームオーバー
+      type: function
+      desc: ゲームオーバーにする
+      code: |
+        ハック.ゲームオーバー();
+
+    time:
+      name: じかん
+      type: number
+      desc: |
+        ゲームがはじまってからの時間を設定できる
+        あるいは、時間によってキャラクターのふるまいを変えられる
+      code: |
+        ハック.じかん = 0;
+
+    stopTimer:
+      name: じかんをとめる
+      type: function
+      desc: |
+        ゲームのじかんを進まないようにする
+        ただし、キャラクターは動き続ける
+        [じかんをうごかす](hack#じかんをうごかす)をすると、また動き始める
+      code: |
+        ハック.じかんをとめる();
+
+    startTimer:
+      name: じかんをうごかす
+      type: function
+      desc: |
+        [じかんをとめる](hack#じかんをとめる)で止めたじかんを、また動かし始める
+      code: |
+        ハック.じかんをとめる();
+        await this.まつ(2);
+        ハック.じかんをうごかす();
+
+    showLabel:
+      name: がめんにだす
+      type: function
+      desc: |
+        プレイヤーのパラメータを左上にだす
+      code: |
+        ハック.がめんにだす('こうげきりょく');
+      args:
+        - name: パラメータ名
+          type: string
+          desc: |
+            出したいパラメータの名前
+            `this.〇〇` の 〇〇 に入るものであれば、何でも使える
+
+    hideLabel:
+      name: がめんからけす
+      type: function
+      desc: |
+        [がめんにだす](hack#がめんにだす)で表示したパラメータを画面から消す
+      code: |
+        ハック.がめんからけす();
+
+    code:
+      name: まどうしょ
+      type: string
+      desc: |
+        まどうしょのなかみをへんこうする
+      code: |
+        ハック.まどうしょ = `player.たいりょく = 100`;
+
+    emphasizeCode:
+      name: まどうしょをひからせる
+      type: function
+      desc: |
+        まどうしょが目立つように光らせる
+      code: |
+        ハック.まどうしょをひからせる();

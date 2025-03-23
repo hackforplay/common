@@ -1,0 +1,69 @@
+RPGObject:
+  name: RPGObject
+  type: class
+  desc: キャラクターのクラス
+  fields:
+    opacity:
+      name: みえやすさ
+      type: number
+      init: 1
+      desc: |
+        このキャラクターの不透明度
+        0 にするとキャラクターが見えなくなる
+      code: |
+        this.opacty = 0;
+
+    money:
+      name: おかね
+      type: number
+      init: 0
+      desc: |
+        このキャラクターが持っているおかねの量
+      code: |
+        this.money = 1;
+
+    showHpLabel:
+      name: たいりょくがみえるか
+      type: boolean
+      init: true
+      desc: |
+        このキャラクターの[たいりょく](rpgobject#たいりょく)がみえるかどうか
+        true なら見える
+      code: |
+        this.たいりょくがみえるか = false; // 体力ゲージを非表示にする
+
+    fieldOfView:
+      name: みえるはんい
+      type: number
+      init: 1
+      desc: |
+        このキャラクターが[みつける](rpgobject#みつける)ときに、何マスとなりまで見つけられるか
+      code: |
+        this.みえるはんい = 2; // 周囲2マスまで見える
+
+    lengthOfView:
+      name: みえるきょり
+      type: number
+      init: 10
+      desc: |
+        このキャラクターが[みつける](rpgobject#みつける)ときに、何マス前まで見つけられるか
+      code: |
+        this.みえるきょり = 5; // 5マス先まで見える
+
+    scaleX:
+      name: みためのはば
+      type: number
+      init: 1
+      desc: |
+        キャラクターの横の長さを何倍に見せるか。見た目だけが変わる（当たり判定は変わらない）
+      code: |
+        this.みためのはば = 2; // 横幅を2倍に見せる
+
+    scaleY:
+      name: みためのたかさ
+      type: number
+      init: 1
+      desc: |
+        キャラクターのたての長さを何倍に見せるか。見た目だけが変わる（当たり判定は変わらない）
+      code: |
+        this.みためのたかさ = 0.5; // 高さを半分に見せる

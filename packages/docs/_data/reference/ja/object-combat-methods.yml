@@ -1,0 +1,110 @@
+RPGObject:
+  name: RPGObject
+  type: class
+  desc: キャラクターのクラス
+  fields:
+    behavior:
+      name: なにをしているか
+      type: string
+      init: 'idle'
+      desc: |
+        このキャラクターが今何をしているか
+        'idle' なら、今は何もしていない
+        'walk' なら、今は[あるく](rpgobject#あるく)している
+        'attack' なら、今は[こうげきする](rpgobject#こうげきする)している
+        'dead' なら、[たいりょく](rpgobject#たいりょく)が 0 になってしまった
+      code: |
+        if (this.なにをしているか === 'idle') {
+          await this.あるく();
+        }
+
+    name:
+      name: なまえ
+      type: string
+      desc: |
+        このキャラクターのアセット名
+        たとえばプレイヤーの[なまえ](rpgobject#なまえ)は 'プレイヤー' になっている
+      code: |
+        if (this.なまえ === 'プレイヤー') {
+          await this.はなす('こんにちは！');
+        }
+
+    parent:
+      name: おや
+      type: RPGObject
+      init: undefined
+      desc: |
+        このキャラクターを[しょうかんする](rpgobject#しょうかんする)によって作ったキャラクター
+      code: |
+        if (this.おや) {
+          // 親キャラクターがいる場合の処理
+          await this.おや.はなす('これは私が作ったキャラクターです');
+        }
+
+    collisionFlag:
+      name: ぶつかるか
+      type: boolean
+      init: false
+      desc: |
+        このキャラクターが他のキャラクターとぶつかるかどうか
+        true にするとぶつかる
+        何も設定しなかった場合、[ふまれたとき](trigger#ふまれたとき)がなければ true になる
+      code: |
+        this.ぶつかるか = true;
+
+  attack:
+    name: こうげきする
+    type: function
+    desc: |
+      キャラクターにこうげきさせる
+    code: |
+      await this.こうげきする()
+
+  find:
+    name: みつける
+    type: function
+    desc: |
+      まわりをみわたして、別のキャラクターのことをみつけようとする
+      何かをみつけたら、[みつけたとき](trigger#みつけたとき)が呼ばれる
+    code: |
+      await this.みつける();
+
+  findEnemy:
+    name: てきをみつける
+    type: function
+    desc: |
+      [てきかどうか](rpgobject#てきかどうか)をチェックして、
+      てきだけを[みつける](rpgobject#みつける)
+    code: |
+      await this.てきをみつける();
+
+  is:
+    name: は
+    type: function
+    desc: |
+      そのキャラクターが指定した[なまえ](rpgobject#なまえ)のものかどうかをしらべる
+    code: |
+      if (item.は('プレイヤー')) {
+        // あいてのキャラクターがプレイヤーであれば、ここに入る
+      }
+    args:
+      - name: なまえ
+        type: string
+        desc: |
+          キャラクターの[なまえ](rpgobject#なまえ)
+
+  isEnemy:
+    name: てきかどうか
+    type: function
+    desc: |
+      指定したキャラクターが自分にとって敵(てき)かどうかをしらべる
+      同じ[なかま](rpgobject#なかま)でないか、どくりつ同士であれば、敵になる
+    code: |
+      if (this.てきかどうか(item)) {
+        // 相手のてきあれば、ここに入る
+      }
+    args:
+      - name: あいて
+        type: RPGObject
+        desc: |
+          てきかどうかをしらべたいキャラクター
