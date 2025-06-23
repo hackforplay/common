@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           cache: 'npm'
-          node-version: '20.19.2'
+          node-version: '20.19.3'
       - name: Install
         run: npm ci
       - name: Build
