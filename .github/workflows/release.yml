@@ -39,7 +39,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCLOUD_SERVICE_KEY }}
       - name: Use Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20.19.5'
       - run: npm ci
