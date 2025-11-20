@@ -33,7 +33,7 @@ jobs:
             echo "GitHub token validation successful!"
           fi
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Setup gcloud environment
         uses: google-github-actions/auth@v3
         with:
