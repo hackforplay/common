@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-node@v6.4.0
         with:
           cache: 'npm'
-          node-version: '20.20.2'
+          node-version: '24.18.0'
       - name: Install
         run: npm ci
       - name: Build
