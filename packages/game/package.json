@@ -70,7 +70,7 @@
     "babel-loader": "10.1.1",
     "canvas": "2.11.2",
     "eslint": "7.32.0",
-    "js-yaml": "4.3.0",
+    "js-yaml": "5.2.1",
     "jsdom": "25.0.1",
     "np": "11.2.2",
     "prettier": "2.8.8",
